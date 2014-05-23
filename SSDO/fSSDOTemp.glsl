@@ -1,11 +1,10 @@
-#version 150
+#version 120
 
-in vec2 pTCoord;
-out vec4 fColor;
+varying vec2 pTCoord;
 
 uniform sampler2D tempSampler;
 
 void main()
 {
-	fColor = texture(tempSampler, pTCoord);
+	gl_FragData[0] = texture2D(tempSampler, pTCoord);
 }

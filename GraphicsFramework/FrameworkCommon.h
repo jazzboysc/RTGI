@@ -25,6 +25,8 @@
 #endif
 #endif
 
+#define RTGI_OUTPUT_RESOURCE_LOADING
+
 #define PI_SP 3.141592f
 #define DEG_TO_RAD_SP PI_SP/180.0f
 

@@ -20,6 +20,38 @@
 		FB18BA1A192ECBBC00D5B13F /* SSDOTempScreenQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA12192ECBBC00D5B13F /* SSDOTempScreenQuad.cpp */; };
 		FB18BA1B192ECBBC00D5B13F /* SSDOTriMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA14192ECBBC00D5B13F /* SSDOTriMesh.cpp */; };
 		FB18BA5F192ECE6F00D5B13F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA5E192ECE6F00D5B13F /* main.cpp */; };
+		FB56CC95192FE8B800DF31A8 /* fDirectLighting.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC3E192FC89600DF31A8 /* fDirectLighting.glsl */; };
+		FB56CC96192FE8B800DF31A8 /* fGBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC3F192FC89600DF31A8 /* fGBuffer.glsl */; };
+		FB56CC97192FE8B800DF31A8 /* fSSDO.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC40192FC89600DF31A8 /* fSSDO.glsl */; };
+		FB56CC98192FE8B800DF31A8 /* fSSDOFilter.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC41192FC89600DF31A8 /* fSSDOFilter.glsl */; };
+		FB56CC99192FE8B800DF31A8 /* fSSDOTemp.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC42192FC89600DF31A8 /* fSSDOTemp.glsl */; };
+		FB56CC9A192FE8B800DF31A8 /* vDirectLighting.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC43192FC89600DF31A8 /* vDirectLighting.glsl */; };
+		FB56CC9B192FE8B800DF31A8 /* vGBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC44192FC89600DF31A8 /* vGBuffer.glsl */; };
+		FB56CC9C192FE8B800DF31A8 /* vSSDO.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC45192FC89600DF31A8 /* vSSDO.glsl */; };
+		FB56CC9D192FE8B800DF31A8 /* vSSDOFilter.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC46192FC89600DF31A8 /* vSSDOFilter.glsl */; };
+		FB56CC9E192FE8B800DF31A8 /* vSSDOTemp.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC47192FC89600DF31A8 /* vSSDOTemp.glsl */; };
+		FB56CCA6192FEB6A00DF31A8 /* cube.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA5192FEB4D00DF31A8 /* cube.ply */; };
+		FB56CCA7192FEB6A00DF31A8 /* beethoven.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA0192FEB3500DF31A8 /* beethoven.ply */; };
+		FB56CCA8192FEB6A00DF31A8 /* big_dodge.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA1192FEB3500DF31A8 /* big_dodge.ply */; };
+		FB56CCA9192FEB6A00DF31A8 /* ground.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA2192FEB3500DF31A8 /* ground.ply */; };
+		FB56CCAA192FEB6A00DF31A8 /* KitchenMediumBlurred.pfm in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA3192FEB3500DF31A8 /* KitchenMediumBlurred.pfm */; };
+		FB56CCAB192FEB6A00DF31A8 /* screenquad.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA4192FEB3500DF31A8 /* screenquad.ply */; };
+		FB56CCAC192FFD2D00DF31A8 /* fDirectLighting.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC3E192FC89600DF31A8 /* fDirectLighting.glsl */; };
+		FB56CCAD192FFD2D00DF31A8 /* fGBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC3F192FC89600DF31A8 /* fGBuffer.glsl */; };
+		FB56CCAE192FFD2D00DF31A8 /* fSSDO.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC40192FC89600DF31A8 /* fSSDO.glsl */; };
+		FB56CCAF192FFD2D00DF31A8 /* fSSDOFilter.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC41192FC89600DF31A8 /* fSSDOFilter.glsl */; };
+		FB56CCB0192FFD2D00DF31A8 /* fSSDOTemp.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC42192FC89600DF31A8 /* fSSDOTemp.glsl */; };
+		FB56CCB1192FFD2D00DF31A8 /* vDirectLighting.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC43192FC89600DF31A8 /* vDirectLighting.glsl */; };
+		FB56CCB2192FFD2D00DF31A8 /* vGBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC44192FC89600DF31A8 /* vGBuffer.glsl */; };
+		FB56CCB3192FFD2D00DF31A8 /* vSSDO.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC45192FC89600DF31A8 /* vSSDO.glsl */; };
+		FB56CCB4192FFD2D00DF31A8 /* vSSDOFilter.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC46192FC89600DF31A8 /* vSSDOFilter.glsl */; };
+		FB56CCB5192FFD2D00DF31A8 /* vSSDOTemp.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC47192FC89600DF31A8 /* vSSDOTemp.glsl */; };
+		FB56CCB6192FFD3500DF31A8 /* cube.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA5192FEB4D00DF31A8 /* cube.ply */; };
+		FB56CCB7192FFD3500DF31A8 /* beethoven.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA0192FEB3500DF31A8 /* beethoven.ply */; };
+		FB56CCB8192FFD3500DF31A8 /* big_dodge.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA1192FEB3500DF31A8 /* big_dodge.ply */; };
+		FB56CCB9192FFD3500DF31A8 /* ground.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA2192FEB3500DF31A8 /* ground.ply */; };
+		FB56CCBA192FFD3500DF31A8 /* KitchenMediumBlurred.pfm in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA3192FEB3500DF31A8 /* KitchenMediumBlurred.pfm */; };
+		FB56CCBB192FFD3500DF31A8 /* screenquad.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA4192FEB3500DF31A8 /* screenquad.ply */; };
 		FB6994A6192FC2A100B20DEB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA5E192ECE6F00D5B13F /* main.cpp */; };
 		FB6994A7192FC2A100B20DEB /* DirectLightingQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA0A192ECBBC00D5B13F /* DirectLightingQuad.cpp */; };
 		FB6994A8192FC2A100B20DEB /* SSDOApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA0C192ECBBC00D5B13F /* SSDOApp.cpp */; };
@@ -80,6 +112,22 @@
 		FB18BA14192ECBBC00D5B13F /* SSDOTriMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SSDOTriMesh.cpp; sourceTree = "<group>"; };
 		FB18BA15192ECBBC00D5B13F /* SSDOTriMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSDOTriMesh.h; sourceTree = "<group>"; };
 		FB18BA5E192ECE6F00D5B13F /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		FB56CC3E192FC89600DF31A8 /* fDirectLighting.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = fDirectLighting.glsl; sourceTree = "<group>"; };
+		FB56CC3F192FC89600DF31A8 /* fGBuffer.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = fGBuffer.glsl; sourceTree = "<group>"; };
+		FB56CC40192FC89600DF31A8 /* fSSDO.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = fSSDO.glsl; sourceTree = "<group>"; };
+		FB56CC41192FC89600DF31A8 /* fSSDOFilter.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = fSSDOFilter.glsl; sourceTree = "<group>"; };
+		FB56CC42192FC89600DF31A8 /* fSSDOTemp.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = fSSDOTemp.glsl; sourceTree = "<group>"; };
+		FB56CC43192FC89600DF31A8 /* vDirectLighting.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = vDirectLighting.glsl; sourceTree = "<group>"; };
+		FB56CC44192FC89600DF31A8 /* vGBuffer.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = vGBuffer.glsl; sourceTree = "<group>"; };
+		FB56CC45192FC89600DF31A8 /* vSSDO.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = vSSDO.glsl; sourceTree = "<group>"; };
+		FB56CC46192FC89600DF31A8 /* vSSDOFilter.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = vSSDOFilter.glsl; sourceTree = "<group>"; };
+		FB56CC47192FC89600DF31A8 /* vSSDOTemp.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = vSSDOTemp.glsl; sourceTree = "<group>"; };
+		FB56CCA0192FEB3500DF31A8 /* beethoven.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = beethoven.ply; sourceTree = "<group>"; };
+		FB56CCA1192FEB3500DF31A8 /* big_dodge.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = big_dodge.ply; sourceTree = "<group>"; };
+		FB56CCA2192FEB3500DF31A8 /* ground.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = ground.ply; sourceTree = "<group>"; };
+		FB56CCA3192FEB3500DF31A8 /* KitchenMediumBlurred.pfm */ = {isa = PBXFileReference; lastKnownFileType = file; path = KitchenMediumBlurred.pfm; sourceTree = "<group>"; };
+		FB56CCA4192FEB3500DF31A8 /* screenquad.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = screenquad.ply; sourceTree = "<group>"; };
+		FB56CCA5192FEB4D00DF31A8 /* cube.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = cube.ply; sourceTree = "<group>"; };
 		FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GraphicsFramework.xcodeproj; path = ../GraphicsFramework/GraphicsFramework.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -127,6 +175,8 @@
 			isa = PBXGroup;
 			children = (
 				FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */,
+				FB56CC3D192FC83300DF31A8 /* GLSL */,
+				FB56CC9F192FEAD400DF31A8 /* Resources */,
 				748AA50C07F465A200486586 /* Sources */,
 				748AA4F707F4641600486586 /* Libraries */,
 				748AA4E207F463F300486586 /* Frameworks */,
@@ -179,6 +229,36 @@
 				FB18BA15192ECBBC00D5B13F /* SSDOTriMesh.h */,
 			);
 			name = Sources;
+			sourceTree = "<group>";
+		};
+		FB56CC3D192FC83300DF31A8 /* GLSL */ = {
+			isa = PBXGroup;
+			children = (
+				FB56CC3E192FC89600DF31A8 /* fDirectLighting.glsl */,
+				FB56CC3F192FC89600DF31A8 /* fGBuffer.glsl */,
+				FB56CC40192FC89600DF31A8 /* fSSDO.glsl */,
+				FB56CC41192FC89600DF31A8 /* fSSDOFilter.glsl */,
+				FB56CC42192FC89600DF31A8 /* fSSDOTemp.glsl */,
+				FB56CC43192FC89600DF31A8 /* vDirectLighting.glsl */,
+				FB56CC44192FC89600DF31A8 /* vGBuffer.glsl */,
+				FB56CC45192FC89600DF31A8 /* vSSDO.glsl */,
+				FB56CC46192FC89600DF31A8 /* vSSDOFilter.glsl */,
+				FB56CC47192FC89600DF31A8 /* vSSDOTemp.glsl */,
+			);
+			name = GLSL;
+			sourceTree = "<group>";
+		};
+		FB56CC9F192FEAD400DF31A8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FB56CCA5192FEB4D00DF31A8 /* cube.ply */,
+				FB56CCA0192FEB3500DF31A8 /* beethoven.ply */,
+				FB56CCA1192FEB3500DF31A8 /* big_dodge.ply */,
+				FB56CCA2192FEB3500DF31A8 /* ground.ply */,
+				FB56CCA3192FEB3500DF31A8 /* KitchenMediumBlurred.pfm */,
+				FB56CCA4192FEB3500DF31A8 /* screenquad.ply */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		FB69949A192FC13100B20DEB /* Products */ = {
@@ -286,6 +366,22 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB56CCA6192FEB6A00DF31A8 /* cube.ply in Resources */,
+				FB56CCA7192FEB6A00DF31A8 /* beethoven.ply in Resources */,
+				FB56CCA8192FEB6A00DF31A8 /* big_dodge.ply in Resources */,
+				FB56CCA9192FEB6A00DF31A8 /* ground.ply in Resources */,
+				FB56CCAA192FEB6A00DF31A8 /* KitchenMediumBlurred.pfm in Resources */,
+				FB56CCAB192FEB6A00DF31A8 /* screenquad.ply in Resources */,
+				FB56CC95192FE8B800DF31A8 /* fDirectLighting.glsl in Resources */,
+				FB56CC96192FE8B800DF31A8 /* fGBuffer.glsl in Resources */,
+				FB56CC97192FE8B800DF31A8 /* fSSDO.glsl in Resources */,
+				FB56CC98192FE8B800DF31A8 /* fSSDOFilter.glsl in Resources */,
+				FB56CC99192FE8B800DF31A8 /* fSSDOTemp.glsl in Resources */,
+				FB56CC9A192FE8B800DF31A8 /* vDirectLighting.glsl in Resources */,
+				FB56CC9B192FE8B800DF31A8 /* vGBuffer.glsl in Resources */,
+				FB56CC9C192FE8B800DF31A8 /* vSSDO.glsl in Resources */,
+				FB56CC9D192FE8B800DF31A8 /* vSSDOFilter.glsl in Resources */,
+				FB56CC9E192FE8B800DF31A8 /* vSSDOTemp.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,6 +389,22 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB56CCB6192FFD3500DF31A8 /* cube.ply in Resources */,
+				FB56CCB7192FFD3500DF31A8 /* beethoven.ply in Resources */,
+				FB56CCB8192FFD3500DF31A8 /* big_dodge.ply in Resources */,
+				FB56CCB9192FFD3500DF31A8 /* ground.ply in Resources */,
+				FB56CCBA192FFD3500DF31A8 /* KitchenMediumBlurred.pfm in Resources */,
+				FB56CCBB192FFD3500DF31A8 /* screenquad.ply in Resources */,
+				FB56CCAC192FFD2D00DF31A8 /* fDirectLighting.glsl in Resources */,
+				FB56CCAD192FFD2D00DF31A8 /* fGBuffer.glsl in Resources */,
+				FB56CCAE192FFD2D00DF31A8 /* fSSDO.glsl in Resources */,
+				FB56CCAF192FFD2D00DF31A8 /* fSSDOFilter.glsl in Resources */,
+				FB56CCB0192FFD2D00DF31A8 /* fSSDOTemp.glsl in Resources */,
+				FB56CCB1192FFD2D00DF31A8 /* vDirectLighting.glsl in Resources */,
+				FB56CCB2192FFD2D00DF31A8 /* vGBuffer.glsl in Resources */,
+				FB56CCB3192FFD2D00DF31A8 /* vSSDO.glsl in Resources */,
+				FB56CCB4192FFD2D00DF31A8 /* vSSDOFilter.glsl in Resources */,
+				FB56CCB5192FFD2D00DF31A8 /* vSSDOTemp.glsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

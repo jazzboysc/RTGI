@@ -24,10 +24,12 @@ public:
 
 	void CreateDeviceResource();
 	GLuint GetShader() const;
+    std::string GetShaderFileName() const;
 
 protected:
 	bool LoadFromFile(const std::string& shaderFileName);
 
+    std::string mShaderFileName;
 	std::string mShaderSource;
 	GLenum mType;
 	GLuint mShader;

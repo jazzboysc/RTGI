@@ -1,7 +1,7 @@
-#version 150
+#version 120
 
-in vec4 vPosition;
-in vec3 vNormal;
+attribute vec4 vPosition;
+attribute vec3 vNormal;
 
 varying vec4 vPositionView;
 varying vec4 vNormalView;

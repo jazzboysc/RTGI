@@ -53,11 +53,29 @@ void ShaderProgram::CreateDeviceResource()
     glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
     if( !linked )
 	{
+        GLint iInfoLen = 0;
+        glGetProgramiv(mProgram, GL_INFO_LOG_LENGTH, &iInfoLen);
+        if( iInfoLen > 1 )
+        {
+            char* acInfoLog = new char[iInfoLen];
+            glGetProgramInfoLog(mProgram, iInfoLen, 0, acInfoLog);
+            printf("Failed linking %s, %s\n%s\n",
+                   mVertexShader->GetShaderFileName().c_str(),
+                   mFragmentShader->GetShaderFileName().c_str(),
+                   acInfoLog);
+            
+            delete[] acInfoLog;
+        }
+        
 		assert( false );
-		// TODO:
-		// Output error info.
 	}
 
+#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+    printf("Linking program %s, %s finished\n",
+           mVertexShader->GetShaderFileName().c_str(),
+           mFragmentShader->GetShaderFileName().c_str());
+#endif
+    
 	//OnInitDeviceResource();
 }
 //----------------------------------------------------------------------------

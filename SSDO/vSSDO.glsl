@@ -1,7 +1,7 @@
-#version 150
+#version 120
 
-in vec4 vPosition;
-in vec2 vTCoord;
+attribute vec4 vPosition;
+attribute vec2 vTCoord;
 varying vec2 pTCoord;
 
 void main()

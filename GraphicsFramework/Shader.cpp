@@ -13,6 +13,7 @@ Shader::Shader(GLenum type, const std::string& shaderFileName)
 	mType(type),
 	mShader(0)
 {
+    mShaderFileName = shaderFileName;
 	bool res = LoadFromFile(shaderFileName);
 	assert( res );
 
@@ -48,18 +49,28 @@ void Shader::CreateDeviceResource()
         if( iInfoLen > 1 )
         {
             char* acInfoLog = new char[iInfoLen];
-            glGetShaderInfoLog(mShader, iInfoLen, 0, acInfoLog); 
+            glGetShaderInfoLog(mShader, iInfoLen, 0, acInfoLog);
+            printf("Failed compiling %s\n%s\n", mShaderFileName.c_str(), acInfoLog);
 
             delete[] acInfoLog;
         }
 
 		assert( false );
 	}
+   
+#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+    printf("Loading shader %s finished\n", mShaderFileName.c_str());
+#endif
 }
 //----------------------------------------------------------------------------
 GLuint Shader::GetShader() const
 {
 	return mShader;
+}
+//----------------------------------------------------------------------------
+std::string Shader::GetShaderFileName() const
+{
+    return mShaderFileName;
 }
 //----------------------------------------------------------------------------
 bool Shader::LoadFromFile(const std::string& shaderFileName)

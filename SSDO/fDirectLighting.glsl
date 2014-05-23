@@ -1,6 +1,6 @@
-#version 150
+#version 120
 
-in vec2 pTCoord;
+varying vec2 pTCoord;
 
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
@@ -11,10 +11,10 @@ uniform sampler2D reflectanceSampler;
 
 void main()
 {
-	vec3 position = texture(positionSampler, pTCoord).rgb;
-	vec3 normal = texture(normalSampler, pTCoord).rgb;
+	vec3 position = texture2D(positionSampler, pTCoord).rgb;
+	vec3 normal = texture2D(normalSampler, pTCoord).rgb;
 	normal = normal.xyz*2.0 - vec3(1.0);
-	vec3 reflectance = texture(reflectanceSampler, pTCoord).rgb;
+	vec3 reflectance = texture2D(reflectanceSampler, pTCoord).rgb;
 
 	vec3 lightDir = lightPosition - position;
 	float lightDistance = length(lightDir);

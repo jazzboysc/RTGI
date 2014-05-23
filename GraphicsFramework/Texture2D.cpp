@@ -31,7 +31,9 @@ bool Texture2D::LoadBMPFromFile(const std::string& fileName)
 	bmpread_t bitmap;
 	if( !bmpread(fileName.c_str(), 0, &bitmap) )
 	{
-		fprintf(stderr, "%s:error loading bitmap file\n", fileName.c_str());
+		printf("Failed loading texture %s\n", fileName.c_str());
+        assert( false );
+        
 		return false;
 	}
 	Width = bitmap.width;
@@ -42,6 +44,10 @@ bool Texture2D::LoadBMPFromFile(const std::string& fileName)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bitmap.width, bitmap.height, 0, 
 		GL_RGB, GL_UNSIGNED_BYTE, bitmap.rgb_data);
 	bmpread_free(&bitmap);
+    
+#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+    printf("Loading texture %s finished\n", fileName.c_str());
+#endif
 
 	return true;
 }
@@ -69,7 +75,9 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
  
     // Read the header.
     fscanf(infile, " %s %d %d ", (char*)&imageformat, &Width, &Height);
+#ifdef RTGI_OUTPUT_RESOURCE_LOADING
     printf("Image format %s Width %d Height %d\n", imageformat, Width, Height);
+#endif
    
     float* pixels = (float*)(malloc(Width * Height * 3 * sizeof(float)));
 
@@ -113,7 +121,10 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 
 	free(pixels);
 
-    printf("Loading finished\n"); 
+#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+    printf("Loading texture %s finished\n", fileName.c_str());
+#endif
+    
     RevGamma = 1.0f / 2.2f; 
 	fclose(infile);
 

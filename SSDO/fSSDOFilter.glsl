@@ -1,7 +1,7 @@
-#version 150
-#extension GL_EXT_gpu_shader4 : enable
+#version 120
+#extension GL_EXT_gpu_shader4 : enable  // for textureSize2D function.
 
-in vec2 pTCoord;
+varying vec2 pTCoord;
 
 uniform sampler2D ssdoSampler;
 uniform sampler2D positionSampler;
@@ -16,10 +16,10 @@ uniform int kernelSize;
 
 void main()
 {
- 	vec3 position = texture(positionSampler, pTCoord).rgb;
- 	vec3 normal = texture(normalSampler, pTCoord).rgb;
+ 	vec3 position = texture2D(positionSampler, pTCoord).rgb;
+ 	vec3 normal = texture2D(normalSampler, pTCoord).rgb;
 	normal = normal*2.0 - 1.0;
- 	vec3 color = texture(colorSampler, pTCoord).rgb;
+ 	vec3 color = texture2D(colorSampler, pTCoord).rgb;
 
 	vec2 textureSize = textureSize2D(positionSampler, 0);
 	vec2 invTextureSize = 1.0 / textureSize;
@@ -27,7 +27,7 @@ void main()
 	// Skip undefined pixels.
  	if( length(normal) == 0.0 )
 	{
- 		gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+ 		gl_FragData[0] = vec4(0.0);
  		return;
  	}
  	
@@ -42,9 +42,9 @@ void main()
 		{
  			
  			vec2 sampleTexCoord = pTCoord + vec2(j, i) * invTextureSize;
- 			vec3 sampleRadiance = texture(ssdoSampler, sampleTexCoord).rgb;
- 			vec3 samplePosition = texture(positionSampler, sampleTexCoord).rgb;
- 			vec3 sampleNormal = texture(normalSampler, sampleTexCoord).rgb;
+ 			vec3 sampleRadiance = texture2D(ssdoSampler, sampleTexCoord).rgb;
+ 			vec3 samplePosition = texture2D(positionSampler, sampleTexCoord).rgb;
+ 			vec3 sampleNormal = texture2D(normalSampler, sampleTexCoord).rgb;
  			
  			if(	(length(samplePosition - position) < positionThreshold) && 
  				(dot(sampleNormal, normal) > (1.0 - normalThreshold)))
@@ -74,7 +74,7 @@ void main()
 	}
 
 	// Add direct light and indirect light.
-	vec3 directLight = texture(directLightingSampler, pTCoord).rgb;
+	vec3 directLight = texture2D(directLightingSampler, pTCoord).rgb;
 	result.rgb = 1.0 * result.rgb + 0.5 * directLight;
 
 	// Simple gamma tone mapper.
@@ -83,5 +83,5 @@ void main()
 	result.rgb = (mappedRadiance / greyRadiance) * result.rgb; 
 
 	result.a = 1.0;
-	gl_FragColor = result;
+	gl_FragData[0] = result;
 }

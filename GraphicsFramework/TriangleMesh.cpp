@@ -32,15 +32,11 @@ void TriangleMesh::Render()
 {
 	// Enable VAO, VBO and IBO.
 	glBindVertexArray(mVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
 
 	// Apply current rendering technique.
 	mMaterial->Apply();
 
 	// Disable VAO, VBO and IBO.
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
 //----------------------------------------------------------------------------
@@ -238,6 +234,10 @@ bool TriangleMesh::LoadFromFile(const std::string& fileName)
 	}
 
 	OnLoadFromFile();
+    
+#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+    printf("Loading mesh %s finished\n", fileName.c_str());
+#endif
 
 	return true;
 }

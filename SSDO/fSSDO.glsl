@@ -1,9 +1,8 @@
-#version 150
+#version 120
 
 const float PI = 3.141592;
 
-in vec2 pTCoord;
-out vec4 fColor;
+varying vec2 pTCoord;
 
 uniform mat4 Proj;
 
@@ -58,10 +57,11 @@ mat3 GetTBNFrame(const vec3 n)
 
 void main()
 {
-	vec3 normalView = texture(normalSampler, pTCoord).rgb;
+	vec3 normalView = texture2D(normalSampler, pTCoord).rgb;
 	normalView = normalView*2.0 - 1.0;
-	vec4 positionView = texture(positionSampler, pTCoord);
-	vec4 pixelColor = texture(colorSampler, pTCoord);         
+	vec4 positionView = texture2D(positionSampler, pTCoord);
+	vec4 pixelColor = texture2D(colorSampler, pTCoord);
+    vec4 outColor = vec4(0.0);
 
 	// Skip undefined pixels.
 	if( pixelColor.a > 0.0 )
@@ -78,7 +78,10 @@ void main()
 		// The index of the current pattern.
 		// We use one out of patternSize * patternSize pre-defined hemisphere patterns.
 		// The i'th pixel in every sub-rectangle uses always the same i-th sub-pattern.
-		int patternIndex = int(gl_FragCoord.x) % patternSize + (int(gl_FragCoord.y) % patternSize) * patternSize;
+		//int patternIndex = int(gl_FragCoord.x) % patternSize + (int(gl_FragCoord.y) % patternSize) * patternSize;
+        float mod1 = mod(gl_FragCoord.x, float(patternSize));
+        float mod2 = mod(gl_FragCoord.y, float(patternSize));
+        int patternIndex = int(mod1) + int(mod2)*patternSize;
 					
 		// Loop over all samples from the current pattern.
 		float invSampleCount = 1.0 / sampleCount;
@@ -88,7 +91,7 @@ void main()
 			// Get the i-th sample direction and tranfrom it to local space.
 			float s = i * invSampleCount;
 			float t = patternIndex * invPatternSizeSqr;
-			vec3 sample = localMatrix * texture(randomSampler, vec2(s, t)).rgb;
+			vec3 sample = localMatrix * texture2D(randomSampler, vec2(s, t)).rgb;
 			
 			vec3 normalizedSample = normalize(sample);
 			
@@ -102,8 +105,8 @@ void main()
 			vec2 occlusionTexCoord = (occluderSamplePosition.xy / occluderSamplePosition.w)*0.5 + 0.5;
 						
 			// Read the occluder position and the occluder normal at the occluder texcoord.
-			vec4 viewOccluderPosition = texture(positionSampler, occlusionTexCoord);
-			vec3 viewOccluderNormal = texture(normalSampler, occlusionTexCoord).rgb;
+			vec4 viewOccluderPosition = texture2D(positionSampler, occlusionTexCoord);
+			vec3 viewOccluderNormal = texture2D(normalSampler, occlusionTexCoord).rgb;
 			
 			// Remove influence of undefined pixels.
 			if( length(viewOccluderNormal) == 0 )
@@ -136,7 +139,7 @@ void main()
 				phi -= 2.0 * PI;
 			}
 						
-			vec3 senderRadiance = texture(envMapSampler, vec2(phi / (2.0*PI), 1.0 - theta / PI)).rgb;
+			vec3 senderRadiance = texture2D(envMapSampler, vec2(phi / (2.0*PI), 1.0 - theta / PI)).rgb;
 
 			// Compute radiance as the usual triple product of visibility, irradiance and BRDF.
 			// Note, that we are not limited to diffuse illumination.
@@ -153,7 +156,7 @@ void main()
 
 			// Compute indirect bounce radiance.
 			// First read sender radiance from occluder.
-			vec3 directRadiance = texture(directLightingSampler, occlusionTexCoord).rgb;
+			vec3 directRadiance = texture2D(directLightingSampler, occlusionTexCoord).rgb;
 			
 			// Compute the bounce geometric term towards the blocker.
 			vec3 delta = positionView.xyz - viewOccluderPosition.xyz;
@@ -188,13 +191,15 @@ void main()
 		radianceSum *= 2.0 * PI / sampleCount;
 				
 		// Store final radiance value in the framebuffer.
-		fColor.rgb = radianceSum;
-		fColor.a = 1.0;
+		outColor.rgb = radianceSum;
+		outColor.a = 1.0;
 
 	}
     else
 	{
 		// In case we came across an invalid deferred pixel.
-		fColor = vec4(0.0);
+		outColor = vec4(0.0);
 	}
+    
+    gl_FragData[0] = outColor;
 }
