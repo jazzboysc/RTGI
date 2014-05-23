@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>52AF5C95-60E6-4D9E-A6A2-21C46C5D867B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SSDO</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>F41B9319-E547-4780-B54D-A11C0739904B</key>
+		<string>https://github.com/jazzboysc/RTGI.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>SSDO/SSDO.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>F41B9319-E547-4780-B54D-A11C0739904B</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/jazzboysc/RTGI.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F41B9319-E547-4780-B54D-A11C0739904B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F41B9319-E547-4780-B54D-A11C0739904B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>RTGI</string>
+		</dict>
+	</array>
+</dict>
+</plist>

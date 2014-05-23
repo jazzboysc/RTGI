@@ -17,7 +17,7 @@ foreach dir (${DIRS})
     endif
 end
 
-set RHEADERS = `ls *.h`
+set RHEADERS = `ls *.h *.inl`
 foreach rheader (${RHEADERS})
     cp -fp "${SRCROOT}"/$rheader ../SDK/Include
 end
