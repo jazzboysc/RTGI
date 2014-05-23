@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "74D6DDFA07F342E200267169"
-               BuildableName = "libWm5Core.a"
+               BuildableName = "libGraphicsFramework.a"
                BlueprintName = "Release Static"
                ReferencedContainer = "container:GraphicsFramework.xcodeproj">
             </BuildableReference>

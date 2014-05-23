@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "74B57E8C07F3427D00913EC4"
-               BuildableName = "libGraphicsFramework.a"
+               BuildableName = "libGraphicsFrameworkd.a"
                BlueprintName = "Debug Static"
                ReferencedContainer = "container:GraphicsFramework.xcodeproj">
             </BuildableReference>
