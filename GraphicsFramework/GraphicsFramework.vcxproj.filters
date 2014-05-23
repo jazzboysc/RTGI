@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="AABB.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Fog.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="PointSet.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Polyline2Geometry.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="RefObject.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderObject.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangleMesh.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexShader.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="FragmentShader.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="bmpread.c">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureCube.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="LSystem.cpp">
+      <Filter>L-System</Filter>
+    </ClCompile>
+    <ClCompile Include="Expression.cpp">
+      <Filter>L-System</Filter>
+    </ClCompile>
+    <ClCompile Include="Token.cpp">
+      <Filter>L-System</Filter>
+    </ClCompile>
+    <ClCompile Include="PolyCylinder.cpp">
+      <Filter>L-System</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsFrameworkPCH.cpp" />
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenQuad.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Pass.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Technique.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialTemplate.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Angel.h" />
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="CheckError.h" />
+    <ClInclude Include="FrameworkCommon.h" />
+    <ClInclude Include="AABB.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="mat.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="vec.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Fog.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="PointSet.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Polyline2Geometry.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="RefObject.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="RefPointer.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderObject.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleMesh.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexShader.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="FragmentShader.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpread.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureCube.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem.h">
+      <Filter>L-System</Filter>
+    </ClInclude>
+    <ClInclude Include="Expression.h">
+      <Filter>L-System</Filter>
+    </ClInclude>
+    <ClInclude Include="Token.h">
+      <Filter>L-System</Filter>
+    </ClInclude>
+    <ClInclude Include="PolyCylinder.h">
+      <Filter>L-System</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsFrameworkPCH.h" />
+    <ClInclude Include="GraphicsFrameworkHeader.h" />
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenQuad.h">
+      <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Pass.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Technique.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialTemplate.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RefObject.inl">
+      <Filter>Scene Objects</Filter>
+    </None>
+    <None Include="RefPointer.inl">
+      <Filter>Scene Objects</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Math">
+      <UniqueIdentifier>{5f9ea4af-9330-4a62-be25-5f9c6b4e7616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene Objects">
+      <UniqueIdentifier>{ed428cae-17e3-4ca9-a435-3adef7288925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{a608d455-a809-42e2-aaab-23d87ad82f5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="L-System">
+      <UniqueIdentifier>{14f3e4a8-9292-4e66-ac66-1609d5a2ad8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Material">
+      <UniqueIdentifier>{2880ec38-9c01-4f96-ae49-7756e9cc51ba}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

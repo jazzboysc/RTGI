@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="SSDOApp.cpp" />
+    <ClCompile Include="SSDOScreenQuad.cpp" />
+    <ClCompile Include="SSDOTriMesh.cpp" />
+    <ClCompile Include="SSDOFilterScreenQuad.cpp" />
+    <ClCompile Include="DirectLightingQuad.cpp" />
+    <ClCompile Include="SSDOTempScreenQuad.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SSDOApp.h" />
+    <ClInclude Include="SSDOScreenQuad.h" />
+    <ClInclude Include="SSDOTriMesh.h" />
+    <ClInclude Include="SSDOFilterScreenQuad.h" />
+    <ClInclude Include="DirectLightingQuad.h" />
+    <ClInclude Include="SSDOTempScreenQuad.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="GLSL">
+      <UniqueIdentifier>{b39132dc-2f19-4058-a121-fa6e963201a0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fGBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vGBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fSSDO.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vSSDO.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fSSDOFilter.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vSSDOFilter.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fDirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vDirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fSSDOTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vSSDOTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+  </ItemGroup>
+</Project>
