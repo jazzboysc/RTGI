@@ -62,7 +62,9 @@ int main(int argc, char **argv)
     glutCreateWindow(0);
 
 	// init glew
-    //glewInit();
+#ifndef __APPLE__
+    glewInit();
+#endif
 
 	// Initialize application.
 	app = new SSDOApp(width, height);

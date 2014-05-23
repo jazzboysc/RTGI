@@ -13,9 +13,17 @@
 #include <fstream>
 #include <cassert>
 
+#ifdef __APPLE__
+#ifndef glGenVertexArrays
 #define glGenVertexArrays    glGenVertexArraysAPPLE
+#endif
+#ifndef glBindVertexArray
 #define glBindVertexArray    glBindVertexArrayAPPLE
+#endif
+#ifndef glDeleteVertexArrays
 #define glDeleteVertexArrays glDeleteVertexArraysAPPLE
+#endif
+#endif
 
 #define PI_SP 3.141592f
 #define DEG_TO_RAD_SP PI_SP/180.0f
