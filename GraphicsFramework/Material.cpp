@@ -12,6 +12,7 @@ Material::Material(MaterialTemplate* materialTemplate)
 	:
 	mTechnique(0)
 {
+	mRenderObject = 0;
 	mMaterialTemplate = materialTemplate;
 }
 //----------------------------------------------------------------------------

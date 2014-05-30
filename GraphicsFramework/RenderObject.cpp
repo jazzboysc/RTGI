@@ -15,6 +15,9 @@ RenderObject::RenderObject(Material* material)
 {
 	assert( material );
 	mMaterial = material;
+
+	// Material object cannot be shared between render objects.
+	assert( !material->mRenderObject );
 	mMaterial->mRenderObject = this;
 }
 //----------------------------------------------------------------------------
