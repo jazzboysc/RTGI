@@ -482,7 +482,7 @@ void TriangleMesh::OnGenerateNormals()
 {
 }
 //----------------------------------------------------------------------------
-void TriangleMesh::SetTCoord(int i, vec2& texCoord)
+void TriangleMesh::SetTCoord(int i, const vec2& texCoord)
 {
 	if( !mHasTCoord )
 	{

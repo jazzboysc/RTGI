@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="RSMApp.cpp" />
+    <ClCompile Include="RSMTriMesh.cpp" />
+    <ClCompile Include="RSMTempScreenQuad.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="GLSL">
+      <UniqueIdentifier>{fed9c22c-ed60-4ec3-a737-dc3f28a3b798}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RSMApp.h" />
+    <ClInclude Include="RSMTriMesh.h" />
+    <ClInclude Include="RSMTempScreenQuad.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fRSMBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vRSMBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fRSMTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vRSMTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,14 @@
+Debug/SSDO.exe
+Debug/RSM.exe
+*.ilk
+*.pdb
+*.obj
+*.tlog
+*.log
+*.lastbuildstate
+*.pch
+*.idb
+*.user
+*.sdf
+*.suo
+*.ipch

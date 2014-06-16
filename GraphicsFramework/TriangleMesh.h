@@ -50,7 +50,7 @@ public:
 	void GenerateNormals();
 	virtual void OnGenerateNormals();
 
-	void SetTCoord(int i, vec2& texCoord);
+	void SetTCoord(int i, const vec2& texCoord);
 	vec2 GetTCoord(int i) const;
 	
 	AABB GetModelSpaceBB() const;
