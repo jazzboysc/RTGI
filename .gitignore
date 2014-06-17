@@ -12,3 +12,6 @@ Debug/RSM.exe
 *.sdf
 *.suo
 *.ipch
+*.xccheckout
+
+*.xcuserstate
