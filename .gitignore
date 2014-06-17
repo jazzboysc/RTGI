@@ -1,5 +1,9 @@
 Debug/SSDO.exe
 Debug/RSM.exe
+SDK/Include/*.h
+SDK/Include/*.inl
+SDK/Lib/Debug/*.lib
+SDK/Lib/Release/*.lib
 *.ilk
 *.pdb
 *.obj
