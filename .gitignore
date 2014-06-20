@@ -19,3 +19,5 @@ SDK/Lib/Release/*.lib
 *.xccheckout
 
 *.xcuserstate
+
+*.a
