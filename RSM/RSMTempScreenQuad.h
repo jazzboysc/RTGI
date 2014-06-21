@@ -14,7 +14,7 @@ namespace RTGI
 class RSMTempScreenQuad : public ScreenQuad
 {
 public:
-	RSMTempScreenQuad(Material* material);
+	RSMTempScreenQuad(Material* material, Camera* camera);
 	virtual ~RSMTempScreenQuad();
 
 	// Implement base class interface.
@@ -22,9 +22,12 @@ public:
 	virtual void OnGetShaderConstants();
 
 	Texture2DPtr TempTexture;
+    int ShowMode;
 
 private:
 	GLint mTempSamplerLoc;
+    GLint mNearFarPlaneLoc;
+    GLint mShowModeLoc;
 };
 
 typedef RefPointer<RSMTempScreenQuad> RSMTempScreenQuadPtr;

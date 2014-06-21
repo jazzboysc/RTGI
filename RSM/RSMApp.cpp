@@ -9,7 +9,7 @@ RSMApp::RSMApp(int width, int height)
 	mHeight(height),
 	mWindowTitle("RSM demo")
 {
-	mShowMode = SM_Depth;
+	mShowMode = SM_Normal;
 }
 //----------------------------------------------------------------------------
 RSMApp::~RSMApp()
@@ -28,7 +28,7 @@ void RSMApp::Initialize()
 
 	// Create camera.
 	mCamera = new Camera;
-	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 0.1f, 100.0f);
+	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 100.0f);
 	mCamera->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-5.0f, 0.0f, -15.0f), 
 		vec3(0.0f, 1.0f, 0.0f));
 
@@ -82,7 +82,7 @@ void RSMApp::Initialize()
 
 	// Create RSM temp result screen quad.
 	material = new Material(mtRSMTemp);
-	mRSMTempResultQuad = new RSMTempScreenQuad(material);
+	mRSMTempResultQuad = new RSMTempScreenQuad(material, mCamera);
 	mRSMTempResultQuad->LoadFromFile("screenquad.ply");
 	mRSMTempResultQuad->SetTCoord(0, vec2(0.0f, 0.0f));
 	mRSMTempResultQuad->SetTCoord(1, vec2(1.0f, 0.0f));
@@ -192,6 +192,8 @@ void RSMApp::OnKeyboard(unsigned char key, int x, int y)
 
 	case '2':
 		mShowMode = SM_Normal;
+        mRSMTempResultQuad->ShowMode = 2;
+        mRSMTempResultQuad->TempTexture = mNormalTexture;
 		break;
 
 	case '3':
@@ -200,6 +202,8 @@ void RSMApp::OnKeyboard(unsigned char key, int x, int y)
 
 	case '4':
 		mShowMode = SM_Depth;
+        mRSMTempResultQuad->ShowMode = 4;
+        mRSMTempResultQuad->TempTexture = mDepthTexture;
 		break;
 
 	case '5':

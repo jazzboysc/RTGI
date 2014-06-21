@@ -28,7 +28,7 @@ void SSDOApp::Initialize()
 
 	// Create camera.
 	mCamera = new Camera;
-	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 0.1f, 100.0f);
+	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 100.0f);
 	mCamera->SetLookAt(vec3(0.0f, 8.0f, 25.0f), vec3(0.0f, 0.0f, 0.0f), 
 		vec3(0.0f, 1.0f, 0.0f));
 

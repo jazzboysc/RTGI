@@ -67,6 +67,13 @@ void Camera::SetFrustum(float upFovDegrees, float aspectRatio, float nearPlane,
 	mAspectRatio = aspectRatio;
 }
 //----------------------------------------------------------------------------
+void Camera::GetNearFarPlane(float* nearFarPlane) const
+{
+    assert( nearFarPlane );
+    nearFarPlane[0] = mFrustum[VF_DMIN];
+    nearFarPlane[1] = mFrustum[VF_DMAX];
+}
+//----------------------------------------------------------------------------
 mat4 Camera::GetViewTransform()
 {
 	mat4 res;
