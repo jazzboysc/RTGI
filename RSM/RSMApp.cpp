@@ -28,7 +28,7 @@ void RSMApp::Initialize()
 
 	// Create camera.
 	mCamera = new Camera;
-	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 100.0f);
+	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
 	mCamera->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-5.0f, 0.0f, -15.0f), 
 		vec3(0.0f, 1.0f, 0.0f));
 
@@ -101,7 +101,7 @@ void RSMApp::Initialize()
 	rotM = RotateY(90.0f);
 	mModel->SetWorldTransform(rotM);
 	mModel->SetWorldTranslation(vec3(-2.0f, 5.0f, -2.0f));
-	mModel->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
+	mModel->MaterialColor = vec3(0.8f, 0.8f, 0.8f);
 
 	material = new Material(mtRSM);
 	mGround = new RSMTriMesh(material, mCamera);
@@ -188,6 +188,8 @@ void RSMApp::OnKeyboard(unsigned char key, int x, int y)
 	{
 	case '1':
 		mShowMode = SM_Position;
+        mRSMTempResultQuad->ShowMode = 1;
+		mRSMTempResultQuad->TempTexture = mPositionTexture;
 		break;
 
 	case '2':
@@ -198,6 +200,8 @@ void RSMApp::OnKeyboard(unsigned char key, int x, int y)
 
 	case '3':
 		mShowMode = SM_Flux;
+		mRSMTempResultQuad->ShowMode = 3;
+		mRSMTempResultQuad->TempTexture = mFluxTexture;
 		break;
 
 	case '4':
