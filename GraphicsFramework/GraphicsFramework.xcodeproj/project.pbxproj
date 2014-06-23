@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A03A135A1957D8CE00F179AF /* RNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A03A13581957D8CE00F179AF /* RNG.cpp */; };
+		A03A135B1957D8CE00F179AF /* RNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A03A13581957D8CE00F179AF /* RNG.cpp */; };
+		A03A135C1957D8CE00F179AF /* RNG.h in Headers */ = {isa = PBXBuildFile; fileRef = A03A13591957D8CE00F179AF /* RNG.h */; };
+		A03A135D1957D8CE00F179AF /* RNG.h in Headers */ = {isa = PBXBuildFile; fileRef = A03A13591957D8CE00F179AF /* RNG.h */; };
 		A099A4E3192EFD5B00B26202 /* PolyCylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA83192ED04C00D5B13F /* PolyCylinder.cpp */; };
 		A099A4E4192EFD5B00B26202 /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA9C192ED04C00D5B13F /* Token.cpp */; };
 		A099A4E5192EFD5B00B26202 /* LSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA78192ED04C00D5B13F /* LSystem.cpp */; };
@@ -142,6 +146,8 @@
 /* Begin PBXFileReference section */
 		74B57E8D07F3427D00913EC4 /* libGraphicsFrameworkd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGraphicsFrameworkd.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		74D6DDFE07F342E200267169 /* libGraphicsFramework.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGraphicsFramework.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A03A13581957D8CE00F179AF /* RNG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RNG.cpp; sourceTree = "<group>"; };
+		A03A13591957D8CE00F179AF /* RNG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNG.h; sourceTree = "<group>"; };
 		FB18BA60192ED04C00D5B13F /* AABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AABB.cpp; sourceTree = "<group>"; };
 		FB18BA61192ED04C00D5B13F /* AABB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AABB.h; sourceTree = "<group>"; };
 		FB18BA62192ED04C00D5B13F /* Angel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Angel.h; sourceTree = "<group>"; };
@@ -314,6 +320,8 @@
 		FB0A81B4192ED9A20016C3F1 /* Math */ = {
 			isa = PBXGroup;
 			children = (
+				A03A13581957D8CE00F179AF /* RNG.cpp */,
+				A03A13591957D8CE00F179AF /* RNG.h */,
 				FB18BAA0192ED04C00D5B13F /* vec.h */,
 				FB18BA7A192ED04C00D5B13F /* mat.h */,
 				FB18BA60192ED04C00D5B13F /* AABB.cpp */,
@@ -380,6 +388,7 @@
 				FB18BAC5192ED04C00D5B13F /* PointSet.h in Headers */,
 				FB18BADA192ED04C00D5B13F /* Texture2D.h in Headers */,
 				FB18BAD2192ED04C00D5B13F /* Shader.h in Headers */,
+				A03A135C1957D8CE00F179AF /* RNG.h in Headers */,
 				FB18BAC1192ED04C00D5B13F /* MaterialTemplate.h in Headers */,
 				FB18BACE192ED04C00D5B13F /* RenderObject.h in Headers */,
 				FB18BAAC192ED04C00D5B13F /* CheckError.h in Headers */,
@@ -423,6 +432,7 @@
 				A099A523192EFE5100B26202 /* GraphicsFrameworkPCH.h in Headers */,
 				A099A500192EFE2500B26202 /* PolyCylinder.h in Headers */,
 				A099A501192EFE2500B26202 /* Token.h in Headers */,
+				A03A135D1957D8CE00F179AF /* RNG.h in Headers */,
 				A099A502192EFE2500B26202 /* LSystem.h in Headers */,
 				A099A503192EFE2500B26202 /* Expression.h in Headers */,
 				A099A504192EFE2500B26202 /* VertexShader.h in Headers */,
@@ -566,6 +576,7 @@
 				FB18BACF192ED04C00D5B13F /* ScreenQuad.cpp in Sources */,
 				FB18BAAD192ED04C00D5B13F /* Expression.cpp in Sources */,
 				FB18BAD5192ED04C00D5B13F /* Technique.cpp in Sources */,
+				A03A135A1957D8CE00F179AF /* RNG.cpp in Sources */,
 				FB18BAB7192ED04C00D5B13F /* GraphicsFrameworkPCH.cpp in Sources */,
 				FB18BAA8192ED04C00D5B13F /* bmpread.c in Sources */,
 				FB18BAD7192ED04C00D5B13F /* Texture.cpp in Sources */,
@@ -602,6 +613,7 @@
 				A099A4F3192EFDA300B26202 /* TriangleMesh.cpp in Sources */,
 				A099A4F4192EFDA300B26202 /* RefObject.cpp in Sources */,
 				A099A4F5192EFDA300B26202 /* RenderObject.cpp in Sources */,
+				A03A135B1957D8CE00F179AF /* RNG.cpp in Sources */,
 				A099A4F6192EFDA300B26202 /* Light.cpp in Sources */,
 				A099A4F7192EFDA300B26202 /* Fog.cpp in Sources */,
 				A099A4F8192EFDA400B26202 /* Camera.cpp in Sources */,

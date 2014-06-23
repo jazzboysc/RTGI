@@ -11,6 +11,8 @@
 		3C6FBC6D083E6E1B0068AA05 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6FBC6B083E6E1B0068AA05 /* OpenGL.framework */; };
 		3CB4F4A813DCF47000C74DF4 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CB4F4A713DCF47000C74DF4 /* GLUT.framework */; };
 		3CB4F4A913DCF47000C74DF4 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CB4F4A713DCF47000C74DF4 /* GLUT.framework */; };
+		A03A13611957D94D00F179AF /* sphere.ply in Resources */ = {isa = PBXBuildFile; fileRef = A03A13601957D94D00F179AF /* sphere.ply */; };
+		A03A13621957D94D00F179AF /* sphere.ply in Resources */ = {isa = PBXBuildFile; fileRef = A03A13601957D94D00F179AF /* sphere.ply */; };
 		A05424441954E0B2005DB399 /* fRSMBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A05424401954E0B2005DB399 /* fRSMBuffer.glsl */; };
 		A05424451954E0B2005DB399 /* fRSMBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A05424401954E0B2005DB399 /* fRSMBuffer.glsl */; };
 		A05424461954E0B2005DB399 /* fRSMTemp.glsl in Resources */ = {isa = PBXBuildFile; fileRef = A05424411954E0B2005DB399 /* fRSMTemp.glsl */; };
@@ -73,6 +75,7 @@
 		3CB4F4A713DCF47000C74DF4 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../../../../System/Library/Frameworks/GLUT.framework; sourceTree = "<group>"; };
 		748AA4CC07F4624400486586 /* RSMd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RSMd.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		748AA4DA07F4631800486586 /* RSM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RSM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A03A13601957D94D00F179AF /* sphere.ply */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sphere.ply; sourceTree = "<group>"; };
 		A05424401954E0B2005DB399 /* fRSMBuffer.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fRSMBuffer.glsl; sourceTree = "<group>"; };
 		A05424411954E0B2005DB399 /* fRSMTemp.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fRSMTemp.glsl; sourceTree = "<group>"; };
 		A05424421954E0B2005DB399 /* vRSMBuffer.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vRSMBuffer.glsl; sourceTree = "<group>"; };
@@ -200,6 +203,7 @@
 		FB56CC9F192FEAD400DF31A8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A03A13601957D94D00F179AF /* sphere.ply */,
 				A054244C1954E0D4005DB399 /* square.ply */,
 				FB56CCA0192FEB3500DF31A8 /* beethoven.ply */,
 				FB56CCA4192FEB3500DF31A8 /* screenquad.ply */,
@@ -316,6 +320,7 @@
 				FB56CCA7192FEB6A00DF31A8 /* beethoven.ply in Resources */,
 				A05424461954E0B2005DB399 /* fRSMTemp.glsl in Resources */,
 				A05424481954E0B2005DB399 /* vRSMBuffer.glsl in Resources */,
+				A03A13611957D94D00F179AF /* sphere.ply in Resources */,
 				FB56CCAB192FEB6A00DF31A8 /* screenquad.ply in Resources */,
 				A05424441954E0B2005DB399 /* fRSMBuffer.glsl in Resources */,
 				A054244D1954E0D4005DB399 /* square.ply in Resources */,
@@ -330,6 +335,7 @@
 				FB56CCB7192FFD3500DF31A8 /* beethoven.ply in Resources */,
 				A05424471954E0B2005DB399 /* fRSMTemp.glsl in Resources */,
 				A05424491954E0B2005DB399 /* vRSMBuffer.glsl in Resources */,
+				A03A13621957D94D00F179AF /* sphere.ply in Resources */,
 				FB56CCBB192FFD3500DF31A8 /* screenquad.ply in Resources */,
 				A05424451954E0B2005DB399 /* fRSMBuffer.glsl in Resources */,
 				A054244E1954E0D4005DB399 /* square.ply in Resources */,
