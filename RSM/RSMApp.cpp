@@ -1,4 +1,5 @@
 #include "RSMApp.h"
+#include "RNG.h"
 
 using namespace RTGI;
 
@@ -27,9 +28,13 @@ void RSMApp::Initialize()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	// Create camera.
+	//mCamera = new Camera;
+	//mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
+	//mCamera->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-5.0f, 0.0f, -15.0f), 
+	//	vec3(0.0f, 1.0f, 0.0f));
 	mCamera = new Camera;
 	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
-	mCamera->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-5.0f, 0.0f, -15.0f), 
+	mCamera->SetLookAt(vec3(0.0f, 0.0f, 50.0f), vec3(0.0f, 0.0f, 0.0f), 
 		vec3(0.0f, 1.0f, 0.0f));
 
 	// Create light.
@@ -100,7 +105,7 @@ void RSMApp::Initialize()
 	mModel->CreateDeviceResource();
 	rotM = RotateY(90.0f);
 	mModel->SetWorldTransform(rotM);
-	mModel->SetWorldTranslation(vec3(-2.0f, 5.0f, -2.0f));
+	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -2.0f));
 	mModel->MaterialColor = vec3(0.8f, 0.8f, 0.8f);
 
 	material = new Material(mtRSM);
@@ -129,14 +134,49 @@ void RSMApp::Initialize()
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
 	mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+
+	material = new Material(mtRSM);
+	mSphere = new RSMTriMesh(material, mCamera);
+	mSphere->LoadFromFile("sphere.ply");
+	mSphere->GenerateNormals();
+	mSphere->CreateDeviceResource();
+	mSphere->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+
+	RandomNumberGenerator rng;
+	for( int i = 0; i < RSM_SAMPLE_COUNT; ++i )
+	{
+		randmoNumbers[2*i + 0] = rng.RandomFloat();
+		randmoNumbers[2*i + 1] = rng.RandomFloat();
+	}
 }
 //----------------------------------------------------------------------------
 void RSMApp::DrawScene()
 {
-	mModel->Render();
-	mLeftWall->Render();
-	mBackWall->Render();
-	mGround->Render();
+	//mModel->Render();
+	//mLeftWall->Render();
+	//mBackWall->Render();
+	//mGround->Render();
+
+	mSphere->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
+	mSphere->SetWorldScale(vec3(1.0f));
+	mSphere->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
+	mSphere->Render();
+
+	float r = 20.0f;
+	mSphere->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+	for( int i = 0; i < RSM_SAMPLE_COUNT; ++i )
+	{
+		float x, y, e1, e2, d;
+		e1 = randmoNumbers[2*i + 0];
+		e2 = randmoNumbers[2*i + 1];
+		x = r * e1 * sinf(2.0f * PI_SP *e2);
+		y = r * e1 * cosf(2.0f * PI_SP *e2);
+		d = sqrtf(x*x + y*y)*0.1f;
+
+		mSphere->SetWorldScale(vec3(d, d, d));
+		mSphere->SetWorldTranslation(vec3(x, y, 0.0f));
+		mSphere->Render();
+	}
 }
 //----------------------------------------------------------------------------
 void RSMApp::Run()
@@ -180,6 +220,7 @@ void RSMApp::Terminate()
 	mDirectLightingTexture = 0;
 
 	mRSMTempResultQuad = 0;
+	mSphere = 0;
 }
 //----------------------------------------------------------------------------
 void RSMApp::OnKeyboard(unsigned char key, int x, int y)

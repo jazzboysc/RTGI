@@ -84,6 +84,9 @@
     <ClCompile Include="Material.cpp">
       <Filter>Material</Filter>
     </ClCompile>
+    <ClCompile Include="RNG.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -181,6 +184,9 @@
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="RNG.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -30,6 +30,7 @@
 #include "vec.h"
 #include "mat.h"
 #include "AABB.h"
+#include "RNG.h"
 
 // Scene Objects
 #include "Camera.h"

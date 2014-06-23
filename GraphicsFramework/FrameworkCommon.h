@@ -25,6 +25,11 @@
 #endif
 #endif
 
+#if defined(_WIN32)
+typedef unsigned __int32 uint32_t;
+typedef unsigned __int64 uint64_t;
+#endif
+
 #define RTGI_OUTPUT_RESOURCE_LOADING
 
 #define PI_SP 3.141592f

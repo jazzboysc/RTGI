@@ -66,6 +66,10 @@ private:
 	ShowMode mShowMode;
 
 	RSMTempScreenQuadPtr mRSMTempResultQuad;
+
+	enum { RSM_SAMPLE_COUNT = 400 };
+	float randmoNumbers[RSM_SAMPLE_COUNT*2];
+	RSMTriMeshPtr mSphere;
 };
 
 }

@@ -133,6 +133,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="Polyline2Geometry.cpp" />
     <ClCompile Include="RefObject.cpp" />
     <ClCompile Include="RenderObject.cpp" />
+    <ClCompile Include="RNG.cpp" />
     <ClCompile Include="ScreenQuad.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
@@ -170,6 +171,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="RefObject.h" />
     <ClInclude Include="RefPointer.h" />
     <ClInclude Include="RenderObject.h" />
+    <ClInclude Include="RNG.h" />
     <ClInclude Include="ScreenQuad.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
