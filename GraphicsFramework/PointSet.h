@@ -23,7 +23,7 @@ public:
 	~PointSet();
 
 	// Implement base class interface.
-	virtual void Render();
+	virtual void Render(int technique, int pass);
 
 	// Loada data from user specified memory location.
 	void LoadFromMemory(int pointCount, GLfloat* vertexData);

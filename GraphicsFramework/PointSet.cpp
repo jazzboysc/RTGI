@@ -25,7 +25,7 @@ PointSet::~PointSet()
 	glDeleteVertexArrays(1, &mVAO);
 }
 //----------------------------------------------------------------------------
-void PointSet::Render()
+void PointSet::Render(int technique, int pass)
 {
 	// TODO:
 	//// Enable shader program.

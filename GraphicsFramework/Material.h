@@ -24,7 +24,7 @@ public:
 	Material(MaterialTemplate* materialTemplate);
 	~Material();
 
-	void Apply();
+	void Apply(int technique, int pass);
 	void CreateDeviceResource();
 	ShaderProgram* GetProgram(int technique, int pass);
 
@@ -33,8 +33,6 @@ protected:
 
 	friend class RenderObject;
 	RenderObject* mRenderObject;
-
-	int mTechnique;
 };
 
 typedef RefPointer<Material> MaterialPtr;

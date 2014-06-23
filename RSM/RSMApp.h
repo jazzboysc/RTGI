@@ -30,6 +30,7 @@ public:
 	void OnReshape(int x, int y);
 
 private:
+    void DrawSceneToRSMBuffer();
 	void DrawScene();
 
 	enum ShowMode
@@ -45,6 +46,7 @@ private:
 
 	std::string mWindowTitle;
 
+    Camera* mLightProjector;
 	Camera* mCamera;
 	LightPtr mLight;
 	RSMTriMeshPtr mGround;

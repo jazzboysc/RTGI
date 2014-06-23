@@ -23,7 +23,7 @@ public:
 	~Polyline2Geometry();
 
 	// Implement base class interface.
-	virtual void Render();
+	virtual void Render(int technique, int pass);
 
 	// Load data from a ".dat" file and create its VBO.
 	bool LoadFromFile(const std::string& fileName);

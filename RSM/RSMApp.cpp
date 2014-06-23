@@ -27,11 +27,11 @@ void RSMApp::Initialize()
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	// Create camera.
-	//mCamera = new Camera;
-	//mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
-	//mCamera->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-5.0f, 0.0f, -15.0f), 
-	//	vec3(0.0f, 1.0f, 0.0f));
+	// Create light projector.
+	mLightProjector = new Camera;
+	mLightProjector->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
+	mLightProjector->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-5.0f, 0.0f, -15.0f),
+		vec3(0.0f, 1.0f, 0.0f));
 	mCamera = new Camera;
 	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
 	mCamera->SetLookAt(vec3(0.0f, 0.0f, 50.0f), vec3(0.0f, 0.0f, 0.0f), 
@@ -39,13 +39,15 @@ void RSMApp::Initialize()
 
 	// Create light.
 	mLight = new Light;
-	mLight->Location = vec3(0.0f, 10.0f, 5.0f);
+	mLight->SetProjector(mLightProjector);
 
 	// Create material templates.
 	Material* material = 0;
 	Pass* passRSMBuffer = new Pass("vRSMBuffer.glsl", "fRSMBuffer.glsl");
+    Pass* passIndirectLighting = new Pass("vIndirectLighting.glsl", "fIndirectLighting.glsl");
 	Technique* techRSM = new Technique();
 	techRSM->AddPass(passRSMBuffer);
+    techRSM->AddPass(passIndirectLighting);
 	MaterialTemplate* mtRSM = new MaterialTemplate();
 	mtRSM->AddTechnique(techRSM);
 
@@ -150,33 +152,49 @@ void RSMApp::Initialize()
 	}
 }
 //----------------------------------------------------------------------------
+void RSMApp::DrawSceneToRSMBuffer()
+{
+    mModel->SetCamera(mLightProjector);
+	mModel->Render(0, 0);
+    mLeftWall->SetCamera(mLightProjector);
+	mLeftWall->Render(0, 0);
+    mBackWall->SetCamera(mLightProjector);
+	mBackWall->Render(0, 0);
+    mGround->SetCamera(mLightProjector);
+	mGround->Render(0, 0);
+}
+//----------------------------------------------------------------------------
 void RSMApp::DrawScene()
 {
-	//mModel->Render();
-	//mLeftWall->Render();
-	//mBackWall->Render();
-	//mGround->Render();
+    mModel->SetCamera(mCamera);
+	mModel->Render(0, 0);
+    mLeftWall->SetCamera(mCamera);
+	mLeftWall->Render(0, 0);
+    mBackWall->SetCamera(mCamera);
+	mBackWall->Render(0, 0);
+    mGround->SetCamera(mCamera);
+	mGround->Render(0, 0);
 
-	mSphere->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
-	mSphere->SetWorldScale(vec3(1.0f));
-	mSphere->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
-	mSphere->Render();
-
-	float r = 20.0f;
-	mSphere->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
-	for( int i = 0; i < RSM_SAMPLE_COUNT; ++i )
-	{
-		float x, y, e1, e2, d;
-		e1 = randmoNumbers[2*i + 0];
-		e2 = randmoNumbers[2*i + 1];
-		x = r * e1 * sinf(2.0f * PI_SP *e2);
-		y = r * e1 * cosf(2.0f * PI_SP *e2);
-		d = sqrtf(x*x + y*y)*0.1f;
-
-		mSphere->SetWorldScale(vec3(d, d, d));
-		mSphere->SetWorldTranslation(vec3(x, y, 0.0f));
-		mSphere->Render();
-	}
+//	mSphere->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
+//	mSphere->SetWorldScale(vec3(1.0f));
+//	mSphere->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
+//	mSphere->Render();
+//
+//	float r = 20.0f;
+//	mSphere->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+//	for( int i = 0; i < RSM_SAMPLE_COUNT; ++i )
+//	{
+//		float x, y, e1, e2, d;
+//		e1 = randmoNumbers[2*i + 0];
+//		e2 = randmoNumbers[2*i + 1];
+//		x = r * e1 * sinf(2.0f * PI_SP *e2);
+//		y = r * e1 * cosf(2.0f * PI_SP *e2);
+//		d = sqrtf(x*x + y*y)*0.1f;
+//
+//		mSphere->SetWorldScale(vec3(d, d, d));
+//		mSphere->SetWorldTranslation(vec3(x, y, 0.0f));
+//		mSphere->Render();
+//	}
 }
 //----------------------------------------------------------------------------
 void RSMApp::Run()
@@ -184,7 +202,7 @@ void RSMApp::Run()
 	// Draw scene to RSM-buffer.
 	mRSMBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	DrawScene();
+	DrawSceneToRSMBuffer();
 	mRSMBuffer->Disable();
 
 	// Deferred lighting.
@@ -194,7 +212,7 @@ void RSMApp::Run()
 
 	// Draw final image.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mRSMTempResultQuad->Render();
+	mRSMTempResultQuad->Render(0, 0);
 
 	glutSwapBuffers();
 }
@@ -203,6 +221,7 @@ void RSMApp::Terminate()
 {
 	// Release all resources.
 
+    delete mLightProjector;
 	delete mCamera;
 	mLight = 0;
 	mGround = 0;

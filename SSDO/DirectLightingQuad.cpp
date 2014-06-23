@@ -21,7 +21,8 @@ DirectLightingQuad::~DirectLightingQuad()
 //----------------------------------------------------------------------------
 void DirectLightingQuad::OnUpdateShaderConstants()
 {
-	glUniform3fv(mLightPositionLoc, 1, (GLfloat*)&mLight->Location);
+    vec3 lightLoc = mLight->GetLocation();
+	glUniform3fv(mLightPositionLoc, 1, (GLfloat*)&lightLoc);
 	glUniform3fv(mLightColorLoc, 1, (GLfloat*)&mLight->Color);
 
 	glActiveTexture(GL_TEXTURE0);

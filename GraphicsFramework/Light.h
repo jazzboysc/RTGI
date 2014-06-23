@@ -8,6 +8,7 @@
 
 #include "FrameworkCommon.h"
 #include "RefObject.h"
+#include "Camera.h"
 
 namespace RTGI
 {
@@ -22,8 +23,17 @@ public:
 	Light();
     virtual ~Light();
 
-	vec3 Location;
 	vec3 Color;
+    
+    void SetProjector(Camera* projector);
+    Camera* GetProjector() const;
+    void SetLocation(const vec3& location);
+    vec3 GetLocation() const;
+   
+private:
+	vec3 mLocation;
+    Camera* mProjector;
+    
 };
 
 typedef RefPointer<Light> LightPtr;

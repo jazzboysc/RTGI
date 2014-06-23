@@ -23,7 +23,7 @@ public:
 	RenderObject(Material* material);
 	virtual ~RenderObject();
 
-	virtual void Render() = 0;
+	virtual void Render(int technique, int pass) = 0;
 
 	virtual void OnUpdateShaderConstants(){};
 	virtual void OnRender(){};

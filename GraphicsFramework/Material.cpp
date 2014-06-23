@@ -9,8 +9,6 @@ using namespace RTGI;
 
 //----------------------------------------------------------------------------
 Material::Material(MaterialTemplate* materialTemplate)
-	:
-	mTechnique(0)
 {
 	mRenderObject = 0;
 	mMaterialTemplate = materialTemplate;
@@ -21,23 +19,20 @@ Material::~Material()
 	mMaterialTemplate = 0;
 }
 //----------------------------------------------------------------------------
-void Material::Apply()
+void Material::Apply(int technique, int pass)
 {
-	Technique* technique = mMaterialTemplate->GetTechnique(mTechnique);
+	Technique* tech = mMaterialTemplate->GetTechnique(technique);
+    assert( tech );
 
-	unsigned int passCount = technique->GetPassCount();
-	for( unsigned int i = 0; i < passCount; ++i )
-	{
-		Pass* pass = technique->GetPass(i);
-		pass->Enable();
-
-		mRenderObject->OnEnableBuffers();
-		mRenderObject->OnUpdateShaderConstants();
-		mRenderObject->OnRender();
-		mRenderObject->OnDisableBuffers();
-
-		pass->Disable();
-	}
+    Pass* p = tech->GetPass(pass);
+    assert( p );
+    
+    p->Enable();
+    mRenderObject->OnEnableBuffers();
+    mRenderObject->OnUpdateShaderConstants();
+    mRenderObject->OnRender();
+    mRenderObject->OnDisableBuffers();
+    p->Disable();
 }
 //----------------------------------------------------------------------------
 void Material::CreateDeviceResource()

@@ -21,7 +21,7 @@ PolyCylinder::~PolyCylinder()
 	Cylinder = 0;
 }
 //----------------------------------------------------------------------------
-void PolyCylinder::Render()
+void PolyCylinder::Render(int technique, int pass)
 {
 	for( unsigned int i = 0; i < Points.size(); i = i + 2 )
 	{
@@ -34,7 +34,7 @@ void PolyCylinder::Render()
 		curPos.z = curPosH.z;
 
 		Sphere->SetWorldTranslation(curPos);
-		Sphere->Render();
+		Sphere->Render(technique, pass);
 
 		LPoint& nextPoint = Points[i + 1];
 		vec4 nextPosH(nextPoint.Position, 1.0f);
@@ -56,10 +56,10 @@ void PolyCylinder::Render()
 		mat4 tranM = Translate(curPos);
 		mat4 m = tranM * rotM;
 		Cylinder->SetWorldTransform(m);
-		Cylinder->Render();
+		Cylinder->Render(technique, pass);
 
 		Sphere->SetWorldTranslation(nextPos);
-		Sphere->Render();
+		Sphere->Render(technique, pass);
 	}
 }
 //----------------------------------------------------------------------------

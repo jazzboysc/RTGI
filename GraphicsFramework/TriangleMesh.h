@@ -25,7 +25,7 @@ public:
 	virtual ~TriangleMesh();
 
 	// Implement base class interface.
-	virtual void Render();
+	virtual void Render(int technique, int pass);
 	virtual void OnRender();
 	virtual void OnUpdateShaderConstants();
 	virtual void OnEnableBuffers();
@@ -40,6 +40,7 @@ public:
 	virtual void OnGetShaderConstants();
 
 	void SetCamera(Camera* camera);
+    Camera* GetCamera() const;
 	void SetWorldTransform(const mat4& worldTrans);
 	mat4 GetWorldTransform() const;
 	void SetWorldTranslation(const vec3& translation);

@@ -26,7 +26,7 @@ public:
 	~PolyCylinder();
 
 	// Implement base class interface.
-	virtual void Render();
+	virtual void Render(int technique, int pass);
 
 	std::vector<LPoint> Points;
 

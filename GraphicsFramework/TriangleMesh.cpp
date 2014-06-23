@@ -28,13 +28,13 @@ TriangleMesh::~TriangleMesh()
 	glDeleteVertexArrays(1, &mVAO);
 }
 //----------------------------------------------------------------------------
-void TriangleMesh::Render()
+void TriangleMesh::Render(int technique, int pass)
 {
 	// Enable VAO, VBO and IBO.
 	glBindVertexArray(mVAO);
 
 	// Apply current rendering technique.
-	mMaterial->Apply();
+	mMaterial->Apply(technique, pass);
 
 	// Disable VAO, VBO and IBO.
 	glBindVertexArray(0);
@@ -372,6 +372,11 @@ void TriangleMesh::OnGetShaderConstants()
 void TriangleMesh::SetCamera(Camera* camera)
 {
 	mCamera = camera;
+}
+//----------------------------------------------------------------------------
+Camera* TriangleMesh::GetCamera() const
+{
+    return mCamera;
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::SetWorldTransform(const mat4& worldTrans)

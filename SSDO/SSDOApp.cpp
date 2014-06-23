@@ -34,7 +34,7 @@ void SSDOApp::Initialize()
 
 	// Create light.
 	mLight = new Light;
-	mLight->Location = vec3(0.0f, 10.0f, 5.0f);
+	mLight->SetLocation(vec3(0.0f, 10.0f, 5.0f));
 
 	// Create material templates.
 	Material* material = 0;
@@ -250,13 +250,13 @@ Do:
 //----------------------------------------------------------------------------
 void SSDOApp::DrawScene()
 {
-	mModel1->Render();
-	mModel2->Render();
-	mGround->Render();
+	mModel1->Render(0, 0);
+	mModel2->Render(0, 0);
+	mGround->Render(0, 0);
 
 	for( int i = 0; i < CubeCount; ++i )
 	{
-		mCubes[i]->Render();
+		mCubes[i]->Render(0, 0);
 	}
 }
 //----------------------------------------------------------------------------
@@ -282,13 +282,13 @@ void SSDOApp::Run()
 	// Deferred lighting.
 	mDirectLightingBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mDirectLightingQuad->Render();
+	mDirectLightingQuad->Render(0, 0);
 	mDirectLightingBuffer->Disable();
 
 	// Generate SSDO buffer.
 	mSSDOBuffer->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mSSDOQuad->Render();
+	mSSDOQuad->Render(0, 0);
 	mSSDOBuffer->Disable();
 
 	// Draw final image.
@@ -296,25 +296,25 @@ void SSDOApp::Run()
 	switch (mShowMode)
 	{
 	case RTGI::SSDOApp::SM_Position:
-		mSSDOTempResultQuad->Render();
+		mSSDOTempResultQuad->Render(0, 0);
 		break;
 	case RTGI::SSDOApp::SM_Normal:
-		mSSDOTempResultQuad->Render();
+		mSSDOTempResultQuad->Render(0, 0);
 		break;
 	case RTGI::SSDOApp::SM_Color:
-		mSSDOTempResultQuad->Render();
+		mSSDOTempResultQuad->Render(0, 0);
 		break;
 	case RTGI::SSDOApp::SM_DirectLighting:
-		mSSDOTempResultQuad->Render();
+		mSSDOTempResultQuad->Render(0, 0);
 		break;
 	case RTGI::SSDOApp::SM_Random:
-		mSSDOTempResultQuad->Render();
+		mSSDOTempResultQuad->Render(0, 0);
 		break;
 	case RTGI::SSDOApp::SM_SSDO:
-		mSSDOTempResultQuad->Render();
+		mSSDOTempResultQuad->Render(0, 0);
 		break;
 	case RTGI::SSDOApp::SM_FilteredSSDO:
-		mSSDOFilterQuad->Render();
+		mSSDOFilterQuad->Render(0, 0);
 		break;
 	default:
 		break;

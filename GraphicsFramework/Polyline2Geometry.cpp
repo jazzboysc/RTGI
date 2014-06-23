@@ -28,7 +28,7 @@ Polyline2Geometry::~Polyline2Geometry()
 	glDeleteVertexArrays(1, &mVAO);
 }
 //----------------------------------------------------------------------------
-void Polyline2Geometry::Render()
+void Polyline2Geometry::Render(int technique, int pass)
 {
 	// TODO:
 	//// Enable shader program.
