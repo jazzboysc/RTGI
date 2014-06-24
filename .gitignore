@@ -21,3 +21,4 @@ SDK/Lib/Release/*.lib
 *.xcuserstate
 
 *.a
+*.unsuccessfulbuild
