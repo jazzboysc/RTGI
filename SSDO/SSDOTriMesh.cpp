@@ -23,9 +23,9 @@ void SSDOTriMesh::OnGetShaderConstants()
 	mMaterialColorLoc = glGetUniformLocation(program, "materialColor");
 }
 //----------------------------------------------------------------------------
-void SSDOTriMesh::OnUpdateShaderConstants()
+void SSDOTriMesh::OnUpdateShaderConstants(int technique, int pass)
 {
-	TriangleMesh::OnUpdateShaderConstants();
+	TriangleMesh::OnUpdateShaderConstants(technique, pass);
 
 	glUniform3fv(mMaterialColorLoc, 1, (GLfloat*)&MaterialColor);
 }

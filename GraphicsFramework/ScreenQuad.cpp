@@ -18,7 +18,7 @@ ScreenQuad::~ScreenQuad()
 {
 }
 //----------------------------------------------------------------------------
-void ScreenQuad::OnUpdateShaderConstants()
+void ScreenQuad::OnUpdateShaderConstants(int, int)
 {
 	// Nothing to do.
 }

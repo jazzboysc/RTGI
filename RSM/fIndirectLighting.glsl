@@ -7,5 +7,5 @@ uniform vec3 materialColor;
 
 void main()
 {
-	gl_FragData[0] = vec4(materialColor, 1.0);
+	gl_FragData[0] = vec4(0.0, 1.0, 0.0, 1.0);
 }

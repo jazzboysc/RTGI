@@ -33,7 +33,7 @@ void TriangleMesh::Render(int technique, int pass)
 	// Enable VAO, VBO and IBO.
 	glBindVertexArray(mVAO);
 
-	// Apply current rendering technique.
+	// Apply current rendering pass.
 	mMaterial->Apply(technique, pass);
 
 	// Disable VAO, VBO and IBO.
@@ -54,8 +54,10 @@ void TriangleMesh::OnRender()
 		GL_UNSIGNED_SHORT, 0);
 }
 //----------------------------------------------------------------------------
-void TriangleMesh::OnUpdateShaderConstants()
+void TriangleMesh::OnUpdateShaderConstants(int technique, int pass)
 {
+    assert( technique == 0 && pass == 0 );
+    
 	glUniformMatrix4fv(mWorldLoc, 1, GL_TRUE, mWorldTransform);
 	if( mCamera )
 	{

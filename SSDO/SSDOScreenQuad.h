@@ -18,7 +18,7 @@ public:
 	virtual ~SSDOScreenQuad();
 
 	// Implement base class interface.
-	virtual void OnUpdateShaderConstants();
+	virtual void OnUpdateShaderConstants(int technique, int pass);
 	virtual void OnGetShaderConstants();
 
 	float SampleRadius;

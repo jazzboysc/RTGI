@@ -19,7 +19,7 @@ DirectLightingQuad::~DirectLightingQuad()
 	ReflectanceTexture = 0;
 }
 //----------------------------------------------------------------------------
-void DirectLightingQuad::OnUpdateShaderConstants()
+void DirectLightingQuad::OnUpdateShaderConstants(int, int)
 {
     vec3 lightLoc = mLight->GetLocation();
 	glUniform3fv(mLightPositionLoc, 1, (GLfloat*)&lightLoc);

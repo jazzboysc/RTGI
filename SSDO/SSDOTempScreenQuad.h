@@ -18,7 +18,7 @@ public:
 	virtual ~SSDOTempScreenQuad();
 
 	// Implement base class interface.
-	virtual void OnUpdateShaderConstants();
+	virtual void OnUpdateShaderConstants(int technique, int pass);
 	virtual void OnGetShaderConstants();
 
 	Texture2DPtr TempTexture;

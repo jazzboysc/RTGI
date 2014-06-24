@@ -24,8 +24,7 @@ public:
 	virtual ~RenderObject();
 
 	virtual void Render(int technique, int pass) = 0;
-
-	virtual void OnUpdateShaderConstants(){};
+	virtual void OnUpdateShaderConstants(int technique, int pass) = 0;
 	virtual void OnRender(){};
 	virtual void OnEnableBuffers(){};
 	virtual void OnDisableBuffers(){};

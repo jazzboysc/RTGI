@@ -32,6 +32,8 @@ void RSMApp::Initialize()
 	mLightProjector->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
 	mLightProjector->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-5.0f, 0.0f, -15.0f),
 		vec3(0.0f, 1.0f, 0.0f));
+    
+    // Create scene camera.
 	mCamera = new Camera;
 	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
 	mCamera->SetLookAt(vec3(0.0f, 0.0f, 50.0f), vec3(0.0f, 0.0f, 0.0f), 
@@ -167,13 +169,13 @@ void RSMApp::DrawSceneToRSMBuffer()
 void RSMApp::DrawScene()
 {
     mModel->SetCamera(mCamera);
-	mModel->Render(0, 0);
+	mModel->Render(0, 1);
     mLeftWall->SetCamera(mCamera);
-	mLeftWall->Render(0, 0);
+	mLeftWall->Render(0, 1);
     mBackWall->SetCamera(mCamera);
-	mBackWall->Render(0, 0);
+	mBackWall->Render(0, 1);
     mGround->SetCamera(mCamera);
-	mGround->Render(0, 0);
+	mGround->Render(0, 1);
 
 //	mSphere->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
 //	mSphere->SetWorldScale(vec3(1.0f));
@@ -212,7 +214,14 @@ void RSMApp::Run()
 
 	// Draw final image.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mRSMTempResultQuad->Render(0, 0);
+    if( mShowMode == SM_DirectLighting )
+    {
+        DrawScene();
+    }
+    else
+    {
+        mRSMTempResultQuad->Render(0, 0);
+    }
 
 	glutSwapBuffers();
 }

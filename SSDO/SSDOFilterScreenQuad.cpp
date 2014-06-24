@@ -18,7 +18,7 @@ SSDOFilterScreenQuad::~SSDOFilterScreenQuad()
 	DirectLightingTexture = 0;
 }
 //----------------------------------------------------------------------------
-void SSDOFilterScreenQuad::OnUpdateShaderConstants()
+void SSDOFilterScreenQuad::OnUpdateShaderConstants(int, int)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, SSDOTexture->GetTexture());

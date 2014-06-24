@@ -18,12 +18,16 @@ public:
 
 	// Implement base class interface.
 	virtual void OnGetShaderConstants();
-	virtual void OnUpdateShaderConstants();
+	virtual void OnUpdateShaderConstants(int technique, int pass);
 
 	vec3 MaterialColor;
 
 private:
+    // pass 1 uniform locations.
 	GLint mMaterialColorLoc;
+    
+    // pass 2 uniform locations.
+    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
 };
 
 typedef RefPointer<RSMTriMesh> RSMTriMeshPtr;

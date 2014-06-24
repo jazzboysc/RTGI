@@ -27,7 +27,7 @@ public:
 	// Implement base class interface.
 	virtual void Render(int technique, int pass);
 	virtual void OnRender();
-	virtual void OnUpdateShaderConstants();
+	virtual void OnUpdateShaderConstants(int technique, int pass);
 	virtual void OnEnableBuffers();
 	virtual void OnDisableBuffers();
 

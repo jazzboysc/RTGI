@@ -19,9 +19,9 @@ SSDOScreenQuad::~SSDOScreenQuad()
 	EnvMapTexture = 0;
 }
 //----------------------------------------------------------------------------
-void SSDOScreenQuad::OnUpdateShaderConstants()
+void SSDOScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 {
-	TriangleMesh::OnUpdateShaderConstants();
+	TriangleMesh::OnUpdateShaderConstants(technique, pass);
 
 	glUniform1f(mSampleRadiusLoc, SampleRadius);
 	glUniform1f(mStrengthLoc, Strength);

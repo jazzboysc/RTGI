@@ -29,7 +29,7 @@ void Material::Apply(int technique, int pass)
     
     p->Enable();
     mRenderObject->OnEnableBuffers();
-    mRenderObject->OnUpdateShaderConstants();
+    mRenderObject->OnUpdateShaderConstants(technique, pass);
     mRenderObject->OnRender();
     mRenderObject->OnDisableBuffers();
     p->Disable();

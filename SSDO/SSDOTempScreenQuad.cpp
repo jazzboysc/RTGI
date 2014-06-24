@@ -14,7 +14,7 @@ SSDOTempScreenQuad::~SSDOTempScreenQuad()
 	TempTexture = 0;
 }
 //----------------------------------------------------------------------------
-void SSDOTempScreenQuad::OnUpdateShaderConstants()
+void SSDOTempScreenQuad::OnUpdateShaderConstants(int, int)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TempTexture->GetTexture());

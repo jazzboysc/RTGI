@@ -15,7 +15,7 @@ RSMTempScreenQuad::~RSMTempScreenQuad()
 	TempTexture = 0;
 }
 //----------------------------------------------------------------------------
-void RSMTempScreenQuad::OnUpdateShaderConstants()
+void RSMTempScreenQuad::OnUpdateShaderConstants(int, int)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TempTexture->GetTexture());

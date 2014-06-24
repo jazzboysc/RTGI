@@ -18,7 +18,7 @@ public:
 
 	// Implement base class interface.
 	virtual void OnGetShaderConstants();
-	virtual void OnUpdateShaderConstants();
+	virtual void OnUpdateShaderConstants(int technique, int pass);
 
 	vec3 MaterialColor;
 
