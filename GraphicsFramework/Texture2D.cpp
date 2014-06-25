@@ -116,7 +116,7 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 
     glGenTextures(1, &mTexture);
     glBindTexture(GL_TEXTURE_2D, mTexture);
-	glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB32F_ARB, Width, Height, 0, GL_RGB, 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, Width, Height, 0, GL_RGB, 
 		GL_FLOAT, pixels);
 
 	free(pixels);
@@ -127,6 +127,19 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
     
     RevGamma = 1.0f / 2.2f; 
 	fclose(infile);
+
+	return true;
+}
+//----------------------------------------------------------------------------
+bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width, 
+	GLsizei height, GLenum format, GLenum type, void* pixels)
+{
+	assert( pixels );
+
+    glGenTextures(1, &mTexture);
+    glBindTexture(GL_TEXTURE_2D, mTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, 
+		type, pixels);
 
 	return true;
 }

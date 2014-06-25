@@ -146,12 +146,19 @@ void RSMApp::Initialize()
 	mSphere->CreateDeviceResource();
 	mSphere->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
 
+	// Create sampling pattern texture.
 	RandomNumberGenerator rng;
+	float e1, e2;
 	for( int i = 0; i < RSM_SAMPLE_COUNT; ++i )
 	{
-		randmoNumbers[2*i + 0] = rng.RandomFloat();
-		randmoNumbers[2*i + 1] = rng.RandomFloat();
+		e1 = rng.RandomFloat();
+		e2 = rng.RandomFloat();
+		randmoNumbers[2*i + 0] = e1 * sinf(2.0f * PI_SP *e2);
+		randmoNumbers[2*i + 1] = e1 * cosf(2.0f * PI_SP *e2);
 	}
+	mSamplingPatternTexture = new Texture2D();
+	mSamplingPatternTexture->LoadFromSystemMemory(GL_RG32F, RSM_SAMPLE_COUNT, 
+		1, GL_RG, GL_FLOAT, (void*)randmoNumbers);
 }
 //----------------------------------------------------------------------------
 void RSMApp::DrawSceneToRSMBuffer()
@@ -168,35 +175,33 @@ void RSMApp::DrawSceneToRSMBuffer()
 //----------------------------------------------------------------------------
 void RSMApp::DrawScene()
 {
-    mModel->SetCamera(mCamera);
-	mModel->Render(0, 1);
-    mLeftWall->SetCamera(mCamera);
-	mLeftWall->Render(0, 1);
-    mBackWall->SetCamera(mCamera);
-	mBackWall->Render(0, 1);
-    mGround->SetCamera(mCamera);
-	mGround->Render(0, 1);
+ //   mModel->SetCamera(mCamera);
+	//mModel->Render(0, 1);
+ //   mLeftWall->SetCamera(mCamera);
+	//mLeftWall->Render(0, 1);
+ //   mBackWall->SetCamera(mCamera);
+	//mBackWall->Render(0, 1);
+ //   mGround->SetCamera(mCamera);
+	//mGround->Render(0, 1);
 
-//	mSphere->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
-//	mSphere->SetWorldScale(vec3(1.0f));
-//	mSphere->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
-//	mSphere->Render();
-//
-//	float r = 20.0f;
-//	mSphere->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
-//	for( int i = 0; i < RSM_SAMPLE_COUNT; ++i )
-//	{
-//		float x, y, e1, e2, d;
-//		e1 = randmoNumbers[2*i + 0];
-//		e2 = randmoNumbers[2*i + 1];
-//		x = r * e1 * sinf(2.0f * PI_SP *e2);
-//		y = r * e1 * cosf(2.0f * PI_SP *e2);
-//		d = sqrtf(x*x + y*y)*0.1f;
-//
-//		mSphere->SetWorldScale(vec3(d, d, d));
-//		mSphere->SetWorldTranslation(vec3(x, y, 0.0f));
-//		mSphere->Render();
-//	}
+	mSphere->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
+	mSphere->SetWorldScale(vec3(1.0f));
+	mSphere->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
+	mSphere->Render(0, 0);
+
+	float r = 5.0f;
+	mSphere->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+	for( int i = 0; i < RSM_SAMPLE_COUNT; ++i )
+	{
+		float x, y, d;
+		x = r * randmoNumbers[2*i + 0];
+		y = r * randmoNumbers[2*i + 1];
+		d = sqrtf(x*x + y*y)*0.1f;
+
+		mSphere->SetWorldScale(vec3(d, d, d));
+		mSphere->SetWorldTranslation(vec3(x, y, 0.0f));
+		mSphere->Render(0, 0);
+	}
 }
 //----------------------------------------------------------------------------
 void RSMApp::Run()
@@ -249,6 +254,7 @@ void RSMApp::Terminate()
 
 	mRSMTempResultQuad = 0;
 	mSphere = 0;
+	mSamplingPatternTexture = 0;
 }
 //----------------------------------------------------------------------------
 void RSMApp::OnKeyboard(unsigned char key, int x, int y)

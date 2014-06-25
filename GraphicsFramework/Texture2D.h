@@ -35,6 +35,11 @@ public:
 	// Load a ".pfm" file and create its resource.
 	bool LoadPFMFromFile(const std::string& fileName);
 
+	// Load texture data from system memory. User is responsible for deleting
+	// the system memory data.
+	bool LoadFromSystemMemory(GLint internalFormat, GLsizei width, 
+		GLsizei height, GLenum format, GLenum type, void* pixels);
+
 	void CreateRenderTarget(int width, int height, RenderTargetFormat format);
 
 	// Generate random positions inside a unit hemisphere based on halton 
