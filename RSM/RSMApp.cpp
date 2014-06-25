@@ -157,7 +157,7 @@ void RSMApp::Initialize()
 		randmoNumbers[2*i + 1] = e1 * cosf(2.0f * PI_SP *e2);
 	}
 	mSamplingPatternTexture = new Texture2D();
-	mSamplingPatternTexture->LoadFromSystemMemory(GL_RG32F, RSM_SAMPLE_COUNT, 
+	mSamplingPatternTexture->LoadFromSystemMemory(GL_RG32F, RSM_SAMPLE_COUNT,
 		1, GL_RG, GL_FLOAT, (void*)randmoNumbers);
 }
 //----------------------------------------------------------------------------

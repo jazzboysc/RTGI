@@ -116,7 +116,7 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 
     glGenTextures(1, &mTexture);
     glBindTexture(GL_TEXTURE_2D, mTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, Width, Height, 0, GL_RGB, 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F_ARB, Width, Height, 0, GL_RGB,
 		GL_FLOAT, pixels);
 
 	free(pixels);
