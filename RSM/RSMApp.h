@@ -70,7 +70,7 @@ private:
 	RSMTempScreenQuadPtr mRSMTempResultQuad;
 
 	enum { RSM_SAMPLE_COUNT = 400 };
-	float randmoNumbers[RSM_SAMPLE_COUNT*2];
+	float randmoNumbers[RSM_SAMPLE_COUNT*3];
 	RSMTriMeshPtr mSphere;
 
 	Texture2DPtr mSamplingPatternTexture;

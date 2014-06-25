@@ -48,8 +48,8 @@ int main(int argc, char **argv)
 	// init glut
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-	int width = 1024;
-	int height = 768;
+	int width = 512;
+	int height = 512;
     glutInitWindowSize(width, height);
 
     // If you are using freeglut, the next two lines will check if 
