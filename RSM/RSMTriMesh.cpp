@@ -77,7 +77,7 @@ void RSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
         }
         
         glUniform1f(mSampleRadiusLoc, SampleRadius);
-        glUniform1f(mSampleCountLoc, SampleCount);
+        glUniform1i(mSampleCountLoc, SampleCount);
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, RSMPositionTexture->GetTexture());

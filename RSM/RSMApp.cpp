@@ -116,7 +116,7 @@ void RSMApp::Initialize()
 	mRSMTempResultQuad->TempTexture = mNormalTexture;
     
 	// Create scene.
-    float RSMSamplingRadius = 0.01f;
+    float RSMSamplingRadius = 0.05f;
 	mat4 rotM;
 	material = new Material(mtRSM);
 	mModel = new RSMTriMesh(material, mCamera);
@@ -140,7 +140,7 @@ void RSMApp::Initialize()
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-	mGround->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
+	mGround->MaterialColor = vec3(0.2862f, 0.2862f, 0.7647f);
     mGround->SampleRadius = RSMSamplingRadius;
     mGround->SampleCount = RSM_SAMPLE_COUNT;
     mGround->LightProjector = mLightProjector;
@@ -157,7 +157,7 @@ void RSMApp::Initialize()
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
-	mBackWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
+	mBackWall->MaterialColor = vec3(0.2980f, 0.6901f, 0.2980f);
     mBackWall->SampleRadius = RSMSamplingRadius;
     mBackWall->SampleCount = RSM_SAMPLE_COUNT;
     mBackWall->LightProjector = mLightProjector;
@@ -174,7 +174,7 @@ void RSMApp::Initialize()
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
-	mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+	mLeftWall->MaterialColor = vec3(0.6509f, 0.2862f, 0.2862f);
     mLeftWall->SampleRadius = RSMSamplingRadius;
     mLeftWall->SampleCount = RSM_SAMPLE_COUNT;
     mLeftWall->LightProjector = mLightProjector;

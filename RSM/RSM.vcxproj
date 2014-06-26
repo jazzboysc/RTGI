@@ -93,8 +93,10 @@
     <ClInclude Include="RSMTriMesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="fIndirectLighting.glsl" />
     <None Include="fRSMBuffer.glsl" />
     <None Include="fRSMTemp.glsl" />
+    <None Include="vIndirectLighting.glsl" />
     <None Include="vRSMBuffer.glsl" />
     <None Include="vRSMTemp.glsl" />
   </ItemGroup>
