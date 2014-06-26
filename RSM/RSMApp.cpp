@@ -10,7 +10,7 @@ RSMApp::RSMApp(int width, int height)
 	mHeight(height),
 	mWindowTitle("RSM demo")
 {
-	mShowMode = SM_Normal;
+	mShowMode = SM_RSMNormal;
 }
 //----------------------------------------------------------------------------
 RSMApp::~RSMApp()
@@ -46,10 +46,10 @@ void RSMApp::Initialize()
 	// Create material templates.
 	Material* material = 0;
 	Pass* passRSMBuffer = new Pass("vRSMBuffer.glsl", "fRSMBuffer.glsl");
-    Pass* passIndirectLighting = new Pass("vIndirectLighting.glsl", "fIndirectLighting.glsl");
+    Pass* passRSMGBuffer = new Pass("vRSMGBuffer.glsl", "fRSMGBuffer.glsl");
 	Technique* techRSM = new Technique();
 	techRSM->AddPass(passRSMBuffer);
-    techRSM->AddPass(passIndirectLighting);
+    techRSM->AddPass(passRSMGBuffer);
 	MaterialTemplate* mtRSM = new MaterialTemplate();
 	mtRSM->AddTechnique(techRSM);
 
@@ -65,20 +65,37 @@ void RSMApp::Initialize()
 	//MaterialTemplate* mtDirectLighting = new MaterialTemplate();
 	//mtDirectLighting->AddTechnique(techDirectLighting);
 
-	// Create MRT textures.
+	// Create RSM-buffer MRT textures.
+	mRSMPositionTexture = new Texture2D();
+	mRSMPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mRSMNormalTexture = new Texture2D();
+	mRSMNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mRSMFluxTexture = new Texture2D();
+	mRSMFluxTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mRSMDepthTexture = new Texture2D();
+	mRSMDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
+
+	// Create RSM-buffer.
+	Texture2D* rsmTextures[3] = {mRSMPositionTexture, mRSMNormalTexture, mRSMFluxTexture};
+	mRSMBuffer = new FrameBuffer();
+	mRSMBuffer->SetRenderTargets(3, rsmTextures, mRSMDepthTexture);
+    
+	// Create G-buffer MRT textures.
 	mPositionTexture = new Texture2D();
 	mPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
 	mNormalTexture = new Texture2D();
 	mNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
-	mFluxTexture = new Texture2D();
-	mFluxTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mColorTexture = new Texture2D();
+	mColorTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
 	mDepthTexture = new Texture2D();
 	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
-
-	// Create RSM-buffer.
-	Texture2D* colorTextures[3] = {mPositionTexture, mNormalTexture, mFluxTexture};
-	mRSMBuffer = new FrameBuffer();
-	mRSMBuffer->SetRenderTargets(3, colorTextures, mDepthTexture);
+	mIndirectLightingTexture = new Texture2D();
+	mIndirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+    
+	// Create G-buffer.
+	Texture2D* gbufferTextures[4] = {mPositionTexture, mNormalTexture, mColorTexture, mIndirectLightingTexture};
+	mGBuffer = new FrameBuffer();
+	mGBuffer->SetRenderTargets(4, gbufferTextures, mDepthTexture);
     
 	// Create RSM sampling pattern texture.
 	RandomNumberGenerator rng;
@@ -94,16 +111,7 @@ void RSMApp::Initialize()
 	mSamplingPatternTexture = new Texture2D();
 	mSamplingPatternTexture->LoadFromSystemMemory(GL_RGB32F_ARB,
                                                   RSM_SAMPLE_COUNT, 1, GL_RGB, GL_FLOAT, (void*)randmoNumbers);
-
-	// Create direct lighting render target.
-	mDirectLightingTexture = new Texture2D();
-	mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
-
-	// Create direct lighting framebuffer.
-	Texture2D* directLightingTexture[1] = {mDirectLightingTexture};
-	mDirectLightingBuffer = new FrameBuffer();
-	mDirectLightingBuffer->SetRenderTargets(1, directLightingTexture, mDepthTexture);
-
+    
 	// Create RSM temp result screen quad.
 	material = new Material(mtRSMTemp);
 	mRSMTempResultQuad = new RSMTempScreenQuad(material, mCamera);
@@ -113,7 +121,7 @@ void RSMApp::Initialize()
 	mRSMTempResultQuad->SetTCoord(2, vec2(1.0f, 1.0f));
 	mRSMTempResultQuad->SetTCoord(3, vec2(0.0f, 1.0f));
 	mRSMTempResultQuad->CreateDeviceResource();
-	mRSMTempResultQuad->TempTexture = mNormalTexture;
+	mRSMTempResultQuad->TempTexture = mRSMNormalTexture;
     
 	// Create scene.
     float RSMSamplingRadius = 0.05f;
@@ -130,9 +138,9 @@ void RSMApp::Initialize()
     mModel->SampleRadius = RSMSamplingRadius;
     mModel->SampleCount = RSM_SAMPLE_COUNT;
     mModel->LightProjector = mLightProjector;
-    mModel->RSMPositionTexture = mPositionTexture;
-    mModel->RSMNormalTexture = mNormalTexture;
-    mModel->RSMFluxTexture = mFluxTexture;
+    mModel->RSMPositionTexture = mRSMPositionTexture;
+    mModel->RSMNormalTexture = mRSMNormalTexture;
+    mModel->RSMFluxTexture = mRSMFluxTexture;
     mModel->RSMSamplingPatternTexture = mSamplingPatternTexture;
 
 	material = new Material(mtRSM);
@@ -144,9 +152,9 @@ void RSMApp::Initialize()
     mGround->SampleRadius = RSMSamplingRadius;
     mGround->SampleCount = RSM_SAMPLE_COUNT;
     mGround->LightProjector = mLightProjector;
-    mGround->RSMPositionTexture = mPositionTexture;
-    mGround->RSMNormalTexture = mNormalTexture;
-    mGround->RSMFluxTexture = mFluxTexture;
+    mGround->RSMPositionTexture = mRSMPositionTexture;
+    mGround->RSMNormalTexture = mRSMNormalTexture;
+    mGround->RSMFluxTexture = mRSMFluxTexture;
     mGround->RSMSamplingPatternTexture = mSamplingPatternTexture;
 
 	material = new Material(mtRSM);
@@ -161,9 +169,9 @@ void RSMApp::Initialize()
     mBackWall->SampleRadius = RSMSamplingRadius;
     mBackWall->SampleCount = RSM_SAMPLE_COUNT;
     mBackWall->LightProjector = mLightProjector;
-    mBackWall->RSMPositionTexture = mPositionTexture;
-    mBackWall->RSMNormalTexture = mNormalTexture;
-    mBackWall->RSMFluxTexture = mFluxTexture;
+    mBackWall->RSMPositionTexture = mRSMPositionTexture;
+    mBackWall->RSMNormalTexture = mRSMNormalTexture;
+    mBackWall->RSMFluxTexture = mRSMFluxTexture;
     mBackWall->RSMSamplingPatternTexture = mSamplingPatternTexture;
 
 	material = new Material(mtRSM);
@@ -178,9 +186,9 @@ void RSMApp::Initialize()
     mLeftWall->SampleRadius = RSMSamplingRadius;
     mLeftWall->SampleCount = RSM_SAMPLE_COUNT;
     mLeftWall->LightProjector = mLightProjector;
-    mLeftWall->RSMPositionTexture = mPositionTexture;
-    mLeftWall->RSMNormalTexture = mNormalTexture;
-    mLeftWall->RSMFluxTexture = mFluxTexture;
+    mLeftWall->RSMPositionTexture = mRSMPositionTexture;
+    mLeftWall->RSMNormalTexture = mRSMNormalTexture;
+    mLeftWall->RSMFluxTexture = mRSMFluxTexture;
     mLeftWall->RSMSamplingPatternTexture = mSamplingPatternTexture;
 
 	material = new Material(mtRSM);
@@ -236,7 +244,7 @@ void RSMApp::DrawScene()
 //----------------------------------------------------------------------------
 void RSMApp::Run()
 {
-	// Draw scene to RSM-buffer.
+	// Generate RSM-buffer.
 	mRSMBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	DrawSceneToRSMBuffer();
@@ -247,16 +255,14 @@ void RSMApp::Run()
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//mDirectLightingBuffer->Disable();
 
-	// Draw final image.
+	// Generate indirect lighting buffer.
+    mGBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if( mShowMode == SM_DirectLighting )
-    {
-        DrawScene();
-    }
-    else
-    {
-        mRSMTempResultQuad->Render(0, 0);
-    }
+    DrawScene();
+    mGBuffer->Disable();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    mRSMTempResultQuad->Render(0, 0);
 
 	glutSwapBuffers();
 }
@@ -274,13 +280,17 @@ void RSMApp::Terminate()
 	mModel = 0;
 
 	mRSMBuffer = 0;
-	mNormalTexture = 0;
-	mPositionTexture = 0;
-	mFluxTexture = 0;
-	mDepthTexture = 0;
+	mRSMNormalTexture = 0;
+	mRSMPositionTexture = 0;
+	mRSMFluxTexture = 0;
+	mRSMDepthTexture = 0;
 
-	mDirectLightingBuffer = 0;
-	mDirectLightingTexture = 0;
+	mGBuffer = 0;
+    mPositionTexture = 0;
+    mNormalTexture = 0;
+    mColorTexture = 0;
+    mDepthTexture = 0;
+	mIndirectLightingTexture = 0;
 
 	mRSMTempResultQuad = 0;
 	mSphere = 0;
@@ -292,32 +302,59 @@ void RSMApp::OnKeyboard(unsigned char key, int x, int y)
 	switch( key )
 	{
 	case '1':
-		mShowMode = SM_Position;
+		mShowMode = SM_RSMPosition;
         mRSMTempResultQuad->ShowMode = 1;
-		mRSMTempResultQuad->TempTexture = mPositionTexture;
+		mRSMTempResultQuad->TempTexture = mRSMPositionTexture;
 		break;
 
 	case '2':
-		mShowMode = SM_Normal;
+		mShowMode = SM_RSMNormal;
         mRSMTempResultQuad->ShowMode = 2;
-        mRSMTempResultQuad->TempTexture = mNormalTexture;
+        mRSMTempResultQuad->TempTexture = mRSMNormalTexture;
 		break;
 
 	case '3':
-		mShowMode = SM_Flux;
+		mShowMode = SM_RSMFlux;
 		mRSMTempResultQuad->ShowMode = 3;
-		mRSMTempResultQuad->TempTexture = mFluxTexture;
+		mRSMTempResultQuad->TempTexture = mRSMFluxTexture;
 		break;
 
 	case '4':
-		mShowMode = SM_Depth;
+		mShowMode = SM_RSMDepth;
         mRSMTempResultQuad->ShowMode = 4;
-        mRSMTempResultQuad->TempTexture = mDepthTexture;
+        mRSMTempResultQuad->TempTexture = mRSMDepthTexture;
 		break;
 
 	case '5':
-		mShowMode = SM_DirectLighting;
+		mShowMode = SM_IndirectLighting;
+        mRSMTempResultQuad->ShowMode = 5;
+        mRSMTempResultQuad->TempTexture = mIndirectLightingTexture;
+        break;
+            
+    case '6':
+        mShowMode = SM_Position;
+        mRSMTempResultQuad->ShowMode = 6;
+        mRSMTempResultQuad->TempTexture = mPositionTexture;
+        break;
+          
+    case '7':
+        mShowMode = SM_Normal;
+        mRSMTempResultQuad->ShowMode = 7;
+        mRSMTempResultQuad->TempTexture = mNormalTexture;
+        break;
+           
+    case '8':
+        mShowMode = SM_Color;
+        mRSMTempResultQuad->ShowMode = 8;
+        mRSMTempResultQuad->TempTexture = mColorTexture;
+        break;
 
+    case '9':
+        mShowMode = SM_Depth;
+        mRSMTempResultQuad->ShowMode = 9;
+        mRSMTempResultQuad->TempTexture = mDepthTexture;
+        break;
+            
 	default:
 		break;
 	}

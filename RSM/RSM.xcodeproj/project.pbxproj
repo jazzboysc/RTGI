@@ -32,15 +32,17 @@
 		FB0A81B8192EE04E0016C3F1 /* libGraphicsFrameworkd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB0A81B7192EE04E0016C3F1 /* libGraphicsFrameworkd.a */; };
 		FB0A81BA192EE0C00016C3F1 /* libGraphicsFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB0A81B9192EE0C00016C3F1 /* libGraphicsFramework.a */; };
 		FB18BA5F192ECE6F00D5B13F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA5E192ECE6F00D5B13F /* main.cpp */; };
+		FB4710A7195CB3B00053826D /* RSMDeferredLightingQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB4710A5195CB3B00053826D /* RSMDeferredLightingQuad.cpp */; };
+		FB4710A8195CB3B00053826D /* RSMDeferredLightingQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB4710A5195CB3B00053826D /* RSMDeferredLightingQuad.cpp */; };
 		FB56CCA7192FEB6A00DF31A8 /* beethoven.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA0192FEB3500DF31A8 /* beethoven.ply */; };
 		FB56CCAB192FEB6A00DF31A8 /* screenquad.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA4192FEB3500DF31A8 /* screenquad.ply */; };
 		FB56CCB7192FFD3500DF31A8 /* beethoven.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA0192FEB3500DF31A8 /* beethoven.ply */; };
 		FB56CCBB192FFD3500DF31A8 /* screenquad.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB56CCA4192FEB3500DF31A8 /* screenquad.ply */; };
 		FB6994A6192FC2A100B20DEB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA5E192ECE6F00D5B13F /* main.cpp */; };
-		FBAE6CC71958AB890023BF1F /* fIndirectLighting.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FBAE6CC51958AB890023BF1F /* fIndirectLighting.glsl */; };
-		FBAE6CC81958AB890023BF1F /* fIndirectLighting.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FBAE6CC51958AB890023BF1F /* fIndirectLighting.glsl */; };
-		FBAE6CC91958AB890023BF1F /* vIndirectLighting.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FBAE6CC61958AB890023BF1F /* vIndirectLighting.glsl */; };
-		FBAE6CCA1958AB890023BF1F /* vIndirectLighting.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FBAE6CC61958AB890023BF1F /* vIndirectLighting.glsl */; };
+		FBAE6CC71958AB890023BF1F /* fRSMGBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FBAE6CC51958AB890023BF1F /* fRSMGBuffer.glsl */; };
+		FBAE6CC81958AB890023BF1F /* fRSMGBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FBAE6CC51958AB890023BF1F /* fRSMGBuffer.glsl */; };
+		FBAE6CC91958AB890023BF1F /* vRSMGBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FBAE6CC61958AB890023BF1F /* vRSMGBuffer.glsl */; };
+		FBAE6CCA1958AB890023BF1F /* vRSMGBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FBAE6CC61958AB890023BF1F /* vRSMGBuffer.glsl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,11 +96,13 @@
 		FB0A81B7192EE04E0016C3F1 /* libGraphicsFrameworkd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGraphicsFrameworkd.a; path = ../SDK/Lib/Debug/libGraphicsFrameworkd.a; sourceTree = "<group>"; };
 		FB0A81B9192EE0C00016C3F1 /* libGraphicsFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGraphicsFramework.a; path = ../SDK/Lib/Release/libGraphicsFramework.a; sourceTree = "<group>"; };
 		FB18BA5E192ECE6F00D5B13F /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		FB4710A5195CB3B00053826D /* RSMDeferredLightingQuad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RSMDeferredLightingQuad.cpp; sourceTree = "<group>"; };
+		FB4710A6195CB3B00053826D /* RSMDeferredLightingQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSMDeferredLightingQuad.h; sourceTree = "<group>"; };
 		FB56CCA0192FEB3500DF31A8 /* beethoven.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = beethoven.ply; sourceTree = "<group>"; };
 		FB56CCA4192FEB3500DF31A8 /* screenquad.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = screenquad.ply; sourceTree = "<group>"; };
 		FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GraphicsFramework.xcodeproj; path = ../GraphicsFramework/GraphicsFramework.xcodeproj; sourceTree = "<group>"; };
-		FBAE6CC51958AB890023BF1F /* fIndirectLighting.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fIndirectLighting.glsl; sourceTree = "<group>"; };
-		FBAE6CC61958AB890023BF1F /* vIndirectLighting.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vIndirectLighting.glsl; sourceTree = "<group>"; };
+		FBAE6CC51958AB890023BF1F /* fRSMGBuffer.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fRSMGBuffer.glsl; sourceTree = "<group>"; };
+		FBAE6CC61958AB890023BF1F /* vRSMGBuffer.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vRSMGBuffer.glsl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +188,8 @@
 		748AA50C07F465A200486586 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				FB4710A5195CB3B00053826D /* RSMDeferredLightingQuad.cpp */,
+				FB4710A6195CB3B00053826D /* RSMDeferredLightingQuad.h */,
 				A054244F1954E103005DB399 /* RSMApp.cpp */,
 				A05424501954E103005DB399 /* RSMApp.h */,
 				A05424511954E103005DB399 /* RSMTempScreenQuad.cpp */,
@@ -198,8 +204,8 @@
 		FB56CC3D192FC83300DF31A8 /* GLSL */ = {
 			isa = PBXGroup;
 			children = (
-				FBAE6CC51958AB890023BF1F /* fIndirectLighting.glsl */,
-				FBAE6CC61958AB890023BF1F /* vIndirectLighting.glsl */,
+				FBAE6CC51958AB890023BF1F /* fRSMGBuffer.glsl */,
+				FBAE6CC61958AB890023BF1F /* vRSMGBuffer.glsl */,
 				A05424401954E0B2005DB399 /* fRSMBuffer.glsl */,
 				A05424411954E0B2005DB399 /* fRSMTemp.glsl */,
 				A05424421954E0B2005DB399 /* vRSMBuffer.glsl */,
@@ -328,11 +334,11 @@
 				FB56CCA7192FEB6A00DF31A8 /* beethoven.ply in Resources */,
 				A05424461954E0B2005DB399 /* fRSMTemp.glsl in Resources */,
 				A05424481954E0B2005DB399 /* vRSMBuffer.glsl in Resources */,
-				FBAE6CC91958AB890023BF1F /* vIndirectLighting.glsl in Resources */,
+				FBAE6CC91958AB890023BF1F /* vRSMGBuffer.glsl in Resources */,
 				A03A13611957D94D00F179AF /* sphere.ply in Resources */,
 				FB56CCAB192FEB6A00DF31A8 /* screenquad.ply in Resources */,
 				A05424441954E0B2005DB399 /* fRSMBuffer.glsl in Resources */,
-				FBAE6CC71958AB890023BF1F /* fIndirectLighting.glsl in Resources */,
+				FBAE6CC71958AB890023BF1F /* fRSMGBuffer.glsl in Resources */,
 				A054244D1954E0D4005DB399 /* square.ply in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -345,11 +351,11 @@
 				FB56CCB7192FFD3500DF31A8 /* beethoven.ply in Resources */,
 				A05424471954E0B2005DB399 /* fRSMTemp.glsl in Resources */,
 				A05424491954E0B2005DB399 /* vRSMBuffer.glsl in Resources */,
-				FBAE6CCA1958AB890023BF1F /* vIndirectLighting.glsl in Resources */,
+				FBAE6CCA1958AB890023BF1F /* vRSMGBuffer.glsl in Resources */,
 				A03A13621957D94D00F179AF /* sphere.ply in Resources */,
 				FB56CCBB192FFD3500DF31A8 /* screenquad.ply in Resources */,
 				A05424451954E0B2005DB399 /* fRSMBuffer.glsl in Resources */,
-				FBAE6CC81958AB890023BF1F /* fIndirectLighting.glsl in Resources */,
+				FBAE6CC81958AB890023BF1F /* fRSMGBuffer.glsl in Resources */,
 				A054244E1954E0D4005DB399 /* square.ply in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -363,6 +369,7 @@
 			files = (
 				A05424551954E103005DB399 /* RSMApp.cpp in Sources */,
 				A05424591954E103005DB399 /* RSMTriMesh.cpp in Sources */,
+				FB4710A7195CB3B00053826D /* RSMDeferredLightingQuad.cpp in Sources */,
 				A05424571954E103005DB399 /* RSMTempScreenQuad.cpp in Sources */,
 				FB18BA5F192ECE6F00D5B13F /* main.cpp in Sources */,
 			);
@@ -374,6 +381,7 @@
 			files = (
 				A05424561954E103005DB399 /* RSMApp.cpp in Sources */,
 				A054245A1954E103005DB399 /* RSMTriMesh.cpp in Sources */,
+				FB4710A8195CB3B00053826D /* RSMDeferredLightingQuad.cpp in Sources */,
 				A05424581954E103005DB399 /* RSMTempScreenQuad.cpp in Sources */,
 				FB6994A6192FC2A100B20DEB /* main.cpp in Sources */,
 			);

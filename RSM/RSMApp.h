@@ -35,11 +35,15 @@ private:
 
 	enum ShowMode
 	{
-		SM_Position,
-		SM_Normal,
-		SM_Flux,
-		SM_Depth,
-		SM_DirectLighting
+		SM_RSMPosition,
+		SM_RSMNormal,
+		SM_RSMFlux,
+		SM_RSMDepth,
+		SM_IndirectLighting,
+        SM_Position,
+        SM_Normal,
+        SM_Color,
+        SM_Depth
 	};
 
 	int mWidth, mHeight;
@@ -56,14 +60,18 @@ private:
 
 	// RSM-buffer.
 	FrameBufferPtr mRSMBuffer;
-	Texture2DPtr mPositionTexture;
-	Texture2DPtr mNormalTexture;
-	Texture2DPtr mFluxTexture;
-	Texture2DPtr mDepthTexture;
+	Texture2DPtr mRSMPositionTexture; // Light view space
+	Texture2DPtr mRSMNormalTexture;   // Light view space
+	Texture2DPtr mRSMFluxTexture;
+	Texture2DPtr mRSMDepthTexture;
 
-	// Direct lighting render target.
-	FrameBufferPtr mDirectLightingBuffer;
-	Texture2DPtr mDirectLightingTexture;
+	// G-buffer.
+	FrameBufferPtr mGBuffer;
+    Texture2DPtr mPositionTexture; // World space
+    Texture2DPtr mNormalTexture;   // World space
+    Texture2DPtr mColorTexture;
+    Texture2DPtr mDepthTexture;
+	Texture2DPtr mIndirectLightingTexture;
 
 	ShowMode mShowMode;
 

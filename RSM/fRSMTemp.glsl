@@ -17,7 +17,7 @@ float GetLinearDepth(vec2 uv)
 
 void main()
 {
-	if( showMode == 2 )
+	if( showMode == 2 || showMode == 7 )
 	{
 		gl_FragData[0] = vec4(texture2D(tempSampler, pTCoord).xyz*0.5 + 0.5, 1.0);
 	}
@@ -26,7 +26,7 @@ void main()
 		vec4 flux = texture2D(tempSampler, pTCoord);
 		gl_FragData[0] = flux;
 	}
-    else if( showMode == 4 )
+    else if( showMode == 4 || showMode == 9 )
     {
         float depth = GetLinearDepth(pTCoord);        
         gl_FragData[0] = vec4(depth, depth, depth, 1.0);
