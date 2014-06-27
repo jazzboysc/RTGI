@@ -162,7 +162,7 @@ void RSMApp::Initialize()
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-    mGround->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
+    mGround->MaterialColor = vec3(0.25f, 0.25f, 0.75f);
     mGround->SampleRadius = RSMSamplingRadius;
     mGround->SampleCount = RSM_SAMPLE_COUNT;
     mGround->LightProjector = mLightProjector;
@@ -179,7 +179,7 @@ void RSMApp::Initialize()
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
-    mBackWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
+    mBackWall->MaterialColor = vec3(0.25f, 0.75f, 0.25f);
     mBackWall->SampleRadius = RSMSamplingRadius;
     mBackWall->SampleCount = RSM_SAMPLE_COUNT;
     mBackWall->LightProjector = mLightProjector;
@@ -196,7 +196,7 @@ void RSMApp::Initialize()
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
-    mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+    mLeftWall->MaterialColor = vec3(0.75f, 0.25f, 0.25f);
     mLeftWall->SampleRadius = RSMSamplingRadius;
     mLeftWall->SampleCount = RSM_SAMPLE_COUNT;
     mLeftWall->LightProjector = mLightProjector;
