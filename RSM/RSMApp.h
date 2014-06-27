@@ -4,6 +4,7 @@
 #include "GraphicsFrameworkHeader.h"
 #include "RSMTriMesh.h"
 #include "RSMTempScreenQuad.h"
+#include "RSMDeferredLightingQuad.h"
 
 namespace RTGI
 {
@@ -43,7 +44,8 @@ private:
         SM_Position,
         SM_Normal,
         SM_Color,
-        SM_Depth
+        SM_Depth,
+        SM_DeferredLighting
 	};
 
 	int mWidth, mHeight;
@@ -76,6 +78,7 @@ private:
 	ShowMode mShowMode;
 
 	RSMTempScreenQuadPtr mRSMTempResultQuad;
+    RSMDeferredLightingQuadPtr mRSMDeferredLightingQuad;
 
 	enum { RSM_SAMPLE_COUNT = 400 };
 	float randmoNumbers[RSM_SAMPLE_COUNT*3];

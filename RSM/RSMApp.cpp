@@ -59,11 +59,11 @@ void RSMApp::Initialize()
 	MaterialTemplate* mtRSMTemp = new MaterialTemplate();
 	mtRSMTemp->AddTechnique(techRSMTemp);
 
-	//Pass* passDirectLighting = new Pass("vDirectLighting.glsl", "fDirectLighting.glsl");
-	//Technique* techDirectLighting = new Technique();
-	//techDirectLighting->AddPass(passDirectLighting);
-	//MaterialTemplate* mtDirectLighting = new MaterialTemplate();
-	//mtDirectLighting->AddTechnique(techDirectLighting);
+	Pass* passDeferredLighting = new Pass("vRSMDeferredLighting.glsl", "fRSMDeferredLighting.glsl");
+	Technique* techDeferredLighting = new Technique();
+	techDeferredLighting->AddPass(passDeferredLighting);
+	MaterialTemplate* mtDeferredLighting = new MaterialTemplate();
+	mtDeferredLighting->AddTechnique(techDeferredLighting);
 
 	// Create RSM-buffer MRT textures.
 	mRSMPositionTexture = new Texture2D();
@@ -123,6 +123,20 @@ void RSMApp::Initialize()
 	mRSMTempResultQuad->CreateDeviceResource();
 	mRSMTempResultQuad->TempTexture = mRSMNormalTexture;
     
+	// Create RSM deferred lighting screen quad.
+	material = new Material(mtDeferredLighting);
+	mRSMDeferredLightingQuad = new RSMDeferredLightingQuad(material, mLight);
+	mRSMDeferredLightingQuad->LoadFromFile("screenquad.ply");
+	mRSMDeferredLightingQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+	mRSMDeferredLightingQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+	mRSMDeferredLightingQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+	mRSMDeferredLightingQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+	mRSMDeferredLightingQuad->CreateDeviceResource();
+    mRSMDeferredLightingQuad->PositionTexture = mPositionTexture;
+    mRSMDeferredLightingQuad->NormalTexture = mNormalTexture;
+    mRSMDeferredLightingQuad->ReflectanceTexture = mColorTexture;
+    mRSMDeferredLightingQuad->IndirectLightingTexture = mIndirectLightingTexture;
+    
 	// Create scene.
     float RSMSamplingRadius = 0.05f;
 	mat4 rotM;
@@ -133,8 +147,8 @@ void RSMApp::Initialize()
 	mModel->CreateDeviceResource();
 	rotM = RotateY(90.0f);
 	mModel->SetWorldTransform(rotM);
-	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -2.0f));
-	mModel->MaterialColor = vec3(0.8f, 0.8f, 0.8f);
+	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
+	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
     mModel->SampleRadius = RSMSamplingRadius;
     mModel->SampleCount = RSM_SAMPLE_COUNT;
     mModel->LightProjector = mLightProjector;
@@ -148,7 +162,7 @@ void RSMApp::Initialize()
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-	mGround->MaterialColor = vec3(0.2862f, 0.2862f, 0.7647f);
+    mGround->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
     mGround->SampleRadius = RSMSamplingRadius;
     mGround->SampleCount = RSM_SAMPLE_COUNT;
     mGround->LightProjector = mLightProjector;
@@ -165,7 +179,7 @@ void RSMApp::Initialize()
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
-	mBackWall->MaterialColor = vec3(0.2980f, 0.6901f, 0.2980f);
+    mBackWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
     mBackWall->SampleRadius = RSMSamplingRadius;
     mBackWall->SampleCount = RSM_SAMPLE_COUNT;
     mBackWall->LightProjector = mLightProjector;
@@ -182,7 +196,7 @@ void RSMApp::Initialize()
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
-	mLeftWall->MaterialColor = vec3(0.6509f, 0.2862f, 0.2862f);
+    mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
     mLeftWall->SampleRadius = RSMSamplingRadius;
     mLeftWall->SampleCount = RSM_SAMPLE_COUNT;
     mLeftWall->LightProjector = mLightProjector;
@@ -250,11 +264,6 @@ void RSMApp::Run()
 	DrawSceneToRSMBuffer();
 	mRSMBuffer->Disable();
 
-	// Deferred lighting.
-	//mDirectLightingBuffer->Enable();
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//mDirectLightingBuffer->Disable();
-
 	// Generate indirect lighting buffer.
     mGBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -262,7 +271,15 @@ void RSMApp::Run()
     mGBuffer->Disable();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    mRSMTempResultQuad->Render(0, 0);
+    if( mShowMode == SM_DeferredLighting )
+    {
+        // Deferred lighting.
+        mRSMDeferredLightingQuad->Render(0, 0);
+    }
+    else
+    {
+        mRSMTempResultQuad->Render(0, 0);
+    }
 
 	glutSwapBuffers();
 }
@@ -293,6 +310,8 @@ void RSMApp::Terminate()
 	mIndirectLightingTexture = 0;
 
 	mRSMTempResultQuad = 0;
+    mRSMDeferredLightingQuad = 0;
+    
 	mSphere = 0;
 	mSamplingPatternTexture = 0;
 }
@@ -353,6 +372,10 @@ void RSMApp::OnKeyboard(unsigned char key, int x, int y)
         mShowMode = SM_Depth;
         mRSMTempResultQuad->ShowMode = 9;
         mRSMTempResultQuad->TempTexture = mDepthTexture;
+        break;
+            
+    case '0':
+        mShowMode = SM_DeferredLighting;
         break;
             
 	default:

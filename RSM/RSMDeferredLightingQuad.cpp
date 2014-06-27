@@ -45,6 +45,12 @@ void RSMDeferredLightingQuad::OnUpdateShaderConstants(int, int)
 	glUniform1i(mReflectanceSamplerLoc, 2);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, IndirectLightingTexture->GetTexture());
+	glUniform1i(mIndirectLightingSamplerLoc, 3);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 //----------------------------------------------------------------------------
 void RSMDeferredLightingQuad::OnGetShaderConstants()
