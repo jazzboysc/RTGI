@@ -5,6 +5,7 @@
     <ClCompile Include="RSMApp.cpp" />
     <ClCompile Include="RSMTriMesh.cpp" />
     <ClCompile Include="RSMTempScreenQuad.cpp" />
+    <ClCompile Include="RSMDeferredLightingQuad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GLSL">
@@ -15,6 +16,7 @@
     <ClInclude Include="RSMApp.h" />
     <ClInclude Include="RSMTriMesh.h" />
     <ClInclude Include="RSMTempScreenQuad.h" />
+    <ClInclude Include="RSMDeferredLightingQuad.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fRSMBuffer.glsl">
@@ -33,6 +35,12 @@
       <Filter>GLSL</Filter>
     </None>
     <None Include="vIndirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fRSMDeferredLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vRSMDeferredLighting.glsl">
       <Filter>GLSL</Filter>
     </None>
   </ItemGroup>

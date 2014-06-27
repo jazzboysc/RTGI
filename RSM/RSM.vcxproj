@@ -84,20 +84,24 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RSMApp.cpp" />
+    <ClCompile Include="RSMDeferredLightingQuad.cpp" />
     <ClCompile Include="RSMTempScreenQuad.cpp" />
     <ClCompile Include="RSMTriMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RSMApp.h" />
+    <ClInclude Include="RSMDeferredLightingQuad.h" />
     <ClInclude Include="RSMTempScreenQuad.h" />
     <ClInclude Include="RSMTriMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fIndirectLighting.glsl" />
     <None Include="fRSMBuffer.glsl" />
+    <None Include="fRSMDeferredLighting.glsl" />
     <None Include="fRSMTemp.glsl" />
     <None Include="vIndirectLighting.glsl" />
     <None Include="vRSMBuffer.glsl" />
+    <None Include="vRSMDeferredLighting.glsl" />
     <None Include="vRSMTemp.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
