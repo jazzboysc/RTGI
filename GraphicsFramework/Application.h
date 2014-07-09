@@ -8,6 +8,10 @@
 
 #include "FrameworkCommon.h"
 
+#ifdef _WIN32
+#include <wingdi.h>
+#endif
+
 namespace RTGI
 {
 
@@ -30,6 +34,11 @@ public:
 	virtual void OnMouse(int button, int state, int x, int y);
 	virtual void OnMouseMove(int x, int y);
 	virtual void OnReshape(int x, int y);
+
+protected:
+#ifdef _WIN32
+	HGLRC mOpenGLContext;
+#endif
 };
 
 }

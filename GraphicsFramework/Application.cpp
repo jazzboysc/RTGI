@@ -11,6 +11,9 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 Application::Application()
 {
+#ifdef _WIN32
+	mOpenGLContext = wglGetCurrentContext();
+#endif
 }
 //----------------------------------------------------------------------------
 Application::~Application()
