@@ -38,6 +38,10 @@ public:
 protected:
 #ifdef _WIN32
 	HGLRC mOpenGLContext;
+#else
+#ifdef __APPLE__
+    CGLContextObj mOpenGLContext;
+#endif
 #endif
 };
 

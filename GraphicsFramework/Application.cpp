@@ -13,6 +13,10 @@ Application::Application()
 {
 #ifdef _WIN32
 	mOpenGLContext = wglGetCurrentContext();
+#else
+#ifdef __APPLE__
+    mOpenGLContext = CGLGetCurrentContext();
+#endif
 #endif
 }
 //----------------------------------------------------------------------------
