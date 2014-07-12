@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "748AA4D907F4631800486586"
-               BuildableName = "RSM.app"
+               BuildableName = "GPGPU_MatrixVectorMath.app"
                BlueprintName = "Release Static"
-               ReferencedContainer = "container:RSM.xcodeproj">
+               ReferencedContainer = "container:GPGPU_MatrixVectorMath.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "748AA4D907F4631800486586"
-            BuildableName = "RSM.app"
+            BuildableName = "GPGPU_MatrixVectorMath.app"
             BlueprintName = "Release Static"
-            ReferencedContainer = "container:RSM.xcodeproj">
+            ReferencedContainer = "container:GPGPU_MatrixVectorMath.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,9 +52,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "748AA4D907F4631800486586"
-            BuildableName = "RSM.app"
+            BuildableName = "GPGPU_MatrixVectorMath.app"
             BlueprintName = "Release Static"
-            ReferencedContainer = "container:RSM.xcodeproj">
+            ReferencedContainer = "container:GPGPU_MatrixVectorMath.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "748AA4D907F4631800486586"
-            BuildableName = "RSM.app"
+            BuildableName = "GPGPU_MatrixVectorMath.app"
             BlueprintName = "Release Static"
-            ReferencedContainer = "container:RSM.xcodeproj">
+            ReferencedContainer = "container:GPGPU_MatrixVectorMath.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
