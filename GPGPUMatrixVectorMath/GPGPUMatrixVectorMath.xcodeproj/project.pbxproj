@@ -57,8 +57,8 @@
 /* Begin PBXFileReference section */
 		3C6FBC6B083E6E1B0068AA05 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		3CB4F4A713DCF47000C74DF4 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../../../../System/Library/Frameworks/GLUT.framework; sourceTree = "<group>"; };
-		748AA4CC07F4624400486586 /* GPGPU_MatrixVectorMathd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPGPU_MatrixVectorMathd.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		748AA4DA07F4631800486586 /* GPGPU_MatrixVectorMath.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPGPU_MatrixVectorMath.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		748AA4CC07F4624400486586 /* GPGPUMatrixVectorMathd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPGPUMatrixVectorMathd.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		748AA4DA07F4631800486586 /* GPGPUMatrixVectorMath.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPGPUMatrixVectorMath.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB0A81B7192EE04E0016C3F1 /* libGraphicsFrameworkd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGraphicsFrameworkd.a; path = ../SDK/Lib/Debug/libGraphicsFrameworkd.a; sourceTree = "<group>"; };
 		FB0A81B9192EE0C00016C3F1 /* libGraphicsFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGraphicsFramework.a; path = ../SDK/Lib/Release/libGraphicsFramework.a; sourceTree = "<group>"; };
 		FB5D63581970693100D3B00E /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
@@ -127,8 +127,8 @@
 		748AA4CD07F4624400486586 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				748AA4CC07F4624400486586 /* GPGPU_MatrixVectorMathd.app */,
-				748AA4DA07F4631800486586 /* GPGPU_MatrixVectorMath.app */,
+				748AA4CC07F4624400486586 /* GPGPUMatrixVectorMathd.app */,
+				748AA4DA07F4631800486586 /* GPGPUMatrixVectorMath.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -204,7 +204,7 @@
 			);
 			name = "Debug Static";
 			productName = BillboardNodesStaDeb;
-			productReference = 748AA4CC07F4624400486586 /* GPGPU_MatrixVectorMathd.app */;
+			productReference = 748AA4CC07F4624400486586 /* GPGPUMatrixVectorMathd.app */;
 			productType = "com.apple.product-type.application";
 		};
 		748AA4D907F4631800486586 /* Release Static */ = {
@@ -222,7 +222,7 @@
 			);
 			name = "Release Static";
 			productName = BillboardNodesStaRel;
-			productReference = 748AA4DA07F4631800486586 /* GPGPU_MatrixVectorMath.app */;
+			productReference = 748AA4DA07F4631800486586 /* GPGPUMatrixVectorMath.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -233,7 +233,7 @@
 			attributes = {
 				LastUpgradeCheck = 0510;
 			};
-			buildConfigurationList = 3C4B93AC08674C10001A085C /* Build configuration list for PBXProject "GPGPU_MatrixVectorMath" */;
+			buildConfigurationList = 3C4B93AC08674C10001A085C /* Build configuration list for PBXProject "GPGPUMatrixVectorMath" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -346,7 +346,7 @@
 				HEADER_SEARCH_PATHS = "${SRCROOT}/../SDK/Include";
 				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../SDK/Lib/Debug";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				PRODUCT_NAME = GPGPU_MatrixVectorMathd;
+				PRODUCT_NAME = GPGPUMatrixVectorMathd;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -363,7 +363,7 @@
 				HEADER_SEARCH_PATHS = "${SRCROOT}/../SDK/Include";
 				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../SDK/Lib/Release";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				PRODUCT_NAME = GPGPU_MatrixVectorMath;
+				PRODUCT_NAME = GPGPUMatrixVectorMath;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -401,7 +401,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		3C4B93AC08674C10001A085C /* Build configuration list for PBXProject "GPGPU_MatrixVectorMath" */ = {
+		3C4B93AC08674C10001A085C /* Build configuration list for PBXProject "GPGPUMatrixVectorMath" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3C4B93AE08674C10001A085C /* Default */,

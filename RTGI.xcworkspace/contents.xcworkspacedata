@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:GPGPU_MatrixVectorMultiply/GPGPU_MatrixVectorMath.xcodeproj">
+      location = "group:GPGPUMatrixVectorMath/GPGPUMatrixVectorMath.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:RSM/RSM.xcodeproj">

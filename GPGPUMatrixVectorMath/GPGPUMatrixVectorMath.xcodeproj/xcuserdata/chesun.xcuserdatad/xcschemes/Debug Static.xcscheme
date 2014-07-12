@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "748AA4D907F4631800486586"
-               BuildableName = "GPGPU_MatrixVectorMath.app"
-               BlueprintName = "Release Static"
-               ReferencedContainer = "container:GPGPU_MatrixVectorMath.xcodeproj">
+               BlueprintIdentifier = "748AA4CB07F4624400486586"
+               BuildableName = "GPGPUMatrixVectorMathd.app"
+               BlueprintName = "Debug Static"
+               ReferencedContainer = "container:GPGPUMatrixVectorMath.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "748AA4D907F4631800486586"
-            BuildableName = "GPGPU_MatrixVectorMath.app"
-            BlueprintName = "Release Static"
-            ReferencedContainer = "container:GPGPU_MatrixVectorMath.xcodeproj">
+            BlueprintIdentifier = "748AA4CB07F4624400486586"
+            BuildableName = "GPGPUMatrixVectorMathd.app"
+            BlueprintName = "Debug Static"
+            ReferencedContainer = "container:GPGPUMatrixVectorMath.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -51,10 +51,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "748AA4D907F4631800486586"
-            BuildableName = "GPGPU_MatrixVectorMath.app"
-            BlueprintName = "Release Static"
-            ReferencedContainer = "container:GPGPU_MatrixVectorMath.xcodeproj">
+            BlueprintIdentifier = "748AA4CB07F4624400486586"
+            BuildableName = "GPGPUMatrixVectorMathd.app"
+            BlueprintName = "Debug Static"
+            ReferencedContainer = "container:GPGPUMatrixVectorMath.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -69,10 +69,10 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "748AA4D907F4631800486586"
-            BuildableName = "GPGPU_MatrixVectorMath.app"
-            BlueprintName = "Release Static"
-            ReferencedContainer = "container:GPGPU_MatrixVectorMath.xcodeproj">
+            BlueprintIdentifier = "748AA4CB07F4624400486586"
+            BuildableName = "GPGPUMatrixVectorMathd.app"
+            BlueprintName = "Debug Static"
+            ReferencedContainer = "container:GPGPUMatrixVectorMath.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
