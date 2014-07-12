@@ -35,6 +35,9 @@ public:
 	virtual void OnMouseMove(int x, int y);
 	virtual void OnReshape(int x, int y);
 
+    void InitializeOpenCL();
+    void TerminateOpenCL();
+    
 protected:
 #ifdef _WIN32
 	HGLRC mOpenGLContext;
@@ -43,6 +46,10 @@ protected:
     CGLContextObj mOpenGLContext;
 #endif
 #endif
+    
+    cl_platform_id mOpenCLPlatform;
+    cl_device_id mOpenCLDevice;
+    cl_context mOpenCLContext;
 };
 
 }

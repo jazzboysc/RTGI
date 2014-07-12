@@ -22,3 +22,5 @@ SDK/Lib/Release/*.lib
 
 *.a
 *.unsuccessfulbuild
+
+RTGI.xcworkspace/xcuserdata/ches.xcuserdatad/UserInterfaceState.xcuserstate
