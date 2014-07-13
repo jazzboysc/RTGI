@@ -25,3 +25,20 @@ cl_command_queue CommandQueue::GetQueue()
 	return mQueue;
 }
 //--------------------------------------------------------------------------
+void CommandQueue::EnqueueKernel(ComputeKernel* kernel,  cl_uint workDim, 
+	size_t* globalWorkSize, size_t* localWorkSize)
+{
+	cl_int res;
+	res = clEnqueueNDRangeKernel(mQueue, kernel->GetKernel(), workDim, NULL, 
+		(const size_t*)globalWorkSize, (const size_t*)localWorkSize, 0, 
+		NULL, NULL);
+}
+//--------------------------------------------------------------------------
+void CommandQueue::EnqueueReadBuffer(MemoryObject* srcBuffer, size_t offset, 
+	size_t dataSize, void* dstData)
+{
+	cl_int res;
+	res = clEnqueueReadBuffer(mQueue, srcBuffer->GetMO(), CL_TRUE, offset, 
+		dataSize, dstData, 0, NULL, NULL);
+}
+//--------------------------------------------------------------------------

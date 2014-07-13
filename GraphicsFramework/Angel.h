@@ -39,6 +39,7 @@
 #  include <GL/glew.h>
 #  include <freeglut.h>
 #  include <freeglut_ext.h>
+#  include <CL/OpenCL.h>
 #endif  // __APPLE__
 
 // Define a helpful macro for handling offsets into buffer objects

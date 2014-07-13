@@ -1,5 +1,5 @@
-#ifndef RTGI_GPGPU_MatrixVectorMathApp_H
-#define RTGI_GPGPU_MatrixVectorMathApp_H
+#ifndef RTGI_GPGPUMatrixVectorMathApp_H
+#define RTGI_GPGPUMatrixVectorMathApp_H
 
 #include "GraphicsFrameworkHeader.h"
 
@@ -10,11 +10,11 @@ namespace RTGI
 // Author: Che Sun
 // Date: 07/11/2014
 //----------------------------------------------------------------------------
-class GPGPU_MatrixVectorMathApp : public Application
+class GPGPUMatrixVectorMathApp : public Application
 {
 public:
-	GPGPU_MatrixVectorMathApp(int width, int height);
-	~GPGPU_MatrixVectorMathApp();
+	GPGPUMatrixVectorMathApp(int width, int height);
+	~GPGPUMatrixVectorMathApp();
 
 	void Initialize();
 	void Run();

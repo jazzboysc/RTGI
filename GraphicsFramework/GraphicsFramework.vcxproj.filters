@@ -87,6 +87,18 @@
     <ClCompile Include="RNG.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="CommandQueue.cpp">
+      <Filter>GPGPU</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeKernel.cpp">
+      <Filter>GPGPU</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeProgram.cpp">
+      <Filter>GPGPU</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryObject.cpp">
+      <Filter>GPGPU</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -188,6 +200,18 @@
     <ClInclude Include="RNG.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="CommandQueue.h">
+      <Filter>GPGPU</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeKernel.h">
+      <Filter>GPGPU</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeProgram.h">
+      <Filter>GPGPU</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryObject.h">
+      <Filter>GPGPU</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="RefObject.inl">
@@ -212,6 +236,9 @@
     </Filter>
     <Filter Include="Material">
       <UniqueIdentifier>{2880ec38-9c01-4f96-ae49-7756e9cc51ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GPGPU">
+      <UniqueIdentifier>{1ba2c928-6b97-4fdf-bc1b-0e6f9c938284}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

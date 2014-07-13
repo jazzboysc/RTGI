@@ -1,4 +1,4 @@
-#include "GPGPU_MatrixVectorMathApp.h"
+#include "GPGPUMatrixVectorMathApp.h"
 
 using namespace RTGI;
 
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 #endif
 
 	// Initialize application.
-	app = new GPGPU_MatrixVectorMathApp(width, height);
+	app = new GPGPUMatrixVectorMathApp(width, height);
 	app->Initialize();
 
 	// assign handlers

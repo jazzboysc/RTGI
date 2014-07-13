@@ -9,6 +9,7 @@
 #include "FrameworkCommon.h"
 #include "RefObject.h"
 #include "ComputeProgram.h"
+#include "MemoryObject.h"
 
 namespace RTGI
 {
@@ -22,6 +23,9 @@ class ComputeKernel : public RefObject
 public:
 	ComputeKernel(ComputeProgram* program, const std::string& kernelName);
 	~ComputeKernel();
+
+	void SetArgument(int index, MemoryObject* data);
+	cl_kernel GetKernel() const;
 
 private:
     cl_kernel mKernel;

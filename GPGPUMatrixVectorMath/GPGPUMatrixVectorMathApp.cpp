@@ -1,19 +1,19 @@
-#include "GPGPU_MatrixVectorMathApp.h"
+#include "GPGPUMatrixVectorMathApp.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-GPGPU_MatrixVectorMathApp::GPGPU_MatrixVectorMathApp(int, int)
+GPGPUMatrixVectorMathApp::GPGPUMatrixVectorMathApp(int, int)
 	:
 	mWindowTitle("GPGPU_MatrixVectorMath demo")
 {
 }
 //----------------------------------------------------------------------------
-GPGPU_MatrixVectorMathApp::~GPGPU_MatrixVectorMathApp()
+GPGPUMatrixVectorMathApp::~GPGPUMatrixVectorMathApp()
 {
 }
 //----------------------------------------------------------------------------
-void GPGPU_MatrixVectorMathApp::Initialize()
+void GPGPUMatrixVectorMathApp::Initialize()
 {
     InitializeOpenCL();
     
@@ -26,7 +26,7 @@ void GPGPU_MatrixVectorMathApp::Initialize()
     
     mCommandQueue = new CommandQueue(mOpenCLContext, mOpenCLDevice);
     
-    float mat[16], vec[4], gpuResult[4], cpuResult[4];
+    float mat[16], vec[4], cpuResult[4];
     for( int i = 0; i < 16; ++i )
     {
         mat[i] = i * 2.0f;
@@ -39,20 +39,32 @@ void GPGPU_MatrixVectorMathApp::Initialize()
         cpuResult[2] += mat[i +  8] * vec[i];
         cpuResult[3] += mat[i + 12] * vec[i];
     }
-    
+ 
     mMatrix = new MemoryObject(mOpenCLContext,
         CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float)*16, mat);
     mVector = new MemoryObject(mOpenCLContext,
         CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float)*4, vec);
     mResult = new MemoryObject(mOpenCLContext, CL_MEM_WRITE_ONLY,
         sizeof(float)*4, NULL);
+	mKernel->SetArgument(0, mMatrix);
+	mKernel->SetArgument(1, mVector);
+	mKernel->SetArgument(2, mResult);
 }
 //----------------------------------------------------------------------------
-void GPGPU_MatrixVectorMathApp::Run()
+void GPGPUMatrixVectorMathApp::Run()
 {
+	static bool done = false;
+	static float gpuResult[4];
+	if( !done )
+	{
+		size_t workUnitsPerKernel = 4;
+		mCommandQueue->EnqueueKernel(mKernel, 1, &workUnitsPerKernel, NULL);
+		mCommandQueue->EnqueueReadBuffer(mResult, 0, sizeof(float)*4, gpuResult);
+		done = true;
+	}
 }
 //----------------------------------------------------------------------------
-void GPGPU_MatrixVectorMathApp::Terminate()
+void GPGPUMatrixVectorMathApp::Terminate()
 {
     mProgram = 0;
     mKernel = 0;
@@ -64,23 +76,23 @@ void GPGPU_MatrixVectorMathApp::Terminate()
     TerminateOpenCL();
 }
 //----------------------------------------------------------------------------
-void GPGPU_MatrixVectorMathApp::OnKeyboard(unsigned char key, int x, int y)
+void GPGPUMatrixVectorMathApp::OnKeyboard(unsigned char key, int x, int y)
 {
 }
 //----------------------------------------------------------------------------
-void GPGPU_MatrixVectorMathApp::OnKeyboardUp(unsigned char key, int x, int y)
+void GPGPUMatrixVectorMathApp::OnKeyboardUp(unsigned char key, int x, int y)
 {
 }
 //----------------------------------------------------------------------------
-void GPGPU_MatrixVectorMathApp::OnMouse(int button, int state, int x, int y)
+void GPGPUMatrixVectorMathApp::OnMouse(int button, int state, int x, int y)
 {
 }
 //----------------------------------------------------------------------------
-void GPGPU_MatrixVectorMathApp::OnMouseMove(int x, int y)
+void GPGPUMatrixVectorMathApp::OnMouseMove(int x, int y)
 {
 }
 //----------------------------------------------------------------------------
-void GPGPU_MatrixVectorMathApp::OnReshape(int x, int y)
+void GPGPUMatrixVectorMathApp::OnReshape(int x, int y)
 {
 }
 //----------------------------------------------------------------------------

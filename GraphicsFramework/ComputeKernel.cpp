@@ -22,3 +22,16 @@ ComputeKernel::~ComputeKernel()
     clReleaseKernel(mKernel);
 }
 //----------------------------------------------------------------------------
+void ComputeKernel::SetArgument(int index, MemoryObject* data)
+{
+	cl_int res;
+	cl_mem mo = data->GetMO();
+	res = clSetKernelArg(mKernel, index, sizeof(cl_mem), &mo);
+	assert( res >= 0 );
+}
+//----------------------------------------------------------------------------
+cl_kernel ComputeKernel::GetKernel() const
+{
+	return mKernel;
+}
+//----------------------------------------------------------------------------
