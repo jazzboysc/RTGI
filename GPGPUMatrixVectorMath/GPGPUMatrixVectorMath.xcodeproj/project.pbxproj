@@ -11,12 +11,12 @@
 		3C6FBC6D083E6E1B0068AA05 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6FBC6B083E6E1B0068AA05 /* OpenGL.framework */; };
 		3CB4F4A813DCF47000C74DF4 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CB4F4A713DCF47000C74DF4 /* GLUT.framework */; };
 		3CB4F4A913DCF47000C74DF4 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CB4F4A713DCF47000C74DF4 /* GLUT.framework */; };
+		A05139A5197332830030AF3A /* GPGPUMatrixVectorMathApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A05139A3197332830030AF3A /* GPGPUMatrixVectorMathApp.cpp */; };
+		A05139A6197332830030AF3A /* GPGPUMatrixVectorMathApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A05139A3197332830030AF3A /* GPGPUMatrixVectorMathApp.cpp */; };
 		FB0A81B8192EE04E0016C3F1 /* libGraphicsFrameworkd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB0A81B7192EE04E0016C3F1 /* libGraphicsFrameworkd.a */; };
 		FB0A81BA192EE0C00016C3F1 /* libGraphicsFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB0A81B9192EE0C00016C3F1 /* libGraphicsFramework.a */; };
 		FB5D63591970693100D3B00E /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB5D63581970693100D3B00E /* OpenCL.framework */; };
 		FB5D635A1970694200D3B00E /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB5D63581970693100D3B00E /* OpenCL.framework */; };
-		FB5D636119706A9400D3B00E /* GPGPU_MatrixVectorMathApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D635E19706A9400D3B00E /* GPGPU_MatrixVectorMathApp.cpp */; };
-		FB5D636219706A9400D3B00E /* GPGPU_MatrixVectorMathApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D635E19706A9400D3B00E /* GPGPU_MatrixVectorMathApp.cpp */; };
 		FB5D636319706A9400D3B00E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D636019706A9400D3B00E /* main.cpp */; };
 		FB5D636419706A9400D3B00E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D636019706A9400D3B00E /* main.cpp */; };
 		FB5D636F1970A3F500D3B00E /* matvec.clsl in Resources */ = {isa = PBXBuildFile; fileRef = FB5D636C1970A23500D3B00E /* matvec.clsl */; };
@@ -59,11 +59,11 @@
 		3CB4F4A713DCF47000C74DF4 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../../../../System/Library/Frameworks/GLUT.framework; sourceTree = "<group>"; };
 		748AA4CC07F4624400486586 /* GPGPUMatrixVectorMathd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPGPUMatrixVectorMathd.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		748AA4DA07F4631800486586 /* GPGPUMatrixVectorMath.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPGPUMatrixVectorMath.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A05139A3197332830030AF3A /* GPGPUMatrixVectorMathApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPGPUMatrixVectorMathApp.cpp; sourceTree = "<group>"; };
+		A05139A4197332830030AF3A /* GPGPUMatrixVectorMathApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPGPUMatrixVectorMathApp.h; sourceTree = "<group>"; };
 		FB0A81B7192EE04E0016C3F1 /* libGraphicsFrameworkd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGraphicsFrameworkd.a; path = ../SDK/Lib/Debug/libGraphicsFrameworkd.a; sourceTree = "<group>"; };
 		FB0A81B9192EE0C00016C3F1 /* libGraphicsFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGraphicsFramework.a; path = ../SDK/Lib/Release/libGraphicsFramework.a; sourceTree = "<group>"; };
 		FB5D63581970693100D3B00E /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
-		FB5D635E19706A9400D3B00E /* GPGPU_MatrixVectorMathApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPGPU_MatrixVectorMathApp.cpp; sourceTree = "<group>"; };
-		FB5D635F19706A9400D3B00E /* GPGPU_MatrixVectorMathApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPGPU_MatrixVectorMathApp.h; sourceTree = "<group>"; };
 		FB5D636019706A9400D3B00E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		FB5D636C1970A23500D3B00E /* matvec.clsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = matvec.clsl; sourceTree = "<group>"; };
 		FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GraphicsFramework.xcodeproj; path = ../GraphicsFramework/GraphicsFramework.xcodeproj; sourceTree = "<group>"; };
@@ -155,8 +155,8 @@
 		748AA50C07F465A200486586 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				FB5D635E19706A9400D3B00E /* GPGPU_MatrixVectorMathApp.cpp */,
-				FB5D635F19706A9400D3B00E /* GPGPU_MatrixVectorMathApp.h */,
+				A05139A3197332830030AF3A /* GPGPUMatrixVectorMathApp.cpp */,
+				A05139A4197332830030AF3A /* GPGPUMatrixVectorMathApp.h */,
 				FB5D636019706A9400D3B00E /* main.cpp */,
 			);
 			name = Sources;
@@ -302,7 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FB5D636319706A9400D3B00E /* main.cpp in Sources */,
-				FB5D636119706A9400D3B00E /* GPGPU_MatrixVectorMathApp.cpp in Sources */,
+				A05139A5197332830030AF3A /* GPGPUMatrixVectorMathApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,7 +311,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FB5D636419706A9400D3B00E /* main.cpp in Sources */,
-				FB5D636219706A9400D3B00E /* GPGPU_MatrixVectorMathApp.cpp in Sources */,
+				A05139A6197332830030AF3A /* GPGPUMatrixVectorMathApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
