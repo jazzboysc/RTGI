@@ -41,9 +41,11 @@ public:
 protected:
 #ifdef _WIN32
 	HGLRC mOpenGLContext;
+	HDC mWindowsDeviceContext;
 #else
 #ifdef __APPLE__
     CGLContextObj mOpenGLContext;
+	CGLShareGroupObj mShareGroup;
 #endif
 #endif
     
