@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="GPGPUPostProcessingTriMesh.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="GLSL">
+      <UniqueIdentifier>{62679678-6c18-4fdb-969e-c07a5e5725d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CLSL">
+      <UniqueIdentifier>{c34ce252-77be-48b3-8213-bcf5fd661ef1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GPGPUPostProcessingTriMesh.h" />
+  </ItemGroup>
+</Project>
