@@ -2,6 +2,8 @@
 #define RTGI_GPGPUPostProcessingApp_H
 
 #include "GraphicsFrameworkHeader.h"
+#include "GPGPUPostProcessingTriMesh.h"
+#include "GPGPUPostProcessingScreenQuad.h"
 
 namespace RTGI
 {
@@ -19,6 +21,9 @@ public:
 	void Initialize();
 	void Run();
 	void Terminate();
+    
+    void InitializeOpenCL();
+    void TerminateOpenCL();
 
 	// Event handlers.
 	void OnKeyboard(unsigned char key, int x, int y);
@@ -28,20 +33,23 @@ public:
 	void OnReshape(int x, int y);
 
 private:
+	int mWidth, mHeight;    
 	std::string mWindowTitle;
-	int mWidth, mHeight;
 
 	Camera* mCamera;
 
 	FrameBufferPtr mRenderBuffer;
 	Texture2DPtr mRenderTexture;
+    Texture2DPtr mDepthTexture;
     
+    GPGPUPostProcessingTriMeshPtr mModel;
+    GPGPUPostProcessingScreenQuadPtr mScreenQuad;
+
+    // GPGPU stuff
     ComputeProgramPtr mProgram;
     ComputeKernelPtr mKernel;
     CommandQueuePtr mCommandQueue;
-    MemoryObjectPtr mMatrix;
-    MemoryObjectPtr mVector;
-    MemoryObjectPtr mResult;
+    MemoryObjectPtr mKernelRenderTexture;
 };
 
 }

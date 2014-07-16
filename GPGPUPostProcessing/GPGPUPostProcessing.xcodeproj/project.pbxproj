@@ -1,0 +1,475 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3C6FBC6C083E6E1B0068AA05 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6FBC6B083E6E1B0068AA05 /* OpenGL.framework */; };
+		3C6FBC6D083E6E1B0068AA05 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6FBC6B083E6E1B0068AA05 /* OpenGL.framework */; };
+		3CB4F4A813DCF47000C74DF4 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CB4F4A713DCF47000C74DF4 /* GLUT.framework */; };
+		3CB4F4A913DCF47000C74DF4 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CB4F4A713DCF47000C74DF4 /* GLUT.framework */; };
+		FB06BFC41976F0D6000691BC /* GPGPUPostProcessingApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB06BFC01976F0D6000691BC /* GPGPUPostProcessingApp.cpp */; };
+		FB06BFC51976F0D6000691BC /* GPGPUPostProcessingApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB06BFC01976F0D6000691BC /* GPGPUPostProcessingApp.cpp */; };
+		FB06BFC61976F0D7000691BC /* GPGPUPostProcessingTriMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB06BFC21976F0D6000691BC /* GPGPUPostProcessingTriMesh.cpp */; };
+		FB06BFC71976F0D7000691BC /* GPGPUPostProcessingTriMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB06BFC21976F0D6000691BC /* GPGPUPostProcessingTriMesh.cpp */; };
+		FB06BFCB1976F233000691BC /* fRenderBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFC91976F233000691BC /* fRenderBuffer.glsl */; };
+		FB06BFCC1976F233000691BC /* fRenderBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFC91976F233000691BC /* fRenderBuffer.glsl */; };
+		FB06BFCD1976F233000691BC /* vRenderBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFCA1976F233000691BC /* vRenderBuffer.glsl */; };
+		FB06BFCE1976F233000691BC /* vRenderBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFCA1976F233000691BC /* vRenderBuffer.glsl */; };
+		FB06BFD11976FCA3000691BC /* beethoven.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFCF1976FCA3000691BC /* beethoven.ply */; };
+		FB06BFD21976FCA3000691BC /* beethoven.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFCF1976FCA3000691BC /* beethoven.ply */; };
+		FB06BFD31976FCA3000691BC /* screenquad.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFD01976FCA3000691BC /* screenquad.ply */; };
+		FB06BFD41976FCA3000691BC /* screenquad.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFD01976FCA3000691BC /* screenquad.ply */; };
+		FB06BFDB19771B06000691BC /* GPGPUPostProcessingScreenQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB06BFD919771B06000691BC /* GPGPUPostProcessingScreenQuad.cpp */; };
+		FB06BFDC19771B06000691BC /* GPGPUPostProcessingScreenQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB06BFD919771B06000691BC /* GPGPUPostProcessingScreenQuad.cpp */; };
+		FB06BFDF19771E10000691BC /* fGPGPUPostProcessingScreenQuad.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFDD19771E10000691BC /* fGPGPUPostProcessingScreenQuad.glsl */; };
+		FB06BFE019771E10000691BC /* fGPGPUPostProcessingScreenQuad.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFDD19771E10000691BC /* fGPGPUPostProcessingScreenQuad.glsl */; };
+		FB06BFE119771E10000691BC /* vGPGPUPostProcessingScreenQuad.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFDE19771E10000691BC /* vGPGPUPostProcessingScreenQuad.glsl */; };
+		FB06BFE219771E10000691BC /* vGPGPUPostProcessingScreenQuad.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB06BFDE19771E10000691BC /* vGPGPUPostProcessingScreenQuad.glsl */; };
+		FB0A81B8192EE04E0016C3F1 /* libGraphicsFrameworkd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB0A81B7192EE04E0016C3F1 /* libGraphicsFrameworkd.a */; };
+		FB0A81BA192EE0C00016C3F1 /* libGraphicsFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB0A81B9192EE0C00016C3F1 /* libGraphicsFramework.a */; };
+		FB5D63591970693100D3B00E /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB5D63581970693100D3B00E /* OpenCL.framework */; };
+		FB5D635A1970694200D3B00E /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB5D63581970693100D3B00E /* OpenCL.framework */; };
+		FB5D636319706A9400D3B00E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D636019706A9400D3B00E /* main.cpp */; };
+		FB5D636419706A9400D3B00E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D636019706A9400D3B00E /* main.cpp */; };
+		FB5D636F1970A3F500D3B00E /* filter.clsl in Resources */ = {isa = PBXBuildFile; fileRef = FB5D636C1970A23500D3B00E /* filter.clsl */; };
+		FB5D63701970A3FC00D3B00E /* filter.clsl in Resources */ = {isa = PBXBuildFile; fileRef = FB5D636C1970A23500D3B00E /* filter.clsl */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FB69949E192FC13100B20DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 74B57E8D07F3427D00913EC4;
+			remoteInfo = "Debug Static";
+		};
+		FB6994A0192FC13100B20DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 74D6DDFE07F342E200267169;
+			remoteInfo = "Release Static";
+		};
+		FB6994A2192FC15300B20DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 74B57E8C07F3427D00913EC4;
+			remoteInfo = "Debug Static";
+		};
+		FB6994A4192FC24200B20DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 74D6DDFA07F342E200267169;
+			remoteInfo = "Release Static";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3C6FBC6B083E6E1B0068AA05 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		3CB4F4A713DCF47000C74DF4 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../../../../System/Library/Frameworks/GLUT.framework; sourceTree = "<group>"; };
+		748AA4CC07F4624400486586 /* GPGPUPostProcessingd.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPGPUPostProcessingd.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		748AA4DA07F4631800486586 /* GPGPUPostProcessing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GPGPUPostProcessing.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB06BFC01976F0D6000691BC /* GPGPUPostProcessingApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPGPUPostProcessingApp.cpp; sourceTree = "<group>"; };
+		FB06BFC11976F0D6000691BC /* GPGPUPostProcessingApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPGPUPostProcessingApp.h; sourceTree = "<group>"; };
+		FB06BFC21976F0D6000691BC /* GPGPUPostProcessingTriMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPGPUPostProcessingTriMesh.cpp; sourceTree = "<group>"; };
+		FB06BFC31976F0D6000691BC /* GPGPUPostProcessingTriMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPGPUPostProcessingTriMesh.h; sourceTree = "<group>"; };
+		FB06BFC91976F233000691BC /* fRenderBuffer.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fRenderBuffer.glsl; sourceTree = "<group>"; };
+		FB06BFCA1976F233000691BC /* vRenderBuffer.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vRenderBuffer.glsl; sourceTree = "<group>"; };
+		FB06BFCF1976FCA3000691BC /* beethoven.ply */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = beethoven.ply; sourceTree = "<group>"; };
+		FB06BFD01976FCA3000691BC /* screenquad.ply */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = screenquad.ply; sourceTree = "<group>"; };
+		FB06BFD919771B06000691BC /* GPGPUPostProcessingScreenQuad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPGPUPostProcessingScreenQuad.cpp; sourceTree = "<group>"; };
+		FB06BFDA19771B06000691BC /* GPGPUPostProcessingScreenQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPGPUPostProcessingScreenQuad.h; sourceTree = "<group>"; };
+		FB06BFDD19771E10000691BC /* fGPGPUPostProcessingScreenQuad.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fGPGPUPostProcessingScreenQuad.glsl; sourceTree = "<group>"; };
+		FB06BFDE19771E10000691BC /* vGPGPUPostProcessingScreenQuad.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vGPGPUPostProcessingScreenQuad.glsl; sourceTree = "<group>"; };
+		FB0A81B7192EE04E0016C3F1 /* libGraphicsFrameworkd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGraphicsFrameworkd.a; path = ../SDK/Lib/Debug/libGraphicsFrameworkd.a; sourceTree = "<group>"; };
+		FB0A81B9192EE0C00016C3F1 /* libGraphicsFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGraphicsFramework.a; path = ../SDK/Lib/Release/libGraphicsFramework.a; sourceTree = "<group>"; };
+		FB5D63581970693100D3B00E /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		FB5D636019706A9400D3B00E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		FB5D636C1970A23500D3B00E /* filter.clsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = filter.clsl; sourceTree = "<group>"; };
+		FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GraphicsFramework.xcodeproj; path = ../GraphicsFramework/GraphicsFramework.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		748AA4CA07F4624400486586 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB0A81B8192EE04E0016C3F1 /* libGraphicsFrameworkd.a in Frameworks */,
+				3C6FBC6C083E6E1B0068AA05 /* OpenGL.framework in Frameworks */,
+				3CB4F4A813DCF47000C74DF4 /* GLUT.framework in Frameworks */,
+				FB5D63591970693100D3B00E /* OpenCL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		748AA4D807F4631800486586 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB0A81BA192EE0C00016C3F1 /* libGraphicsFramework.a in Frameworks */,
+				3C6FBC6D083E6E1B0068AA05 /* OpenGL.framework in Frameworks */,
+				3CB4F4A913DCF47000C74DF4 /* GLUT.framework in Frameworks */,
+				FB5D635A1970694200D3B00E /* OpenCL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7432C2B407F8766A00ABC141 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				FB0A81B7192EE04E0016C3F1 /* libGraphicsFrameworkd.a */,
+			);
+			name = Debug;
+			sourceTree = "<group>";
+		};
+		7432C2B707F8767000ABC141 /* Release */ = {
+			isa = PBXGroup;
+			children = (
+				FB0A81B9192EE0C00016C3F1 /* libGraphicsFramework.a */,
+			);
+			name = Release;
+			sourceTree = "<group>";
+		};
+		748AA4BE07F4621A00486586 = {
+			isa = PBXGroup;
+			children = (
+				FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */,
+				FB06BFC81976F143000691BC /* GLSL */,
+				FB56CC3D192FC83300DF31A8 /* CLSL */,
+				FB56CC9F192FEAD400DF31A8 /* Resources */,
+				748AA50C07F465A200486586 /* Sources */,
+				748AA4F707F4641600486586 /* Libraries */,
+				748AA4E207F463F300486586 /* Frameworks */,
+				748AA4CD07F4624400486586 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		748AA4CD07F4624400486586 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				748AA4CC07F4624400486586 /* GPGPUPostProcessingd.app */,
+				748AA4DA07F4631800486586 /* GPGPUPostProcessing.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		748AA4E207F463F300486586 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FB5D63581970693100D3B00E /* OpenCL.framework */,
+				3CB4F4A713DCF47000C74DF4 /* GLUT.framework */,
+				3C6FBC6B083E6E1B0068AA05 /* OpenGL.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		748AA4F707F4641600486586 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				7432C2B407F8766A00ABC141 /* Debug */,
+				7432C2B707F8767000ABC141 /* Release */,
+			);
+			name = Libraries;
+			sourceTree = SOURCE_ROOT;
+		};
+		748AA50C07F465A200486586 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				FB06BFD919771B06000691BC /* GPGPUPostProcessingScreenQuad.cpp */,
+				FB06BFDA19771B06000691BC /* GPGPUPostProcessingScreenQuad.h */,
+				FB06BFC01976F0D6000691BC /* GPGPUPostProcessingApp.cpp */,
+				FB06BFC11976F0D6000691BC /* GPGPUPostProcessingApp.h */,
+				FB06BFC21976F0D6000691BC /* GPGPUPostProcessingTriMesh.cpp */,
+				FB06BFC31976F0D6000691BC /* GPGPUPostProcessingTriMesh.h */,
+				FB5D636019706A9400D3B00E /* main.cpp */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		FB06BFC81976F143000691BC /* GLSL */ = {
+			isa = PBXGroup;
+			children = (
+				FB06BFDD19771E10000691BC /* fGPGPUPostProcessingScreenQuad.glsl */,
+				FB06BFDE19771E10000691BC /* vGPGPUPostProcessingScreenQuad.glsl */,
+				FB06BFC91976F233000691BC /* fRenderBuffer.glsl */,
+				FB06BFCA1976F233000691BC /* vRenderBuffer.glsl */,
+			);
+			name = GLSL;
+			sourceTree = "<group>";
+		};
+		FB56CC3D192FC83300DF31A8 /* CLSL */ = {
+			isa = PBXGroup;
+			children = (
+				FB5D636C1970A23500D3B00E /* filter.clsl */,
+			);
+			name = CLSL;
+			sourceTree = "<group>";
+		};
+		FB56CC9F192FEAD400DF31A8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FB06BFCF1976FCA3000691BC /* beethoven.ply */,
+				FB06BFD01976FCA3000691BC /* screenquad.ply */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		FB69949A192FC13100B20DEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FB69949F192FC13100B20DEB /* libGraphicsFrameworkd.a */,
+				FB6994A1192FC13100B20DEB /* libGraphicsFramework.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		748AA4CB07F4624400486586 /* Debug Static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C4B939708674C10001A085C /* Build configuration list for PBXNativeTarget "Debug Static" */;
+			buildPhases = (
+				748AA4C807F4624400486586 /* Resources */,
+				748AA4C907F4624400486586 /* Sources */,
+				748AA4CA07F4624400486586 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FB6994A3192FC15300B20DEB /* PBXTargetDependency */,
+			);
+			name = "Debug Static";
+			productName = BillboardNodesStaDeb;
+			productReference = 748AA4CC07F4624400486586 /* GPGPUPostProcessingd.app */;
+			productType = "com.apple.product-type.application";
+		};
+		748AA4D907F4631800486586 /* Release Static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C4B939A08674C10001A085C /* Build configuration list for PBXNativeTarget "Release Static" */;
+			buildPhases = (
+				748AA4D607F4631800486586 /* Resources */,
+				748AA4D707F4631800486586 /* Sources */,
+				748AA4D807F4631800486586 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FB6994A5192FC24200B20DEB /* PBXTargetDependency */,
+			);
+			name = "Release Static";
+			productName = BillboardNodesStaRel;
+			productReference = 748AA4DA07F4631800486586 /* GPGPUPostProcessing.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		748AA4C207F4621A00486586 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+			};
+			buildConfigurationList = 3C4B93AC08674C10001A085C /* Build configuration list for PBXProject "GPGPUPostProcessing" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 748AA4BE07F4621A00486586;
+			productRefGroup = 748AA4CD07F4624400486586 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = FB69949A192FC13100B20DEB /* Products */;
+					ProjectRef = FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				748AA4CB07F4624400486586 /* Debug Static */,
+				748AA4D907F4631800486586 /* Release Static */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		FB69949F192FC13100B20DEB /* libGraphicsFrameworkd.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGraphicsFrameworkd.a;
+			remoteRef = FB69949E192FC13100B20DEB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FB6994A1192FC13100B20DEB /* libGraphicsFramework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGraphicsFramework.a;
+			remoteRef = FB6994A0192FC13100B20DEB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		748AA4C807F4624400486586 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB06BFE119771E10000691BC /* vGPGPUPostProcessingScreenQuad.glsl in Resources */,
+				FB06BFD11976FCA3000691BC /* beethoven.ply in Resources */,
+				FB06BFD31976FCA3000691BC /* screenquad.ply in Resources */,
+				FB06BFDF19771E10000691BC /* fGPGPUPostProcessingScreenQuad.glsl in Resources */,
+				FB06BFCB1976F233000691BC /* fRenderBuffer.glsl in Resources */,
+				FB5D636F1970A3F500D3B00E /* filter.clsl in Resources */,
+				FB06BFCD1976F233000691BC /* vRenderBuffer.glsl in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		748AA4D607F4631800486586 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB06BFE219771E10000691BC /* vGPGPUPostProcessingScreenQuad.glsl in Resources */,
+				FB06BFD21976FCA3000691BC /* beethoven.ply in Resources */,
+				FB06BFD41976FCA3000691BC /* screenquad.ply in Resources */,
+				FB06BFE019771E10000691BC /* fGPGPUPostProcessingScreenQuad.glsl in Resources */,
+				FB06BFCC1976F233000691BC /* fRenderBuffer.glsl in Resources */,
+				FB5D63701970A3FC00D3B00E /* filter.clsl in Resources */,
+				FB06BFCE1976F233000691BC /* vRenderBuffer.glsl in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		748AA4C907F4624400486586 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB06BFC41976F0D6000691BC /* GPGPUPostProcessingApp.cpp in Sources */,
+				FB06BFDB19771B06000691BC /* GPGPUPostProcessingScreenQuad.cpp in Sources */,
+				FB06BFC61976F0D7000691BC /* GPGPUPostProcessingTriMesh.cpp in Sources */,
+				FB5D636319706A9400D3B00E /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		748AA4D707F4631800486586 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB06BFC51976F0D6000691BC /* GPGPUPostProcessingApp.cpp in Sources */,
+				FB06BFDC19771B06000691BC /* GPGPUPostProcessingScreenQuad.cpp in Sources */,
+				FB06BFC71976F0D7000691BC /* GPGPUPostProcessingTriMesh.cpp in Sources */,
+				FB5D636419706A9400D3B00E /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FB6994A3192FC15300B20DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Debug Static";
+			targetProxy = FB6994A2192FC15300B20DEB /* PBXContainerItemProxy */;
+		};
+		FB6994A5192FC24200B20DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Release Static";
+			targetProxy = FB6994A4192FC24200B20DEB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3C4B939908674C10001A085C /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = "${SRCROOT}/../SDK/Include";
+				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../SDK/Lib/Debug";
+				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
+				PRODUCT_NAME = GPGPUPostProcessingd;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Default;
+		};
+		3C4B939C08674C10001A085C /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				HEADER_SEARCH_PATHS = "${SRCROOT}/../SDK/Include";
+				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../SDK/Lib/Release";
+				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
+				PRODUCT_NAME = GPGPUPostProcessing;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"-Wno-deprecated",
+				);
+			};
+			name = Default;
+		};
+		3C4B93AE08674C10001A085C /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				SDKROOT = macosx;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3C4B939708674C10001A085C /* Build configuration list for PBXNativeTarget "Debug Static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C4B939908674C10001A085C /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		3C4B939A08674C10001A085C /* Build configuration list for PBXNativeTarget "Release Static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C4B939C08674C10001A085C /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		3C4B93AC08674C10001A085C /* Build configuration list for PBXProject "GPGPUPostProcessing" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C4B93AE08674C10001A085C /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 748AA4C207F4621A00486586 /* Project object */;
+}

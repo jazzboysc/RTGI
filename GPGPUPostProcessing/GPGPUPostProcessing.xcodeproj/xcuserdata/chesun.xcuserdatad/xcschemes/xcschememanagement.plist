@@ -7,26 +7,16 @@
 		<key>Debug Static.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>8</integer>
+			<integer>6</integer>
 		</dict>
 		<key>Release Static.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>9</integer>
+			<integer>7</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>3C64D2A71256D1CD00F4B0B0</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>3C64D3861256D98E00F4B0B0</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>748AA4CB07F4624400486586</key>
 		<dict>
 			<key>primary</key>

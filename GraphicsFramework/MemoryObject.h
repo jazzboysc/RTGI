@@ -8,6 +8,7 @@
 
 #include "FrameworkCommon.h"
 #include "RefObject.h"
+#include "Texture2D.h"
 
 namespace RTGI
 {
@@ -19,9 +20,14 @@ namespace RTGI
 class MemoryObject : public RefObject
 {
 public:
-	MemoryObject(cl_context context, cl_mem_flags flags, size_t size,
-        void* data);
+	MemoryObject();
 	~MemoryObject();
+    
+    void CreateFromSystemMemory(cl_context context, cl_mem_flags flags,
+        size_t size, void* data);
+    
+    void CreateFromTexture2D(cl_context context, cl_mem_flags flags,
+        Texture2D* texture);
 
 	cl_mem GetMO();
 

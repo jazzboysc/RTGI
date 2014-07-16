@@ -26,6 +26,9 @@ public:
 
 	void EnqueueKernel(ComputeKernel* kernel,  cl_uint workDim, 
 		size_t* globalWorkSize, size_t* localWorkSize);
+    
+	void ExecuteKernel(ComputeKernel* kernel,  cl_uint workDim,
+        size_t* globalWorkSize, size_t* localWorkSize);
 
 	// Only support blocking read for now.
 	void EnqueueReadBuffer(MemoryObject* srcBuffer, size_t offset, 

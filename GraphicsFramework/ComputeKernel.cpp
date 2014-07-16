@@ -24,10 +24,19 @@ ComputeKernel::~ComputeKernel()
 //----------------------------------------------------------------------------
 void ComputeKernel::SetArgument(int index, MemoryObject* data)
 {
+    assert( index >= 0 && index < MAX_ARGUMENT_COUNT );
+    mArguments[index] = data;
+    
 	cl_int res;
 	cl_mem mo = data->GetMO();
 	res = clSetKernelArg(mKernel, index, sizeof(cl_mem), &mo);
 	assert( res >= 0 );
+}
+//----------------------------------------------------------------------------
+MemoryObject* ComputeKernel::GetArgument(int index) const
+{
+    assert( index >= 0 && index < MAX_ARGUMENT_COUNT );
+    return mArguments[index];
 }
 //----------------------------------------------------------------------------
 cl_kernel ComputeKernel::GetKernel() const

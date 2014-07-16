@@ -3,8 +3,10 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-GPGPUPostProcessingApp::GPGPUPostProcessingApp(int, int)
+GPGPUPostProcessingApp::GPGPUPostProcessingApp(int width, int height)
 	:
+    mWidth(width),
+    mHeight(height),
 	mWindowTitle("GPGPU post processing demo")
 {
 }
@@ -15,8 +17,6 @@ GPGPUPostProcessingApp::~GPGPUPostProcessingApp()
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::Initialize()
 {
-    InitializeOpenCL();
-    
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -27,8 +27,8 @@ void GPGPUPostProcessingApp::Initialize()
 
 	// Create camera.
 	mCamera = new Camera;
-	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 100.0f);
-	mCamera->SetLookAt(vec3(0.0f, 8.0f, 25.0f), vec3(0.0f, 0.0f, 0.0f), 
+	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 0.01f, 100.0f);
+	mCamera->SetLookAt(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
 	// Create material templates.
@@ -39,64 +39,107 @@ void GPGPUPostProcessingApp::Initialize()
 	MaterialTemplate* mtRenderBuffer = new MaterialTemplate();
 	mtRenderBuffer->AddTechnique(techRenderBuffer);
     
-    mProgram = new ComputeProgram(mOpenCLContext, mOpenCLDevice, "matvec.clsl");
-    mProgram->CreateDeviceResource();
-    mKernel = new ComputeKernel(mProgram, "matvec_mult");
+	Pass* passScreenQuad = new Pass("vGPGPUPostProcessingScreenQuad.glsl",
+        "fGPGPUPostProcessingScreenQuad.glsl");
+	Technique* techScreenQuad = new Technique();
+	techScreenQuad->AddPass(passScreenQuad);
+	MaterialTemplate* mtScreenQuad = new MaterialTemplate();
+	mtScreenQuad->AddTechnique(techScreenQuad);
     
-    mCommandQueue = new CommandQueue(mOpenCLContext, mOpenCLDevice);
+	// Create render target.
+	mRenderTexture = new Texture2D();
+	mRenderTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mDepthTexture = new Texture2D();
+	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
     
-    float mat[16], vec[4], cpuResult[4];
-    for( int i = 0; i < 16; ++i )
-    {
-        mat[i] = i * 2.0f;
-    }
-    for( int i = 0; i < 4; ++i )
-    {
-        vec[i] = i * 3.0f;
-        cpuResult[0] += mat[i     ] * vec[i];
-        cpuResult[1] += mat[i +  4] * vec[i];
-        cpuResult[2] += mat[i +  8] * vec[i];
-        cpuResult[3] += mat[i + 12] * vec[i];
-    }
- 
-    mMatrix = new MemoryObject(mOpenCLContext,
-        CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float)*16, mat);
-    mVector = new MemoryObject(mOpenCLContext,
-        CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float)*4, vec);
-    mResult = new MemoryObject(mOpenCLContext, CL_MEM_WRITE_ONLY,
-        sizeof(float)*4, NULL);
-	mKernel->SetArgument(0, mMatrix);
-	mKernel->SetArgument(1, mVector);
-	mKernel->SetArgument(2, mResult);
+	// Create framebuffer.
+	Texture2D* renderTexture[1] = {mRenderTexture};
+	mRenderBuffer = new FrameBuffer();
+	mRenderBuffer->SetRenderTargets(1, renderTexture, mDepthTexture);
+    
+	// Create scene.
+	material = new Material(mtRenderBuffer);
+	mModel = new GPGPUPostProcessingTriMesh(material, mCamera);
+	mModel->LoadFromFile("beethoven.ply");
+	mModel->GenerateNormals();
+	mModel->CreateDeviceResource();
+	mModel->SetWorldTranslation(vec3(0.0f, 0.0f, -10.0f));
+    
+	// Create screen quad.
+	material = new Material(mtScreenQuad);
+	mScreenQuad = new GPGPUPostProcessingScreenQuad(material);
+	mScreenQuad->LoadFromFile("screenquad.ply");
+	mScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+	mScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+	mScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+	mScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+	mScreenQuad->CreateDeviceResource();
+	mScreenQuad->RenderTexture = mRenderTexture;
 }
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::Run()
 {
-	static bool done = false;
-	static float gpuResult[4];
-	if( !done )
-	{
-		size_t workUnitsPerKernel = 4;
-		mCommandQueue->EnqueueKernel(mKernel, 1, &workUnitsPerKernel, NULL);
-		mCommandQueue->EnqueueReadBuffer(mResult, 0, sizeof(float)*4, gpuResult);
-		done = true;
-	}
+    static float angle = 0.0f;
+    angle += 0.5f;
+    mat4 rot = RotateY(angle);
+    vec3 trans = mModel->GetWorldTranslation();
+    mModel->SetWorldTransform(rot);
+    mModel->SetWorldTranslation(trans);
+ 
+    // OpenGL stuff.
+    
+    mRenderBuffer->Enable();
+   	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    mModel->Render(0, 0);
+    mRenderBuffer->Disable();
+    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    mScreenQuad->Render(0, 0);
+    
+	glutSwapBuffers();
+    
+    // OpenCL stuff.
+    
+    size_t globalWorkSize[] = { mWidth, mHeight };
+    mCommandQueue->ExecuteKernel(mKernel, 2, globalWorkSize, NULL);
 }
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::Terminate()
 {
-    mProgram = 0;
-    mKernel = 0;
-    mCommandQueue = 0;
-    mMatrix = 0;
-    mVector = 0;
-    mResult = 0;
-
 	mCamera = 0;
 	mRenderBuffer = 0;
 	mRenderTexture = 0;
+    mDepthTexture = 0;
+    mModel = 0;
+    mScreenQuad = 0;
+}
+//----------------------------------------------------------------------------
+void GPGPUPostProcessingApp::InitializeOpenCL()
+{
+    Application::InitializeOpenCL();
     
-    TerminateOpenCL();
+    // Create compute program.
+    mProgram = new ComputeProgram(mOpenCLContext, mOpenCLDevice, "filter.clsl");
+    mProgram->CreateDeviceResource();
+    mKernel = new ComputeKernel(mProgram, "filter");
+    
+    // Create command queue.
+    mCommandQueue = new CommandQueue(mOpenCLContext, mOpenCLDevice);
+    
+    // Create kernel image object.
+    mKernelRenderTexture = new MemoryObject();
+    mKernelRenderTexture->CreateFromTexture2D(mOpenCLContext,
+        CL_MEM_READ_WRITE, mRenderTexture);
+    
+    mKernel->SetArgument(0, mKernelRenderTexture);
+}
+//----------------------------------------------------------------------------
+void GPGPUPostProcessingApp::TerminateOpenCL()
+{
+    mProgram = 0;
+    mKernel = 0;
+    mCommandQueue = 0;
+    mKernelRenderTexture = 0;
 }
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::OnKeyboard(unsigned char key, int x, int y)

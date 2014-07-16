@@ -19,11 +19,6 @@ public:
 	// Implement base class interface.
 	virtual void OnGetShaderConstants();
 	virtual void OnUpdateShaderConstants(int technique, int pass);
-
-	vec3 MaterialColor;
-
-private:
-	GLint mMaterialColorLoc;
 };
 
 typedef RefPointer<GPGPUPostProcessingTriMesh> GPGPUPostProcessingTriMeshPtr;

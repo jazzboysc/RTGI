@@ -25,11 +25,14 @@ public:
 	~ComputeKernel();
 
 	void SetArgument(int index, MemoryObject* data);
+    MemoryObject* GetArgument(int index) const;
 	cl_kernel GetKernel() const;
 
 private:
     cl_kernel mKernel;
 
+    enum { MAX_ARGUMENT_COUNT = 8 };
+    MemoryObject* mArguments[MAX_ARGUMENT_COUNT];
 };
 
 typedef RefPointer<ComputeKernel> ComputeKernelPtr;

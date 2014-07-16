@@ -19,6 +19,9 @@ public:
 	void Initialize();
 	void Run();
 	void Terminate();
+    
+    void InitializeOpenCL();
+    void TerminateOpenCL();
 
 	// Event handlers.
 	void OnKeyboard(unsigned char key, int x, int y);

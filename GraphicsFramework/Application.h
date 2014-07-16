@@ -28,15 +28,15 @@ public:
 	virtual void Initialize();
 	virtual void Run();
 	virtual void Terminate();
+    
+    virtual void InitializeOpenCL();
+    virtual void TerminateOpenCL();
 
 	virtual void OnKeyboard(unsigned char key, int x, int y);
 	virtual void OnKeyboardUp(unsigned char key, int x, int y);
 	virtual void OnMouse(int button, int state, int x, int y);
 	virtual void OnMouseMove(int x, int y);
 	virtual void OnReshape(int x, int y);
-
-    void InitializeOpenCL();
-    void TerminateOpenCL();
     
 protected:
 #ifdef _WIN32

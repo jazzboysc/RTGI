@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "748AA4D907F4631800486586"
-               BuildableName = "GPGPUMatrixVectorMath.app"
+               BuildableName = "GPGPUPostProcessing.app"
                BlueprintName = "Release Static"
-               ReferencedContainer = "container:GPGPUMatrixVectorMath.xcodeproj">
+               ReferencedContainer = "container:GPGPUPostProcessing.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "748AA4D907F4631800486586"
-            BuildableName = "GPGPUMatrixVectorMath.app"
+            BuildableName = "GPGPUPostProcessing.app"
             BlueprintName = "Release Static"
-            ReferencedContainer = "container:GPGPUMatrixVectorMath.xcodeproj">
+            ReferencedContainer = "container:GPGPUPostProcessing.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,9 +52,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "748AA4D907F4631800486586"
-            BuildableName = "GPGPUMatrixVectorMath.app"
+            BuildableName = "GPGPUPostProcessing.app"
             BlueprintName = "Release Static"
-            ReferencedContainer = "container:GPGPUMatrixVectorMath.xcodeproj">
+            ReferencedContainer = "container:GPGPUPostProcessing.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "748AA4D907F4631800486586"
-            BuildableName = "GPGPUMatrixVectorMath.app"
+            BuildableName = "GPGPUPostProcessing.app"
             BlueprintName = "Release Static"
-            ReferencedContainer = "container:GPGPUMatrixVectorMath.xcodeproj">
+            ReferencedContainer = "container:GPGPUPostProcessing.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

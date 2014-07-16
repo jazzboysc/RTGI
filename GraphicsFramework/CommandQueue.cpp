@@ -32,6 +32,30 @@ void CommandQueue::EnqueueKernel(ComputeKernel* kernel,  cl_uint workDim,
 	res = clEnqueueNDRangeKernel(mQueue, kernel->GetKernel(), workDim, NULL, 
 		(const size_t*)globalWorkSize, (const size_t*)localWorkSize, 0, 
 		NULL, NULL);
+    assert( res >= 0 );
+}
+//--------------------------------------------------------------------------
+void CommandQueue::ExecuteKernel(ComputeKernel* kernel,  cl_uint workDim,
+    size_t* globalWorkSize, size_t* localWorkSize)
+{
+    glFinish();
+    
+	cl_int res;
+    cl_event kernelEvent;
+    cl_mem object = kernel->GetArgument(0)->GetMO();
+    res = clEnqueueAcquireGLObjects(mQueue, 1, &object, 0, NULL, NULL);
+    assert( res >= 0 );
+    
+ 	res = clEnqueueNDRangeKernel(mQueue, kernel->GetKernel(), workDim, NULL,
+        (const size_t*)globalWorkSize, (const size_t*)localWorkSize, 0,
+        NULL, &kernelEvent);
+    assert( res >= 0 );
+    
+    clWaitForEvents(1, &kernelEvent);
+    
+    clEnqueueReleaseGLObjects(mQueue, 1, &object, 0, NULL, NULL);
+    clFinish(mQueue);
+    clReleaseEvent(kernelEvent);
 }
 //--------------------------------------------------------------------------
 void CommandQueue::EnqueueReadBuffer(MemoryObject* srcBuffer, size_t offset, 

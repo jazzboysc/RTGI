@@ -69,6 +69,7 @@ int main(int argc, char **argv)
 	// Initialize application.
 	app = new GPGPUMatrixVectorMathApp(width, height);
 	app->Initialize();
+    app->InitializeOpenCL();
 
 	// assign handlers
     glutDisplayFunc(OnIdle);
@@ -83,6 +84,7 @@ int main(int argc, char **argv)
     glutMainLoop();
 
 	// Terminate application.
+    app->TerminateOpenCL();
 	app->Terminate();
 	delete app;
 
