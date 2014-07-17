@@ -51,6 +51,8 @@ void GPGPUPostProcessingApp::Initialize()
 	mRenderTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
 	mDepthTexture = new Texture2D();
 	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
+    mResultTexture = new Texture2D();
+    mResultTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
     
 	// Create framebuffer.
 	Texture2D* renderTexture[1] = {mRenderTexture};
@@ -74,7 +76,7 @@ void GPGPUPostProcessingApp::Initialize()
 	mScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
 	mScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
 	mScreenQuad->CreateDeviceResource();
-	mScreenQuad->RenderTexture = mRenderTexture;
+	mScreenQuad->RenderTexture = mResultTexture;
 }
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::Run()
@@ -110,6 +112,7 @@ void GPGPUPostProcessingApp::Terminate()
 	mRenderBuffer = 0;
 	mRenderTexture = 0;
     mDepthTexture = 0;
+    mResultTexture = 0;
     mModel = 0;
     mScreenQuad = 0;
 }
@@ -129,9 +132,12 @@ void GPGPUPostProcessingApp::InitializeOpenCL()
     // Create kernel image object.
     mKernelRenderTexture = new MemoryObject();
     mKernelRenderTexture->CreateFromTexture2D(mOpenCLContext,
-        CL_MEM_READ_WRITE, mRenderTexture);
+        CL_MEM_READ_ONLY, mRenderTexture);
+    mKernelResultTexture = new MemoryObject();
+    mKernelResultTexture->CreateFromTexture2D(mOpenCLContext,
+        CL_MEM_WRITE_ONLY, mResultTexture);
     
-    mKernel->SetArgument(0, mKernelRenderTexture);
+    mKernel->SetArgument(0, mKernelResultTexture);
 }
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::TerminateOpenCL()
@@ -140,6 +146,7 @@ void GPGPUPostProcessingApp::TerminateOpenCL()
     mKernel = 0;
     mCommandQueue = 0;
     mKernelRenderTexture = 0;
+    mKernelResultTexture = 0;
 }
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::OnKeyboard(unsigned char key, int x, int y)

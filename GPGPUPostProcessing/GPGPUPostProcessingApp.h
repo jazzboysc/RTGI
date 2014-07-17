@@ -41,6 +41,7 @@ private:
 	FrameBufferPtr mRenderBuffer;
 	Texture2DPtr mRenderTexture;
     Texture2DPtr mDepthTexture;
+    Texture2DPtr mResultTexture;
     
     GPGPUPostProcessingTriMeshPtr mModel;
     GPGPUPostProcessingScreenQuadPtr mScreenQuad;
@@ -50,6 +51,7 @@ private:
     ComputeKernelPtr mKernel;
     CommandQueuePtr mCommandQueue;
     MemoryObjectPtr mKernelRenderTexture;
+    MemoryObjectPtr mKernelResultTexture;
 };
 
 }
