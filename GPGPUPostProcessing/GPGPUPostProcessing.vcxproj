@@ -83,12 +83,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GPGPUPostProcessingApp.cpp" />
+    <ClCompile Include="GPGPUPostProcessingScreenQuad.cpp" />
     <ClCompile Include="GPGPUPostProcessingTriMesh.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GPGPUPostProcessingApp.h" />
+    <ClInclude Include="GPGPUPostProcessingScreenQuad.h" />
     <ClInclude Include="GPGPUPostProcessingTriMesh.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fGPGPUPostProcessingScreenQuad.glsl" />
+    <None Include="filter.clsl" />
+    <None Include="fRenderBuffer.glsl" />
+    <None Include="vGPGPUPostProcessingScreenQuad.glsl" />
+    <None Include="vRenderBuffer.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

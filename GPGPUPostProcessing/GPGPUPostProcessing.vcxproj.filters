@@ -3,6 +3,8 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GPGPUPostProcessingTriMesh.cpp" />
+    <ClCompile Include="GPGPUPostProcessingApp.cpp" />
+    <ClCompile Include="GPGPUPostProcessingScreenQuad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GLSL">
@@ -14,5 +16,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GPGPUPostProcessingTriMesh.h" />
+    <ClInclude Include="GPGPUPostProcessingApp.h" />
+    <ClInclude Include="GPGPUPostProcessingScreenQuad.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="filter.clsl">
+      <Filter>CLSL</Filter>
+    </None>
+    <None Include="fGPGPUPostProcessingScreenQuad.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fRenderBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vGPGPUPostProcessingScreenQuad.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vRenderBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>
