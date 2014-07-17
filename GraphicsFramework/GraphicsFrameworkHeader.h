@@ -21,6 +21,7 @@
 #include "Shader.h"
 #include "VertexShader.h"
 #include "FragmentShader.h"
+#include "ComputeShader.h"
 #include "ShaderProgram.h"
 #include "Pass.h"
 #include "Technique.h"

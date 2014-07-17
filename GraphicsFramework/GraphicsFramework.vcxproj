@@ -118,6 +118,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="CommandQueue.cpp" />
     <ClCompile Include="ComputeKernel.cpp" />
     <ClCompile Include="ComputeProgram.cpp" />
+    <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="Fog.cpp" />
     <ClCompile Include="FragmentShader.cpp" />
     <ClCompile Include="Expression.cpp" />
@@ -159,6 +160,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="CommandQueue.h" />
     <ClInclude Include="ComputeKernel.h" />
     <ClInclude Include="ComputeProgram.h" />
+    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="Fog.h" />
     <ClInclude Include="FragmentShader.h" />
     <ClInclude Include="Expression.h" />

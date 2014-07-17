@@ -99,6 +99,9 @@
     <ClCompile Include="MemoryObject.cpp">
       <Filter>GPGPU</Filter>
     </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="MemoryObject.h">
       <Filter>GPGPU</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
