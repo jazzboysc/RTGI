@@ -102,6 +102,18 @@
     <ClCompile Include="ComputeShader.cpp">
       <Filter>Material</Filter>
     </ClCompile>
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelBuffer.cpp">
+      <Filter>Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="AtomicCounterBuffer.cpp">
+      <Filter>Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureBuffer.cpp">
+      <Filter>Buffers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -218,6 +230,18 @@
     <ClInclude Include="ComputeShader.h">
       <Filter>Material</Filter>
     </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelBuffer.h">
+      <Filter>Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="AtomicCounterBuffer.h">
+      <Filter>Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureBuffer.h">
+      <Filter>Buffers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="RefObject.inl">
@@ -245,6 +269,9 @@
     </Filter>
     <Filter Include="GPGPU">
       <UniqueIdentifier>{1ba2c928-6b97-4fdf-bc1b-0e6f9c938284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buffers">
+      <UniqueIdentifier>{55286779-3123-4965-a8a8-03f1885983ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

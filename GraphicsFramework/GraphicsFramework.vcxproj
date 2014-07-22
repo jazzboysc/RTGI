@@ -109,11 +109,13 @@ copy /y *.inl ..\SDK\Include</Command>
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="AtomicCounterBuffer.cpp" />
     <ClCompile Include="bmpread.c">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4996</DisableSpecificWarnings>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommandQueue.cpp" />
     <ClCompile Include="ComputeKernel.cpp" />
@@ -133,6 +135,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="MaterialTemplate.cpp" />
     <ClCompile Include="MemoryObject.cpp" />
     <ClCompile Include="Pass.cpp" />
+    <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="PointSet.cpp" />
     <ClCompile Include="PolyCylinder.cpp" />
     <ClCompile Include="Polyline2Geometry.cpp" />
@@ -145,6 +148,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="Technique.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="TextureBuffer.cpp" />
     <ClCompile Include="TextureCube.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="TriangleMesh.cpp" />
@@ -154,7 +158,9 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="AABB.h" />
     <ClInclude Include="Angel.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="AtomicCounterBuffer.h" />
     <ClInclude Include="bmpread.h" />
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CheckError.h" />
     <ClInclude Include="CommandQueue.h" />
@@ -175,6 +181,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="MaterialTemplate.h" />
     <ClInclude Include="MemoryObject.h" />
     <ClInclude Include="Pass.h" />
+    <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="PointSet.h" />
     <ClInclude Include="PolyCylinder.h" />
     <ClInclude Include="Polyline2Geometry.h" />
@@ -188,6 +195,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="Technique.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="TextureBuffer.h" />
     <ClInclude Include="TextureCube.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="TriangleMesh.h" />

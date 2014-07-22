@@ -17,6 +17,12 @@
 #include "TextureCube.h"
 #include "FrameBuffer.h"
 
+// Buffers
+#include "Buffer.h"
+#include "PixelBuffer.h"
+#include "AtomicCounterBuffer.h"
+#include "TextureBuffer.h"
+
 // Material
 #include "Shader.h"
 #include "VertexShader.h"
