@@ -1,4 +1,4 @@
-#version 120
+#version 420 core
 
 attribute vec4 vPosition;
 attribute vec3 vNormal;
