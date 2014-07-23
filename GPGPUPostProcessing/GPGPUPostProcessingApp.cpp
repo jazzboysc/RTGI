@@ -90,20 +90,20 @@ void GPGPUPostProcessingApp::Run()
  
     // OpenGL stuff.
     
-    mRenderBuffer->Enable();
+    //mRenderBuffer->Enable();
    	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mModel->Render(0, 0);
-    mRenderBuffer->Disable();
+    //mRenderBuffer->Disable();
     
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    mScreenQuad->Render(0, 0);
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //mScreenQuad->Render(0, 0);
     
 	glutSwapBuffers();
     
     // OpenCL stuff.
     
-    size_t globalWorkSize[] = { mWidth, mHeight };
-    mCommandQueue->ExecuteKernel(mKernel, 2, globalWorkSize, NULL);
+    //size_t globalWorkSize[] = { mWidth, mHeight };
+    //mCommandQueue->ExecuteKernel(mKernel, 2, globalWorkSize, NULL);
 }
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::Terminate()
@@ -119,25 +119,25 @@ void GPGPUPostProcessingApp::Terminate()
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::InitializeOpenCL()
 {
-    Application::InitializeOpenCL();
-    
-    // Create compute program.
-    mProgram = new ComputeProgram(mOpenCLContext, mOpenCLDevice, "filter.clsl");
-    mProgram->CreateDeviceResource();
-    mKernel = new ComputeKernel(mProgram, "filter");
-    
-    // Create command queue.
-    mCommandQueue = new CommandQueue(mOpenCLContext, mOpenCLDevice);
-    
-    // Create kernel image object.
-    mKernelRenderTexture = new MemoryObject();
-    mKernelRenderTexture->CreateFromTexture2D(mOpenCLContext,
-        CL_MEM_READ_ONLY, mRenderTexture);
-    mKernelResultTexture = new MemoryObject();
-    mKernelResultTexture->CreateFromTexture2D(mOpenCLContext,
-        CL_MEM_WRITE_ONLY, mResultTexture);
-    
-    mKernel->SetArgument(0, mKernelResultTexture);
+    //Application::InitializeOpenCL();
+    //
+    //// Create compute program.
+    //mProgram = new ComputeProgram(mOpenCLContext, mOpenCLDevice, "filter.clsl");
+    //mProgram->CreateDeviceResource();
+    //mKernel = new ComputeKernel(mProgram, "filter");
+    //
+    //// Create command queue.
+    //mCommandQueue = new CommandQueue(mOpenCLContext, mOpenCLDevice);
+    //
+    //// Create kernel image object.
+    //mKernelRenderTexture = new MemoryObject();
+    //mKernelRenderTexture->CreateFromTexture2D(mOpenCLContext,
+    //    CL_MEM_READ_ONLY, mRenderTexture);
+    //mKernelResultTexture = new MemoryObject();
+    //mKernelResultTexture->CreateFromTexture2D(mOpenCLContext,
+    //    CL_MEM_WRITE_ONLY, mResultTexture);
+    //
+    //mKernel->SetArgument(0, mKernelResultTexture);
 }
 //----------------------------------------------------------------------------
 void GPGPUPostProcessingApp::TerminateOpenCL()

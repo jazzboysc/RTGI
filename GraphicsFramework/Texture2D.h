@@ -8,6 +8,7 @@
 
 #include "FrameworkCommon.h"
 #include "Texture.h"
+#include "PixelBuffer.h"
 
 namespace RTGI
 {
@@ -26,6 +27,7 @@ public:
 	{
 		RTF_RGB,
 		RTF_RGBF,
+		RTF_R32UI,
 		RTF_Depth
 	};
 
@@ -42,6 +44,9 @@ public:
 
 	void CreateRenderTarget(int width, int height, RenderTargetFormat format);
 
+	// Update a render target from pixel buffer.
+	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
+
 	// Generate random positions inside a unit hemisphere based on halton 
 	// numbers.
 	void CreateLDRandomTexture(int maxSampleCount, int patternSize);
@@ -52,6 +57,11 @@ public:
 	float LMax;
 	float RevGamma;
 	RenderTargetFormat RTFormat;
+
+private:
+	GLint mInternalFormat;
+	GLenum mFormat;
+	GLenum mType;
 };
 
 typedef RefPointer<Texture2D> Texture2DPtr;

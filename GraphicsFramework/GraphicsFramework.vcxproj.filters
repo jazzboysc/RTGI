@@ -114,6 +114,9 @@
     <ClCompile Include="TextureBuffer.cpp">
       <Filter>Buffers</Filter>
     </ClCompile>
+    <ClCompile Include="StructuredBuffer.cpp">
+      <Filter>Buffers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -240,6 +243,9 @@
       <Filter>Buffers</Filter>
     </ClInclude>
     <ClInclude Include="TextureBuffer.h">
+      <Filter>Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
       <Filter>Buffers</Filter>
     </ClInclude>
   </ItemGroup>

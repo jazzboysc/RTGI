@@ -29,6 +29,8 @@ public:
 	// the system memory data.
 	bool LoadFromSystemMemory(GLuint size, void* data, GLenum usage);
 
+	void ReserveDeviceResource(GLuint size, GLenum usage);
+
 	GLuint GetBuffer() const;
 	GLuint GetSize() const;
 

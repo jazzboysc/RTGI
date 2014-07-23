@@ -44,6 +44,10 @@ bool Texture2D::LoadBMPFromFile(const std::string& fileName)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bitmap.width, bitmap.height, 0, 
 		GL_RGB, GL_UNSIGNED_BYTE, bitmap.rgb_data);
 	bmpread_free(&bitmap);
+
+	mInternalFormat = GL_RGB;
+	mFormat = GL_RGB;
+	mType = GL_UNSIGNED_BYTE;
     
 #ifdef RTGI_OUTPUT_RESOURCE_LOADING
     printf("Loading texture %s finished\n", fileName.c_str());
@@ -119,6 +123,10 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F_ARB, Width, Height, 0, GL_RGB,
 		GL_FLOAT, pixels);
 
+	mInternalFormat = GL_RGB32F_ARB;
+	mFormat = GL_RGB;
+	mType = GL_FLOAT;
+
 	free(pixels);
 
 #ifdef RTGI_OUTPUT_RESOURCE_LOADING
@@ -140,6 +148,10 @@ bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
     glBindTexture(GL_TEXTURE_2D, mTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, 
 		type, pixels);
+
+	mInternalFormat = internalFormat;
+	mFormat = format;
+	mType = type;
 
 	return true;
 }
@@ -163,21 +175,43 @@ void Texture2D::CreateRenderTarget(int width, int height,
 		break;
 
 	case RTGI::Texture2D::RTF_RGBF:
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F_ARB, width, height, 0, GL_RGB, 
-			GL_FLOAT, 0);
+		mInternalFormat = GL_RGB32F_ARB;
+		mFormat = GL_RGB;
+		mType = GL_FLOAT;
+		break;
+
+	case RTGI::Texture2D::RTF_R32UI:
+		mInternalFormat = GL_R32UI;
+		mFormat = GL_RED_INTEGER;
+		mType = GL_UNSIGNED_INT;
 		break;
 
 	case RTGI::Texture2D::RTF_Depth:
-		glTexImage2D (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, 
-			GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+		mInternalFormat = GL_DEPTH_COMPONENT24;
+		mFormat = GL_DEPTH_COMPONENT;
+		mType = GL_UNSIGNED_BYTE;
 		break;
 
 	default:
 		break;
 	}
 
+	glTexImage2D(GL_TEXTURE_2D, 0, mInternalFormat, width, height, 0, 
+		mFormat, mType, 0);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+//--------------------------------------------------------------------------
+void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
+{
+	GLuint buffer = pixelBuffer->GetBuffer();
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
+	glBindTexture(GL_TEXTURE_2D, mTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, mInternalFormat, Width, Height, 0, 
+		mFormat, mType, 0);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 //--------------------------------------------------------------------------
 void Texture2D::CreateLDRandomTexture(int maxSampleCount, int patternSize)

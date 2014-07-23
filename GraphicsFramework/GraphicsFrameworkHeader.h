@@ -22,6 +22,7 @@
 #include "PixelBuffer.h"
 #include "AtomicCounterBuffer.h"
 #include "TextureBuffer.h"
+#include "StructuredBuffer.h"
 
 // Material
 #include "Shader.h"

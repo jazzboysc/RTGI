@@ -52,3 +52,11 @@ bool Buffer::LoadFromSystemMemory(GLuint size, void* data, GLenum usage)
 	return true;
 }
 //----------------------------------------------------------------------------
+void Buffer::ReserveDeviceResource(GLuint size, GLenum usage)
+{
+	mSize = size;
+	glGenBuffers(1, &mBuffer);
+	glBindBuffer(mType, mBuffer);
+	glBufferData(mType, size, 0, usage);
+}
+//----------------------------------------------------------------------------

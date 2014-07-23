@@ -6,7 +6,7 @@ __kernel void filter(write_only image2d_t srcImage)
     int y = get_global_id(1);
 
     //float4 pixel = read_imagef(srcImage, sampler, (int2)(x, y));
-    float4 color = float4(1.0f, 1.0f, 0.0f, 1.0f);
-    write_imagef(srcImage, (int2)(x, y), color);
+    //float4 color = float4(1.0f, 1.0f, 0.0f, 1.0f);
+    //write_imagef(srcImage, (int2)(x, y), color);
 }
 
