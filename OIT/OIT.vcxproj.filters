@@ -9,16 +9,24 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OITApp.cpp" />
     <ClCompile Include="OITTriMesh.cpp" />
+    <ClCompile Include="OITScreenQuad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OITApp.h" />
     <ClInclude Include="OITTriMesh.h" />
+    <ClInclude Include="OITScreenQuad.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fGPUABuffer.glsl">
       <Filter>GLSL</Filter>
     </None>
     <None Include="vGPUABuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fOIT.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vOIT.glsl">
       <Filter>GLSL</Filter>
     </None>
   </ItemGroup>

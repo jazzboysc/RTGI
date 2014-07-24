@@ -3,6 +3,7 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "OITTriMesh.h"
+#include "OITScreenQuad.h"
 
 namespace RTGI
 {
@@ -39,6 +40,7 @@ private:
 	AtomicCounterBufferPtr mGPUMemAllocCounter;
 	TextureBufferPtr mGPUMemPool;
     
+	OITScreenQuadPtr mScreenQuad;
     OITTriMeshPtr mModel;
 };
 

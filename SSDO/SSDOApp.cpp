@@ -118,7 +118,6 @@ void SSDOApp::Initialize()
 	material = new Material(mtDirectLighting);
 	mDirectLightingQuad = new DirectLightingQuad(material, mLight);
 	mDirectLightingQuad->LoadFromFile("screenquad.ply");
-
 	mDirectLightingQuad->SetTCoord(0, tcoord00);
 	mDirectLightingQuad->SetTCoord(1, tcoord10);
 	mDirectLightingQuad->SetTCoord(2, tcoord11);

@@ -38,6 +38,24 @@ void OITApp::Initialize()
 	techRenderBuffer->AddPass(passRenderBuffer);
 	MaterialTemplate* mtRenderBuffer = new MaterialTemplate();
 	mtRenderBuffer->AddTechnique(techRenderBuffer);
+
+	Pass* passOIT = new Pass("vOIT.glsl", "fOIT.glsl");
+	Technique* techOIT = new Technique();
+	techOIT->AddPass(passOIT);
+	MaterialTemplate* mtOIT = new MaterialTemplate();
+	mtOIT->AddTechnique(techOIT);
+
+	// Create OIT screen quad.
+	material = new Material(mtOIT);
+	mScreenQuad = new OITScreenQuad(material);
+	mScreenQuad->LoadFromFile("screenquad.ply");
+	mScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+	mScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+	mScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+	mScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+	mScreenQuad->CreateDeviceResource();
+	mScreenQuad->HeadPointerTexture = mHeadPointerTexture;
+	mScreenQuad->GPUMemPool = mGPUMemPool;
     
 	// Create scene.
 	material = new Material(mtRenderBuffer);
@@ -74,13 +92,6 @@ void OITApp::Initialize()
 //----------------------------------------------------------------------------
 void OITApp::Run()
 {
-    static float angle = 0.0f;
-    angle += 0.5f;
-    mat4 rot = RotateY(angle);
-    vec3 trans = mModel->GetWorldTranslation();
-    mModel->SetWorldTransform(rot);
-    mModel->SetWorldTranslation(trans);
-
 	// Reset head pointer texture and bind it to image unit 0.
 	mHeadPointerTexture->UpdateFromPixelBuffer(mHeadPointerTextureInitData);
 	mHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
@@ -88,6 +99,8 @@ void OITApp::Run()
 	// Reset atomic counter.
 	GLuint zero = 0;
 	mGPUMemAllocCounter->UpdateSubData(0, 0, sizeof(zero), &zero);
+
+	mGPUMemPool->Bind();
  
    	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mModel->Render(0, 0);
@@ -102,6 +115,7 @@ void OITApp::Terminate()
 	mHeadPointerTextureInitData = 0;
 	mGPUMemAllocCounter = 0;
 	mGPUMemPool = 0;
+	mScreenQuad = 0;
     mModel = 0;
 }
 //----------------------------------------------------------------------------

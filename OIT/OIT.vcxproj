@@ -13,15 +13,19 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OITApp.cpp" />
+    <ClCompile Include="OITScreenQuad.cpp" />
     <ClCompile Include="OITTriMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OITApp.h" />
+    <ClInclude Include="OITScreenQuad.h" />
     <ClInclude Include="OITTriMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fGPUABuffer.glsl" />
+    <None Include="fOIT.glsl" />
     <None Include="vGPUABuffer.glsl" />
+    <None Include="vOIT.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4B8D985C-49FC-4FCC-A744-3BB6D4DB6574}</ProjectGuid>

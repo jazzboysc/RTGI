@@ -42,9 +42,14 @@ void Buffer::Unmap()
 	glUnmapBuffer(mType);
 }
 //----------------------------------------------------------------------------
-void Buffer::Bind(GLuint bindingPoint)
+void Buffer::Bind(GLuint index)
 {
-	glBindBufferBase(mType, bindingPoint, mBuffer);
+	glBindBufferBase(mType, index, mBuffer);
+}
+//----------------------------------------------------------------------------
+void Buffer::Bind()
+{
+	glBindBuffer(mType, mBuffer);
 }
 //----------------------------------------------------------------------------
 void Buffer::UpdateSubData(GLuint bindingPoint, int offset, size_t size, 

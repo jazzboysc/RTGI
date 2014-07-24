@@ -1,9 +1,9 @@
 #version 420 core
 
-#define LIST_MAX_LENGTH 15
+#define LIST_MAX_LENGTH 20
 
-uniform sampler2D headPointerImage;
-uniform samplerBuffer gpuMemoryPool;
+layout (binding = 0, r32ui) uniform uimage2D headPointerImage;
+layout (binding = 1, rgba32ui) uniform uimageBuffer gpuMemoryPool;
 
 uvec4 perPixelNodes[LIST_MAX_LENGTH];
 
@@ -15,12 +15,12 @@ int GetPerPixelNodes(ivec2 pixelCoord)
     int nodeCount = 0;
     
     // Get linked list header which is the first node index.
-    currentNodeIndex = texelFetch(headPointerImage, pixelCoord, 0);
+    currentNodeIndex = imageLoad(headPointerImage, pixelCoord).x;
     
-    while( currentNodeIndex != 0xFF && nodeCount < LIST_MAX_LENGTH )
+    while( currentNodeIndex != 0xFFFFFFFF && nodeCount < LIST_MAX_LENGTH )
     {
         // Get a previously stored node from GPU buffer.
-        uvec4 currentNode = texelFetch(gpuMemoryPool, currentNodeIndex);
+        uvec4 currentNode = imageLoad(gpuMemoryPool, int(currentNodeIndex));
         
         // Get next node index linked by current node.
         currentNodeIndex = currentNode.x;
