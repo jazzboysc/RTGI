@@ -214,6 +214,11 @@ void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 //--------------------------------------------------------------------------
+void Texture2D::BindToImageUnit(GLuint unit, GLenum access)
+{
+	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, mFormat);
+}
+//--------------------------------------------------------------------------
 void Texture2D::CreateLDRandomTexture(int maxSampleCount, int patternSize)
 {
 	// This function is based on the PFM loader of Thorsten Grosch and 

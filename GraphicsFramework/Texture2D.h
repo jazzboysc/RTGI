@@ -47,6 +47,8 @@ public:
 	// Update a render target from pixel buffer.
 	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
 
+	void BindToImageUnit(GLuint unit, GLenum access);
+
 	// Generate random positions inside a unit hemisphere based on halton 
 	// numbers.
 	void CreateLDRandomTexture(int maxSampleCount, int patternSize);

@@ -42,6 +42,18 @@ void Buffer::Unmap()
 	glUnmapBuffer(mType);
 }
 //----------------------------------------------------------------------------
+void Buffer::Bind(GLuint bindingPoint)
+{
+	glBindBufferBase(mType, bindingPoint, mBuffer);
+}
+//----------------------------------------------------------------------------
+void Buffer::UpdateSubData(GLuint bindingPoint, int offset, size_t size, 
+	void* data)
+{
+	Bind(bindingPoint);
+	glBufferSubData(mType, offset, size, data);
+}
+//----------------------------------------------------------------------------
 bool Buffer::LoadFromSystemMemory(GLuint size, void* data, GLenum usage)
 {
 	mSize = size;

@@ -81,7 +81,13 @@ void OITApp::Run()
     mModel->SetWorldTransform(rot);
     mModel->SetWorldTranslation(trans);
 
+	// Reset head pointer texture and bind it to image unit 0.
 	mHeadPointerTexture->UpdateFromPixelBuffer(mHeadPointerTextureInitData);
+	mHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
+
+	// Reset atomic counter.
+	GLuint zero = 0;
+	mGPUMemAllocCounter->UpdateSubData(0, 0, sizeof(zero), &zero);
  
    	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mModel->Render(0, 0);

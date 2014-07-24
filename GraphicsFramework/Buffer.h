@@ -24,6 +24,8 @@ public:
 
 	void* Map(GLenum access);
 	void Unmap();
+	void Bind(GLuint bindingPoint);
+	void UpdateSubData(GLuint bindingPoint, int offset, size_t size, void* data);
 
 	// Load buffer data from system memory. User is responsible for deleting
 	// the system memory data.
