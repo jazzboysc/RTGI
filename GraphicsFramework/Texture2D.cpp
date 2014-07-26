@@ -16,6 +16,7 @@ Texture2D::Texture2D()
 	Height = 0;
 	IsRenderTarget = false;
 	IsHDRTexture = false;
+	IsTextureBuffer = false;
 	LMax = 0.0f;
 	RevGamma = 0.0f;
 }
@@ -156,6 +157,22 @@ bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 	return true;
 }
 //----------------------------------------------------------------------------
+bool Texture2D::LoadFromTextureBuffer(TextureBuffer* textureBuffer, 
+	GLenum internalFormat)
+{
+	IsTextureBuffer = true;
+
+	GLuint buffer = textureBuffer->GetBuffer();
+    glGenTextures(1, &mTexture);
+    glBindTexture(GL_TEXTURE_BUFFER, mTexture);
+    glTexBuffer(GL_TEXTURE_BUFFER, internalFormat, buffer);
+    glBindTexture(GL_TEXTURE_BUFFER, 0);
+
+	mInternalFormat = internalFormat;
+
+	return true;
+}
+//----------------------------------------------------------------------------
 void Texture2D::CreateRenderTarget(int width, int height, 
 	RenderTargetFormat format)
 {
@@ -205,6 +222,8 @@ void Texture2D::CreateRenderTarget(int width, int height,
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glBindTexture(GL_TEXTURE_2D, 0);	
 }
 //--------------------------------------------------------------------------
 void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
@@ -214,13 +233,14 @@ void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 	glBindTexture(GL_TEXTURE_2D, mTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, mInternalFormat, Width, Height, 0, 
 		mFormat, mType, 0);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 }
 //--------------------------------------------------------------------------
 void Texture2D::BindToImageUnit(GLuint unit, GLenum access)
 {
-	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, mFormat);
+	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, 
+		mInternalFormat);
 }
 //--------------------------------------------------------------------------
 void Texture2D::CreateLDRandomTexture(int maxSampleCount, int patternSize)

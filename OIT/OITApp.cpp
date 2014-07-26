@@ -20,10 +20,15 @@ void OITApp::Initialize()
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
-	float color = 0.5f;
+	const char* version = (const char*)glGetString(GL_VERSION);
+	const char* vendor = (const char*)glGetString(GL_VENDOR);
+
+	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
-	glEnable(GL_DEPTH_TEST);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glActiveTexture(GL_TEXTURE0);
 
 	// Create camera.
 	mCamera = new Camera;
@@ -33,11 +38,11 @@ void OITApp::Initialize()
 
 	// Create material templates.
 	Material* material = 0;
-	Pass* passRenderBuffer = new Pass("vGPUABuffer.glsl", "fGPUABuffer.glsl");
-	Technique* techRenderBuffer = new Technique();
-	techRenderBuffer->AddPass(passRenderBuffer);
-	MaterialTemplate* mtRenderBuffer = new MaterialTemplate();
-	mtRenderBuffer->AddTechnique(techRenderBuffer);
+	Pass* passGPUABuffer = new Pass("vGPUABuffer.glsl", "fGPUABuffer.glsl");
+	Technique* techGPUABuffer = new Technique();
+	techGPUABuffer->AddPass(passGPUABuffer);
+	MaterialTemplate* mtGPUABuffer = new MaterialTemplate();
+	mtGPUABuffer->AddTechnique(techGPUABuffer);
 
 	Pass* passOIT = new Pass("vOIT.glsl", "fOIT.glsl");
 	Technique* techOIT = new Technique();
@@ -58,7 +63,7 @@ void OITApp::Initialize()
 	mScreenQuad->GPUMemPool = mGPUMemPool;
     
 	// Create scene.
-	material = new Material(mtRenderBuffer);
+	material = new Material(mtGPUABuffer);
 	mModel = new OITTriMesh(material, mCamera);
 	mModel->LoadFromFile("beethoven.ply");
 	mModel->GenerateNormals();
@@ -75,8 +80,10 @@ void OITApp::Initialize()
 	mHeadPointerTextureInitData = new PixelBuffer();
 	mHeadPointerTextureInitData->ReserveDeviceResource(
 		pixelCount*sizeof(GLuint), GL_STATIC_DRAW);
+	mHeadPointerTextureInitData->Bind();
 	void* pixelBufferData = mHeadPointerTextureInitData->Map(GL_WRITE_ONLY);
-	memset(pixelBufferData, 0xFF, pixelCount*sizeof(GLuint));
+	assert( pixelBufferData );
+	memset(pixelBufferData, 0x00, pixelCount*sizeof(GLuint));
 	mHeadPointerTextureInitData->Unmap();
 
 	// Create GPU memory allocator counter.
@@ -88,22 +95,37 @@ void OITApp::Initialize()
 	size_t gpuMemPoolSize = 2 * pixelCount * sizeof(vec4);
 	mGPUMemPool = new TextureBuffer();
 	mGPUMemPool->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
+
+	// Create GPU memory pool texture.
+	mGPUMemPoolTexture = new Texture2D();
+	mGPUMemPoolTexture->LoadFromTextureBuffer(mGPUMemPool, GL_RGBA32UI);
+
+	glClearDepth(1.0f);
 }
 //----------------------------------------------------------------------------
 void OITApp::Run()
 {
-	// Reset head pointer texture and bind it to image unit 0.
-	mHeadPointerTexture->UpdateFromPixelBuffer(mHeadPointerTextureInitData);
-	mHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
-
 	// Reset atomic counter.
-	GLuint zero = 0;
-	mGPUMemAllocCounter->UpdateSubData(0, 0, sizeof(zero), &zero);
+	//GLuint zero = 0;
+	//mGPUMemAllocCounter->UpdateSubData(0, 0, sizeof(zero), &zero);
+	mGPUMemAllocCounter->Bind(0);
+	GLuint* counterData = (GLuint*)mGPUMemAllocCounter->Map(GL_WRITE_ONLY);
+	assert( counterData );
+	counterData[0] = 0;
+	mGPUMemAllocCounter->Unmap();
 
-	mGPUMemPool->Bind();
+	// Reset head pointer texture.
+	mHeadPointerTexture->UpdateFromPixelBuffer(mHeadPointerTextureInitData);
+
+	// Bind textures to image units.
+	mHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
+	mGPUMemPoolTexture->BindToImageUnit(1, GL_WRITE_ONLY);
  
-   	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   	glClear(GL_COLOR_BUFFER_BIT);
     mModel->Render(0, 0);
+
+	glClear(GL_COLOR_BUFFER_BIT);
+	mScreenQuad->Render(0, 0);
     
 	glutSwapBuffers();
 }
@@ -111,10 +133,13 @@ void OITApp::Run()
 void OITApp::Terminate()
 {
 	mCamera = 0;
+
+	mGPUMemAllocCounter = 0;
 	mHeadPointerTexture = 0;
 	mHeadPointerTextureInitData = 0;
-	mGPUMemAllocCounter = 0;
+	mGPUMemPoolTexture = 0;
 	mGPUMemPool = 0;
+
 	mScreenQuad = 0;
     mModel = 0;
 }

@@ -12,13 +12,13 @@ layout (binding = 0, offset = 0) uniform atomic_uint gpuMemoryAllocator;
 layout (binding = 0, r32ui) uniform uimage2D headPointerImage;
 
 // Linked lists GPU memory pool.
-layout (binding = 1, rgba32ui) uniform uimageBuffer gpuMemoryPool;
+layout (binding = 1, rgba32ui) uniform writeonly uimageBuffer gpuMemoryPool;
 
 void main()
 {
 	vec3 vNormal = normalize(vNormalView.xyz);
 	vNormal.xyz = (vNormal.xyz + 1.0) * 0.5;
-    vec4 newNodeData = vec4(vNormal, 0.0);
+    vec4 newNodeData = vec4(vNormal, 0.5);
     
     uint newHead = atomicCounterIncrement(gpuMemoryAllocator);
     
@@ -26,7 +26,8 @@ void main()
     
     uvec4 newNode;
     newNode.x = oldHead;
-    newNode.y = packUnorm4x8(newNodeData);
+    //newNode.y = packUnorm4x8(newNodeData);
+	newNode.y = 1;
     newNode.z = floatBitsToUint(gl_FragCoord.z);
     newNode.w = 0;
     

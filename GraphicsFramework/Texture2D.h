@@ -9,6 +9,7 @@
 #include "FrameworkCommon.h"
 #include "Texture.h"
 #include "PixelBuffer.h"
+#include "TextureBuffer.h"
 
 namespace RTGI
 {
@@ -42,6 +43,9 @@ public:
 	bool LoadFromSystemMemory(GLint internalFormat, GLsizei width, 
 		GLsizei height, GLenum format, GLenum type, void* pixels);
 
+	// Load and create from texture buffer object.
+	bool LoadFromTextureBuffer(TextureBuffer* textureBuffer, GLenum internalFormat);
+
 	void CreateRenderTarget(int width, int height, RenderTargetFormat format);
 
 	// Update a render target from pixel buffer.
@@ -56,6 +60,7 @@ public:
 	int Width, Height;
 	bool IsRenderTarget;
 	bool IsHDRTexture;
+	bool IsTextureBuffer;
 	float LMax;
 	float RevGamma;
 	RenderTargetFormat RTFormat;

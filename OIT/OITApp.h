@@ -35,9 +35,10 @@ private:
 
 	Camera* mCamera;
 
+	AtomicCounterBufferPtr mGPUMemAllocCounter;
 	Texture2DPtr mHeadPointerTexture;
 	PixelBufferPtr mHeadPointerTextureInitData;
-	AtomicCounterBufferPtr mGPUMemAllocCounter;
+	Texture2DPtr mGPUMemPoolTexture;
 	TextureBufferPtr mGPUMemPool;
     
 	OITScreenQuadPtr mScreenQuad;

@@ -75,5 +75,6 @@ void Buffer::ReserveDeviceResource(GLuint size, GLenum usage)
 	glGenBuffers(1, &mBuffer);
 	glBindBuffer(mType, mBuffer);
 	glBufferData(mType, size, 0, usage);
+	glBindBuffer(mType, 0);
 }
 //----------------------------------------------------------------------------

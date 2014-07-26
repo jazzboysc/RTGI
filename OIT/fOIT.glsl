@@ -17,7 +17,7 @@ int GetPerPixelNodes(ivec2 pixelCoord)
     // Get linked list header which is the first node index.
     currentNodeIndex = imageLoad(headPointerImage, pixelCoord).x;
     
-    while( currentNodeIndex != 0xFFFFFFFF && nodeCount < LIST_MAX_LENGTH )
+    while( currentNodeIndex != 0 && nodeCount < LIST_MAX_LENGTH )
     {
         // Get a previously stored node from GPU buffer.
         uvec4 currentNode = imageLoad(gpuMemoryPool, int(currentNodeIndex));
@@ -60,12 +60,17 @@ vec4 BlendTwoColor(vec4 lhsColor, vec4 rhsColor)
 
 vec4 BlendPerPixelNodes(int nodeCount)
 {
+	//float n = float(nodeCount);
     vec4 color = vec4(0.0);
     
     for( int i = 0; i < nodeCount; ++i )
     {
-        vec4 nodeColor = unpackUnorm4x8(perPixelNodes[i].y);
-        color = BlendTwoColor(color, nodeColor);
+        //vec4 nodeColor = unpackUnorm4x8(perPixelNodes[i].y);
+		//float depth = uintBitsToFloat(perPixelNodes[i].z);
+        //color = BlendTwoColor(color, nodeColor);
+
+		float data = float(perPixelNodes[i].y);
+		color += vec4(data);
     }
     
     return color;
@@ -73,7 +78,15 @@ vec4 BlendPerPixelNodes(int nodeCount)
 
 void main()
 {
-    int nodeCount = GetPerPixelNodes(ivec2(gl_FragCoord.xy));
-    SortPerPixelNodes(nodeCount);
-    color = BlendPerPixelNodes(nodeCount);
+    //int nodeCount = GetPerPixelNodes(ivec2(gl_FragCoord.xy));
+    //SortPerPixelNodes(nodeCount);
+    //color = BlendPerPixelNodes(nodeCount);
+
+    uint currentNodeIndex;
+    int nodeCount = 0;
+    
+    // Get linked list header which is the first node index.
+    currentNodeIndex = imageLoad(headPointerImage, ivec2(gl_FragCoord.xy)).x;
+	float r = float(currentNodeIndex) / 600000.0;
+	color = vec4(r);
 }
