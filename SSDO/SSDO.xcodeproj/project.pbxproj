@@ -20,6 +20,10 @@
 		FB18BA1A192ECBBC00D5B13F /* SSDOTempScreenQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA12192ECBBC00D5B13F /* SSDOTempScreenQuad.cpp */; };
 		FB18BA1B192ECBBC00D5B13F /* SSDOTriMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA14192ECBBC00D5B13F /* SSDOTriMesh.cpp */; };
 		FB18BA5F192ECE6F00D5B13F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BA5E192ECE6F00D5B13F /* main.cpp */; };
+		FB27B0991983262800ED3B3C /* dragon.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB27B0981983262800ED3B3C /* dragon.ply */; };
+		FB27B09A1983262800ED3B3C /* dragon.ply in Resources */ = {isa = PBXBuildFile; fileRef = FB27B0981983262800ED3B3C /* dragon.ply */; };
+		FB27B09C1983275800ED3B3C /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB27B09B1983275800ED3B3C /* OpenCL.framework */; };
+		FB27B09D1983276800ED3B3C /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB27B09B1983275800ED3B3C /* OpenCL.framework */; };
 		FB56CC95192FE8B800DF31A8 /* fDirectLighting.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC3E192FC89600DF31A8 /* fDirectLighting.glsl */; };
 		FB56CC96192FE8B800DF31A8 /* fGBuffer.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC3F192FC89600DF31A8 /* fGBuffer.glsl */; };
 		FB56CC97192FE8B800DF31A8 /* fSSDO.glsl in Resources */ = {isa = PBXBuildFile; fileRef = FB56CC40192FC89600DF31A8 /* fSSDO.glsl */; };
@@ -112,6 +116,8 @@
 		FB18BA14192ECBBC00D5B13F /* SSDOTriMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SSDOTriMesh.cpp; sourceTree = "<group>"; };
 		FB18BA15192ECBBC00D5B13F /* SSDOTriMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSDOTriMesh.h; sourceTree = "<group>"; };
 		FB18BA5E192ECE6F00D5B13F /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		FB27B0981983262800ED3B3C /* dragon.ply */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dragon.ply; sourceTree = "<group>"; };
+		FB27B09B1983275800ED3B3C /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		FB56CC3E192FC89600DF31A8 /* fDirectLighting.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = fDirectLighting.glsl; sourceTree = "<group>"; };
 		FB56CC3F192FC89600DF31A8 /* fGBuffer.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = fGBuffer.glsl; sourceTree = "<group>"; };
 		FB56CC40192FC89600DF31A8 /* fSSDO.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = fSSDO.glsl; sourceTree = "<group>"; };
@@ -139,6 +145,7 @@
 				FB0A81B8192EE04E0016C3F1 /* libGraphicsFrameworkd.a in Frameworks */,
 				3C6FBC6C083E6E1B0068AA05 /* OpenGL.framework in Frameworks */,
 				3CB4F4A813DCF47000C74DF4 /* GLUT.framework in Frameworks */,
+				FB27B09C1983275800ED3B3C /* OpenCL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,6 +156,7 @@
 				FB0A81BA192EE0C00016C3F1 /* libGraphicsFramework.a in Frameworks */,
 				3C6FBC6D083E6E1B0068AA05 /* OpenGL.framework in Frameworks */,
 				3CB4F4A913DCF47000C74DF4 /* GLUT.framework in Frameworks */,
+				FB27B09D1983276800ED3B3C /* OpenCL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +204,7 @@
 		748AA4E207F463F300486586 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FB27B09B1983275800ED3B3C /* OpenCL.framework */,
 				3CB4F4A713DCF47000C74DF4 /* GLUT.framework */,
 				3C6FBC6B083E6E1B0068AA05 /* OpenGL.framework */,
 			);
@@ -251,6 +260,7 @@
 		FB56CC9F192FEAD400DF31A8 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				FB27B0981983262800ED3B3C /* dragon.ply */,
 				FB56CCA5192FEB4D00DF31A8 /* cube.ply */,
 				FB56CCA0192FEB3500DF31A8 /* beethoven.ply */,
 				FB56CCA1192FEB3500DF31A8 /* big_dodge.ply */,
@@ -372,6 +382,7 @@
 				FB56CCA9192FEB6A00DF31A8 /* ground.ply in Resources */,
 				FB56CCAA192FEB6A00DF31A8 /* KitchenMediumBlurred.pfm in Resources */,
 				FB56CCAB192FEB6A00DF31A8 /* screenquad.ply in Resources */,
+				FB27B0991983262800ED3B3C /* dragon.ply in Resources */,
 				FB56CC95192FE8B800DF31A8 /* fDirectLighting.glsl in Resources */,
 				FB56CC96192FE8B800DF31A8 /* fGBuffer.glsl in Resources */,
 				FB56CC97192FE8B800DF31A8 /* fSSDO.glsl in Resources */,
@@ -395,6 +406,7 @@
 				FB56CCB9192FFD3500DF31A8 /* ground.ply in Resources */,
 				FB56CCBA192FFD3500DF31A8 /* KitchenMediumBlurred.pfm in Resources */,
 				FB56CCBB192FFD3500DF31A8 /* screenquad.ply in Resources */,
+				FB27B09A1983262800ED3B3C /* dragon.ply in Resources */,
 				FB56CCAC192FFD2D00DF31A8 /* fDirectLighting.glsl in Resources */,
 				FB56CCAD192FFD2D00DF31A8 /* fGBuffer.glsl in Resources */,
 				FB56CCAE192FFD2D00DF31A8 /* fSSDO.glsl in Resources */,

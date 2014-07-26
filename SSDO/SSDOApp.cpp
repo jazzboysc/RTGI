@@ -29,7 +29,7 @@ void SSDOApp::Initialize()
 	// Create camera.
 	mCamera = new Camera;
 	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 100.0f);
-	mCamera->SetLookAt(vec3(0.0f, 8.0f, 25.0f), vec3(0.0f, 0.0f, 0.0f), 
+	mCamera->SetLookAt(vec3(0.0f, 9.0f, 26.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
 	// Create light.
@@ -184,20 +184,24 @@ void SSDOApp::Initialize()
 	// Create scene.
 	material = new Material(mtGBuffer);
 	mModel1 = new SSDOTriMesh(material, mCamera);
-	mModel1->LoadFromFile("beethoven.ply");
+	mModel1->LoadFromFile("dragon_s.ply");
 	mModel1->GenerateNormals();
 	mModel1->CreateDeviceResource();
-	mModel1->SetWorldTranslation(vec3(-5.0f, 2.0f, -10.0f));
+	mat4 rot = RotateY(30.0f);
+	mModel1->SetWorldTransform(rot);
+	mModel1->SetWorldTranslation(vec3(-5.0f, 1.2f, -10.0f));
+    mModel1->SetWorldScale(vec3(75.0f));
 	mModel1->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
 
 	material = new Material(mtGBuffer);
 	mModel2 = new SSDOTriMesh(material, mCamera);
-	mModel2->LoadFromFile("big_dodge.ply");
+	mModel2->LoadFromFile("happy_s.ply");
 	mModel2->GenerateNormals();
 	mModel2->CreateDeviceResource();
-	mat4 rot = RotateY(-60.0f);
+	rot = RotateY(0.0f);
 	mModel2->SetWorldTransform(rot);
-	mModel2->SetWorldTranslation(vec3(8.0, -1.0, -14.0));
+	mModel2->SetWorldTranslation(vec3(5.0f, 0.0f, 5.0f));
+    mModel2->SetWorldScale(vec3(60.0f));
 	mModel2->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
 
 	material = new Material(mtGBuffer);

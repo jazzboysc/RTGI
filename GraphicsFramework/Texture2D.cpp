@@ -181,9 +181,13 @@ void Texture2D::CreateRenderTarget(int width, int height,
 		break;
 
 	case RTGI::Texture2D::RTF_R32UI:
+#ifndef __APPLE__
 		mInternalFormat = GL_R32UI;
 		mFormat = GL_RED_INTEGER;
 		mType = GL_UNSIGNED_INT;
+#else
+        assert( false );
+#endif
 		break;
 
 	case RTGI::Texture2D::RTF_Depth:
