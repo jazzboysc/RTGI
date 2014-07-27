@@ -28,9 +28,6 @@ public:
 	virtual void Initialize();
 	virtual void Run();
 	virtual void Terminate();
-    
-    virtual void InitializeOpenCL();
-    virtual void TerminateOpenCL();
 
 	virtual void OnKeyboard(unsigned char key, int x, int y);
 	virtual void OnKeyboardUp(unsigned char key, int x, int y);
@@ -48,10 +45,6 @@ protected:
 	CGLShareGroupObj mShareGroup;
 #endif
 #endif
-    
-    cl_platform_id mOpenCLPlatform;
-    cl_device_id mOpenCLDevice;
-    cl_context mOpenCLContext;
 };
 
 }

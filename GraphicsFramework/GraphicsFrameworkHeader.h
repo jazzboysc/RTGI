@@ -58,10 +58,4 @@
 #include "PolyCylinder.h"
 #include "Token.h"
 
-// GPGPU
-#include "ComputeProgram.h"
-#include "ComputeKernel.h"
-#include "MemoryObject.h"
-#include "CommandQueue.h"
-
 #endif

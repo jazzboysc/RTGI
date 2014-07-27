@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GPGPU">
+      <UniqueIdentifier>{a4f072f7-d48e-403e-934c-1ad51b6df8d6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommandQueue.cpp">
+      <Filter>GPGPU</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeKernel.cpp">
+      <Filter>GPGPU</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeProgram.cpp">
+      <Filter>GPGPU</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryObject.cpp">
+      <Filter>GPGPU</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputingApplication.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommandQueue.h">
+      <Filter>GPGPU</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeKernel.h">
+      <Filter>GPGPU</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeProgram.h">
+      <Filter>GPGPU</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryObject.h">
+      <Filter>GPGPU</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputingFrameworkCommon.h" />
+    <ClInclude Include="ComputingApplication.h" />
+  </ItemGroup>
+</Project>

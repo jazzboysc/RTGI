@@ -43,8 +43,8 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\SDK\Lib\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\glew-1.10.0\include;..\freeglut\include;..\freeglut\include\GL;$(INTELOCLSDKROOT)include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(INTELOCLSDKROOT)lb\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\glew-1.10.0\include;..\freeglut\include;..\freeglut\include\GL;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>GraphicsFramework</TargetName>
@@ -117,9 +117,6 @@ copy /y *.inl ..\SDK\Include</Command>
     </ClCompile>
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CommandQueue.cpp" />
-    <ClCompile Include="ComputeKernel.cpp" />
-    <ClCompile Include="ComputeProgram.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="Fog.cpp" />
     <ClCompile Include="FragmentShader.cpp" />
@@ -133,7 +130,6 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialTemplate.cpp" />
-    <ClCompile Include="MemoryObject.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="PointSet.cpp" />
@@ -164,9 +160,6 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CheckError.h" />
-    <ClInclude Include="CommandQueue.h" />
-    <ClInclude Include="ComputeKernel.h" />
-    <ClInclude Include="ComputeProgram.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="Fog.h" />
     <ClInclude Include="FragmentShader.h" />
@@ -180,7 +173,6 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="mat.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialTemplate.h" />
-    <ClInclude Include="MemoryObject.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="PointSet.h" />
