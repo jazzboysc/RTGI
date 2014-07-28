@@ -10,7 +10,7 @@ RSMApp::RSMApp(int width, int height)
 	mHeight(height),
 	mWindowTitle("RSM demo")
 {
-	mShowMode = SM_RSMNormal;
+	mShowMode = SM_DeferredLighting;
 }
 //----------------------------------------------------------------------------
 RSMApp::~RSMApp()
