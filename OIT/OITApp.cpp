@@ -33,7 +33,7 @@ void OITApp::Initialize()
 	// Create camera.
 	mCamera = new Camera;
 	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 0.0001f, 100.0f);
-	mCamera->SetLookAt(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f),
+	mCamera->SetLookAt(vec3(0.0f, 9.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
 	// Create material templates.
@@ -70,8 +70,8 @@ void OITApp::Initialize()
 	mModel->CreateDeviceResource();
 	mat4 rot = RotateY(30.0f);
 	mModel->SetWorldTransform(rot);
-	mModel->SetWorldTranslation(vec3(0.0f, 0.0f, -10.0f));
-    mModel->SetWorldScale(vec3(75.0f));
+	mModel->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
+    mModel->SetWorldScale(vec3(40.0f));
 
 	// Create head pointer texture.
 	mHeadPointerTexture = new Texture2D();
