@@ -7,7 +7,7 @@ OITApp::OITApp(int width, int height)
 	:
     mWidth(width),
     mHeight(height),
-	mWindowTitle("OIT demo")
+	mWindowTitle("Order Independent Transparency demo")
 {
 }
 //----------------------------------------------------------------------------
@@ -22,17 +22,17 @@ void OITApp::Initialize()
 
 	const char* version = (const char*)glGetString(GL_VERSION);
 	const char* vendor = (const char*)glGetString(GL_VENDOR);
+	printf("OpenGL version: %s, vendor: %s\n", version, vendor);
 
 	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
     glDisable(GL_DEPTH_TEST);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisable(GL_CULL_FACE);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glActiveTexture(GL_TEXTURE0);
 
 	// Create camera.
 	mCamera = new Camera;
-	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 0.01f, 100.0f);
+	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 0.0001f, 100.0f);
 	mCamera->SetLookAt(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
@@ -65,10 +65,13 @@ void OITApp::Initialize()
 	// Create scene.
 	material = new Material(mtGPUABuffer);
 	mModel = new OITTriMesh(material, mCamera);
-	mModel->LoadFromFile("beethoven.ply");
+	mModel->LoadFromFile("dragon_s.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
+	mat4 rot = RotateY(30.0f);
+	mModel->SetWorldTransform(rot);
 	mModel->SetWorldTranslation(vec3(0.0f, 0.0f, -10.0f));
+    mModel->SetWorldScale(vec3(75.0f));
 
 	// Create head pointer texture.
 	mHeadPointerTexture = new Texture2D();
@@ -99,8 +102,6 @@ void OITApp::Initialize()
 	// Create GPU memory pool texture.
 	mGPUMemPoolTexture = new Texture2D();
 	mGPUMemPoolTexture->LoadFromTextureBuffer(mGPUMemPool, GL_RGBA32UI);
-
-	glClearDepth(1.0f);
 }
 //----------------------------------------------------------------------------
 void OITApp::Run()
@@ -119,7 +120,7 @@ void OITApp::Run()
 
 	// Bind textures to image units.
 	mHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
-	mGPUMemPoolTexture->BindToImageUnit(1, GL_WRITE_ONLY);
+	mGPUMemPoolTexture->BindToImageUnit(1, GL_READ_WRITE);
  
    	glClear(GL_COLOR_BUFFER_BIT);
     mModel->Render(0, 0);

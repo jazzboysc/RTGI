@@ -161,14 +161,13 @@ bool Texture2D::LoadFromTextureBuffer(TextureBuffer* textureBuffer,
 	GLenum internalFormat)
 {
 	IsTextureBuffer = true;
+	mInternalFormat = internalFormat;
 
 	GLuint buffer = textureBuffer->GetBuffer();
     glGenTextures(1, &mTexture);
     glBindTexture(GL_TEXTURE_BUFFER, mTexture);
     glTexBuffer(GL_TEXTURE_BUFFER, internalFormat, buffer);
     glBindTexture(GL_TEXTURE_BUFFER, 0);
-
-	mInternalFormat = internalFormat;
 
 	return true;
 }

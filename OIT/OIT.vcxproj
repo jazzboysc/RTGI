@@ -58,8 +58,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\SDK\Include;..\glew-1.10.0\include;..\freeglut\include;..\freeglut\include\GL;$(INTELOCLSDKROOT)include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\SDK\Lib\Debug;..\glew-1.10.0\lib\Release\Win32;..\freeglut\lib;$(INTELOCLSDKROOT)lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\SDK\Include;..\glew-1.10.0\include;..\freeglut\include;..\freeglut\include\GL;$(IncludePath)</IncludePath>
+    <LibraryPath>..\SDK\Lib\Debug;..\glew-1.10.0\lib\Release\Win32;..\freeglut\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -77,7 +77,7 @@
     <Link>
       <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>freeglut.lib;glew32.lib;glew32s.lib;opengl32.lib;glu32.lib;OpenCL.lib;GraphicsFramework.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;glew32.lib;glew32s.lib;opengl32.lib;glu32.lib;GraphicsFramework.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
