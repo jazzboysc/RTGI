@@ -25,17 +25,19 @@ void RayBundleApp::Initialize()
 	glClearColor(color, color, color, 0.0f);
     //glDisable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    //glDisable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
+	//glDisable(GL_CULL_FACE);
 
 	// Create ray-bundle projector.
 	mRayBundleProjector = new Camera;
-	mRayBundleProjector->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
+	mRayBundleProjector->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
 	mRayBundleProjector->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-7.0f, 0.0f, -12.0f),
 		vec3(0.0f, 1.0f, 0.0f));
     
     // Create scene camera.
-	mCamera = new Camera;
-	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
+	mCamera = new Camera();
+	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
+	//mCamera->SetOrthogonalFrustum(15.0f, (float)mWidth/(float)mHeight, 1.0f, 500.0f);
 	mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 

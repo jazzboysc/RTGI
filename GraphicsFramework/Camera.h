@@ -18,7 +18,7 @@ namespace RTGI
 class Camera
 {
 public:
-	Camera();
+	Camera(bool IsPerspective = true);
 	~Camera();
 
 	// Camera frame
@@ -41,13 +41,17 @@ public:
 	void SetLookAt(const vec3& location, const vec3& lookAt, const vec3& up);
     void SetLocation(const vec3& location);
     void SetAxes(const vec3& right, const vec3& up, const vec3& direction);
-	void SetFrustum(float upFovDegrees, float aspectRatio, float nearPlane, 
+	void SetPerspectiveFrustum(float upFovDegrees, float aspectRatio, float nearPlane, 
+		float farPlane);
+	void SetOrthogonalFrustum(float upMax, float aspectRatio, float nearPlane, 
 		float farPlane);
 
 	vec3 GetLocation() const;
     void GetNearFarPlane(float* nearFarPlane) const;
 	mat4 GetViewTransform();
 	mat4 GetProjectionTransform();
+
+	bool IsPerspective() const;
 
     // View frustum.
     enum

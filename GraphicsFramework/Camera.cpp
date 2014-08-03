@@ -8,15 +8,22 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-Camera::Camera()
+Camera::Camera(bool IsPerspective)
 	:
 	mLocation(0.0f, 0.0f, 0.0f), 
 	mRight(1.0f, 0.0f, 0.0f),
 	mUp(0.0f, 1.0f, 0.0f), 
 	mDirection(0.0f, 0.0f, 1.0f),
-	mIsPerspective(true)
+	mIsPerspective(IsPerspective)
 {
-	SetFrustum(45.0f, 1.0f, 0.01f, 100.0f);
+	if( mIsPerspective )
+	{
+		SetPerspectiveFrustum(45.0f, 1.0f, 0.01f, 100.0f);
+	}
+	else
+	{
+		SetOrthogonalFrustum(1.0f, 1.0f, 0.01f, 100.0f);
+	}
 }
 //----------------------------------------------------------------------------
 Camera::~Camera()
@@ -52,9 +59,11 @@ void Camera::SetAxes(const vec3& right, const vec3& up, const vec3& direction)
 	mDirection = direction;
 }
 //----------------------------------------------------------------------------
-void Camera::SetFrustum(float upFovDegrees, float aspectRatio, float nearPlane,
-    float farPlane)
+void Camera::SetPerspectiveFrustum(float upFovDegrees, float aspectRatio, 
+	float nearPlane, float farPlane)
 {
+	assert( mIsPerspective );
+
     float halfAngleRadians = 0.5f * upFovDegrees * DEG_TO_RAD_SP;
     mFrustum[VF_UMAX] = nearPlane * tan(halfAngleRadians);
     mFrustum[VF_RMAX] = aspectRatio * mFrustum[VF_UMAX];
@@ -64,6 +73,21 @@ void Camera::SetFrustum(float upFovDegrees, float aspectRatio, float nearPlane,
     mFrustum[VF_DMAX] = farPlane;
 
 	mUpFovDegrees = upFovDegrees;
+	mAspectRatio = aspectRatio;
+}
+//----------------------------------------------------------------------------
+void Camera::SetOrthogonalFrustum(float upMax, float aspectRatio, 
+	float nearPlane, float farPlane)
+{
+	assert( !mIsPerspective );
+
+    mFrustum[VF_UMAX] = upMax;
+    mFrustum[VF_RMAX] = aspectRatio * mFrustum[VF_UMAX];
+    mFrustum[VF_UMIN] = -mFrustum[VF_UMAX];
+    mFrustum[VF_RMIN] = -mFrustum[VF_RMAX];
+    mFrustum[VF_DMIN] = nearPlane;
+    mFrustum[VF_DMAX] = farPlane;
+
 	mAspectRatio = aspectRatio;
 }
 //----------------------------------------------------------------------------
@@ -116,10 +140,15 @@ mat4 Camera::GetProjectionTransform()
 	}
 	else
 	{
-		// TODO:
-		assert( false );
+		res = Ortho(mFrustum[VF_RMIN], mFrustum[VF_RMAX], mFrustum[VF_UMIN],
+			mFrustum[VF_UMAX], mFrustum[VF_DMIN], mFrustum[VF_DMAX]);
 	}
 
 	return res;
+}
+//----------------------------------------------------------------------------
+bool Camera::IsPerspective() const
+{
+	return mIsPerspective;
 }
 //----------------------------------------------------------------------------

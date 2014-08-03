@@ -29,13 +29,13 @@ void RSMApp::Initialize()
 
 	// Create light projector.
 	mLightProjector = new Camera;
-	mLightProjector->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
+	mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
 	mLightProjector->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-7.0f, 0.0f, -12.0f),
 		vec3(0.0f, 1.0f, 0.0f));
     
     // Create scene camera.
 	mCamera = new Camera;
-	mCamera->SetFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
+	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
 	mCamera->SetLookAt(vec3(18.0f, 15.0f, 5.0f), vec3(0.0f, 6.0f, -2.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
