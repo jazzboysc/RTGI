@@ -21,5 +21,17 @@
     <None Include="vScene.glsl">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="fCreateAccumulation.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fSortAccumulation.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vCreateAccumulation.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vSortAccumulation.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

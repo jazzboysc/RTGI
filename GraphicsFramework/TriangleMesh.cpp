@@ -165,12 +165,12 @@ bool TriangleMesh::LoadFromFile(const std::string& fileName)
 		mVertexData.push_back(vertex);
 
 		// Update model space bounding box.
-		mModelSpaceBB.Min[0] = HW_MIN(mModelSpaceBB.Min[0], vertex[0]);
-		mModelSpaceBB.Min[1] = HW_MIN(mModelSpaceBB.Min[1], vertex[1]);
-		mModelSpaceBB.Min[2] = HW_MIN(mModelSpaceBB.Min[2], vertex[2]);
-		mModelSpaceBB.Max[0] = HW_MAX(mModelSpaceBB.Max[0], vertex[0]);
-		mModelSpaceBB.Max[1] = HW_MAX(mModelSpaceBB.Max[1], vertex[1]);
-		mModelSpaceBB.Max[2] = HW_MAX(mModelSpaceBB.Max[2], vertex[2]);
+		mModelSpaceBB.Min[0] = RTGI_MIN(mModelSpaceBB.Min[0], vertex[0]);
+		mModelSpaceBB.Min[1] = RTGI_MIN(mModelSpaceBB.Min[1], vertex[1]);
+		mModelSpaceBB.Min[2] = RTGI_MIN(mModelSpaceBB.Min[2], vertex[2]);
+		mModelSpaceBB.Max[0] = RTGI_MAX(mModelSpaceBB.Max[0], vertex[0]);
+		mModelSpaceBB.Max[1] = RTGI_MAX(mModelSpaceBB.Max[1], vertex[1]);
+		mModelSpaceBB.Max[2] = RTGI_MAX(mModelSpaceBB.Max[2], vertex[2]);
 	}
 
 	// Adjust vertices based on the center of the model.
@@ -505,6 +505,23 @@ vec2 TriangleMesh::GetTCoord(int i) const
 {
 	assert( (int)mTCoordData.size() > i );
 	return mTCoordData[i];
+}
+//----------------------------------------------------------------------------
+int TriangleMesh::GetVertexCount() const
+{
+	return mVertexCount;
+}
+//----------------------------------------------------------------------------
+vec3 TriangleMesh::GetWorldVertex(int i) const
+{
+	assert( (int)mVertexData.size() > i );
+	vec4 temp = vec4(mVertexData[i], 1.0f);
+	temp = mWorldTransform * temp;
+	vec3 res;
+	res.x = temp.x;
+	res.y = temp.y;
+	res.z = temp.z;
+	return res;
 }
 //----------------------------------------------------------------------------
 AABB TriangleMesh::GetModelSpaceBB() const

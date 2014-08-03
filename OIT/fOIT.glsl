@@ -36,7 +36,7 @@ void main()
             float depthI = uintBitsToFloat(perPixelList[i].z);
             float depthJ = uintBitsToFloat(perPixelList[j].z);
             
-            if( depthI > depthJ )
+            if( depthI < depthJ )
             {
                 uvec4 temp = perPixelList[i];
                 perPixelList[i] = perPixelList[j];

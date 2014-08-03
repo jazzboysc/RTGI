@@ -20,8 +20,12 @@
     <ClInclude Include="RayBundleTriMesh.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="fCreateAccumulation.glsl" />
     <None Include="fScene.glsl" />
+    <None Include="fSortAccumulation.glsl" />
+    <None Include="vCreateAccumulation.glsl" />
     <None Include="vScene.glsl" />
+    <None Include="vSortAccumulation.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{75459691-05E4-4436-B4BD-8C73A0ED8D73}</ProjectGuid>

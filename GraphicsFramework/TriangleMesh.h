@@ -53,6 +53,9 @@ public:
 
 	void SetTCoord(int i, const vec2& texCoord);
 	vec2 GetTCoord(int i) const;
+
+	int GetVertexCount() const;
+	vec3 GetWorldVertex(int i) const;
 	
 	AABB GetModelSpaceBB() const;
 

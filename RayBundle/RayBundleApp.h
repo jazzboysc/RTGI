@@ -45,6 +45,12 @@ private:
 	RayBundleTriMeshPtr mRightWall;
 	RayBundleTriMeshPtr mModel;
 
+	AtomicCounterBufferPtr mGPUMemAllocCounter;
+	Texture2DPtr mHeadPointerTexture;
+	PixelBufferPtr mHeadPointerTextureInitData;
+	Texture2DPtr mGPUMemPoolTexture;
+	TextureBufferPtr mGPUMemPool;
+
 	enum { RAYBUNDLE_SAMPLE_COUNT = 8 };
 	float randmoNumbers[RAYBUNDLE_SAMPLE_COUNT*2];
 };
