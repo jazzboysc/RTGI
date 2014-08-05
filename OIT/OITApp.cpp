@@ -99,6 +99,11 @@ void OITApp::Initialize()
 	mGPUMemPool = new TextureBuffer();
 	mGPUMemPool->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
 
+	gpuMemPoolSize = 2 * pixelCount * (sizeof(vec4) + sizeof(GLuint) + 
+		sizeof(GLfloat));
+	mGPUMemPool2 = new StructuredBuffer();
+	mGPUMemPool2->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
+
 	// Create GPU memory pool texture.
 	mGPUMemPoolTexture = new Texture2D();
 	mGPUMemPoolTexture->LoadFromTextureBuffer(mGPUMemPool, GL_RGBA32UI);
@@ -121,6 +126,9 @@ void OITApp::Run()
 	// Bind textures to image units.
 	mHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
 	mGPUMemPoolTexture->BindToImageUnit(1, GL_READ_WRITE);
+
+	// Bind structured buffer.
+	mGPUMemPool2->Bind(0);
  
    	glClear(GL_COLOR_BUFFER_BIT);
     mModel->Render(0, 0);
@@ -140,6 +148,7 @@ void OITApp::Terminate()
 	mHeadPointerTextureInitData = 0;
 	mGPUMemPoolTexture = 0;
 	mGPUMemPool = 0;
+	mGPUMemPool2 = 0;
 
 	mScreenQuad = 0;
     mModel = 0;

@@ -3,6 +3,8 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "RayBundleTriMesh.h"
+#include "AccumulationScreenQuad.h"
+#include "UpdateAccumulationScreenQuad.h"
 
 namespace RTGI
 {
@@ -29,7 +31,8 @@ public:
 	void OnReshape(int x, int y);
 
 private:
-	void DrawScene();
+	void ResetAccumulation();
+	void DrawRayBundle();
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;
@@ -45,11 +48,18 @@ private:
 	RayBundleTriMeshPtr mRightWall;
 	RayBundleTriMeshPtr mModel;
 
-	AtomicCounterBufferPtr mGPUMemAllocCounter;
-	Texture2DPtr mHeadPointerTexture;
-	PixelBufferPtr mHeadPointerTextureInitData;
-	Texture2DPtr mGPUMemPoolTexture;
-	TextureBufferPtr mGPUMemPool;
+	AtomicCounterBufferPtr mAccumulationAllocCounter;
+	Texture2DPtr mAccumulationHeadPointerTexture;
+	PixelBufferPtr mAccuHeadPointerTextureInitData;
+	StructuredBufferPtr mAccuGPUMemPool;
+
+	AtomicCounterBufferPtr mRayAllocCounter;
+	Texture2DPtr mRayHeadPointerTexture;
+	PixelBufferPtr mRayHeadPointerTextureInitData;
+	StructuredBufferPtr mRayGPUMemPool;
+
+	AccumulationScreenQuadPtr mScreenQuad;
+	UpdateAccumulationScreenQuadPtr mUpdateAccuScreenQuad;
 
 	enum { RAYBUNDLE_SAMPLE_COUNT = 8 };
 	float randmoNumbers[RAYBUNDLE_SAMPLE_COUNT*2];

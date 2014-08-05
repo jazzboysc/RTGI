@@ -21,10 +21,14 @@ public:
 	virtual void OnGetShaderConstants();
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 
+	bool IsLight;
 	vec3 MaterialColor;
     vec3 EmissionColor;
 
 private:
+    // pass 2 uniform locations.
+    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
+	GLint mIsLightLoc;
 	GLint mMaterialColorLoc;
 	GLint mEmissionColorLoc;
 };

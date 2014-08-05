@@ -11,21 +11,29 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AccumulationScreenQuad.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RayBundleApp.cpp" />
     <ClCompile Include="RayBundleTriMesh.cpp" />
+    <ClCompile Include="UpdateAccumulationScreenQuad.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccumulationScreenQuad.h" />
     <ClInclude Include="RayBundleApp.h" />
     <ClInclude Include="RayBundleTriMesh.h" />
+    <ClInclude Include="UpdateAccumulationScreenQuad.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fCreateAccumulation.glsl" />
+    <None Include="fRayBundle.glsl" />
     <None Include="fScene.glsl" />
     <None Include="fSortAccumulation.glsl" />
+    <None Include="fUpdateAccumulation.glsl" />
     <None Include="vCreateAccumulation.glsl" />
+    <None Include="vRayBundle.glsl" />
     <None Include="vScene.glsl" />
     <None Include="vSortAccumulation.glsl" />
+    <None Include="vUpdateAccumulation.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{75459691-05E4-4436-B4BD-8C73A0ED8D73}</ProjectGuid>

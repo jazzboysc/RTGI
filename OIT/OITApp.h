@@ -40,6 +40,7 @@ private:
 	PixelBufferPtr mHeadPointerTextureInitData;
 	Texture2DPtr mGPUMemPoolTexture;
 	TextureBufferPtr mGPUMemPool;
+	StructuredBufferPtr mGPUMemPool2;
     
 	OITScreenQuadPtr mScreenQuad;
     OITTriMeshPtr mModel;

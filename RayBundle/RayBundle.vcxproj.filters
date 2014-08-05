@@ -9,10 +9,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RayBundleApp.cpp" />
     <ClCompile Include="RayBundleTriMesh.cpp" />
+    <ClCompile Include="AccumulationScreenQuad.cpp" />
+    <ClCompile Include="UpdateAccumulationScreenQuad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RayBundleApp.h" />
     <ClInclude Include="RayBundleTriMesh.h" />
+    <ClInclude Include="AccumulationScreenQuad.h" />
+    <ClInclude Include="UpdateAccumulationScreenQuad.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fScene.glsl">
@@ -31,6 +35,18 @@
       <Filter>GLSL</Filter>
     </None>
     <None Include="vSortAccumulation.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fRayBundle.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vRayBundle.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fUpdateAccumulation.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vUpdateAccumulation.glsl">
       <Filter>GLSL</Filter>
     </None>
   </ItemGroup>
