@@ -38,8 +38,8 @@ void GPGPUMatrixVectorMathApp::Terminate()
 //----------------------------------------------------------------------------
 void GPGPUMatrixVectorMathApp::InitializeOpenCL()
 {
-    Application::InitializeOpenCL();
-    
+    ComputingApplication::InitializeOpenCL();
+
     mProgram = new ComputeProgram(mOpenCLContext, mOpenCLDevice, "matvec.clsl");
     mProgram->CreateDeviceResource();
     mKernel = new ComputeKernel(mProgram, "matvec_mult");
@@ -82,6 +82,8 @@ void GPGPUMatrixVectorMathApp::TerminateOpenCL()
     mMatrix = 0;
     mVector = 0;
     mResult = 0;
+    
+    ComputingApplication::TerminateOpenCL();
 }
 //----------------------------------------------------------------------------
 void GPGPUMatrixVectorMathApp::OnKeyboard(unsigned char key, int x, int y)

@@ -1,0 +1,444 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FB9AE2DA199186A7003D03A8 /* CommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2CC199186A7003D03A8 /* CommandQueue.cpp */; };
+		FB9AE2DB199186A7003D03A8 /* CommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2CC199186A7003D03A8 /* CommandQueue.cpp */; };
+		FB9AE2DC199186A7003D03A8 /* CommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2CD199186A7003D03A8 /* CommandQueue.h */; };
+		FB9AE2DD199186A7003D03A8 /* CommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2CD199186A7003D03A8 /* CommandQueue.h */; };
+		FB9AE2DE199186A7003D03A8 /* ComputeKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2CE199186A7003D03A8 /* ComputeKernel.cpp */; };
+		FB9AE2DF199186A7003D03A8 /* ComputeKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2CE199186A7003D03A8 /* ComputeKernel.cpp */; };
+		FB9AE2E0199186A7003D03A8 /* ComputeKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2CF199186A7003D03A8 /* ComputeKernel.h */; };
+		FB9AE2E1199186A7003D03A8 /* ComputeKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2CF199186A7003D03A8 /* ComputeKernel.h */; };
+		FB9AE2E2199186A7003D03A8 /* ComputeProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2D0199186A7003D03A8 /* ComputeProgram.cpp */; };
+		FB9AE2E3199186A7003D03A8 /* ComputeProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2D0199186A7003D03A8 /* ComputeProgram.cpp */; };
+		FB9AE2E4199186A7003D03A8 /* ComputeProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D1199186A7003D03A8 /* ComputeProgram.h */; };
+		FB9AE2E5199186A7003D03A8 /* ComputeProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D1199186A7003D03A8 /* ComputeProgram.h */; };
+		FB9AE2E6199186A7003D03A8 /* ComputingApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2D2199186A7003D03A8 /* ComputingApplication.cpp */; };
+		FB9AE2E7199186A7003D03A8 /* ComputingApplication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2D2199186A7003D03A8 /* ComputingApplication.cpp */; };
+		FB9AE2E8199186A7003D03A8 /* ComputingApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D3199186A7003D03A8 /* ComputingApplication.h */; };
+		FB9AE2E9199186A7003D03A8 /* ComputingApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D3199186A7003D03A8 /* ComputingApplication.h */; };
+		FB9AE2EA199186A7003D03A8 /* ComputingFrameworkCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D4199186A7003D03A8 /* ComputingFrameworkCommon.h */; };
+		FB9AE2EB199186A7003D03A8 /* ComputingFrameworkCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D4199186A7003D03A8 /* ComputingFrameworkCommon.h */; };
+		FB9AE2EC199186A7003D03A8 /* ComputingFrameworkHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D5199186A7003D03A8 /* ComputingFrameworkHeader.h */; };
+		FB9AE2ED199186A7003D03A8 /* ComputingFrameworkHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D5199186A7003D03A8 /* ComputingFrameworkHeader.h */; };
+		FB9AE2EE199186A7003D03A8 /* ComputingFrameworkPCH.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2D6199186A7003D03A8 /* ComputingFrameworkPCH.cpp */; };
+		FB9AE2EF199186A7003D03A8 /* ComputingFrameworkPCH.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2D6199186A7003D03A8 /* ComputingFrameworkPCH.cpp */; };
+		FB9AE2F0199186A7003D03A8 /* ComputingFrameworkPCH.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D7199186A7003D03A8 /* ComputingFrameworkPCH.h */; };
+		FB9AE2F1199186A7003D03A8 /* ComputingFrameworkPCH.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D7199186A7003D03A8 /* ComputingFrameworkPCH.h */; };
+		FB9AE2F2199186A7003D03A8 /* MemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2D8199186A7003D03A8 /* MemoryObject.cpp */; };
+		FB9AE2F3199186A7003D03A8 /* MemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB9AE2D8199186A7003D03A8 /* MemoryObject.cpp */; };
+		FB9AE2F4199186A7003D03A8 /* MemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D9199186A7003D03A8 /* MemoryObject.h */; };
+		FB9AE2F5199186A7003D03A8 /* MemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = FB9AE2D9199186A7003D03A8 /* MemoryObject.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FB9AE30819918819003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE30319918819003D03A8 /* GraphicsFramework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 74B57E8D07F3427D00913EC4;
+			remoteInfo = "Debug Static";
+		};
+		FB9AE30A19918819003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE30319918819003D03A8 /* GraphicsFramework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 74D6DDFE07F342E200267169;
+			remoteInfo = "Release Static";
+		};
+		FB9AE30C19918855003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE30319918819003D03A8 /* GraphicsFramework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 74B57E8C07F3427D00913EC4;
+			remoteInfo = "Debug Static";
+		};
+		FB9AE30E19918863003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE30319918819003D03A8 /* GraphicsFramework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 74D6DDFA07F342E200267169;
+			remoteInfo = "Release Static";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		74B57E8D07F3427D00913EC4 /* libComputingFrameworkd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libComputingFrameworkd.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		74D6DDFE07F342E200267169 /* libComputingFramework.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libComputingFramework.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB9AE2CC199186A7003D03A8 /* CommandQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandQueue.cpp; sourceTree = "<group>"; };
+		FB9AE2CD199186A7003D03A8 /* CommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandQueue.h; sourceTree = "<group>"; };
+		FB9AE2CE199186A7003D03A8 /* ComputeKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeKernel.cpp; sourceTree = "<group>"; };
+		FB9AE2CF199186A7003D03A8 /* ComputeKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeKernel.h; sourceTree = "<group>"; };
+		FB9AE2D0199186A7003D03A8 /* ComputeProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeProgram.cpp; sourceTree = "<group>"; };
+		FB9AE2D1199186A7003D03A8 /* ComputeProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeProgram.h; sourceTree = "<group>"; };
+		FB9AE2D2199186A7003D03A8 /* ComputingApplication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputingApplication.cpp; sourceTree = "<group>"; };
+		FB9AE2D3199186A7003D03A8 /* ComputingApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputingApplication.h; sourceTree = "<group>"; };
+		FB9AE2D4199186A7003D03A8 /* ComputingFrameworkCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputingFrameworkCommon.h; sourceTree = "<group>"; };
+		FB9AE2D5199186A7003D03A8 /* ComputingFrameworkHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputingFrameworkHeader.h; sourceTree = "<group>"; };
+		FB9AE2D6199186A7003D03A8 /* ComputingFrameworkPCH.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputingFrameworkPCH.cpp; sourceTree = "<group>"; };
+		FB9AE2D7199186A7003D03A8 /* ComputingFrameworkPCH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputingFrameworkPCH.h; sourceTree = "<group>"; };
+		FB9AE2D8199186A7003D03A8 /* MemoryObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObject.cpp; sourceTree = "<group>"; };
+		FB9AE2D9199186A7003D03A8 /* MemoryObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObject.h; sourceTree = "<group>"; };
+		FB9AE30319918819003D03A8 /* GraphicsFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GraphicsFramework.xcodeproj; path = ../GraphicsFramework/GraphicsFramework.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		74B57E8B07F3427D00913EC4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		74D6DDFD07F342E200267169 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		74B57E7F07F3425300913EC4 = {
+			isa = PBXGroup;
+			children = (
+				FB9AE30319918819003D03A8 /* GraphicsFramework.xcodeproj */,
+				74D6DE0107F3432700267169 /* Sources */,
+				74B57E8E07F3427D00913EC4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		74B57E8E07F3427D00913EC4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				74B57E8D07F3427D00913EC4 /* libComputingFrameworkd.a */,
+				74D6DDFE07F342E200267169 /* libComputingFramework.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		74D6DE0107F3432700267169 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				FB9AE2CC199186A7003D03A8 /* CommandQueue.cpp */,
+				FB9AE2CD199186A7003D03A8 /* CommandQueue.h */,
+				FB9AE2CE199186A7003D03A8 /* ComputeKernel.cpp */,
+				FB9AE2CF199186A7003D03A8 /* ComputeKernel.h */,
+				FB9AE2D0199186A7003D03A8 /* ComputeProgram.cpp */,
+				FB9AE2D1199186A7003D03A8 /* ComputeProgram.h */,
+				FB9AE2D2199186A7003D03A8 /* ComputingApplication.cpp */,
+				FB9AE2D3199186A7003D03A8 /* ComputingApplication.h */,
+				FB9AE2D4199186A7003D03A8 /* ComputingFrameworkCommon.h */,
+				FB9AE2D5199186A7003D03A8 /* ComputingFrameworkHeader.h */,
+				FB9AE2D6199186A7003D03A8 /* ComputingFrameworkPCH.cpp */,
+				FB9AE2D7199186A7003D03A8 /* ComputingFrameworkPCH.h */,
+				FB9AE2D8199186A7003D03A8 /* MemoryObject.cpp */,
+				FB9AE2D9199186A7003D03A8 /* MemoryObject.h */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		FB9AE30419918819003D03A8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FB9AE30919918819003D03A8 /* libGraphicsFrameworkd.a */,
+				FB9AE30B19918819003D03A8 /* libGraphicsFramework.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		74B57E8907F3427D00913EC4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB9AE2DC199186A7003D03A8 /* CommandQueue.h in Headers */,
+				FB9AE2EC199186A7003D03A8 /* ComputingFrameworkHeader.h in Headers */,
+				FB9AE2E4199186A7003D03A8 /* ComputeProgram.h in Headers */,
+				FB9AE2E8199186A7003D03A8 /* ComputingApplication.h in Headers */,
+				FB9AE2F4199186A7003D03A8 /* MemoryObject.h in Headers */,
+				FB9AE2F0199186A7003D03A8 /* ComputingFrameworkPCH.h in Headers */,
+				FB9AE2E0199186A7003D03A8 /* ComputeKernel.h in Headers */,
+				FB9AE2EA199186A7003D03A8 /* ComputingFrameworkCommon.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		74D6DDFB07F342E200267169 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB9AE2DD199186A7003D03A8 /* CommandQueue.h in Headers */,
+				FB9AE2ED199186A7003D03A8 /* ComputingFrameworkHeader.h in Headers */,
+				FB9AE2E5199186A7003D03A8 /* ComputeProgram.h in Headers */,
+				FB9AE2E9199186A7003D03A8 /* ComputingApplication.h in Headers */,
+				FB9AE2F5199186A7003D03A8 /* MemoryObject.h in Headers */,
+				FB9AE2F1199186A7003D03A8 /* ComputingFrameworkPCH.h in Headers */,
+				FB9AE2E1199186A7003D03A8 /* ComputeKernel.h in Headers */,
+				FB9AE2EB199186A7003D03A8 /* ComputingFrameworkCommon.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		74B57E8C07F3427D00913EC4 /* Debug Static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C027382088FE67300A93309 /* Build configuration list for PBXNativeTarget "Debug Static" */;
+			buildPhases = (
+				74B57E8907F3427D00913EC4 /* Headers */,
+				74B57E8A07F3427D00913EC4 /* Sources */,
+				74B57E8B07F3427D00913EC4 /* Frameworks */,
+				3C6FBBCD083E65BF0068AA05 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FB9AE30D19918855003D03A8 /* PBXTargetDependency */,
+			);
+			name = "Debug Static";
+			productName = "Static Debug";
+			productReference = 74B57E8D07F3427D00913EC4 /* libComputingFrameworkd.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		74D6DDFA07F342E200267169 /* Release Static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C027385088FE67300A93309 /* Build configuration list for PBXNativeTarget "Release Static" */;
+			buildPhases = (
+				74D6DDFB07F342E200267169 /* Headers */,
+				74D6DDFC07F342E200267169 /* Sources */,
+				74D6DDFD07F342E200267169 /* Frameworks */,
+				3C6FBBD0083E65D80068AA05 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FB9AE30F19918863003D03A8 /* PBXTargetDependency */,
+			);
+			name = "Release Static";
+			productName = "Static Debug";
+			productReference = 74D6DDFE07F342E200267169 /* libComputingFramework.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		74B57E8307F3425300913EC4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+			};
+			buildConfigurationList = 3C027397088FE67400A93309 /* Build configuration list for PBXProject "ComputingFramework" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 74B57E7F07F3425300913EC4;
+			productRefGroup = 74B57E8E07F3427D00913EC4 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = FB9AE30419918819003D03A8 /* Products */;
+					ProjectRef = FB9AE30319918819003D03A8 /* GraphicsFramework.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				74B57E8C07F3427D00913EC4 /* Debug Static */,
+				74D6DDFA07F342E200267169 /* Release Static */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		FB9AE30919918819003D03A8 /* libGraphicsFrameworkd.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGraphicsFrameworkd.a;
+			remoteRef = FB9AE30819918819003D03A8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FB9AE30B19918819003D03A8 /* libGraphicsFramework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGraphicsFramework.a;
+			remoteRef = FB9AE30A19918819003D03A8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3C6FBBCD083E65BF0068AA05 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = ./CopySdkDebugStatic.sh;
+		};
+		3C6FBBD0083E65D80068AA05 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = ./CopySdkReleaseStatic.sh;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		74B57E8A07F3427D00913EC4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB9AE2DE199186A7003D03A8 /* ComputeKernel.cpp in Sources */,
+				FB9AE2F2199186A7003D03A8 /* MemoryObject.cpp in Sources */,
+				FB9AE2DA199186A7003D03A8 /* CommandQueue.cpp in Sources */,
+				FB9AE2E2199186A7003D03A8 /* ComputeProgram.cpp in Sources */,
+				FB9AE2EE199186A7003D03A8 /* ComputingFrameworkPCH.cpp in Sources */,
+				FB9AE2E6199186A7003D03A8 /* ComputingApplication.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		74D6DDFC07F342E200267169 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB9AE2DF199186A7003D03A8 /* ComputeKernel.cpp in Sources */,
+				FB9AE2F3199186A7003D03A8 /* MemoryObject.cpp in Sources */,
+				FB9AE2DB199186A7003D03A8 /* CommandQueue.cpp in Sources */,
+				FB9AE2E3199186A7003D03A8 /* ComputeProgram.cpp in Sources */,
+				FB9AE2EF199186A7003D03A8 /* ComputingFrameworkPCH.cpp in Sources */,
+				FB9AE2E7199186A7003D03A8 /* ComputingApplication.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FB9AE30D19918855003D03A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Debug Static";
+			targetProxy = FB9AE30C19918855003D03A8 /* PBXContainerItemProxy */;
+		};
+		FB9AE30F19918863003D03A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Release Static";
+			targetProxy = FB9AE30E19918863003D03A8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3C027384088FE67300A93309 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)/$(CONFIGURATION)";
+				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "${SRCROOT}/../SDK/Include";
+				LIBRARY_STYLE = STATIC;
+				PRODUCT_NAME = ComputingFrameworkd;
+				SDKROOT = macosx;
+				SHARED_PRECOMPS_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/DebugStatic";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Default;
+		};
+		3C027387088FE67300A93309 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)/$(CONFIGURATION)";
+				HEADER_SEARCH_PATHS = "${SRCROOT}/../SDK/Include";
+				LIBRARY_STYLE = STATIC;
+				PRODUCT_NAME = ComputingFramework;
+				SHARED_PRECOMPS_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/ReleaseStatic";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Default;
+		};
+		3C027399088FE67400A93309 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_WARN_SIGN_COMPARE = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				SDKROOT = macosx;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3C027382088FE67300A93309 /* Build configuration list for PBXNativeTarget "Debug Static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C027384088FE67300A93309 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		3C027385088FE67300A93309 /* Build configuration list for PBXNativeTarget "Release Static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C027387088FE67300A93309 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		3C027397088FE67400A93309 /* Build configuration list for PBXProject "ComputingFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C027399088FE67400A93309 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 74B57E8307F3425300913EC4 /* Project object */;
+}

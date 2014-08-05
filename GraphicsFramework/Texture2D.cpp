@@ -160,6 +160,10 @@ bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 bool Texture2D::LoadFromTextureBuffer(TextureBuffer* textureBuffer, 
 	GLenum internalFormat)
 {
+#if defined(__APPLE__)
+    assert( false );
+    return false;
+#else
 	IsTextureBuffer = true;
 	mInternalFormat = internalFormat;
 
@@ -170,6 +174,7 @@ bool Texture2D::LoadFromTextureBuffer(TextureBuffer* textureBuffer,
     glBindTexture(GL_TEXTURE_BUFFER, 0);
 
 	return true;
+#endif
 }
 //----------------------------------------------------------------------------
 void Texture2D::CreateRenderTarget(int width, int height, 
@@ -238,8 +243,12 @@ void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 //--------------------------------------------------------------------------
 void Texture2D::BindToImageUnit(GLuint unit, GLenum access)
 {
+#if defined(__APPLE__)
+    assert( false );
+#else
 	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, 
 		mInternalFormat);
+#endif
 }
 //--------------------------------------------------------------------------
 void Texture2D::CreateLDRandomTexture(int maxSampleCount, int patternSize)

@@ -2,7 +2,7 @@
 
 using namespace RTGI;
 
-Application* app = 0;
+ComputingApplication* app = 0;
 
 //----------------------------------------------------------------------------
 void OnIdle()

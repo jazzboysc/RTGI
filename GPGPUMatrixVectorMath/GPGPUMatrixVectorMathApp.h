@@ -2,6 +2,7 @@
 #define RTGI_GPGPUMatrixVectorMathApp_H
 
 #include "GraphicsFrameworkHeader.h"
+#include "ComputingFrameworkHeader.h"
 
 namespace RTGI
 {
@@ -10,7 +11,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 07/11/2014
 //----------------------------------------------------------------------------
-class GPGPUMatrixVectorMathApp : public Application
+class GPGPUMatrixVectorMathApp : public ComputingApplication
 {
 public:
 	GPGPUMatrixVectorMathApp(int width, int height);

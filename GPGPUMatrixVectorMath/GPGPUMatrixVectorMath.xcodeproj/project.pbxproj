@@ -21,6 +21,8 @@
 		FB5D636419706A9400D3B00E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D636019706A9400D3B00E /* main.cpp */; };
 		FB5D636F1970A3F500D3B00E /* matvec.clsl in Resources */ = {isa = PBXBuildFile; fileRef = FB5D636C1970A23500D3B00E /* matvec.clsl */; };
 		FB5D63701970A3FC00D3B00E /* matvec.clsl in Resources */ = {isa = PBXBuildFile; fileRef = FB5D636C1970A23500D3B00E /* matvec.clsl */; };
+		FB9AE32E19918DB1003D03A8 /* libComputingFrameworkd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB9AE32D19918DB1003D03A8 /* libComputingFrameworkd.a */; };
+		FB9AE33219918F41003D03A8 /* libComputingFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB9AE33119918F41003D03A8 /* libComputingFramework.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +54,34 @@
 			remoteGlobalIDString = 74D6DDFA07F342E200267169;
 			remoteInfo = "Release Static";
 		};
+		FB9AE31519918891003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE31019918891003D03A8 /* ComputingFramework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 74B57E8D07F3427D00913EC4;
+			remoteInfo = "Debug Static";
+		};
+		FB9AE31719918891003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE31019918891003D03A8 /* ComputingFramework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 74D6DDFE07F342E200267169;
+			remoteInfo = "Release Static";
+		};
+		FB9AE32219918B73003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE31019918891003D03A8 /* ComputingFramework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 74B57E8C07F3427D00913EC4;
+			remoteInfo = "Debug Static";
+		};
+		FB9AE32F19918F2A003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE31019918891003D03A8 /* ComputingFramework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 74D6DDFA07F342E200267169;
+			remoteInfo = "Release Static";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +97,9 @@
 		FB5D636019706A9400D3B00E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		FB5D636C1970A23500D3B00E /* matvec.clsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = matvec.clsl; sourceTree = "<group>"; };
 		FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GraphicsFramework.xcodeproj; path = ../GraphicsFramework/GraphicsFramework.xcodeproj; sourceTree = "<group>"; };
+		FB9AE31019918891003D03A8 /* ComputingFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ComputingFramework.xcodeproj; path = ../ComputingFramework/ComputingFramework.xcodeproj; sourceTree = "<group>"; };
+		FB9AE32D19918DB1003D03A8 /* libComputingFrameworkd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libComputingFrameworkd.a; path = ../SDK/Lib/Debug/libComputingFrameworkd.a; sourceTree = "<group>"; };
+		FB9AE33119918F41003D03A8 /* libComputingFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libComputingFramework.a; path = ../SDK/Lib/Release/libComputingFramework.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB9AE32E19918DB1003D03A8 /* libComputingFrameworkd.a in Frameworks */,
 				FB0A81B8192EE04E0016C3F1 /* libGraphicsFrameworkd.a in Frameworks */,
 				3C6FBC6C083E6E1B0068AA05 /* OpenGL.framework in Frameworks */,
 				3CB4F4A813DCF47000C74DF4 /* GLUT.framework in Frameworks */,
@@ -85,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB9AE33219918F41003D03A8 /* libComputingFramework.a in Frameworks */,
 				FB0A81BA192EE0C00016C3F1 /* libGraphicsFramework.a in Frameworks */,
 				3C6FBC6D083E6E1B0068AA05 /* OpenGL.framework in Frameworks */,
 				3CB4F4A913DCF47000C74DF4 /* GLUT.framework in Frameworks */,
@@ -98,6 +133,7 @@
 		7432C2B407F8766A00ABC141 /* Debug */ = {
 			isa = PBXGroup;
 			children = (
+				FB9AE32D19918DB1003D03A8 /* libComputingFrameworkd.a */,
 				FB0A81B7192EE04E0016C3F1 /* libGraphicsFrameworkd.a */,
 			);
 			name = Debug;
@@ -106,6 +142,7 @@
 		7432C2B707F8767000ABC141 /* Release */ = {
 			isa = PBXGroup;
 			children = (
+				FB9AE33119918F41003D03A8 /* libComputingFramework.a */,
 				FB0A81B9192EE0C00016C3F1 /* libGraphicsFramework.a */,
 			);
 			name = Release;
@@ -114,6 +151,7 @@
 		748AA4BE07F4621A00486586 = {
 			isa = PBXGroup;
 			children = (
+				FB9AE31019918891003D03A8 /* ComputingFramework.xcodeproj */,
 				FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */,
 				FB56CC3D192FC83300DF31A8 /* CLSL */,
 				FB56CC9F192FEAD400DF31A8 /* Resources */,
@@ -186,6 +224,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		FB9AE31119918891003D03A8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FB9AE31619918891003D03A8 /* libComputingFrameworkd.a */,
+				FB9AE31819918891003D03A8 /* libComputingFramework.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -200,6 +247,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				FB9AE32319918B73003D03A8 /* PBXTargetDependency */,
 				FB6994A3192FC15300B20DEB /* PBXTargetDependency */,
 			);
 			name = "Debug Static";
@@ -218,6 +266,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				FB9AE33019918F2A003D03A8 /* PBXTargetDependency */,
 				FB6994A5192FC24200B20DEB /* PBXTargetDependency */,
 			);
 			name = "Release Static";
@@ -248,6 +297,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = FB9AE31119918891003D03A8 /* Products */;
+					ProjectRef = FB9AE31019918891003D03A8 /* ComputingFramework.xcodeproj */;
+				},
+				{
 					ProductGroup = FB69949A192FC13100B20DEB /* Products */;
 					ProjectRef = FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */;
 				},
@@ -273,6 +326,20 @@
 			fileType = archive.ar;
 			path = libGraphicsFramework.a;
 			remoteRef = FB6994A0192FC13100B20DEB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FB9AE31619918891003D03A8 /* libComputingFrameworkd.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libComputingFrameworkd.a;
+			remoteRef = FB9AE31519918891003D03A8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FB9AE31819918891003D03A8 /* libComputingFramework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libComputingFramework.a;
+			remoteRef = FB9AE31719918891003D03A8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -328,6 +395,16 @@
 			name = "Release Static";
 			targetProxy = FB6994A4192FC24200B20DEB /* PBXContainerItemProxy */;
 		};
+		FB9AE32319918B73003D03A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Debug Static";
+			targetProxy = FB9AE32219918B73003D03A8 /* PBXContainerItemProxy */;
+		};
+		FB9AE33019918F2A003D03A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Release Static";
+			targetProxy = FB9AE32F19918F2A003D03A8 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -344,7 +421,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = "${SRCROOT}/../SDK/Include";
-				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../SDK/Lib/Debug";
+				LIBRARY_SEARCH_PATHS = (
+					"${SRCROOT}/../SDK/Lib/Debug",
+					/Users/ches/RTGI/SDK/Lib/Debug,
+				);
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = GPGPUMatrixVectorMathd;
 				WARNING_CFLAGS = (
@@ -361,7 +441,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = "${SRCROOT}/../SDK/Include";
-				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../SDK/Lib/Release";
+				LIBRARY_SEARCH_PATHS = (
+					"${SRCROOT}/../SDK/Lib/Release",
+					/Users/ches/RTGI/SDK/Lib/Release,
+				);
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = GPGPUMatrixVectorMath;
 				WARNING_CFLAGS = (

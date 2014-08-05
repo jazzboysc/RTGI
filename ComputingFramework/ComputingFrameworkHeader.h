@@ -6,6 +6,9 @@
 #ifndef RTGI_ComputingFrameworkHeader_H
 #define RTGI_ComputingFrameworkHeader_H
 
+#include "ComputingFrameworkCommon.h"
+#include "ComputingApplication.h"
+
 // GPGPU
 #include "ComputeProgram.h"
 #include "ComputeKernel.h"

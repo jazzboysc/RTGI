@@ -68,6 +68,20 @@
 			remoteGlobalIDString = 74D6DDFA07F342E200267169;
 			remoteInfo = "Release Static";
 		};
+		FB9AE31E199188BC003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE319199188BC003D03A8 /* ComputingFramework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 74B57E8D07F3427D00913EC4;
+			remoteInfo = "Debug Static";
+		};
+		FB9AE320199188BC003D03A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB9AE319199188BC003D03A8 /* ComputingFramework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 74D6DDFE07F342E200267169;
+			remoteInfo = "Release Static";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -93,6 +107,7 @@
 		FB5D636019706A9400D3B00E /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		FB5D636C1970A23500D3B00E /* filter.clsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = filter.clsl; sourceTree = "<group>"; };
 		FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GraphicsFramework.xcodeproj; path = ../GraphicsFramework/GraphicsFramework.xcodeproj; sourceTree = "<group>"; };
+		FB9AE319199188BC003D03A8 /* ComputingFramework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ComputingFramework.xcodeproj; path = ../ComputingFramework/ComputingFramework.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +155,7 @@
 		748AA4BE07F4621A00486586 = {
 			isa = PBXGroup;
 			children = (
+				FB9AE319199188BC003D03A8 /* ComputingFramework.xcodeproj */,
 				FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */,
 				FB06BFC81976F143000691BC /* GLSL */,
 				FB56CC3D192FC83300DF31A8 /* CLSL */,
@@ -230,6 +246,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		FB9AE31A199188BC003D03A8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FB9AE31F199188BC003D03A8 /* libComputingFrameworkd.a */,
+				FB9AE321199188BC003D03A8 /* libComputingFramework.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -292,6 +317,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = FB9AE31A199188BC003D03A8 /* Products */;
+					ProjectRef = FB9AE319199188BC003D03A8 /* ComputingFramework.xcodeproj */;
+				},
+				{
 					ProductGroup = FB69949A192FC13100B20DEB /* Products */;
 					ProjectRef = FB699499192FC13100B20DEB /* GraphicsFramework.xcodeproj */;
 				},
@@ -317,6 +346,20 @@
 			fileType = archive.ar;
 			path = libGraphicsFramework.a;
 			remoteRef = FB6994A0192FC13100B20DEB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FB9AE31F199188BC003D03A8 /* libComputingFrameworkd.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libComputingFrameworkd.a;
+			remoteRef = FB9AE31E199188BC003D03A8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FB9AE321199188BC003D03A8 /* libComputingFramework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libComputingFramework.a;
+			remoteRef = FB9AE320199188BC003D03A8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

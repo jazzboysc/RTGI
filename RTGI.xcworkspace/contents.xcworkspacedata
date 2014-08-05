@@ -13,4 +13,10 @@
    <FileRef
       location = "group:SSDO/SSDO.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:ComputingFramework/ComputingFramework.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:GraphicsFramework/GraphicsFramework.xcodeproj">
+   </FileRef>
 </Workspace>

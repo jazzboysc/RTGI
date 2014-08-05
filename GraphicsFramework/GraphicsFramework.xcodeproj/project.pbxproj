@@ -141,22 +141,6 @@
 		FB18BAE1192ED04C00D5B13F /* vec.h in Headers */ = {isa = PBXBuildFile; fileRef = FB18BAA0192ED04C00D5B13F /* vec.h */; };
 		FB18BAE2192ED04C00D5B13F /* VertexShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB18BAA1192ED04C00D5B13F /* VertexShader.cpp */; };
 		FB18BAE3192ED04C00D5B13F /* VertexShader.h in Headers */ = {isa = PBXBuildFile; fileRef = FB18BAA2192ED04C00D5B13F /* VertexShader.h */; };
-		FB5D6368197098C800D3B00E /* ComputeProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D6366197098C800D3B00E /* ComputeProgram.cpp */; };
-		FB5D6369197098C800D3B00E /* ComputeProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D6366197098C800D3B00E /* ComputeProgram.cpp */; };
-		FB5D636A197098C800D3B00E /* ComputeProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = FB5D6367197098C800D3B00E /* ComputeProgram.h */; };
-		FB5D636B197098C800D3B00E /* ComputeProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = FB5D6367197098C800D3B00E /* ComputeProgram.h */; };
-		FB5D63731970ADE000D3B00E /* MemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D63711970ADE000D3B00E /* MemoryObject.cpp */; };
-		FB5D63741970ADE000D3B00E /* MemoryObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D63711970ADE000D3B00E /* MemoryObject.cpp */; };
-		FB5D63751970ADE000D3B00E /* MemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = FB5D63721970ADE000D3B00E /* MemoryObject.h */; };
-		FB5D63761970ADE000D3B00E /* MemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = FB5D63721970ADE000D3B00E /* MemoryObject.h */; };
-		FB5D63791970B2E000D3B00E /* CommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D63771970B2E000D3B00E /* CommandQueue.cpp */; };
-		FB5D637A1970B2E000D3B00E /* CommandQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D63771970B2E000D3B00E /* CommandQueue.cpp */; };
-		FB5D637B1970B2E000D3B00E /* CommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = FB5D63781970B2E000D3B00E /* CommandQueue.h */; };
-		FB5D637C1970B2E000D3B00E /* CommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = FB5D63781970B2E000D3B00E /* CommandQueue.h */; };
-		FB5D637F1970B6E100D3B00E /* ComputeKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D637D1970B6E100D3B00E /* ComputeKernel.cpp */; };
-		FB5D63801970B6E100D3B00E /* ComputeKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB5D637D1970B6E100D3B00E /* ComputeKernel.cpp */; };
-		FB5D63811970B6E100D3B00E /* ComputeKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = FB5D637E1970B6E100D3B00E /* ComputeKernel.h */; };
-		FB5D63821970B6E100D3B00E /* ComputeKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = FB5D637E1970B6E100D3B00E /* ComputeKernel.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -231,14 +215,6 @@
 		FB18BAA0192ED04C00D5B13F /* vec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vec.h; sourceTree = "<group>"; };
 		FB18BAA1192ED04C00D5B13F /* VertexShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexShader.cpp; sourceTree = "<group>"; };
 		FB18BAA2192ED04C00D5B13F /* VertexShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VertexShader.h; sourceTree = "<group>"; };
-		FB5D6366197098C800D3B00E /* ComputeProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeProgram.cpp; sourceTree = "<group>"; };
-		FB5D6367197098C800D3B00E /* ComputeProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeProgram.h; sourceTree = "<group>"; };
-		FB5D63711970ADE000D3B00E /* MemoryObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObject.cpp; sourceTree = "<group>"; };
-		FB5D63721970ADE000D3B00E /* MemoryObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObject.h; sourceTree = "<group>"; };
-		FB5D63771970B2E000D3B00E /* CommandQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandQueue.cpp; sourceTree = "<group>"; };
-		FB5D63781970B2E000D3B00E /* CommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandQueue.h; sourceTree = "<group>"; };
-		FB5D637D1970B6E100D3B00E /* ComputeKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeKernel.cpp; sourceTree = "<group>"; };
-		FB5D637E1970B6E100D3B00E /* ComputeKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeKernel.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -279,7 +255,6 @@
 		74D6DE0107F3432700267169 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				FB5D636519707DD500D3B00E /* GPGPU */,
 				FB0A81B6192ED9C00016C3F1 /* L-System */,
 				FB0A81B5192ED9B20016C3F1 /* Material */,
 				FB0A81B4192ED9A20016C3F1 /* Math */,
@@ -393,21 +368,6 @@
 			name = "L-System";
 			sourceTree = "<group>";
 		};
-		FB5D636519707DD500D3B00E /* GPGPU */ = {
-			isa = PBXGroup;
-			children = (
-				FB5D637D1970B6E100D3B00E /* ComputeKernel.cpp */,
-				FB5D637E1970B6E100D3B00E /* ComputeKernel.h */,
-				FB5D63771970B2E000D3B00E /* CommandQueue.cpp */,
-				FB5D63781970B2E000D3B00E /* CommandQueue.h */,
-				FB5D63711970ADE000D3B00E /* MemoryObject.cpp */,
-				FB5D63721970ADE000D3B00E /* MemoryObject.h */,
-				FB5D6366197098C800D3B00E /* ComputeProgram.cpp */,
-				FB5D6367197098C800D3B00E /* ComputeProgram.h */,
-			);
-			name = GPGPU;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -418,19 +378,16 @@
 				FB18BABC192ED04C00D5B13F /* LSystem.h in Headers */,
 				FB18BAE1192ED04C00D5B13F /* vec.h in Headers */,
 				FB18BAB0192ED04C00D5B13F /* Fog.h in Headers */,
-				FB5D63811970B6E100D3B00E /* ComputeKernel.h in Headers */,
 				FB18BAC7192ED04C00D5B13F /* PolyCylinder.h in Headers */,
 				FB18BADC192ED04C00D5B13F /* TextureCube.h in Headers */,
 				FB18BAB2192ED04C00D5B13F /* FragmentShader.h in Headers */,
 				FB18BACC192ED04C00D5B13F /* RefPointer.h in Headers */,
 				FB18BAA5192ED04C00D5B13F /* Angel.h in Headers */,
-				FB5D637B1970B2E000D3B00E /* CommandQueue.h in Headers */,
 				FB18BAD6192ED04C00D5B13F /* Technique.h in Headers */,
 				FB18BAC3192ED04C00D5B13F /* Pass.h in Headers */,
 				FB18BAC5192ED04C00D5B13F /* PointSet.h in Headers */,
 				FB18BADA192ED04C00D5B13F /* Texture2D.h in Headers */,
 				FB18BAD2192ED04C00D5B13F /* Shader.h in Headers */,
-				FB5D636A197098C800D3B00E /* ComputeProgram.h in Headers */,
 				A03A135C1957D8CE00F179AF /* RNG.h in Headers */,
 				FB18BAC1192ED04C00D5B13F /* MaterialTemplate.h in Headers */,
 				FB18BACE192ED04C00D5B13F /* RenderObject.h in Headers */,
@@ -452,7 +409,6 @@
 				FB18BAB6192ED04C00D5B13F /* GraphicsFrameworkHeader.h in Headers */,
 				FB18BACB192ED04C00D5B13F /* RefObject.h in Headers */,
 				FB18BABA192ED04C00D5B13F /* Light.h in Headers */,
-				FB5D63751970ADE000D3B00E /* MemoryObject.h in Headers */,
 				FB18BAB4192ED04C00D5B13F /* FrameBuffer.h in Headers */,
 				FB18BAAB192ED04C00D5B13F /* Camera.h in Headers */,
 				FB18BABF192ED04C00D5B13F /* Material.h in Headers */,
@@ -466,19 +422,16 @@
 				A099A519192EFE5100B26202 /* Texture.h in Headers */,
 				A099A51A192EFE5100B26202 /* Texture2D.h in Headers */,
 				A099A51B192EFE5100B26202 /* TextureCube.h in Headers */,
-				FB5D63821970B6E100D3B00E /* ComputeKernel.h in Headers */,
 				A099A51C192EFE5100B26202 /* FrameBuffer.h in Headers */,
 				A099A51D192EFE5100B26202 /* bmpread.h in Headers */,
 				A099A51E192EFE5100B26202 /* Angel.h in Headers */,
 				A099A51F192EFE5100B26202 /* Application.h in Headers */,
 				A099A520192EFE5100B26202 /* CheckError.h in Headers */,
-				FB5D637C1970B2E000D3B00E /* CommandQueue.h in Headers */,
 				A099A521192EFE5100B26202 /* FrameworkCommon.h in Headers */,
 				A099A522192EFE5100B26202 /* GraphicsFrameworkHeader.h in Headers */,
 				A099A523192EFE5100B26202 /* GraphicsFrameworkPCH.h in Headers */,
 				A099A500192EFE2500B26202 /* PolyCylinder.h in Headers */,
 				A099A501192EFE2500B26202 /* Token.h in Headers */,
-				FB5D636B197098C800D3B00E /* ComputeProgram.h in Headers */,
 				A03A135D1957D8CE00F179AF /* RNG.h in Headers */,
 				A099A502192EFE2500B26202 /* LSystem.h in Headers */,
 				A099A503192EFE2500B26202 /* Expression.h in Headers */,
@@ -500,7 +453,6 @@
 				A099A513192EFE2500B26202 /* RefObject.h in Headers */,
 				A099A514192EFE2500B26202 /* RefPointer.h in Headers */,
 				A099A515192EFE2500B26202 /* RenderObject.h in Headers */,
-				FB5D63761970ADE000D3B00E /* MemoryObject.h in Headers */,
 				A099A516192EFE2500B26202 /* Light.h in Headers */,
 				A099A517192EFE2500B26202 /* Fog.h in Headers */,
 				A099A518192EFE2500B26202 /* Camera.h in Headers */,
@@ -613,7 +565,6 @@
 				FB18BAC0192ED04C00D5B13F /* MaterialTemplate.cpp in Sources */,
 				FB18BAD3192ED04C00D5B13F /* ShaderProgram.cpp in Sources */,
 				FB18BAB9192ED04C00D5B13F /* Light.cpp in Sources */,
-				FB5D6368197098C800D3B00E /* ComputeProgram.cpp in Sources */,
 				FB18BADD192ED04C00D5B13F /* Token.cpp in Sources */,
 				FB18BAC6192ED04C00D5B13F /* PolyCylinder.cpp in Sources */,
 				FB18BABE192ED04C00D5B13F /* Material.cpp in Sources */,
@@ -631,18 +582,15 @@
 				FB18BAD7192ED04C00D5B13F /* Texture.cpp in Sources */,
 				FB18BAC2192ED04C00D5B13F /* Pass.cpp in Sources */,
 				FB18BAC8192ED04C00D5B13F /* Polyline2Geometry.cpp in Sources */,
-				FB5D637F1970B6E100D3B00E /* ComputeKernel.cpp in Sources */,
 				FB18BAAA192ED04C00D5B13F /* Camera.cpp in Sources */,
 				FB18BAD9192ED04C00D5B13F /* Texture2D.cpp in Sources */,
 				FB18BAA3192ED04C00D5B13F /* AABB.cpp in Sources */,
-				FB5D63731970ADE000D3B00E /* MemoryObject.cpp in Sources */,
 				FB18BACD192ED04C00D5B13F /* RenderObject.cpp in Sources */,
 				FB18BAD1192ED04C00D5B13F /* Shader.cpp in Sources */,
 				FB18BAB1192ED04C00D5B13F /* FragmentShader.cpp in Sources */,
 				FB18BAB3192ED04C00D5B13F /* FrameBuffer.cpp in Sources */,
 				FB18BAE2192ED04C00D5B13F /* VertexShader.cpp in Sources */,
 				FB18BAA6192ED04C00D5B13F /* Application.cpp in Sources */,
-				FB5D63791970B2E000D3B00E /* CommandQueue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,7 +602,6 @@
 				A099A4E8192EFDA300B26202 /* Shader.cpp in Sources */,
 				A099A4E9192EFDA300B26202 /* ShaderProgram.cpp in Sources */,
 				A099A4EA192EFDA300B26202 /* Technique.cpp in Sources */,
-				FB5D6369197098C800D3B00E /* ComputeProgram.cpp in Sources */,
 				A099A4EB192EFDA300B26202 /* Material.cpp in Sources */,
 				A099A4EC192EFDA300B26202 /* MaterialTemplate.cpp in Sources */,
 				A099A4ED192EFDA300B26202 /* Pass.cpp in Sources */,
@@ -672,18 +619,15 @@
 				A099A4F8192EFDA400B26202 /* Camera.cpp in Sources */,
 				A099A4F9192EFDA400B26202 /* Texture.cpp in Sources */,
 				A099A4FA192EFDA400B26202 /* Texture2D.cpp in Sources */,
-				FB5D63801970B6E100D3B00E /* ComputeKernel.cpp in Sources */,
 				A099A4FB192EFDA400B26202 /* TextureCube.cpp in Sources */,
 				A099A4FC192EFDA400B26202 /* FrameBuffer.cpp in Sources */,
 				A099A4FD192EFDA400B26202 /* bmpread.c in Sources */,
-				FB5D63741970ADE000D3B00E /* MemoryObject.cpp in Sources */,
 				A099A4FE192EFDA400B26202 /* Application.cpp in Sources */,
 				A099A4FF192EFDA400B26202 /* GraphicsFrameworkPCH.cpp in Sources */,
 				A099A4E3192EFD5B00B26202 /* PolyCylinder.cpp in Sources */,
 				A099A4E4192EFD5B00B26202 /* Token.cpp in Sources */,
 				A099A4E5192EFD5B00B26202 /* LSystem.cpp in Sources */,
 				A099A4E6192EFD5B00B26202 /* Expression.cpp in Sources */,
-				FB5D637A1970B2E000D3B00E /* CommandQueue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
