@@ -53,6 +53,8 @@ private:
 	PixelBufferPtr mAccuHeadPointerTextureInitData;
 	StructuredBufferPtr mAccuGPUMemPool;
 
+	Texture3DPtr mAccumulationTexture;
+
 	AtomicCounterBufferPtr mRayAllocCounter;
 	Texture2DPtr mRayHeadPointerTexture;
 	PixelBufferPtr mRayHeadPointerTextureInitData;

@@ -143,8 +143,6 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width, 
 	GLsizei height, GLenum format, GLenum type, void* pixels)
 {
-	assert( pixels );
-
     glGenTextures(1, &mTexture);
     glBindTexture(GL_TEXTURE_2D, mTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, 

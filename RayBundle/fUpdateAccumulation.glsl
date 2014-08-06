@@ -16,21 +16,48 @@ uniform vec3 worldRayBundleDirection;
 #define LIST_MAX_LENGTH 20
 ListNode perPixelList[LIST_MAX_LENGTH];
 
-layout (binding = 0, r32ui) uniform uimage2D headPointerImage;
-layout (location = 0) out vec4 color;
-layout (std430, binding = 0) buffer gpuMemoryPool
+layout (binding = 0, r32ui)   uniform uimage2D headPointerImage;
+layout (binding = 1, rgba32f) uniform image3D radianceAccumulationImage;
+layout (std430, binding = 0)  buffer gpuMemoryPool
 {
 	ListNode nodes[];
 } rayBundleBuffer;
 
-vec3 GetRadianceFromAccumulationBuffer(ListNode sender)
+layout (location = 0) out vec4 color;
+
+ivec3 GetImageCoords(vec3 worldPosition)
 {
-    // TODO:
+	// Scene bounding box.
+	// x: [-10, 10] y: [0, 20] z: [-10, 10]
+	const vec3 minP = vec3(-10.0, 0.0, -10);
+	const vec3 maxP = vec3(10.0, 20.0, 10.0);
+	vec3 range = maxP - minP;
+	vec3 imageDim = vec3(imageSize(radianceAccumulationImage));
+
+	worldPosition.x = min(max(worldPosition.x, minP.x), maxP.x);
+	worldPosition.y = min(max(worldPosition.y, minP.y), maxP.y);
+	worldPosition.z = min(max(worldPosition.z, minP.z), maxP.z);
+	float x = ((worldPosition.x - minP.x) / range.x) * imageDim.x;
+	float y = ((worldPosition.y - minP.y) / range.y) * imageDim.y;
+	float z = ((worldPosition.z - minP.z) / range.z) * imageDim.z;
+
+	ivec3 res = ivec3(x, y, z);
+	return res;
 }
 
-void AddRadianceToAccumulationBuffer(ListNode receiver, vec3 radiance)
+vec3 GetRadianceFromAccumulationBuffer(ListNode node)
 {
-    // TODO:
+	ivec3 coords = GetImageCoords(node.worldPosition);
+    vec3 radiance = imageLoad(radianceAccumulationImage, coords).xyz;
+	return radiance;
+}
+
+void AddRadianceToAccumulationBuffer(ListNode node, vec3 radiance)
+{
+    vec3 currentRadiance = GetRadianceFromAccumulationBuffer(node);
+	currentRadiance += radiance;
+	ivec3 coords = GetImageCoords(node.worldPosition);
+	imageStore(radianceAccumulationImage, coords, vec4(currentRadiance, 0.0));
 }
 
 void TransferEnergy(ListNode receiver, ListNode sender)

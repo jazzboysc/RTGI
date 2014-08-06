@@ -105,6 +105,9 @@
     <ClCompile Include="StructuredBuffer.cpp">
       <Filter>Buffers</Filter>
     </ClCompile>
+    <ClCompile Include="Texture3D.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="StructuredBuffer.h">
       <Filter>Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture3D.h">
+      <Filter>Textures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -168,6 +168,11 @@ void RayBundleApp::Initialize()
 	mAccuGPUMemPool = new StructuredBuffer();
 	mAccuGPUMemPool->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
 
+	// Create accumulation texture.
+	mAccumulationTexture = new Texture3D();
+	mAccumulationTexture->LoadFromSystemMemory(GL_RGBA32F_ARB, mWidth, mWidth, 
+		mWidth, GL_RGBA, GL_FLOAT, 0);
+
 	// Create ray head pointer texture.
 	mRayHeadPointerTexture = new Texture2D();
 	mRayHeadPointerTexture->CreateRenderTarget(mWidth, mHeight, 
@@ -325,6 +330,7 @@ void RayBundleApp::Terminate()
 	mAccuHeadPointerTextureInitData = 0;
 	mAccuGPUMemPool = 0;
 
+	mAccumulationTexture = 0;
 	mRayAllocCounter = 0;
 	mRayHeadPointerTexture = 0;
 	mRayHeadPointerTextureInitData = 0;
