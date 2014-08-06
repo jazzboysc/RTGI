@@ -23,9 +23,38 @@ layout (std430, binding = 0) buffer gpuMemoryPool
 	ListNode nodes[];
 } rayBundleBuffer;
 
-void ExchangeEnergy(ListNode receiver, ListNode sender)
+vec3 GetRadianceFromAccumulationBuffer(ListNode sender)
 {
-	// TODO.
+    // TODO:
+}
+
+void AddRadianceToAccumulationBuffer(ListNode receiver, vec3 radiance)
+{
+    // TODO:
+}
+
+void TransferEnergy(ListNode receiver, ListNode sender)
+{
+    vec3 incidentDir = receiver.worldPosition - sender.worldPosition;
+    float incidentDirLengthSqr = dot(incidentDir, incidentDir);
+    vec3 normalizedIncidentDir = normalize(incidentDir);
+    
+    float geometricTerm = max(0.0, dot(-normalizedIncidentDir, receiver.worldNormal)) *
+        max(0.0, dot(normalizedIncidentDir, sender.worldNormal)) /
+        incidentDirLengthSqr;
+    
+    vec3 senderRadiance;
+    if( sender.isLight )
+    {
+        senderRadiance = sender.emissionColor;
+    }
+    else
+    {
+        senderRadiance = GetRadianceFromAccumulationBuffer(sender);
+    }
+    
+    vec3 receiverRadiance = senderRadiance * geometricTerm;
+    AddRadianceToAccumulationBuffer(receiver, receiverRadiance);
 }
 
 void main()
@@ -66,7 +95,7 @@ void main()
         }
     }
 
-	// Exchange energy between two consecutive intersection points.
+	// Transfer energy between two consecutive intersection points.
 	if( nodeCount >= 2 )
 	{
 		ListNode receiver, sender;
@@ -77,7 +106,7 @@ void main()
 		float d = dot(worldRayBundleDirection, receiver.worldNormal);
 		if( d > 0.0 )
 		{
-			ExchangeEnergy(receiver, sender);
+			TransferEnergy(receiver, sender);
 		}
 
 		int i;
@@ -93,7 +122,7 @@ void main()
 			{
 				sender = perPixelList[i - 1];
 			}
-			ExchangeEnergy(receiver, sender);
+			TransferEnergy(receiver, sender);
 		}
 
 		// Handle last intersection point.
@@ -102,7 +131,7 @@ void main()
 		d = dot(worldRayBundleDirection, receiver.worldNormal);
 		if( d < 0.0 )
 		{
-			ExchangeEnergy(receiver, sender);
+			TransferEnergy(receiver, sender);
 		}
 	}
 }
