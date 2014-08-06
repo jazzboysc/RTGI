@@ -441,10 +441,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				HEADER_SEARCH_PATHS = "${SRCROOT}/../SDK/Include";
-				LIBRARY_SEARCH_PATHS = (
-					"${SRCROOT}/../SDK/Lib/Release",
-					/Users/ches/RTGI/SDK/Lib/Release,
-				);
+				LIBRARY_SEARCH_PATHS = "${SRCROOT}/../SDK/Lib/Release";
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = GPGPUMatrixVectorMath;
 				WARNING_CFLAGS = (
