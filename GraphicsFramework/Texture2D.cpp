@@ -148,6 +148,8 @@ bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, 
 		type, pixels);
 
+	Width = width;
+	Height = height;
 	mInternalFormat = internalFormat;
 	mFormat = format;
 	mType = type;

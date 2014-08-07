@@ -28,6 +28,11 @@ public:
 		GLsizei height, GLsizei depth, GLenum format, GLenum type, 
 		void* pixels);
 
+		// Update a render target from pixel buffer.
+	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
+
+	void BindToImageUnit(GLuint unit, GLenum access);
+
 	int Width, Height, Depth;
 
 private:

@@ -3,7 +3,6 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "RayBundleTriMesh.h"
-#include "AccumulationScreenQuad.h"
 #include "UpdateAccumulationScreenQuad.h"
 
 namespace RTGI
@@ -31,7 +30,6 @@ public:
 	void OnReshape(int x, int y);
 
 private:
-	void ResetAccumulation();
 	void DrawRayBundle();
 
 	int mWidth, mHeight;
@@ -48,19 +46,13 @@ private:
 	RayBundleTriMeshPtr mRightWall;
 	RayBundleTriMeshPtr mModel;
 
-	AtomicCounterBufferPtr mAccumulationAllocCounter;
-	Texture2DPtr mAccumulationHeadPointerTexture;
-	PixelBufferPtr mAccuHeadPointerTextureInitData;
-	StructuredBufferPtr mAccuGPUMemPool;
-
 	Texture3DPtr mAccumulationTexture;
-
+	PixelBufferPtr mAccumulationTextureInitData;
 	AtomicCounterBufferPtr mRayAllocCounter;
 	Texture2DPtr mRayHeadPointerTexture;
 	PixelBufferPtr mRayHeadPointerTextureInitData;
 	StructuredBufferPtr mRayGPUMemPool;
 
-	AccumulationScreenQuadPtr mScreenQuad;
 	UpdateAccumulationScreenQuadPtr mUpdateAccuScreenQuad;
 
 	enum { RAYBUNDLE_SAMPLE_COUNT = 8 };

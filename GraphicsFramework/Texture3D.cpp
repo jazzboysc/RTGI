@@ -28,6 +28,9 @@ bool Texture3D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 	glTexImage3D(GL_TEXTURE_3D, 0, internalFormat, width, height, depth, 0, 
 		format, type, pixels);
 
+	Width = width;
+	Height = height;
+	Depth = depth;
 	mInternalFormat = internalFormat;
 	mFormat = format;
 	mType = type;
@@ -36,3 +39,24 @@ bool Texture3D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 	return true;
 }
 //----------------------------------------------------------------------------
+void Texture3D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
+{
+	GLuint buffer = pixelBuffer->GetBuffer();
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
+	glBindTexture(GL_TEXTURE_3D, mTexture);
+	glTexImage3D(GL_TEXTURE_3D, 0, mInternalFormat, Width, Height, Depth, 0, 
+		mFormat, mType, 0);
+	glBindTexture(GL_TEXTURE_3D, 0);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+}
+//--------------------------------------------------------------------------
+void Texture3D::BindToImageUnit(GLuint unit, GLenum access)
+{
+#if defined(__APPLE__)
+    assert( false );
+#else
+	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, 
+		mInternalFormat);
+#endif
+}
+//--------------------------------------------------------------------------
