@@ -17,11 +17,21 @@ uniform vec3 worldRayBundleDirection;
 ListNode perPixelList[LIST_MAX_LENGTH];
 
 layout (binding = 0, r32ui)   uniform uimage2D headPointerImage;
-layout (binding = 1, rgba32f) uniform image3D radianceAccumulationImage;
-layout (std430, binding = 0)  buffer gpuMemoryPool
+
+layout (std430, binding = 0)  buffer gpuMemoryPool1
 {
 	ListNode nodes[];
 } rayBundleBuffer;
+
+struct AccumulationRadiance
+{
+	vec3 radiance;
+};
+
+layout (std430, binding = 1)  buffer gpuMemoryPool2
+{
+	AccumulationRadiance data[];
+} accumulationBuffer;
 
 layout (location = 0) out vec4 color;
 
@@ -32,7 +42,7 @@ ivec3 GetImageCoords(vec3 worldPosition)
 	const vec3 minP = vec3(-10.0, 0.0, -10);
 	const vec3 maxP = vec3(10.0, 20.0, 10.0);
 	vec3 range = maxP - minP;
-	vec3 imageDim = vec3(imageSize(radianceAccumulationImage));
+	vec3 imageDim = vec3(256.0, 256.0, 256.0);
 
 	worldPosition.x = min(max(worldPosition.x, minP.x), maxP.x);
 	worldPosition.y = min(max(worldPosition.y, minP.y), maxP.y);
@@ -48,7 +58,8 @@ ivec3 GetImageCoords(vec3 worldPosition)
 vec3 GetRadianceFromAccumulationBuffer(ListNode node)
 {
 	ivec3 coords = GetImageCoords(node.worldPosition);
-    vec3 radiance = imageLoad(radianceAccumulationImage, coords).xyz;
+	int index = coords.x + (coords.y + coords.z*256)*256;
+    vec3 radiance = accumulationBuffer.data[index].radiance;
 	return radiance;
 }
 
@@ -57,11 +68,16 @@ void AddRadianceToAccumulationBuffer(ListNode node, vec3 radiance)
     vec3 currentRadiance = GetRadianceFromAccumulationBuffer(node);
 	currentRadiance += radiance;
 	ivec3 coords = GetImageCoords(node.worldPosition);
-	imageStore(radianceAccumulationImage, coords, vec4(currentRadiance, 0.0));
+	int index = coords.x + (coords.y + coords.z*256)*256;
+	accumulationBuffer.data[index].radiance = currentRadiance;
 }
 
 void TransferEnergy(ListNode receiver, ListNode sender)
 {
+	//ListNode temp = receiver;
+	//receiver = sender;
+	//sender = temp;
+
     vec3 incidentDir = receiver.worldPosition - sender.worldPosition;
     float incidentDirLengthSqr = dot(incidentDir, incidentDir);
     vec3 normalizedIncidentDir = normalize(incidentDir);
@@ -81,6 +97,7 @@ void TransferEnergy(ListNode receiver, ListNode sender)
     }
     
     vec3 receiverRadiance = senderRadiance * geometricTerm;
+	receiverRadiance.x = 1.0;
     AddRadianceToAccumulationBuffer(receiver, receiverRadiance);
 }
 
@@ -161,4 +178,9 @@ void main()
 			TransferEnergy(receiver, sender);
 		}
 	}
+	// test
+	//imageStore(radianceAccumulationImage, ivec3(0, 0, 0), vec4(1.0, 0.0, 0.0, 0.0));
+	//vec2 xy = vec2(gl_FragCoord.xy) / 256.0;
+	//int index = int(gl_FragCoord.y)*256 + int(gl_FragCoord.x);
+	//rayBundleBuffer.nodes[index].materialColor = vec3(xy, 0.0);
 }

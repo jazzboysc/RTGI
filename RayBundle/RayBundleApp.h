@@ -31,6 +31,7 @@ public:
 
 private:
 	void DrawRayBundle();
+	void DrawScene();
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;
@@ -46,12 +47,11 @@ private:
 	RayBundleTriMeshPtr mRightWall;
 	RayBundleTriMeshPtr mModel;
 
-	Texture3DPtr mAccumulationTexture;
-	PixelBufferPtr mAccumulationTextureInitData;
 	AtomicCounterBufferPtr mRayAllocCounter;
 	Texture2DPtr mRayHeadPointerTexture;
 	PixelBufferPtr mRayHeadPointerTextureInitData;
-	StructuredBufferPtr mRayGPUMemPool;
+	StructuredBufferPtr mRayBundleNodeBuffer;
+	StructuredBufferPtr mAccumulationBuffer;
 
 	UpdateAccumulationScreenQuadPtr mUpdateAccuScreenQuad;
 

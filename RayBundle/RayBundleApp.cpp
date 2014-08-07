@@ -133,22 +133,6 @@ void RayBundleApp::Initialize()
 	void* pixelBufferData = 0;
 	size_t gpuMemPoolSize = 0;
 
-	// Create accumulation texture.
-	mAccumulationTexture = new Texture3D();
-	mAccumulationTexture->LoadFromSystemMemory(GL_RGBA32F_ARB, mWidth, mWidth, 
-		mWidth, GL_RGBA, GL_FLOAT, 0);
-
-	// Create accumulation texture init data.
-	pixelCount = mWidth * mWidth * mWidth;
-	mAccumulationTextureInitData = new PixelBuffer();
-	mAccumulationTextureInitData->ReserveDeviceResource(
-		pixelCount*sizeof(vec4), GL_STATIC_DRAW);
-	mAccumulationTextureInitData->Bind();
-	pixelBufferData = mAccumulationTextureInitData->Map(GL_WRITE_ONLY);
-	assert( pixelBufferData );
-	memset(pixelBufferData, 0x00, pixelCount*sizeof(vec4));
-	mAccumulationTextureInitData->Unmap();
-
 	// Create ray head pointer texture.
 	mRayHeadPointerTexture = new Texture2D();
 	mRayHeadPointerTexture->CreateRenderTarget(mWidth, mHeight, 
@@ -173,8 +157,13 @@ void RayBundleApp::Initialize()
 	// Create ray GPU memory pool for concurrent linked lists.
 	gpuMemPoolSize = 8 * pixelCount * (4*sizeof(vec4) + sizeof(GLuint) + 
 		sizeof(GLfloat) + sizeof(GLboolean));
-	mRayGPUMemPool = new StructuredBuffer();
-	mRayGPUMemPool->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
+	mRayBundleNodeBuffer = new StructuredBuffer();
+	mRayBundleNodeBuffer->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
+
+	// Create accumulation buffer.
+	size_t bufferSize = 256 * 256 * 256 * sizeof(vec3);
+	mAccumulationBuffer = new StructuredBuffer();
+	mAccumulationBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
 	// Create update accumulation screen quad.
 	material = new Material(mtUpdateAccumulation);
@@ -207,15 +196,36 @@ void RayBundleApp::DrawRayBundle()
 	mRightWall->SetCamera(mRayBundleProjector);
 	mRightWall->Render(0, 1);
 
-	mModel->SetCamera(mRayBundleProjector);
-	mModel->Render(0, 1);
+	//mModel->SetCamera(mRayBundleProjector);
+	//mModel->Render(0, 1);
+}
+//----------------------------------------------------------------------------
+void RayBundleApp::DrawScene()
+{
+	mGround->SetCamera(mCamera);
+	mGround->Render(0, 0);
+
+	mCeiling->SetCamera(mCamera);
+	mCeiling->Render(0, 0);
+
+	mLight->SetCamera(mCamera);
+	mLight->Render(0, 0);
+
+	mBackWall->SetCamera(mCamera);
+	mBackWall->Render(0, 0);
+
+	mLeftWall->SetCamera(mCamera);
+	mLeftWall->Render(0, 0);
+
+	mRightWall->SetCamera(mCamera);
+	mRightWall->Render(0, 0);
+
+	//mModel->SetCamera(mCamera);
+	//mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void RayBundleApp::Run()
 {
-	// Reset accumulation texture.
-	mAccumulationTexture->UpdateFromPixelBuffer(mAccumulationTextureInitData);
-
 	// Reset ray bundle atomic counter.
 	mRayAllocCounter->Bind(0);
 	GLuint* counterData = (GLuint*)mRayAllocCounter->Map(GL_WRITE_ONLY);
@@ -227,13 +237,21 @@ void RayBundleApp::Run()
 	mRayHeadPointerTexture->UpdateFromPixelBuffer(
 		mRayHeadPointerTextureInitData);
 
-	// Bind ray bundle textures to image units.
+	// Bind ray bundle texture to image unit.
 	mRayHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
-	mAccumulationTexture->BindToImageUnit(1, GL_READ_WRITE);
 
 	// Bind ray bundle buffer.
-	mRayGPUMemPool->Bind(0);
+	mRayBundleNodeBuffer->Bind(0);
 
+	// Reset accumulation buffer.
+	mAccumulationBuffer->Bind(1);
+	vec4* bufferData = (vec4*)mAccumulationBuffer->Map(GL_WRITE_ONLY);
+	assert( bufferData );
+	memset(bufferData, 0x00, mAccumulationBuffer->GetSize());
+	mAccumulationBuffer->Unmap();
+
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
     glClear(GL_COLOR_BUFFER_BIT);
 
 	// Create a ray bundle.
@@ -241,6 +259,11 @@ void RayBundleApp::Run()
 
 	// Transfer energy for ray bundle.
 	mUpdateAccuScreenQuad->Render(0, 0);
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DrawScene();
 
 	glutSwapBuffers();
 }
@@ -260,12 +283,11 @@ void RayBundleApp::Terminate()
 	mRightWall = 0;
 	mModel = 0;
 
-	mAccumulationTexture = 0;
-	mAccumulationTextureInitData = 0;
 	mRayAllocCounter = 0;
 	mRayHeadPointerTexture = 0;
 	mRayHeadPointerTextureInitData = 0;
-	mRayGPUMemPool = 0;
+	mRayBundleNodeBuffer = 0;
+	mAccumulationBuffer = 0;
 
 	mUpdateAccuScreenQuad = 0;
 }
