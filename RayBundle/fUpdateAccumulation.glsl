@@ -69,7 +69,8 @@ void AddRadianceToAccumulationBuffer(ListNode node, vec3 radiance)
 	currentRadiance += radiance;
 	ivec3 coords = GetImageCoords(node.worldPosition);
 	int index = coords.x + (coords.y + coords.z*256)*256;
-	accumulationBuffer.data[index].radiance = currentRadiance;
+	//accumulationBuffer.data[index].radiance = currentRadiance;
+	accumulationBuffer.data[index].radiance = radiance;
 }
 
 void TransferEnergy(ListNode receiver, ListNode sender)
@@ -139,48 +140,47 @@ void main()
         }
     }
 
-	// Transfer energy between two consecutive intersection points.
-	if( nodeCount >= 2 )
+	for( int i = 0; i < nodeCount; ++i )
 	{
-		ListNode receiver, sender;
-
-		// Handle first intersection point.
-		receiver = perPixelList[0];
-		sender = perPixelList[1];
-		float d = dot(worldRayBundleDirection, receiver.worldNormal);
-		if( d > 0.0 )
-		{
-			TransferEnergy(receiver, sender);
-		}
-
-		int i;
-		for( i = 1; i < nodeCount - 1; ++i )
-		{
-			receiver = perPixelList[i];
-			d = dot(worldRayBundleDirection, receiver.worldNormal);
-			if( d > 0.0 )
-			{
-				sender = perPixelList[i + 1];
-			}
-			else
-			{
-				sender = perPixelList[i - 1];
-			}
-			TransferEnergy(receiver, sender);
-		}
-
-		// Handle last intersection point.
-		receiver = perPixelList[i];
-		sender = perPixelList[i - 1];
-		d = dot(worldRayBundleDirection, receiver.worldNormal);
-		if( d < 0.0 )
-		{
-			TransferEnergy(receiver, sender);
-		}
+		AddRadianceToAccumulationBuffer(perPixelList[i], vec3(0.0, 1.0, 0.0));
 	}
-	// test
-	//imageStore(radianceAccumulationImage, ivec3(0, 0, 0), vec4(1.0, 0.0, 0.0, 0.0));
-	//vec2 xy = vec2(gl_FragCoord.xy) / 256.0;
-	//int index = int(gl_FragCoord.y)*256 + int(gl_FragCoord.x);
-	//rayBundleBuffer.nodes[index].materialColor = vec3(xy, 0.0);
+	// Transfer energy between two consecutive intersection points.
+	//if( nodeCount >= 2 )
+	//{
+	//	ListNode receiver, sender;
+
+	//	// Handle first intersection point.
+	//	receiver = perPixelList[0];
+	//	sender = perPixelList[1];
+	//	float d = dot(worldRayBundleDirection, receiver.worldNormal);
+	//	if( d > 0.0 )
+	//	{
+	//		TransferEnergy(receiver, sender);
+	//	}
+
+	//	int i;
+	//	for( i = 1; i < nodeCount - 1; ++i )
+	//	{
+	//		receiver = perPixelList[i];
+	//		d = dot(worldRayBundleDirection, receiver.worldNormal);
+	//		if( d > 0.0 )
+	//		{
+	//			sender = perPixelList[i + 1];
+	//		}
+	//		else
+	//		{
+	//			sender = perPixelList[i - 1];
+	//		}
+	//		TransferEnergy(receiver, sender);
+	//	}
+
+	//	// Handle last intersection point.
+	//	receiver = perPixelList[i];
+	//	sender = perPixelList[i - 1];
+	//	d = dot(worldRayBundleDirection, receiver.worldNormal);
+	//	if( d < 0.0 )
+	//	{
+	//		TransferEnergy(receiver, sender);
+	//	}
+	//}
 }

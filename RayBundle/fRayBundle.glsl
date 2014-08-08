@@ -13,6 +13,7 @@ struct ListNode
 
 varying vec4 vPositionWorld;
 varying vec4 vNormalWorld;
+varying vec4 vPositionView;
 
 uniform bool isLight;
 uniform vec3 materialColor;
@@ -37,7 +38,7 @@ void main()
 
 	ListNode newNode;
 	newNode.next = oldHead;
-	newNode.depth = gl_FragCoord.z;
+	newNode.depth = vPositionView.z;
 	newNode.isLight = isLight;
 	newNode.materialColor = materialColor;
 	newNode.emissionColor = emissionColor;

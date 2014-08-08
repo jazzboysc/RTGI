@@ -75,7 +75,7 @@ void RayBundleApp::Initialize()
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-    mGround->MaterialColor = vec3(0.0f, 0.75f, 0.75f);
+    mGround->MaterialColor = vec3(1.0f, 1.0f, 0.0f);
 
 	material = new Material(mtRayBundle);
 	mCeiling = new RayBundleTriMesh(material, mCamera);
@@ -97,6 +97,7 @@ void RayBundleApp::Initialize()
 	mLight->SetWorldScale(vec3(0.5f));
 	mLight->SetWorldTranslation(vec3(0.0f, 19.0f, 3.0f));
 	mLight->EmissionColor = vec3(1.0f, 1.0f, 1.0f);
+	mLight->MaterialColor = vec3(0.0f, 0.0f, 0.0f);
 	mLight->IsLight = true;
 
 	material = new Material(mtRayBundle);
@@ -184,20 +185,20 @@ void RayBundleApp::DrawRayBundle()
 	mCeiling->SetCamera(mRayBundleProjector);
 	mCeiling->Render(0, 1);
 
-	mLight->SetCamera(mRayBundleProjector);
-	mLight->Render(0, 1);
+	//mLight->SetCamera(mRayBundleProjector);
+	//mLight->Render(0, 1);
 
-	mBackWall->SetCamera(mRayBundleProjector);
-	mBackWall->Render(0, 1);
+	//mBackWall->SetCamera(mRayBundleProjector);
+	//mBackWall->Render(0, 1);
 
-	mLeftWall->SetCamera(mRayBundleProjector);
-	mLeftWall->Render(0, 1);
+	//mLeftWall->SetCamera(mRayBundleProjector);
+	//mLeftWall->Render(0, 1);
 
-	mRightWall->SetCamera(mRayBundleProjector);
-	mRightWall->Render(0, 1);
+	//mRightWall->SetCamera(mRayBundleProjector);
+	//mRightWall->Render(0, 1);
 
-	//mModel->SetCamera(mRayBundleProjector);
-	//mModel->Render(0, 1);
+	mModel->SetCamera(mRayBundleProjector);
+	mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
 void RayBundleApp::DrawScene()
@@ -208,17 +209,17 @@ void RayBundleApp::DrawScene()
 	mCeiling->SetCamera(mCamera);
 	mCeiling->Render(0, 0);
 
-	mLight->SetCamera(mCamera);
-	mLight->Render(0, 0);
+	//mLight->SetCamera(mCamera);
+	//mLight->Render(0, 0);
 
-	mBackWall->SetCamera(mCamera);
-	mBackWall->Render(0, 0);
+	//mBackWall->SetCamera(mCamera);
+	//mBackWall->Render(0, 0);
 
-	mLeftWall->SetCamera(mCamera);
-	mLeftWall->Render(0, 0);
+	//mLeftWall->SetCamera(mCamera);
+	//mLeftWall->Render(0, 0);
 
-	mRightWall->SetCamera(mCamera);
-	mRightWall->Render(0, 0);
+	//mRightWall->SetCamera(mCamera);
+	//mRightWall->Render(0, 0);
 
 	//mModel->SetCamera(mCamera);
 	//mModel->Render(0, 0);

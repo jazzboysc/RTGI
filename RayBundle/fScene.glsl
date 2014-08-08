@@ -54,18 +54,10 @@ void main()
 	ivec3 coords = GetImageCoords(vPositionWorld.xyz);
 	int index = coords.x + (coords.y + coords.z*256)*256;
     vec3 radiance = accumulationBuffer.data[index].radiance;
-	radiance *= 1000.0;
 
 	vec3 normal = normalize(vNormalWorld).xyz;
 	normal = normal*0.5 + 0.5;
 
 	gl_FragData[0] = vec4(radiance, 1.0);
-
-	//gl_FragData[0] = vec4(GetNormalizedWorldPosition(vPositionWorld.xyz), 1.0);
 	//gl_FragData[0] = vec4(normal, 1.0);
-
-	// test
-	//radiance = imageLoad(radianceAccumulationImage, ivec3(0, 0, 0)).xyz;
-	//int index = int(gl_FragCoord.y)*256 + int(gl_FragCoord.x);
-	//gl_FragData[0] = vec4(rayBundleBuffer.nodes[index].materialColor, 1.0);
 }
