@@ -39,8 +39,8 @@ ivec3 GetImageCoords(vec3 worldPosition)
 {
 	// Scene bounding box.
 	// x: [-10, 10] y: [0, 20] z: [-10, 10]
-	const vec3 minP = vec3(-10.0, 0.0, -10);
-	const vec3 maxP = vec3(10.0, 20.0, 10.0);
+	const vec3 minP = vec3(-15.0, 0.0, -15);
+	const vec3 maxP = vec3(15.0, 25.0, 15.0);
 	vec3 range = maxP - minP;
 	vec3 imageDim = vec3(256.0, 256.0, 256.0);
 
@@ -142,7 +142,8 @@ void main()
 
 	for( int i = 0; i < nodeCount; ++i )
 	{
-		AddRadianceToAccumulationBuffer(perPixelList[i], vec3(0.0, 1.0, 0.0));
+		vec3 normal = perPixelList[i].worldNormal*0.5 + 0.5;
+		AddRadianceToAccumulationBuffer(perPixelList[i], perPixelList[i].materialColor);
 	}
 	// Transfer energy between two consecutive intersection points.
 	//if( nodeCount >= 2 )

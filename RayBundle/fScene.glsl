@@ -33,8 +33,8 @@ ivec3 GetImageCoords(vec3 worldPosition)
 {
 	// Scene bounding box.
 	// x: [-10, 10] y: [0, 20] z: [-10, 10]
-	const vec3 minP = vec3(-10.0, 0.0, -10);
-	const vec3 maxP = vec3(10.0, 20.0, 10.0);
+	const vec3 minP = vec3(-15.0, 0.0, -15);
+	const vec3 maxP = vec3(15.0, 25.0, 15.0);
 	vec3 range = maxP - minP;
 	vec3 imageDim = vec3(256.0, 256.0, 256.0);
 

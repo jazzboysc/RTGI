@@ -75,7 +75,7 @@ void RayBundleApp::Initialize()
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-    mGround->MaterialColor = vec3(1.0f, 1.0f, 0.0f);
+    mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
 
 	material = new Material(mtRayBundle);
 	mCeiling = new RayBundleTriMesh(material, mCamera);
@@ -85,7 +85,7 @@ void RayBundleApp::Initialize()
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
-    mCeiling->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
+    mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
 
 	material = new Material(mtRayBundle);
 	mLight = new RayBundleTriMesh(material, mCamera);
@@ -162,7 +162,7 @@ void RayBundleApp::Initialize()
 	mRayBundleNodeBuffer->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
 
 	// Create accumulation buffer.
-	size_t bufferSize = 256 * 256 * 256 * sizeof(vec3);
+	size_t bufferSize = 300 * 300 * 300 * sizeof(vec3);
 	mAccumulationBuffer = new StructuredBuffer();
 	mAccumulationBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
@@ -197,8 +197,8 @@ void RayBundleApp::DrawRayBundle()
 	//mRightWall->SetCamera(mRayBundleProjector);
 	//mRightWall->Render(0, 1);
 
-	mModel->SetCamera(mRayBundleProjector);
-	mModel->Render(0, 1);
+	//mModel->SetCamera(mRayBundleProjector);
+	//mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
 void RayBundleApp::DrawScene()
