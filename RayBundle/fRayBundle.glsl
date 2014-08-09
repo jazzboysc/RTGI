@@ -2,13 +2,13 @@
 
 struct ListNode
 {
+	vec4 materialColor;
+	vec4 emissionColor;
+	vec4 worldPosition;
+	vec4 worldNormal;
 	uint next;
 	float depth;
 	bool isLight;
-	vec3 materialColor;
-	vec3 emissionColor;
-	vec3 worldPosition;
-	vec3 worldNormal;
 };
 
 varying vec4 vPositionWorld;
@@ -37,21 +37,16 @@ void main()
 	vec3 vNormal = normalize(vNormalWorld.xyz);
 
 	ListNode newNode;
+	newNode.materialColor.xyz = materialColor;
+	newNode.emissionColor.xyz = emissionColor;
+	newNode.worldPosition.xyz = vPositionWorld.xyz;
+	//newNode.worldNormal.xyz = vec3(0.0, 1.0, 0.0);
+	newNode.worldNormal.xyz = vNormal;
 	newNode.next = oldHead;
 	newNode.depth = vPositionView.z;
 	newNode.isLight = isLight;
-	newNode.materialColor = materialColor;
-	newNode.emissionColor = emissionColor;
-	newNode.worldPosition = vPositionWorld.xyz;
-	newNode.worldNormal = vNormal;
+
 	rayBundleBuffer.nodes[newHead] = newNode;
 
-	//if( !isLight )
-	//{
-	//	gl_FragData[0] = vec4(materialColor, 0.0);
-	//}
-	//else
-	//{
-	//	gl_FragData[0] = vec4(emissionColor, 0.0);
-	//}
+	gl_FragData[0] = vec4(vNormal, 1.0);
 }

@@ -108,6 +108,15 @@
     <ClCompile Include="Texture3D.cpp">
       <Filter>Textures</Filter>
     </ClCompile>
+    <ClCompile Include="PassInfo.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="TechniqueInfo.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryAttributes.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -229,6 +238,15 @@
     </ClInclude>
     <ClInclude Include="Texture3D.h">
       <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="PassInfo.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="TechniqueInfo.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryAttributes.h">
+      <Filter>Scene Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

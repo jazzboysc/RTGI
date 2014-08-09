@@ -19,25 +19,42 @@ Material::~Material()
 	mMaterialTemplate = 0;
 }
 //----------------------------------------------------------------------------
-void Material::Apply(int technique, int pass)
+void Material::Apply(int techniqueNum, int passNum)
 {
-	Technique* tech = mMaterialTemplate->GetTechnique(technique);
+	Technique* tech = mMaterialTemplate->GetTechnique(techniqueNum);
     assert( tech );
 
-    Pass* p = tech->GetPass(pass);
-    assert( p );
+    Pass* pass = tech->GetPass(passNum);
+    assert( pass );
+
+	PassInfo* passInfo = mTechniqueInfo[techniqueNum]->GetPassInfo(passNum);
+	assert( passInfo );
     
-    p->Enable();
+	passInfo->Enable();
+    pass->Enable();
+
     mRenderObject->OnEnableBuffers();
-    mRenderObject->OnUpdateShaderConstants(technique, pass);
+    mRenderObject->OnUpdateShaderConstants(techniqueNum, passNum);
     mRenderObject->OnRender();
     mRenderObject->OnDisableBuffers();
-    p->Disable();
+
+    pass->Disable();
+	passInfo->Disable();
 }
 //----------------------------------------------------------------------------
-void Material::CreateDeviceResource()
+void Material::CreateDeviceResource(GeometryAttributes* geometryAttr)
 {
 	mMaterialTemplate->CreateDeviceResource();
+
+	unsigned int tcount = mMaterialTemplate->GetTechniqueCount();
+	mTechniqueInfo.reserve(tcount);
+	for( unsigned int i = 0; i < tcount; ++i )
+	{
+		Technique* technique = mMaterialTemplate->GetTechnique((int)i);
+		TechniqueInfo* techInfo = new TechniqueInfo();
+		techInfo->CreatePassInfo(technique, geometryAttr);
+		mTechniqueInfo.push_back(techInfo);
+	}
 }
 //----------------------------------------------------------------------------
 ShaderProgram* Material::GetProgram(int technique, int pass)

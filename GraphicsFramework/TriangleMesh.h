@@ -62,10 +62,14 @@ public:
 	void UpdateModelSpaceVertices(const mat4& trans);
 
 protected:
+	void CreateVertexBufferDeviceResource();
+	void CreateIndexBufferDeviceResource();
+
 	AABB mModelSpaceBB;
 
 	int mVertexCount;
 	int mFaceCount;
+	int mVertexComponentCount;
 	std::vector<vec3> mVertexData;
 	std::vector<vec2> mTCoordData;
 	std::vector<vec3> mVertexNormalData;

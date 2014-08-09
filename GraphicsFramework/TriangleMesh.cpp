@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------
 #include "GraphicsFrameworkPCH.h"
 #include "TriangleMesh.h"
+#include "GeometryAttributes.h"
 
 using namespace RTGI;
 
@@ -13,6 +14,7 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
 	RenderObject(material),
 	mVertexCount(0),
 	mFaceCount(0),
+	mVertexComponentCount(0),
 	mHasTCoord(false),
 	mHasNormal(false),
 	mWorldScale(1.0f, 1.0f, 1.0f),
@@ -30,14 +32,8 @@ TriangleMesh::~TriangleMesh()
 //----------------------------------------------------------------------------
 void TriangleMesh::Render(int technique, int pass)
 {
-	// Enable VAO, VBO and IBO.
-	glBindVertexArray(mVAO);
-
 	// Apply current rendering pass.
 	mMaterial->Apply(technique, pass);
-
-	// Disable VAO, VBO and IBO.
-	glBindVertexArray(0);
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::OnEnableBuffers()
@@ -250,114 +246,18 @@ void TriangleMesh::OnLoadFromFile()
 //----------------------------------------------------------------------------
 void TriangleMesh::CreateDeviceResource()
 {
-	// First create shader program used by this geometry object.
-	mMaterial->CreateDeviceResource();
-	GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+	// Create VBO and IBO.
+	CreateIndexBufferDeviceResource();
+	CreateVertexBufferDeviceResource();
 
-	// Create VAO for this object.
-	glGenVertexArrays(1, &mVAO);
-	glBindVertexArray(mVAO);
-
-	// Create VBO for this object.
-	int vertexComponent = 3;
-	if( mHasTCoord )
-	{
-		vertexComponent += 2;
-	}
-	if( mHasNormal )
-	{
-		vertexComponent += 3;
-	}
-	std::vector<float> tempVB;
-	if( mVertexData.size() > 0 )
-	{
-		glGenBuffers(1, &mVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-
-		for( int i = 0; i < mVertexCount; ++i )
-		{
-			tempVB.push_back(mVertexData[i].x);
-			tempVB.push_back(mVertexData[i].y);
-			tempVB.push_back(mVertexData[i].z);
-
-			if( mHasTCoord )
-			{
-				tempVB.push_back(mTCoordData[i].x);
-				tempVB.push_back(mTCoordData[i].y);
-			}
-
-			if( mHasNormal )
-			{
-				tempVB.push_back(mVertexNormalData[i].x);
-				tempVB.push_back(mVertexNormalData[i].y);
-				tempVB.push_back(mVertexNormalData[i].z);
-			}
-		}
-		glBufferData(GL_ARRAY_BUFFER, 
-			sizeof(GLfloat)*mVertexCount*vertexComponent, 
-			(GLvoid*)&tempVB[0], GL_STATIC_DRAW);
-	}
-
-	// Create IBO for this object.
-	if( mIndexData.size() > 0 )
-	{
-		glGenBuffers(1, &mIBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
-			sizeof(unsigned short)*mIndexData.size(), (GLvoid*)&mIndexData[0],
-			GL_STATIC_DRAW);
-	}
-
-	// Specify vertex attributes.
-	if( !mHasNormal && !mHasTCoord )
-	{
-		GLuint loc = glGetAttribLocation(program, "vPosition");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	}
-	else if( mHasNormal && !mHasTCoord )
-	{
-		GLuint loc = glGetAttribLocation(program, "vPosition");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponent*sizeof(float), 0);
-
-		loc = glGetAttribLocation(program, "vNormal");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponent*sizeof(float), (void*)12);
-	}
-	else if( mHasNormal && mHasTCoord )
-	{
-		GLuint loc = glGetAttribLocation(program, "vPosition");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponent*sizeof(float), 0);
-
-		loc = glGetAttribLocation(program, "vTCoord");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 
-			vertexComponent*sizeof(float), (void*)12);
-
-		loc = glGetAttribLocation(program, "vNormal");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponent*sizeof(float), (void*)20);
-	}
-	else
-	{
-		GLuint loc = glGetAttribLocation(program, "vPosition");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponent*sizeof(float), 0);
-
-		loc = glGetAttribLocation(program, "vTCoord");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 
-			vertexComponent*sizeof(float), (void*)12);
-	}
-
-	glBindVertexArray(0);
+	// Create shader programs.
+	GeometryAttributes attributes;
+	attributes.VBO = mVBO;
+	attributes.IBO = mIBO;
+	attributes.HasNormal = mHasNormal;
+	attributes.HasTCoord = mHasTCoord;
+	attributes.VertexComponentCount = mVertexComponentCount;
+	mMaterial->CreateDeviceResource(&attributes);
 
 	// Get shader constants here.
 	OnGetShaderConstants();
@@ -553,5 +453,63 @@ void TriangleMesh::UpdateModelSpaceVertices(const mat4& trans)
 	mModelSpaceBB.Max.z = tempV.z;
 
 	GenerateNormals();
+}
+//----------------------------------------------------------------------------
+void TriangleMesh::CreateVertexBufferDeviceResource()
+{
+	mVertexComponentCount = 3;
+	if( mHasTCoord )
+	{
+		mVertexComponentCount += 2;
+	}
+	if( mHasNormal )
+	{
+		mVertexComponentCount += 3;
+	}
+	std::vector<float> tempVB;
+	if( mVertexData.size() > 0 )
+	{
+		glGenBuffers(1, &mVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+
+		for( int i = 0; i < mVertexCount; ++i )
+		{
+			tempVB.push_back(mVertexData[i].x);
+			tempVB.push_back(mVertexData[i].y);
+			tempVB.push_back(mVertexData[i].z);
+
+			if( mHasTCoord )
+			{
+				tempVB.push_back(mTCoordData[i].x);
+				tempVB.push_back(mTCoordData[i].y);
+			}
+
+			if( mHasNormal )
+			{
+				tempVB.push_back(mVertexNormalData[i].x);
+				tempVB.push_back(mVertexNormalData[i].y);
+				tempVB.push_back(mVertexNormalData[i].z);
+			}
+		}
+
+		glBufferData(GL_ARRAY_BUFFER, 
+			sizeof(GLfloat)*mVertexCount*mVertexComponentCount, 
+			(GLvoid*)&tempVB[0], GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+}
+//----------------------------------------------------------------------------
+void TriangleMesh::CreateIndexBufferDeviceResource()
+{
+	assert( mIndexData.size() > 0 );
+	if( mIndexData.size() > 0 )
+	{
+		glGenBuffers(1, &mIBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
+			sizeof(unsigned short)*mIndexData.size(), (GLvoid*)&mIndexData[0],
+			GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
 }
 //----------------------------------------------------------------------------

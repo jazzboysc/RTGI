@@ -32,7 +32,9 @@
 #include "ComputeShader.h"
 #include "ShaderProgram.h"
 #include "Pass.h"
+#include "PassInfo.h"
 #include "Technique.h"
+#include "TechniqueInfo.h"
 #include "MaterialTemplate.h"
 
 // Math
@@ -52,6 +54,7 @@
 #include "RenderObject.h"
 #include "TriangleMesh.h"
 #include "ScreenQuad.h"
+#include "GeometryAttributes.h"
 
 // L-System
 #include "Expression.h"

@@ -9,6 +9,8 @@
 #include "FrameworkCommon.h"
 #include "RefObject.h"
 #include "MaterialTemplate.h"
+#include "TechniqueInfo.h"
+#include "GeometryAttributes.h"
 
 namespace RTGI
 {
@@ -24,8 +26,8 @@ public:
 	Material(MaterialTemplate* materialTemplate);
 	~Material();
 
-	void Apply(int technique, int pass);
-	void CreateDeviceResource();
+	void Apply(int techniqueNum, int passNum);
+	void CreateDeviceResource(GeometryAttributes* geometryAttr);
 	ShaderProgram* GetProgram(int technique, int pass);
 
 protected:
@@ -33,6 +35,8 @@ protected:
 
 	friend class RenderObject;
 	RenderObject* mRenderObject;
+
+	std::vector<TechniqueInfo*> mTechniqueInfo;
 };
 
 typedef RefPointer<Material> MaterialPtr;
