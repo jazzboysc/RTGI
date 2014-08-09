@@ -96,7 +96,7 @@ void RayBundleApp::Initialize()
 	mLight->SetWorldTransform(rotM);
 	mLight->SetWorldScale(vec3(0.5f));
 	mLight->SetWorldTranslation(vec3(0.0f, 19.0f, 3.0f));
-	mLight->EmissionColor = vec3(1.0f, 1.0f, 1.0f);
+	mLight->EmissionColor = vec3(100.0f, 100.0f, 100.0f);
 	mLight->MaterialColor = vec3(0.0f, 0.0f, 0.0f);
 	mLight->IsLight = true;
 
@@ -182,11 +182,11 @@ void RayBundleApp::DrawRayBundle()
 	mGround->SetCamera(mRayBundleProjector);
 	mGround->Render(0, 1);
 
-	mCeiling->SetCamera(mRayBundleProjector);
-	mCeiling->Render(0, 1);
+	//mCeiling->SetCamera(mRayBundleProjector);
+	//mCeiling->Render(0, 1);
 
-	//mLight->SetCamera(mRayBundleProjector);
-	//mLight->Render(0, 1);
+	mLight->SetCamera(mRayBundleProjector);
+	mLight->Render(0, 1);
 
 	//mBackWall->SetCamera(mRayBundleProjector);
 	//mBackWall->Render(0, 1);
@@ -206,11 +206,11 @@ void RayBundleApp::DrawScene()
 	mGround->SetCamera(mCamera);
 	mGround->Render(0, 0);
 
-	mCeiling->SetCamera(mCamera);
-	mCeiling->Render(0, 0);
+	//mCeiling->SetCamera(mCamera);
+	//mCeiling->Render(0, 0);
 
-	//mLight->SetCamera(mCamera);
-	//mLight->Render(0, 0);
+	mLight->SetCamera(mCamera);
+	mLight->Render(0, 0);
 
 	//mBackWall->SetCamera(mCamera);
 	//mBackWall->Render(0, 0);
@@ -259,6 +259,7 @@ void RayBundleApp::Run()
 	DrawRayBundle();
 
 	// Transfer energy for ray bundle.
+	mUpdateAccuScreenQuad->WorldRayBundleDirection = vec3(0.0f, 1.0f, 0.0f);
 	mUpdateAccuScreenQuad->Render(0, 0);
 
     glEnable(GL_DEPTH_TEST);

@@ -46,12 +46,12 @@ void main()
 	newNode.worldNormal = vNormal;
 	rayBundleBuffer.nodes[newHead] = newNode;
 
-	if( !isLight )
-	{
-		gl_FragData[0] = vec4(materialColor, 0.0);
-	}
-	else
-	{
-		gl_FragData[0] = vec4(emissionColor, 0.0);
-	}
+	//if( !isLight )
+	//{
+	//	gl_FragData[0] = vec4(materialColor, 0.0);
+	//}
+	//else
+	//{
+	//	gl_FragData[0] = vec4(emissionColor, 0.0);
+	//}
 }

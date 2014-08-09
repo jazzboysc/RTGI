@@ -69,23 +69,22 @@ void AddRadianceToAccumulationBuffer(ListNode node, vec3 radiance)
 	currentRadiance += radiance;
 	ivec3 coords = GetImageCoords(node.worldPosition);
 	int index = coords.x + (coords.y + coords.z*256)*256;
-	//accumulationBuffer.data[index].radiance = currentRadiance;
-	accumulationBuffer.data[index].radiance = radiance;
+	accumulationBuffer.data[index].radiance = currentRadiance;
+	//accumulationBuffer.data[index].radiance = radiance;
 }
 
 void TransferEnergy(ListNode receiver, ListNode sender)
 {
-	//ListNode temp = receiver;
-	//receiver = sender;
-	//sender = temp;
-
     vec3 incidentDir = receiver.worldPosition - sender.worldPosition;
     float incidentDirLengthSqr = dot(incidentDir, incidentDir);
     vec3 normalizedIncidentDir = normalize(incidentDir);
     
-    float geometricTerm = max(0.0, dot(-normalizedIncidentDir, receiver.worldNormal)) *
-        max(0.0, dot(normalizedIncidentDir, sender.worldNormal)) /
-        incidentDirLengthSqr;
+    //float geometricTerm = max(0.0, dot(-normalizedIncidentDir, receiver.worldNormal)) *
+    //    max(0.0, dot(normalizedIncidentDir, sender.worldNormal)) /
+    //    incidentDirLengthSqr;
+    float geometricTerm = max(0.0, dot(-normalizedIncidentDir, vec3(0.0, 1.0, 0.0))) *
+        max(0.0, dot(normalizedIncidentDir, vec3(0.0, -1.0, 0.0)));
+	geometricTerm /= incidentDirLengthSqr;
     
     vec3 senderRadiance;
     if( sender.isLight )
@@ -98,7 +97,6 @@ void TransferEnergy(ListNode receiver, ListNode sender)
     }
     
     vec3 receiverRadiance = senderRadiance * geometricTerm;
-	receiverRadiance.x = 1.0;
     AddRadianceToAccumulationBuffer(receiver, receiverRadiance);
 }
 
@@ -131,7 +129,7 @@ void main()
             float depthI = perPixelList[i].depth;
             float depthJ = perPixelList[j].depth;
             
-            if( depthI > depthJ )
+            if( depthI < depthJ )
             {
                 ListNode temp = perPixelList[i];
                 perPixelList[i] = perPixelList[j];
@@ -140,48 +138,52 @@ void main()
         }
     }
 
-	for( int i = 0; i < nodeCount; ++i )
-	{
-		vec3 normal = perPixelList[i].worldNormal*0.5 + 0.5;
-		AddRadianceToAccumulationBuffer(perPixelList[i], perPixelList[i].materialColor);
-	}
-	// Transfer energy between two consecutive intersection points.
-	//if( nodeCount >= 2 )
+	//for( int i = 0; i < nodeCount; ++i )
 	//{
-	//	ListNode receiver, sender;
-
-	//	// Handle first intersection point.
-	//	receiver = perPixelList[0];
-	//	sender = perPixelList[1];
-	//	float d = dot(worldRayBundleDirection, receiver.worldNormal);
-	//	if( d > 0.0 )
-	//	{
-	//		TransferEnergy(receiver, sender);
-	//	}
-
-	//	int i;
-	//	for( i = 1; i < nodeCount - 1; ++i )
-	//	{
-	//		receiver = perPixelList[i];
-	//		d = dot(worldRayBundleDirection, receiver.worldNormal);
-	//		if( d > 0.0 )
-	//		{
-	//			sender = perPixelList[i + 1];
-	//		}
-	//		else
-	//		{
-	//			sender = perPixelList[i - 1];
-	//		}
-	//		TransferEnergy(receiver, sender);
-	//	}
-
-	//	// Handle last intersection point.
-	//	receiver = perPixelList[i];
-	//	sender = perPixelList[i - 1];
-	//	d = dot(worldRayBundleDirection, receiver.worldNormal);
-	//	if( d < 0.0 )
-	//	{
-	//		TransferEnergy(receiver, sender);
-	//	}
+	//	vec3 normal = perPixelList[i].worldNormal.xyz;
+	//	normal = normal*0.5 + 0.5;
+	//	//AddRadianceToAccumulationBuffer(perPixelList[i], perPixelList[i].materialColor);
+	//	AddRadianceToAccumulationBuffer(perPixelList[i], normal);
 	//}
+
+	// Transfer energy between two consecutive intersection points.
+	if( nodeCount >= 2 )
+	{
+		ListNode receiver, sender;
+
+		// Handle first intersection point.
+		receiver = perPixelList[0];
+		sender = perPixelList[1];
+		//float d = dot(worldRayBundleDirection, receiver.worldNormal);
+		float d = dot(worldRayBundleDirection, vec3(0.0, 1.0, 0.0));
+		if( d > 0.0 )
+		{
+			TransferEnergy(receiver, sender);
+		}
+
+		int i;
+		for( i = 1; i < nodeCount - 1; ++i )
+		{
+			receiver = perPixelList[i];
+			d = dot(worldRayBundleDirection, receiver.worldNormal);
+			if( d > 0.0 )
+			{
+				sender = perPixelList[i + 1];
+			}
+			else
+			{
+				sender = perPixelList[i - 1];
+			}
+			TransferEnergy(receiver, sender);
+		}
+
+		// Handle last intersection point.
+		receiver = perPixelList[i];
+		sender = perPixelList[i - 1];
+		d = dot(worldRayBundleDirection, receiver.worldNormal);
+		if( d < 0.0 )
+		{
+			TransferEnergy(receiver, sender);
+		}
+	}
 }
