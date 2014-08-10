@@ -62,13 +62,13 @@ void RayBundleApp::Initialize()
 
 	// Create scene.
 	mat4 rotM;
-	//material = new Material(mtRayBundle);
-	//mModel = new RayBundleTriMesh(material, mCamera);
-	//mModel->LoadFromFile("beethoven.ply");
-	//mModel->GenerateNormals();
-	//mModel->CreateDeviceResource();
-	//mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
-	//mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
+	material = new Material(mtRayBundle);
+	mModel = new RayBundleTriMesh(material, mCamera);
+	mModel->LoadFromFile("beethoven.ply");
+	mModel->GenerateNormals();
+	mModel->CreateDeviceResource();
+	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
+	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
 
 	material = new Material(mtRayBundle);
 	mGround = new RayBundleTriMesh(material, mCamera);
@@ -77,15 +77,15 @@ void RayBundleApp::Initialize()
 	mGround->CreateDeviceResource();
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
 
-	//material = new Material(mtRayBundle);
-	//mCeiling = new RayBundleTriMesh(material, mCamera);
-	//mCeiling->LoadFromFile("square.ply");
-	//mCeiling->GenerateNormals();
-	//mCeiling->CreateDeviceResource();
-	//rotM = RotateX(180.0f);
-	//mCeiling->SetWorldTransform(rotM);
-	//mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
- //   mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
+	material = new Material(mtRayBundle);
+	mCeiling = new RayBundleTriMesh(material, mCamera);
+	mCeiling->LoadFromFile("square.ply");
+	mCeiling->GenerateNormals();
+	mCeiling->CreateDeviceResource();
+	rotM = RotateX(180.0f);
+	mCeiling->SetWorldTransform(rotM);
+	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
+    mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
 
 	material = new Material(mtRayBundle);
 	mLight = new RayBundleTriMesh(material, mCamera);
@@ -96,39 +96,39 @@ void RayBundleApp::Initialize()
 	mLight->SetWorldTransform(rotM);
 	mLight->SetWorldScale(vec3(0.5f));
 	mLight->SetWorldTranslation(vec3(0.0f, 19.0f, 3.0f));
-	mLight->EmissionColor = vec3(100.0f, 100.0f, 100.0f);
+	mLight->EmissionColor = vec3(10000.0f, 0.0f, 10000.0f);
 	mLight->MaterialColor = vec3(0.0f, 0.0f, 0.0f);
 	mLight->IsLight = true;
 
-	//material = new Material(mtRayBundle);
-	//mBackWall = new RayBundleTriMesh(material, mCamera);
-	//mBackWall->LoadFromFile("square.ply");
-	//mBackWall->GenerateNormals();
-	//mBackWall->CreateDeviceResource();
-	//rotM = RotateX(90.0f);
-	//mBackWall->SetWorldTransform(rotM);
-	//mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
- //   mBackWall->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
+	material = new Material(mtRayBundle);
+	mBackWall = new RayBundleTriMesh(material, mCamera);
+	mBackWall->LoadFromFile("square.ply");
+	mBackWall->GenerateNormals();
+	mBackWall->CreateDeviceResource();
+	rotM = RotateX(90.0f);
+	mBackWall->SetWorldTransform(rotM);
+	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
+    mBackWall->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
 
-	//material = new Material(mtRayBundle);
-	//mLeftWall = new RayBundleTriMesh(material, mCamera);
-	//mLeftWall->LoadFromFile("square.ply");
-	//mLeftWall->GenerateNormals();
-	//mLeftWall->CreateDeviceResource();
-	//rotM = RotateZ(-90.0f);
-	//mLeftWall->SetWorldTransform(rotM);
-	//mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
- //   mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+	material = new Material(mtRayBundle);
+	mLeftWall = new RayBundleTriMesh(material, mCamera);
+	mLeftWall->LoadFromFile("square.ply");
+	mLeftWall->GenerateNormals();
+	mLeftWall->CreateDeviceResource();
+	rotM = RotateZ(-90.0f);
+	mLeftWall->SetWorldTransform(rotM);
+	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
+    mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
 
-	//material = new Material(mtRayBundle);
-	//mRightWall = new RayBundleTriMesh(material, mCamera);
-	//mRightWall->LoadFromFile("square.ply");
-	//mRightWall->GenerateNormals();
-	//mRightWall->CreateDeviceResource();
-	//rotM = RotateZ(90.0f);
-	//mRightWall->SetWorldTransform(rotM);
-	//mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
- //   mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
+	material = new Material(mtRayBundle);
+	mRightWall = new RayBundleTriMesh(material, mCamera);
+	mRightWall->LoadFromFile("square.ply");
+	mRightWall->GenerateNormals();
+	mRightWall->CreateDeviceResource();
+	rotM = RotateZ(90.0f);
+	mRightWall->SetWorldTransform(rotM);
+	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
+    mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
 
 	int pixelCount = 0;
 	void* pixelBufferData = 0;
@@ -180,14 +180,14 @@ void RayBundleApp::Initialize()
 void RayBundleApp::DrawRayBundle()
 {
 	//mGround->SetCamera(mRayBundleProjector);
-	mGround->SetCamera(mCamera);
+	mGround->SetCamera(mRayBundleProjector);
 	mGround->Render(0, 1);
 
 	//mCeiling->SetCamera(mRayBundleProjector);
 	//mCeiling->Render(0, 1);
 
 	//mLight->SetCamera(mRayBundleProjector);
-	mLight->SetCamera(mCamera);
+	mLight->SetCamera(mRayBundleProjector);
 	mLight->Render(0, 1);
 
 	//mBackWall->SetCamera(mRayBundleProjector);
@@ -199,8 +199,8 @@ void RayBundleApp::DrawRayBundle()
 	//mRightWall->SetCamera(mRayBundleProjector);
 	//mRightWall->Render(0, 1);
 
-	//mModel->SetCamera(mRayBundleProjector);
-	//mModel->Render(0, 1);
+	mModel->SetCamera(mRayBundleProjector);
+	mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
 void RayBundleApp::DrawScene()
@@ -223,8 +223,8 @@ void RayBundleApp::DrawScene()
 	//mRightWall->SetCamera(mCamera);
 	//mRightWall->Render(0, 0);
 
-	//mModel->SetCamera(mCamera);
-	//mModel->Render(0, 0);
+	mModel->SetCamera(mCamera);
+	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void RayBundleApp::Run()
@@ -261,13 +261,13 @@ void RayBundleApp::Run()
 	DrawRayBundle();
 
 	// Transfer energy for ray bundle.
-	//mUpdateAccuScreenQuad->WorldRayBundleDirection = vec3(0.0f, 1.0f, 0.0f);
-	//mUpdateAccuScreenQuad->Render(0, 0);
+	mUpdateAccuScreenQuad->WorldRayBundleDirection = vec3(0.0f, 1.0f, 0.0f);
+	mUpdateAccuScreenQuad->Render(0, 0);
 
- //   glEnable(GL_DEPTH_TEST);
- //   glEnable(GL_CULL_FACE);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//DrawScene();
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DrawScene();
 
 	glutSwapBuffers();
 }

@@ -3,22 +3,6 @@
 varying vec4 vPositionWorld;
 varying vec4 vNormalWorld;
 
-struct ListNode
-{
-	uint next;
-	float depth;
-	bool isLight;
-	vec3 materialColor;
-	vec3 emissionColor;
-	vec3 worldPosition;
-	vec3 worldNormal;
-};
-
-layout (std430, binding = 0)  buffer gpuMemoryPool
-{
-	ListNode nodes[];
-} rayBundleBuffer;
-
 struct AccumulationRadiance
 {
 	vec3 radiance;
@@ -58,6 +42,6 @@ void main()
 	vec3 normal = normalize(vNormalWorld).xyz;
 	normal = normal*0.5 + 0.5;
 
-	//gl_FragData[0] = vec4(radiance, 1.0);
-	gl_FragData[0] = vec4(normal, 1.0);
+	gl_FragData[0] = vec4(radiance, 1.0);
+	//gl_FragData[0] = vec4(normal, 1.0);
 }

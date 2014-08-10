@@ -1,5 +1,9 @@
 #version 430 core
 
+uniform vec3 worldRayBundleDirection;
+
+layout (binding = 0, r32ui)   uniform uimage2D headPointerImage;
+
 struct ListNode
 {
 	vec4 materialColor;
@@ -10,13 +14,6 @@ struct ListNode
 	float depth;
 	bool isLight;
 };
-
-uniform vec3 worldRayBundleDirection;
-
-#define LIST_MAX_LENGTH 8
-ListNode perPixelList[LIST_MAX_LENGTH];
-
-layout (binding = 0, r32ui)   uniform uimage2D headPointerImage;
 
 layout (std430, binding = 0)  buffer gpuMemoryPool1
 {
@@ -34,6 +31,9 @@ layout (std430, binding = 1)  buffer gpuMemoryPool2
 } accumulationBuffer;
 
 layout (location = 0) out vec4 color;
+
+#define LIST_MAX_LENGTH 16
+ListNode perPixelList[LIST_MAX_LENGTH];
 
 ivec3 GetImageCoords(vec3 worldPosition)
 {
@@ -69,20 +69,23 @@ void AddRadianceToAccumulationBuffer(ListNode node, vec3 radiance)
 	currentRadiance += radiance;
 	ivec3 coords = GetImageCoords(node.worldPosition.xyz);
 	int index = coords.x + (coords.y + coords.z*256)*256;
-	accumulationBuffer.data[index].radiance = currentRadiance;
-	//accumulationBuffer.data[index].radiance = radiance;
+	//accumulationBuffer.data[index].radiance = currentRadiance;
+	accumulationBuffer.data[index].radiance = radiance;
 }
 
 void TransferEnergy(ListNode receiver, ListNode sender)
 {
+	//if( receiver.isLight )
+	//{
+	//	return;
+	//}
+
     vec3 incidentDir = receiver.worldPosition.xyz - sender.worldPosition.xyz;
     float incidentDirLengthSqr = dot(incidentDir, incidentDir);
     vec3 normalizedIncidentDir = normalize(incidentDir);
     
-    float geometricTerm = max(0.0, dot(-normalizedIncidentDir, receiver.worldNormal.xyz));
-    //    max(0.0, dot(normalizedIncidentDir, sender.worldNormal.xyz));
-    //float geometricTerm = max(0.0, dot(-normalizedIncidentDir, vec3(0.0, 1.0, 0.0))) *
-    //    max(0.0, dot(normalizedIncidentDir, vec3(0.0, -1.0, 0.0)));
+    float geometricTerm = max(0.0, dot(-normalizedIncidentDir, receiver.worldNormal.xyz)) *
+        max(0.0, dot(normalizedIncidentDir, sender.worldNormal.xyz));
 	geometricTerm /= incidentDirLengthSqr;
     
     vec3 senderRadiance;
@@ -137,6 +140,12 @@ void main()
         }
     }
 
+	// Test
+	//for( int i = 0; i < nodeCount; ++i )
+	//{
+	//	AddRadianceToAccumulationBuffer(perPixelList[i], vec3(1.0, 0.0, 0.0));
+	//}
+
 	// Transfer energy between two consecutive intersection points.
 	if( nodeCount >= 2 )
 	{
@@ -145,8 +154,8 @@ void main()
 		// Handle first intersection point.
 		receiver = perPixelList[0];
 		sender = perPixelList[1];
-		//float d = dot(worldRayBundleDirection, receiver.worldNormal);
-		float d = dot(worldRayBundleDirection, vec3(0.0, 1.0, 0.0));
+		float d = dot(worldRayBundleDirection, receiver.worldNormal.xyz);
+		
 		if( d > 0.0 )
 		{
 			TransferEnergy(receiver, sender);

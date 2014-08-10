@@ -12,15 +12,12 @@ struct ListNode
 };
 
 varying vec4 vPositionWorld;
-varying vec4 vNormalWorld;
 varying vec4 vPositionView;
+varying vec4 vNormalWorld;
 
 uniform bool isLight;
 uniform vec3 materialColor;
 uniform vec3 emissionColor;
-
-// Turn on early fragment testing.
-layout (early_fragment_tests) in;
 
 layout (binding = 0, offset = 0) uniform atomic_uint  gpuMemoryAllocator;
 layout (binding = 0, r32ui)      uniform uimage2D     headPointerImage;
@@ -40,7 +37,6 @@ void main()
 	newNode.materialColor.xyz = materialColor;
 	newNode.emissionColor.xyz = emissionColor;
 	newNode.worldPosition.xyz = vPositionWorld.xyz;
-	//newNode.worldNormal.xyz = vec3(0.0, 1.0, 0.0);
 	newNode.worldNormal.xyz = vNormal;
 	newNode.next = oldHead;
 	newNode.depth = vPositionView.z;
@@ -48,5 +44,6 @@ void main()
 
 	rayBundleBuffer.nodes[newHead] = newNode;
 
-	gl_FragData[0] = vec4(vNormal, 1.0);
+	//vNormal = vNormal*0.5 + 0.5;
+	//gl_FragData[0] = vec4(vNormal, 1.0);
 }
