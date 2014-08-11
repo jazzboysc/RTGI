@@ -13,6 +13,7 @@
 // Textures
 #include "bmpread.h"
 #include "Texture.h"
+#include "Texture1D.h"
 #include "Texture2D.h"
 #include "Texture3D.h"
 #include "TextureCube.h"

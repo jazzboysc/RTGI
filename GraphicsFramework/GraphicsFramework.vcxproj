@@ -147,6 +147,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="Technique.cpp" />
     <ClCompile Include="TechniqueInfo.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Texture1D.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="TextureBuffer.cpp" />
@@ -195,6 +196,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="Technique.h" />
     <ClInclude Include="TechniqueInfo.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Texture1D.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Texture3D.h" />
     <ClInclude Include="TextureBuffer.h" />

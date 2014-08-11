@@ -5,7 +5,7 @@ varying vec4 vNormalWorld;
 
 struct AccumulationRadiance
 {
-	vec3 radiance;
+	vec4 radiance;
 };
 
 layout (std430, binding = 1)  buffer gpuMemoryPool2
@@ -37,11 +37,11 @@ void main()
 {
 	ivec3 coords = GetImageCoords(vPositionWorld.xyz);
 	int index = coords.x + (coords.y + coords.z*256)*256;
-    vec3 radiance = accumulationBuffer.data[index].radiance;
+    vec4 radiance = accumulationBuffer.data[index].radiance;
 
 	vec3 normal = normalize(vNormalWorld).xyz;
 	normal = normal*0.5 + 0.5;
 
-	gl_FragData[0] = vec4(radiance, 1.0);
+	gl_FragData[0] = vec4(radiance.xyz/radiance.w, 1.0);
 	//gl_FragData[0] = vec4(normal, 1.0);
 }

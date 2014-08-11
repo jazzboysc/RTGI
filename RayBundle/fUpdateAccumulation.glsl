@@ -2,7 +2,8 @@
 
 uniform vec3 worldRayBundleDirection;
 
-layout (binding = 0, r32ui)   uniform uimage2D headPointerImage;
+layout (binding = 0, r32ui) uniform uimage2D headPointerImage;
+layout (binding = 1, r32ui) uniform coherent volatile uimage1D perVoxelMutexImage;
 
 struct ListNode
 {
@@ -22,7 +23,7 @@ layout (std430, binding = 0)  buffer gpuMemoryPool1
 
 struct AccumulationRadiance
 {
-	vec3 radiance;
+	vec4 radiance;
 };
 
 layout (std430, binding = 1)  buffer gpuMemoryPool2
@@ -59,18 +60,33 @@ vec3 GetRadianceFromAccumulationBuffer(ListNode node)
 {
 	ivec3 coords = GetImageCoords(node.worldPosition.xyz);
 	int index = coords.x + (coords.y + coords.z*256)*256;
-    vec3 radiance = accumulationBuffer.data[index].radiance;
-	return radiance;
+    vec4 radiance = accumulationBuffer.data[index].radiance;
+	return radiance.xyz / radiance.w;
+}
+
+void Lock(int index)
+{
+	uint lock_available;
+	do
+	{
+		lock_available = imageAtomicCompSwap(perVoxelMutexImage, index, 0, 1);
+	} while (lock_available == 1);
+}
+
+void UnLock(int index)
+{
+	imageAtomicCompSwap(perVoxelMutexImage, index, 1, 0);
 }
 
 void AddRadianceToAccumulationBuffer(ListNode node, vec3 radiance)
 {
-    vec3 currentRadiance = GetRadianceFromAccumulationBuffer(node);
-	currentRadiance += radiance;
 	ivec3 coords = GetImageCoords(node.worldPosition.xyz);
 	int index = coords.x + (coords.y + coords.z*256)*256;
-	//accumulationBuffer.data[index].radiance = currentRadiance;
-	accumulationBuffer.data[index].radiance = radiance;
+
+	Lock(index);
+	accumulationBuffer.data[index].radiance.xyz += radiance;
+	accumulationBuffer.data[index].radiance.w += 1.0;
+	UnLock(index);
 }
 
 void TransferEnergy(ListNode receiver, ListNode sender)

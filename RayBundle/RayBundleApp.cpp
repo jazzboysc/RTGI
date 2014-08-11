@@ -3,6 +3,40 @@
 
 using namespace RTGI;
 
+static GLboolean QueryExtension(char *extName)
+{
+    /*
+    ** Search for extName in the extensions string. Use of strstr()
+    ** is not sufficient because extension names can be prefixes of
+    ** other extension names. Could use strtok() but the constant
+    ** string returned by glGetString might be in read-only memory.
+    */
+    char *p;
+    char *end;
+    int extNameLen;   
+
+    extNameLen = strlen(extName);
+        
+    p = (char *)glGetString(GL_EXTENSIONS);
+    if( NULL == p )
+	{
+        return GL_FALSE;
+    }
+
+    end = p + strlen(p);   
+
+    while( p < end )
+	{
+        int n = strcspn(p, " ");
+        if( (extNameLen == n) && (strncmp(extName, p, n) == 0) )
+		{
+            return GL_TRUE;
+        }
+        p += (n + 1);
+    }
+    return GL_FALSE;
+}
+
 //----------------------------------------------------------------------------
 RayBundleApp::RayBundleApp(int width, int height)
 	:
@@ -18,6 +52,9 @@ RayBundleApp::~RayBundleApp()
 //----------------------------------------------------------------------------
 void RayBundleApp::Initialize()
 {
+	GLboolean supportNVAtomicFloatOp = QueryExtension("GL_NV_shader_atomic_float");
+	assert( supportNVAtomicFloatOp );
+
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -150,6 +187,20 @@ void RayBundleApp::Initialize()
 	memset(pixelBufferData, 0x00, pixelCount*sizeof(GLuint));
 	mRayHeadPointerTextureInitData->Unmap();
 
+	// Create per-voxel mutex texture.
+	int voxelMutexCount = 300*300*300;
+	mPerVoxelMutexTexture = new Texture1D();
+	mPerVoxelMutexTexture->LoadFromSystemMemory(GL_R32UI, voxelMutexCount, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
+
+	// Create per-voxel mutex texture init data.
+	mPerVoxelMutexTextureInitData = new PixelBuffer();
+	mPerVoxelMutexTextureInitData->ReserveDeviceResource(voxelMutexCount*sizeof(GLuint), GL_STATIC_DRAW);
+	mPerVoxelMutexTextureInitData->Bind();
+	pixelBufferData = mPerVoxelMutexTextureInitData->Map(GL_WRITE_ONLY);
+	assert( pixelBufferData );
+	memset(pixelBufferData, 0x00, voxelMutexCount*sizeof(GLuint));
+	mPerVoxelMutexTextureInitData->Unmap();
+
 	// Create ray GPU memory allocator counter.
 	mRayAllocCounter = new AtomicCounterBuffer();
 	mRayAllocCounter->ReserveDeviceResource(sizeof(GLuint),
@@ -162,7 +213,7 @@ void RayBundleApp::Initialize()
 	mRayBundleNodeBuffer->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
 
 	// Create accumulation buffer.
-	size_t bufferSize = 300 * 300 * 300 * sizeof(vec3);
+	size_t bufferSize = 300 * 300 * 300 * sizeof(vec4);
 	mAccumulationBuffer = new StructuredBuffer();
 	mAccumulationBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
@@ -246,6 +297,11 @@ void RayBundleApp::Run()
 	// Bind ray bundle buffer.
 	mRayBundleNodeBuffer->Bind(0);
 
+	// Reset per-voxel mutex texture.
+	mPerVoxelMutexTexture->UpdateFromPixelBuffer(mPerVoxelMutexTextureInitData);
+
+	mPerVoxelMutexTexture->BindToImageUnit(1, GL_READ_WRITE);
+
 	// Reset accumulation buffer.
 	mAccumulationBuffer->Bind(1);
 	vec4* bufferData = (vec4*)mAccumulationBuffer->Map(GL_WRITE_ONLY);
@@ -290,6 +346,8 @@ void RayBundleApp::Terminate()
 	mRayAllocCounter = 0;
 	mRayHeadPointerTexture = 0;
 	mRayHeadPointerTextureInitData = 0;
+	mPerVoxelMutexTexture = 0;
+	mPerVoxelMutexTextureInitData = 0;
 	mRayBundleNodeBuffer = 0;
 	mAccumulationBuffer = 0;
 
@@ -314,7 +372,5 @@ void RayBundleApp::OnMouseMove(int x, int y)
 //----------------------------------------------------------------------------
 void RayBundleApp::OnReshape(int x, int y)
 {
-	mWidth = x;
-	mHeight = y;
 }
 //----------------------------------------------------------------------------

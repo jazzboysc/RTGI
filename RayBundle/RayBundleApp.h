@@ -50,6 +50,8 @@ private:
 	AtomicCounterBufferPtr mRayAllocCounter;
 	Texture2DPtr mRayHeadPointerTexture;
 	PixelBufferPtr mRayHeadPointerTextureInitData;
+	Texture1DPtr mPerVoxelMutexTexture;
+	PixelBufferPtr mPerVoxelMutexTextureInitData;
 	StructuredBufferPtr mRayBundleNodeBuffer;
 	StructuredBufferPtr mAccumulationBuffer;
 

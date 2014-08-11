@@ -154,6 +154,10 @@ bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 	mFormat = format;
 	mType = type;
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	return true;
 }
 //----------------------------------------------------------------------------
