@@ -57,8 +57,10 @@ private:
 
 	UpdateAccumulationScreenQuadPtr mUpdateAccuScreenQuad;
 
+	float sphereRadius;
+	vec3 sphereCenter;
 	enum { RAYBUNDLE_SAMPLE_COUNT = 8 };
-	float randmoNumbers[RAYBUNDLE_SAMPLE_COUNT*2];
+	vec3 mRandmoDirections[RAYBUNDLE_SAMPLE_COUNT];
 };
 
 }

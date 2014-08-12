@@ -1,7 +1,11 @@
 #version 430 core
 
+const float PI = 3.141592;
+
 varying vec4 vPositionWorld;
 varying vec4 vNormalWorld;
+
+uniform bool isLight;
 
 struct AccumulationRadiance
 {
@@ -38,10 +42,24 @@ void main()
 	ivec3 coords = GetImageCoords(vPositionWorld.xyz);
 	int index = coords.x + (coords.y + coords.z*256)*256;
     vec4 radiance = accumulationBuffer.data[index].radiance;
+	vec3 result = 2.0 * PI * radiance.xyz / radiance.w;
 
 	vec3 normal = normalize(vNormalWorld).xyz;
 	normal = normal*0.5 + 0.5;
 
-	gl_FragData[0] = vec4(radiance.xyz/radiance.w, 1.0);
-	//gl_FragData[0] = vec4(normal, 1.0);
+	// Simple gamma tone mapper.
+	float maxRadiance = 24.5;
+	float greyRadiance = max(0.001, 0.3 * result.r + 0.6 * result.g + 0.1 * result.b);
+	float mappedRadiance = pow(min(greyRadiance / maxRadiance, 1.0), 1.0/2.2);
+	result.rgb = (mappedRadiance / greyRadiance) * result.rgb; 
+
+	if( isLight )
+	{
+		gl_FragData[0] = vec4(vec3(1.0, 1.0, 1.0), 1.0);
+	}
+	else
+	{
+		//gl_FragData[0] = vec4(result, 1.0);
+		gl_FragData[0] = vec4(normal, 1.0);
+	}
 }

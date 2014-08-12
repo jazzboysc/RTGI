@@ -44,6 +44,8 @@ RayBundleApp::RayBundleApp(int width, int height)
 	mHeight(height),
 	mWindowTitle("Ray-bundle demo")
 {
+	sphereRadius = 14.15f;
+	sphereCenter = vec3(0.0f, 10.0f, 0.0f);
 }
 //----------------------------------------------------------------------------
 RayBundleApp::~RayBundleApp()
@@ -66,8 +68,6 @@ void RayBundleApp::Initialize()
     //glEnable(GL_CULL_FACE);
 	glDisable(GL_CULL_FACE);
 
-	float sphereRadius = 14.15f;
-	vec3 sphereCenter = vec3(0.0f, 10.0f, 0.0f);
 	// Create ray-bundle projector.
 	mRayBundleProjector = new Camera(false);
 	mRayBundleProjector->SetOrthogonalFrustum(11.0f, (float)mWidth/(float)mHeight, 1.0f, 100.0f);
@@ -133,7 +133,7 @@ void RayBundleApp::Initialize()
 	mLight->SetWorldTransform(rotM);
 	mLight->SetWorldScale(vec3(0.5f));
 	mLight->SetWorldTranslation(vec3(0.0f, 19.0f, 3.0f));
-	mLight->EmissionColor = vec3(10000.0f, 0.0f, 10000.0f);
+	mLight->EmissionColor = vec3(1000.0f, 1000.0f, 1000.0f);
 	mLight->MaterialColor = vec3(0.0f, 0.0f, 0.0f);
 	mLight->IsLight = true;
 
@@ -226,6 +226,13 @@ void RayBundleApp::Initialize()
 	mUpdateAccuScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
 	mUpdateAccuScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
 	mUpdateAccuScreenQuad->CreateDeviceResource();
+
+	for( int i = 0; i < RAYBUNDLE_SAMPLE_COUNT; ++i )
+	{
+		float u1 = (float)UniformRandom();
+		float u2 = (float)UniformRandom();
+		mRandmoDirections[i] = UniformSampleSphere(u1, u2);
+	}
 }
 //----------------------------------------------------------------------------
 void RayBundleApp::DrawRayBundle()
@@ -280,28 +287,6 @@ void RayBundleApp::DrawScene()
 //----------------------------------------------------------------------------
 void RayBundleApp::Run()
 {
-	// Reset ray bundle atomic counter.
-	mRayAllocCounter->Bind(0);
-	GLuint* counterData = (GLuint*)mRayAllocCounter->Map(GL_WRITE_ONLY);
-	assert( counterData );
-	counterData[0] = 0;
-	mRayAllocCounter->Unmap();
-
-	// Reset ray bundle head pointer texture.
-	mRayHeadPointerTexture->UpdateFromPixelBuffer(
-		mRayHeadPointerTextureInitData);
-
-	// Bind ray bundle texture to image unit.
-	mRayHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
-
-	// Bind ray bundle buffer.
-	mRayBundleNodeBuffer->Bind(0);
-
-	// Reset per-voxel mutex texture.
-	mPerVoxelMutexTexture->UpdateFromPixelBuffer(mPerVoxelMutexTextureInitData);
-
-	mPerVoxelMutexTexture->BindToImageUnit(1, GL_READ_WRITE);
-
 	// Reset accumulation buffer.
 	mAccumulationBuffer->Bind(1);
 	vec4* bufferData = (vec4*)mAccumulationBuffer->Map(GL_WRITE_ONLY);
@@ -309,16 +294,59 @@ void RayBundleApp::Run()
 	memset(bufferData, 0x00, mAccumulationBuffer->GetSize());
 	mAccumulationBuffer->Unmap();
 
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-    glClear(GL_COLOR_BUFFER_BIT);
+	for( int i = 0; i < RAYBUNDLE_SAMPLE_COUNT; ++i )
+	{
+		vec3 d = mRandmoDirections[i];
+		vec3 u, r;
+		if( d.x > d.y )
+		{
+			u = vec3(d.z, 0.0, -d.x);
+		}
+		else
+		{
+			u = vec3(0.0, d.z, -d.y);
+		}
+		u = normalize(u);
+		r = cross(u, d);
+		vec3 e = sphereCenter + d*sphereRadius;
 
-	// Create a ray bundle.
-	DrawRayBundle();
+		//mRayBundleProjector->SetLocation(e);
+		//mRayBundleProjector->SetAxes(r, u, d);
 
-	// Transfer energy for ray bundle.
-	mUpdateAccuScreenQuad->WorldRayBundleDirection = vec3(0.0f, 1.0f, 0.0f);
-	mUpdateAccuScreenQuad->Render(0, 0);
+
+		// Reset ray bundle atomic counter.
+		mRayAllocCounter->Bind(0);
+		GLuint* counterData = (GLuint*)mRayAllocCounter->Map(GL_WRITE_ONLY);
+		assert( counterData );
+		counterData[0] = 0;
+		mRayAllocCounter->Unmap();
+
+		// Reset ray bundle head pointer texture.
+		mRayHeadPointerTexture->UpdateFromPixelBuffer(
+			mRayHeadPointerTextureInitData);
+
+		// Bind ray bundle texture to image unit.
+		mRayHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
+
+		// Bind ray bundle buffer.
+		mRayBundleNodeBuffer->Bind(0);
+
+		// Reset per-voxel mutex texture.
+		mPerVoxelMutexTexture->UpdateFromPixelBuffer(mPerVoxelMutexTextureInitData);
+
+		mPerVoxelMutexTexture->BindToImageUnit(1, GL_READ_WRITE);
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Create a ray bundle.
+		DrawRayBundle();
+
+		// Transfer energy for the ray bundle.
+		mUpdateAccuScreenQuad->WorldRayBundleDirection = vec3(0,1,0);
+		mUpdateAccuScreenQuad->Render(0, 0);
+	}
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);

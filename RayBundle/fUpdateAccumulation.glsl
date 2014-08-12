@@ -3,7 +3,7 @@
 uniform vec3 worldRayBundleDirection;
 
 layout (binding = 0, r32ui) uniform uimage2D headPointerImage;
-layout (binding = 1, r32ui) uniform coherent volatile uimage1D perVoxelMutexImage;
+layout (binding = 1, r32ui) uniform coherent uimage1D perVoxelMutexImage;
 
 struct ListNode
 {
@@ -66,16 +66,14 @@ vec3 GetRadianceFromAccumulationBuffer(ListNode node)
 
 void Lock(int index)
 {
-	uint lock_available;
-	do
+	while( imageAtomicCompSwap(perVoxelMutexImage, index, 0, 1) == 1 )
 	{
-		lock_available = imageAtomicCompSwap(perVoxelMutexImage, index, 0, 1);
-	} while (lock_available == 1);
+	}
 }
 
 void UnLock(int index)
 {
-	imageAtomicCompSwap(perVoxelMutexImage, index, 1, 0);
+	imageAtomicExchange(perVoxelMutexImage, index, 0);
 }
 
 void AddRadianceToAccumulationBuffer(ListNode node, vec3 radiance)
@@ -83,10 +81,30 @@ void AddRadianceToAccumulationBuffer(ListNode node, vec3 radiance)
 	ivec3 coords = GetImageCoords(node.worldPosition.xyz);
 	int index = coords.x + (coords.y + coords.z*256)*256;
 
-	Lock(index);
-	accumulationBuffer.data[index].radiance.xyz += radiance;
-	accumulationBuffer.data[index].radiance.w += 1.0;
-	UnLock(index);
+	//Lock(index);
+
+    //bool done = false;
+    //uint locked = 0;
+    //while( !done )
+    //{
+    //    locked = imageAtomicExchange(perVoxelMutexImage, index, 1u);
+    //    if( locked == 0 )
+    //    {
+			accumulationBuffer.data[index].radiance.xyz += radiance;
+			accumulationBuffer.data[index].radiance.w += 1.0;
+
+    //        memoryBarrier();
+
+    //        imageAtomicExchange(perVoxelMutexImage, index, 0u);
+
+    //        // replacing this with a break will NOT work
+    //        done = true;
+    //    }
+    //}
+
+	//accumulationBuffer.data[index].radiance.xyz += radiance;
+	//accumulationBuffer.data[index].radiance.w += 1.0;
+	//UnLock(index);
 }
 
 void TransferEnergy(ListNode receiver, ListNode sender)
@@ -114,7 +132,7 @@ void TransferEnergy(ListNode receiver, ListNode sender)
         senderRadiance = GetRadianceFromAccumulationBuffer(sender);
     }
     
-    vec3 receiverRadiance = senderRadiance * geometricTerm;
+    vec3 receiverRadiance = receiver.materialColor.xyz * senderRadiance * geometricTerm;
     AddRadianceToAccumulationBuffer(receiver, receiverRadiance);
 }
 

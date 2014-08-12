@@ -195,5 +195,15 @@ inline float Halton(const int base, int index)
 	return x;
 }
 //----------------------------------------------------------------------------
+inline vec3 UniformSampleSphere(float u1, float u2)
+{
+    float z = 1.0f - 2.0f * u1;
+    float r = sqrtf(RTGI_MAX(0.0f, 1.0f - z*z));
+    float phi = 2.0f * PI_SP * u2;
+    float x = r * cosf(phi);
+    float y = r * sinf(phi);
+    return vec3(x, y, z);
+}
+//----------------------------------------------------------------------------
 
 #endif

@@ -9,6 +9,7 @@ RayBundleTriMesh::RayBundleTriMesh(Material* material, Camera* camera)
 	IsLight(false),
 	MaterialColor(0.75f, 0.75f, 0.75f),
 	EmissionColor(0.0f, 0.0f, 0.0f),
+	mIsLightLoc0(0),
 	mWorldLoc2(0),
 	mViewLoc2(0),
 	mProjLoc2(0),
@@ -26,8 +27,12 @@ void RayBundleTriMesh::OnGetShaderConstants()
 {
 	TriangleMesh::OnGetShaderConstants();
 
+	// Get pass 1 uniform locations.
+	GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+	mIsLightLoc0 = glGetUniformLocation(program, "isLight");
+
     // Get pass 2 uniform locations.
-	GLuint program = mMaterial->GetProgram(0, 1)->GetProgram();
+	program = mMaterial->GetProgram(0, 1)->GetProgram();
 	mWorldLoc2 = glGetUniformLocation(program, "World");
 	mViewLoc2 = glGetUniformLocation(program, "View");
 	mProjLoc2 = glGetUniformLocation(program, "Proj");
@@ -42,6 +47,7 @@ void RayBundleTriMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == 0 )
     {
 		TriangleMesh::OnUpdateShaderConstants(technique, pass);
+		glUniform1i(mIsLightLoc0, IsLight);
 	}
 
     // Update pass 2 uniform data.
