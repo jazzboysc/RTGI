@@ -237,25 +237,23 @@ void RayBundleApp::Initialize()
 //----------------------------------------------------------------------------
 void RayBundleApp::DrawRayBundle()
 {
-	//mGround->SetCamera(mRayBundleProjector);
 	mGround->SetCamera(mRayBundleProjector);
 	mGround->Render(0, 1);
 
 	//mCeiling->SetCamera(mRayBundleProjector);
 	//mCeiling->Render(0, 1);
 
-	//mLight->SetCamera(mRayBundleProjector);
 	mLight->SetCamera(mRayBundleProjector);
 	mLight->Render(0, 1);
 
 	//mBackWall->SetCamera(mRayBundleProjector);
 	//mBackWall->Render(0, 1);
 
-	//mLeftWall->SetCamera(mRayBundleProjector);
-	//mLeftWall->Render(0, 1);
+	mLeftWall->SetCamera(mRayBundleProjector);
+	mLeftWall->Render(0, 1);
 
-	//mRightWall->SetCamera(mRayBundleProjector);
-	//mRightWall->Render(0, 1);
+	mRightWall->SetCamera(mRayBundleProjector);
+	mRightWall->Render(0, 1);
 
 	mModel->SetCamera(mRayBundleProjector);
 	mModel->Render(0, 1);
@@ -275,11 +273,11 @@ void RayBundleApp::DrawScene()
 	//mBackWall->SetCamera(mCamera);
 	//mBackWall->Render(0, 0);
 
-	//mLeftWall->SetCamera(mCamera);
-	//mLeftWall->Render(0, 0);
+	mLeftWall->SetCamera(mCamera);
+	mLeftWall->Render(0, 0);
 
-	//mRightWall->SetCamera(mCamera);
-	//mRightWall->Render(0, 0);
+	mRightWall->SetCamera(mCamera);
+	mRightWall->Render(0, 0);
 
 	mModel->SetCamera(mCamera);
 	mModel->Render(0, 0);
@@ -294,25 +292,27 @@ void RayBundleApp::Run()
 	memset(bufferData, 0x00, mAccumulationBuffer->GetSize());
 	mAccumulationBuffer->Unmap();
 
-	for( int i = 0; i < RAYBUNDLE_SAMPLE_COUNT; ++i )
-	{
-		vec3 d = mRandmoDirections[i];
-		vec3 u, r;
-		if( d.x > d.y )
-		{
-			u = vec3(d.z, 0.0, -d.x);
-		}
-		else
-		{
-			u = vec3(0.0, d.z, -d.y);
-		}
-		u = normalize(u);
-		r = cross(u, d);
-		vec3 e = sphereCenter + d*sphereRadius;
+	//for( int i = 0; i < RAYBUNDLE_SAMPLE_COUNT; ++i )
+	//{
+	//	vec3 d = mRandmoDirections[i];
+	//	vec3 u, r;
+	//	if( d.x > d.y )
+	//	{
+	//		u = vec3(d.z, 0.0, -d.x);
+	//	}
+	//	else
+	//	{
+	//		u = vec3(0.0, d.z, -d.y);
+	//	}
+	//	u = normalize(u);
+	//	r = cross(u, d);
+	//	vec3 e = sphereCenter + d*sphereRadius;
 
-		//mRayBundleProjector->SetLocation(e);
-		//mRayBundleProjector->SetAxes(r, u, d);
+	//	mRayBundleProjector->SetLocation(e);
+	//	mRayBundleProjector->SetAxes(r, u, d);
 
+		mRayBundleProjector->SetLookAt(vec3(0.0f, -4.15f, 0.0f), sphereCenter,
+			vec3(0.0f, 0.0f, 1.0f));
 
 		// Reset ray bundle atomic counter.
 		mRayAllocCounter->Bind(0);
@@ -344,9 +344,42 @@ void RayBundleApp::Run()
 		DrawRayBundle();
 
 		// Transfer energy for the ray bundle.
-		mUpdateAccuScreenQuad->WorldRayBundleDirection = vec3(0,1,0);
+		mUpdateAccuScreenQuad->WorldRayBundleDirection = -mRayBundleProjector->GetDirection();
 		mUpdateAccuScreenQuad->Render(0, 0);
-	}
+
+
+		//mRayBundleProjector->SetLookAt(vec3(14.15f, 10.0f, 0.0f), sphereCenter,
+		//vec3(0.0f, 1.0f, 0.0f));
+
+		//// Reset ray bundle atomic counter.
+		//mRayAllocCounter->Bind(0);
+		//counterData = (GLuint*)mRayAllocCounter->Map(GL_WRITE_ONLY);
+		//assert( counterData );
+		//counterData[0] = 0;
+		//mRayAllocCounter->Unmap();
+
+		//// Reset ray bundle head pointer texture.
+		//mRayHeadPointerTexture->UpdateFromPixelBuffer(
+		//	mRayHeadPointerTextureInitData);
+
+		//// Bind ray bundle texture to image unit.
+		//mRayHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
+
+		//// Bind ray bundle buffer.
+		//mRayBundleNodeBuffer->Bind(0);
+
+		//// Reset per-voxel mutex texture.
+		////mPerVoxelMutexTexture->UpdateFromPixelBuffer(mPerVoxelMutexTextureInitData);
+
+		////mPerVoxelMutexTexture->BindToImageUnit(1, GL_READ_WRITE);
+
+		//// Create a ray bundle.
+		//DrawRayBundle();
+
+		//// Transfer energy for the ray bundle.
+		//mUpdateAccuScreenQuad->WorldRayBundleDirection = -mRayBundleProjector->GetDirection();
+		//mUpdateAccuScreenQuad->Render(0, 0);
+	//}
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);

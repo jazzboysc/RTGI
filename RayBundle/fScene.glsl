@@ -59,7 +59,7 @@ void main()
 	}
 	else
 	{
-		//gl_FragData[0] = vec4(result, 1.0);
-		gl_FragData[0] = vec4(normal, 1.0);
+		gl_FragData[0] = vec4(result, 1.0);
+		//gl_FragData[0] = vec4(normal, 1.0);
 	}
 }

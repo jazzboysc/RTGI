@@ -152,3 +152,8 @@ bool Camera::IsPerspective() const
 	return mIsPerspective;
 }
 //----------------------------------------------------------------------------
+vec3 Camera::GetDirection() const
+{
+	return mDirection;
+}
+//----------------------------------------------------------------------------

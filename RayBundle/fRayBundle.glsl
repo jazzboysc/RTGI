@@ -46,4 +46,5 @@ void main()
 
 	//vNormal = vNormal*0.5 + 0.5;
 	//gl_FragData[0] = vec4(vNormal, 1.0);
+	gl_FragData[0] = vec4(materialColor, 1.0);
 }

@@ -59,7 +59,7 @@ private:
 
 	float sphereRadius;
 	vec3 sphereCenter;
-	enum { RAYBUNDLE_SAMPLE_COUNT = 8 };
+	enum { RAYBUNDLE_SAMPLE_COUNT = 32 };
 	vec3 mRandmoDirections[RAYBUNDLE_SAMPLE_COUNT];
 };
 

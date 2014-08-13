@@ -47,6 +47,7 @@ public:
 		float farPlane);
 
 	vec3 GetLocation() const;
+	vec3 GetDirection() const;
     void GetNearFarPlane(float* nearFarPlane) const;
 	mat4 GetViewTransform();
 	mat4 GetProjectionTransform();
