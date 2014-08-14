@@ -24,6 +24,8 @@ public:
 	float GetDiagonal();
 	vec3 GetBoxCenter();
 
+	void Merge(const AABB& box);
+
 	vec3 Min;
 	vec3 Max;
 };

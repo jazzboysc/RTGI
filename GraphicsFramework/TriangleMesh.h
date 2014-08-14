@@ -58,6 +58,7 @@ public:
 	vec3 GetWorldVertex(int i) const;
 	
 	AABB GetModelSpaceBB() const;
+	AABB GetWorldSpaceBB() const;
 
 	void UpdateModelSpaceVertices(const mat4& trans);
 

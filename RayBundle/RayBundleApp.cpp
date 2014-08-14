@@ -106,6 +106,7 @@ void RayBundleApp::Initialize()
 	mModel->CreateDeviceResource();
 	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
+	mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
 	mGround = new RayBundleTriMesh(material, mCamera);
@@ -113,6 +114,7 @@ void RayBundleApp::Initialize()
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
+	mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
 	mCeiling = new RayBundleTriMesh(material, mCamera);
@@ -123,6 +125,7 @@ void RayBundleApp::Initialize()
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
+	mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
 	mLight = new RayBundleTriMesh(material, mCamera);
@@ -136,6 +139,7 @@ void RayBundleApp::Initialize()
 	mLight->EmissionColor = vec3(1000.0f, 1000.0f, 1000.0f);
 	mLight->MaterialColor = vec3(0.0f, 0.0f, 0.0f);
 	mLight->IsLight = true;
+	mSceneBB.Merge(mLight->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
 	mBackWall = new RayBundleTriMesh(material, mCamera);
@@ -146,6 +150,7 @@ void RayBundleApp::Initialize()
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
+	mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
 	mLeftWall = new RayBundleTriMesh(material, mCamera);
@@ -156,6 +161,7 @@ void RayBundleApp::Initialize()
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+	mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
 	mRightWall = new RayBundleTriMesh(material, mCamera);
@@ -166,6 +172,7 @@ void RayBundleApp::Initialize()
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
+	mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
 	int pixelCount = 0;
 	void* pixelBufferData = 0;

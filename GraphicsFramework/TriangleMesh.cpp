@@ -429,6 +429,24 @@ AABB TriangleMesh::GetModelSpaceBB() const
 	return mModelSpaceBB;
 }
 //----------------------------------------------------------------------------
+AABB TriangleMesh::GetWorldSpaceBB() const
+{
+	AABB res;
+	vec4 tempV;
+	for( int i = 0; i < mVertexCount; ++i )
+	{
+		tempV = vec4(mVertexData[i], 1.0f);
+		tempV = mWorldTransform * tempV;
+		res.Min.x = RTGI_MIN(res.Min.x, tempV.x);
+		res.Min.y = RTGI_MIN(res.Min.y, tempV.y);
+		res.Min.z = RTGI_MIN(res.Min.z, tempV.z);
+		res.Max.x = RTGI_MAX(res.Max.x, tempV.x);
+		res.Max.y = RTGI_MAX(res.Max.y, tempV.y);
+		res.Max.z = RTGI_MAX(res.Max.z, tempV.z);
+	}
+	return res;
+}
+//----------------------------------------------------------------------------
 void TriangleMesh::UpdateModelSpaceVertices(const mat4& trans)
 {
 	vec4 tempV;

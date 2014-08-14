@@ -56,6 +56,7 @@ private:
 	StructuredBufferPtr mAccumulationBuffer;
 
 	UpdateAccumulationScreenQuadPtr mUpdateAccuScreenQuad;
+	AABB mSceneBB;
 
 	float sphereRadius;
 	vec3 sphereCenter;

@@ -33,3 +33,13 @@ vec3 AABB::GetBoxCenter()
 	return 0.5f*(Min + Max);
 }
 //----------------------------------------------------------------------------
+void AABB::Merge(const AABB& box)
+{
+	Min.x = RTGI_MIN(Min.x, box.Min.x);
+	Min.y = RTGI_MIN(Min.y, box.Min.y);
+	Min.z = RTGI_MIN(Min.z, box.Min.z);
+	Max.x = RTGI_MAX(Max.x, box.Max.x);
+	Max.y = RTGI_MAX(Max.y, box.Max.y);
+	Max.z = RTGI_MAX(Max.z, box.Max.z);
+}
+//----------------------------------------------------------------------------
