@@ -53,10 +53,19 @@ private:
 	Texture1DPtr mPerVoxelMutexTexture;
 	PixelBufferPtr mPerVoxelMutexTextureInitData;
 	StructuredBufferPtr mRayBundleNodeBuffer;
+
+	int mVoxelGridDim;
+	int mVoxelCount;
 	StructuredBufferPtr mAccumulationBuffer;
+
+	int mRayBundleRTWidth, mRayBundleRTHeight;
+	FrameBufferPtr mRayBundleFB;
+	Texture2DPtr mRayBundleRT;
+	Texture2DPtr mRayBundleDepth;
 
 	UpdateAccumulationScreenQuadPtr mUpdateAccuScreenQuad;
 	AABB mSceneBB;
+	vec3 mVoxelGridCenter;
 
 	float sphereRadius;
 	vec3 sphereCenter;

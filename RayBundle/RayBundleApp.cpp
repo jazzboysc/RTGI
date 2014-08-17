@@ -46,6 +46,10 @@ RayBundleApp::RayBundleApp(int width, int height)
 {
 	sphereRadius = 14.15f;
 	sphereCenter = vec3(0.0f, 10.0f, 0.0f);
+	mVoxelGridDim = 128;
+	mVoxelCount = mVoxelGridDim * mVoxelGridDim * mVoxelGridDim;
+	mRayBundleRTWidth = 64;
+	mRayBundleRTHeight = 64;
 }
 //----------------------------------------------------------------------------
 RayBundleApp::~RayBundleApp()
@@ -70,14 +74,14 @@ void RayBundleApp::Initialize()
 
 	// Create ray-bundle projector.
 	mRayBundleProjector = new Camera(false);
-	mRayBundleProjector->SetOrthogonalFrustum(11.0f, (float)mWidth/(float)mHeight, 1.0f, 100.0f);
+	mRayBundleProjector->SetOrthogonalFrustum(11.0f, 
+		(float)mRayBundleRTWidth/(float)mRayBundleRTHeight, 1.0f, 100.0f);
 	mRayBundleProjector->SetLookAt(vec3(0.0f, -4.15f, 0.0f), sphereCenter,
 		vec3(0.0f, 0.0f, 1.0f));
     
     // Create scene camera.
 	mCamera = new Camera();
 	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
-	//mCamera->SetOrthogonalFrustum(15.0f, (float)mWidth/(float)mHeight, 1.0f, 500.0f);
 	mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
@@ -174,17 +178,19 @@ void RayBundleApp::Initialize()
     mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
 	mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
+	mVoxelGridCenter = mSceneBB.GetBoxCenter();
+
 	int pixelCount = 0;
 	void* pixelBufferData = 0;
 	size_t gpuMemPoolSize = 0;
 
 	// Create ray head pointer texture.
 	mRayHeadPointerTexture = new Texture2D();
-	mRayHeadPointerTexture->CreateRenderTarget(mWidth, mHeight, 
+	mRayHeadPointerTexture->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, 
 		Texture2D::RTF_R32UI);
 
 	// Create ray head pointer texture init data.
-	pixelCount = mWidth * mHeight;
+	pixelCount = mRayBundleRTWidth * mRayBundleRTHeight;
 	mRayHeadPointerTextureInitData = new PixelBuffer();
 	mRayHeadPointerTextureInitData->ReserveDeviceResource(
 		pixelCount*sizeof(GLuint), GL_STATIC_DRAW);
@@ -195,7 +201,7 @@ void RayBundleApp::Initialize()
 	mRayHeadPointerTextureInitData->Unmap();
 
 	// Create per-voxel mutex texture.
-	int voxelMutexCount = 300*300*300;
+	int voxelMutexCount = mVoxelCount;
 	mPerVoxelMutexTexture = new Texture1D();
 	mPerVoxelMutexTexture->LoadFromSystemMemory(GL_R32UI, voxelMutexCount, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
 
@@ -220,9 +226,19 @@ void RayBundleApp::Initialize()
 	mRayBundleNodeBuffer->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
 
 	// Create accumulation buffer.
-	size_t bufferSize = 300 * 300 * 300 * sizeof(vec4);
+	size_t bufferSize = mVoxelCount * sizeof(vec4);
 	mAccumulationBuffer = new StructuredBuffer();
 	mAccumulationBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
+
+	// Create ray-bundle render target.
+	mRayBundleRT = new Texture2D();
+	mRayBundleRT->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, Texture2D::RTF_RGBF);
+	mRayBundleDepth = new Texture2D();
+	mRayBundleDepth->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, Texture2D::RTF_Depth);
+
+	Texture2D* rayBundleRT[1] = {mRayBundleRT};
+	mRayBundleFB = new FrameBuffer();
+	mRayBundleFB->SetRenderTargets(1, rayBundleRT, mRayBundleDepth);
 
 	// Create update accumulation screen quad.
 	material = new Material(mtUpdateAccumulation);
@@ -340,8 +356,9 @@ void RayBundleApp::Run()
 
 		// Reset per-voxel mutex texture.
 		mPerVoxelMutexTexture->UpdateFromPixelBuffer(mPerVoxelMutexTextureInitData);
-
 		mPerVoxelMutexTexture->BindToImageUnit(1, GL_READ_WRITE);
+
+		mRayBundleFB->Enable();
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
@@ -352,8 +369,10 @@ void RayBundleApp::Run()
 
 		// Transfer energy for the ray bundle.
 		mUpdateAccuScreenQuad->WorldRayBundleDirection = -mRayBundleProjector->GetDirection();
+		mUpdateAccuScreenQuad->VoxelGridCenter = mVoxelGridCenter;
 		mUpdateAccuScreenQuad->Render(0, 0);
 
+		mRayBundleFB->Disable();
 
 		//mRayBundleProjector->SetLookAt(vec3(14.15f, 10.0f, 0.0f), sphereCenter,
 		//vec3(0.0f, 1.0f, 0.0f));
@@ -418,6 +437,9 @@ void RayBundleApp::Terminate()
 	mPerVoxelMutexTextureInitData = 0;
 	mRayBundleNodeBuffer = 0;
 	mAccumulationBuffer = 0;
+	mRayBundleFB = 0;
+	mRayBundleRT = 0;
+	mRayBundleDepth = 0;
 
 	mUpdateAccuScreenQuad = 0;
 }

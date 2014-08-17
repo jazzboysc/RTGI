@@ -1,6 +1,7 @@
 #version 430 core
 
 uniform vec3 worldRayBundleDirection;
+uniform vec3 voxelGridCenter;
 
 layout (binding = 0, r32ui) uniform uimage2D headPointerImage;
 layout (binding = 1, r32ui) uniform coherent uimage1D perVoxelMutexImage;
@@ -175,49 +176,49 @@ void main()
     }
 
 	// Test
-	//for( int i = 0; i < nodeCount; ++i )
-	//{
-	//	AddRadianceToAccumulationBuffer(perPixelList[i], vec3(1.0, 0.0, 0.0));
-	//}
-
-	// Transfer energy between two consecutive intersection points.
-	if( nodeCount >= 2 )
+	for( int i = 0; i < nodeCount; ++i )
 	{
-		ListNode receiver, sender;
-
-		// Handle first intersection point.
-		receiver = perPixelList[0];
-		sender = perPixelList[1];
-		float d = dot(worldRayBundleDirection, receiver.worldNormal.xyz);
-		
-		if( d > 0.0 )
-		{
-			TransferEnergy(receiver, sender);
-		}
-
-		int i;
-		for( i = 1; i < nodeCount - 1; ++i )
-		{
-			receiver = perPixelList[i];
-			d = dot(worldRayBundleDirection, receiver.worldNormal.xyz);
-			if( d > 0.0 )
-			{
-				sender = perPixelList[i + 1];
-			}
-			else
-			{
-				sender = perPixelList[i - 1];
-			}
-			TransferEnergy(receiver, sender);
-		}
-
-		// Handle last intersection point.
-		receiver = perPixelList[i];
-		sender = perPixelList[i - 1];
-		d = dot(worldRayBundleDirection, receiver.worldNormal.xyz);
-		if( d < 0.0 )
-		{
-			TransferEnergy(receiver, sender);
-		}
+		AddRadianceToAccumulationBuffer(perPixelList[i], vec3(1.0, 0.0, 0.0));
 	}
+
+	//// Transfer energy between two consecutive intersection points.
+	//if( nodeCount >= 2 )
+	//{
+	//	ListNode receiver, sender;
+
+	//	// Handle first intersection point.
+	//	receiver = perPixelList[0];
+	//	sender = perPixelList[1];
+	//	float d = dot(worldRayBundleDirection, receiver.worldNormal.xyz);
+		
+	//	if( d > 0.0 )
+	//	{
+	//		TransferEnergy(receiver, sender);
+	//	}
+
+	//	int i;
+	//	for( i = 1; i < nodeCount - 1; ++i )
+	//	{
+	//		receiver = perPixelList[i];
+	//		d = dot(worldRayBundleDirection, receiver.worldNormal.xyz);
+	//		if( d > 0.0 )
+	//		{
+	//			sender = perPixelList[i + 1];
+	//		}
+	//		else
+	//		{
+	//			sender = perPixelList[i - 1];
+	//		}
+	//		TransferEnergy(receiver, sender);
+	//	}
+
+	//	// Handle last intersection point.
+	//	receiver = perPixelList[i];
+	//	sender = perPixelList[i - 1];
+	//	d = dot(worldRayBundleDirection, receiver.worldNormal.xyz);
+	//	if( d < 0.0 )
+	//	{
+	//		TransferEnergy(receiver, sender);
+	//	}
+	//}
 }

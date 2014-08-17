@@ -21,9 +21,11 @@ public:
 	virtual void OnGetShaderConstants();
 
 	vec3 WorldRayBundleDirection;
+	vec3 VoxelGridCenter;
 
 private:
 	GLint mWorldRayBundleDirectionLoc;
+	GLint mVoxelGridCenterLoc;
 };
 
 typedef RefPointer<UpdateAccumulationScreenQuad> UpdateAccumulationScreenQuadPtr;
