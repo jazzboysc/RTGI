@@ -44,7 +44,11 @@ void Buffer::Unmap()
 //----------------------------------------------------------------------------
 void Buffer::Bind(GLuint index)
 {
+#ifndef __APPLE__
 	glBindBufferBase(mType, index, mBuffer);
+#else
+    assert( false );
+#endif
 }
 //----------------------------------------------------------------------------
 void Buffer::Bind()

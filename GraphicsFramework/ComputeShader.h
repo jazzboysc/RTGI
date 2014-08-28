@@ -6,6 +6,8 @@
 #ifndef RTGI_ComputeShader_H
 #define RTGI_ComputeShader_H
 
+#ifndef __APPLE__
+
 #include "Shader.h"
 
 namespace RTGI
@@ -25,5 +27,7 @@ public:
 typedef RefPointer<ComputeShader> ComputeShaderPtr;
 
 }
+
+#endif
 
 #endif

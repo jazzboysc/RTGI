@@ -6,6 +6,8 @@
 #ifndef RTGI_StructuredBuffer_H
 #define RTGI_StructuredBuffer_H
 
+#ifndef __APPLE__
+
 #include "FrameworkCommon.h"
 #include "Buffer.h"
 
@@ -26,5 +28,7 @@ public:
 typedef RefPointer<StructuredBuffer> StructuredBufferPtr;
 
 }
+
+#endif
 
 #endif

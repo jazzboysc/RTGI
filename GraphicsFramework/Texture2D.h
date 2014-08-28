@@ -43,8 +43,10 @@ public:
 	bool LoadFromSystemMemory(GLint internalFormat, GLsizei width, 
 		GLsizei height, GLenum format, GLenum type, void* pixels);
 
+#ifndef __APPLE__
 	// Load and create from texture buffer object.
 	bool LoadFromTextureBuffer(TextureBuffer* textureBuffer, GLenum internalFormat);
+#endif
 
 	void CreateRenderTarget(int width, int height, RenderTargetFormat format);
 

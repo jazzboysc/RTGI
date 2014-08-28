@@ -161,13 +161,10 @@ bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 	return true;
 }
 //----------------------------------------------------------------------------
+#ifndef __APPLE__
 bool Texture2D::LoadFromTextureBuffer(TextureBuffer* textureBuffer, 
 	GLenum internalFormat)
 {
-#if defined(__APPLE__)
-    assert( false );
-    return false;
-#else
 	IsTextureBuffer = true;
 	mInternalFormat = internalFormat;
 
@@ -178,8 +175,8 @@ bool Texture2D::LoadFromTextureBuffer(TextureBuffer* textureBuffer,
     glBindTexture(GL_TEXTURE_BUFFER, 0);
 
 	return true;
-#endif
 }
+#endif
 //----------------------------------------------------------------------------
 void Texture2D::CreateRenderTarget(int width, int height, 
 	RenderTargetFormat format)

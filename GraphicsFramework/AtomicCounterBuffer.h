@@ -6,6 +6,8 @@
 #ifndef RTGI_AtomicCounterBuffer_H
 #define RTGI_AtomicCounterBuffer_H
 
+#ifndef __APPLE__
+
 #include "FrameworkCommon.h"
 #include "Buffer.h"
 
@@ -26,5 +28,7 @@ public:
 typedef RefPointer<AtomicCounterBuffer> AtomicCounterBufferPtr;
 
 }
+
+#endif
 
 #endif

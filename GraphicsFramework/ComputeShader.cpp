@@ -5,6 +5,8 @@
 #include "GraphicsFrameworkPCH.h"
 #include "ComputeShader.h"
 
+#ifndef __APPLE__
+
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
@@ -18,3 +20,5 @@ ComputeShader::~ComputeShader()
 {
 }
 //----------------------------------------------------------------------------
+
+#endif
