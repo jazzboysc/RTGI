@@ -120,6 +120,12 @@
     <ClCompile Include="Texture1D.cpp">
       <Filter>Textures</Filter>
     </ClCompile>
+    <ClCompile Include="TessellationControlShader.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="TessellationEvaluationShader.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -253,6 +259,12 @@
     </ClInclude>
     <ClInclude Include="Texture1D.h">
       <Filter>Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="TessellationControlShader.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="TessellationEvaluationShader.h">
+      <Filter>Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
