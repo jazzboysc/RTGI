@@ -19,6 +19,7 @@
       <Filter>GPGPU</Filter>
     </ClCompile>
     <ClCompile Include="ComputingApplication.cpp" />
+    <ClCompile Include="ComputingFrameworkPCH.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandQueue.h">
@@ -35,5 +36,7 @@
     </ClInclude>
     <ClInclude Include="ComputingFrameworkCommon.h" />
     <ClInclude Include="ComputingApplication.h" />
+    <ClInclude Include="ComputingFrameworkHeader.h" />
+    <ClInclude Include="ComputingFrameworkPCH.h" />
   </ItemGroup>
 </Project>
