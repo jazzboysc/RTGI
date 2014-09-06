@@ -23,7 +23,7 @@ void ISMApp::Initialize()
 
 	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     
@@ -38,7 +38,12 @@ void ISMApp::Initialize()
     ShaderProgramInfo programInfo;
     programInfo.VShaderFileName = "vScene.glsl";
     programInfo.FShaderFileName = "fScene.glsl";
-    programInfo.ShaderStageFlag = ShaderType::ST_Vertex | ShaderType::ST_Fragment;
+    programInfo.TCShaderFileName = "tcScene.glsl";
+    programInfo.TEShaderFileName = "teScene.glsl";
+    programInfo.ShaderStageFlag = ShaderType::ST_Vertex | 
+                                  ShaderType::ST_Fragment | 
+                                  ShaderType::ST_TessellationControl |
+                                  ShaderType::ST_TessellationEvaluation;
     Pass* passScene = new Pass(programInfo);
 	Technique* techScene = new Technique();
 	techScene->AddPass(passScene);

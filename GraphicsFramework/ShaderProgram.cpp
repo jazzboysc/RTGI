@@ -197,3 +197,12 @@ void ShaderProgram::Disable()
 	// Nothing to do.
 }
 //----------------------------------------------------------------------------
+bool ShaderProgram::IsTessellationEnabled() const
+{
+    if( mProgramInfo.ShaderStageFlag & ShaderType::ST_TessellationEvaluation )
+    {
+        return true;
+    }
+    return false;
+}
+//----------------------------------------------------------------------------

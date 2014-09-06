@@ -1,7 +1,7 @@
 #version 430 core
 
-varying vec4 vPositionWorld;
-varying vec4 vNormalWorld;
+in vec4 vPositionWorld;
+in vec4 vNormalWorld;
 
 void main()
 {

@@ -33,6 +33,11 @@ void Pass::Disable()
 	mShaderProgram->Disable();
 }
 //----------------------------------------------------------------------------
+bool Pass::IsTessellationEnabled() const
+{
+    return mShaderProgram->IsTessellationEnabled();
+}
+//----------------------------------------------------------------------------
 ShaderProgram* Pass::GetShaderProgram()
 {
 	return mShaderProgram;

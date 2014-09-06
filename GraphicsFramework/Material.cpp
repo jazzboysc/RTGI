@@ -35,7 +35,7 @@ void Material::Apply(int techniqueNum, int passNum)
 
     mRenderObject->OnEnableBuffers();
     mRenderObject->OnUpdateShaderConstants(techniqueNum, passNum);
-    mRenderObject->OnRender();
+    mRenderObject->OnRender(pass, passInfo);
     mRenderObject->OnDisableBuffers();
 
     pass->Disable();

@@ -12,6 +12,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fScene.glsl" />
+    <None Include="tcScene.glsl" />
+    <None Include="teScene.glsl" />
     <None Include="vScene.glsl" />
   </ItemGroup>
   <ItemGroup>

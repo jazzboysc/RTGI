@@ -27,6 +27,7 @@ public:
 	void Enable();
 	void Disable();
 
+    bool IsTessellationEnabled() const;
 	ShaderProgram* GetShaderProgram();
 	void CreateDeviceResource();
 

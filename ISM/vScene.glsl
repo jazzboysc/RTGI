@@ -1,10 +1,10 @@
 #version 430 core
 
-attribute vec4 vPosition;
-attribute vec3 vNormal;
+in vec4 vPosition;
+in vec3 vNormal;
 
-varying vec4 vPositionWorld;
-varying vec4 vNormalWorld;
+out vec4 vPositionWorld;
+out vec4 vNormalWorld;
 
 uniform mat4 World;
 uniform mat4 View;

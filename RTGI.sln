@@ -47,8 +47,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RayBundle", "RayBundle\RayB
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ISM", "ISM\ISM.vcxproj", "{DDBF9FAE-3B00-48EF-93A1-84D688606DF7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1654A1CC-FA42-415F-8E83-6905FA03B52A} = {1654A1CC-FA42-415F-8E83-6905FA03B52A}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Cornell", "Cornell\Cornell.vcxproj", "{329E4196-5F30-4EF7-9DB5-A446B2F7C485}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1654A1CC-FA42-415F-8E83-6905FA03B52A} = {1654A1CC-FA42-415F-8E83-6905FA03B52A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

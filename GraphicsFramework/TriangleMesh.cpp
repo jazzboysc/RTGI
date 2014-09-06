@@ -44,10 +44,20 @@ void TriangleMesh::OnDisableBuffers()
 {
 }
 //----------------------------------------------------------------------------
-void TriangleMesh::OnRender()
+void TriangleMesh::OnRender(Pass* pass, PassInfo*)
 {
-	glDrawElements(GL_TRIANGLES, (GLsizei)mIndexData.size(), 
-		GL_UNSIGNED_SHORT, 0);
+    bool enableTessellation = pass->IsTessellationEnabled();
+
+    if( enableTessellation )
+    {
+        glDrawElements(GL_PATCHES, (GLsizei)mIndexData.size(),
+            GL_UNSIGNED_SHORT, 0);
+    }
+    else
+    {
+        glDrawElements(GL_TRIANGLES, (GLsizei)mIndexData.size(),
+            GL_UNSIGNED_SHORT, 0);
+    }
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::OnUpdateShaderConstants(int technique, int pass)

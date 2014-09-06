@@ -25,7 +25,7 @@ public:
 
 	virtual void Render(int technique, int pass) = 0;
 	virtual void OnUpdateShaderConstants(int technique, int pass) = 0;
-	virtual void OnRender(){};
+    virtual void OnRender(Pass* pass, PassInfo* passInfo){};
 	virtual void OnEnableBuffers(){};
 	virtual void OnDisableBuffers(){};
 

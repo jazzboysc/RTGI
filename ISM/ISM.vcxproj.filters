@@ -7,6 +7,12 @@
     <None Include="vScene.glsl">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="tcScene.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="teScene.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GLSL">
