@@ -21,7 +21,7 @@ void ISMApp::Initialize()
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
-	float color = 0.0f;
+	float color = 0.5f;
 	glClearColor(color, color, color, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
@@ -49,6 +49,27 @@ void ISMApp::Initialize()
 	techScene->AddPass(passScene);
 	MaterialTemplate* mtScene = new MaterialTemplate();
 	mtScene->AddTechnique(techScene);
+
+    programInfo.VShaderFileName = "vISMTemp.glsl";
+    programInfo.FShaderFileName = "fISMTemp.glsl";
+    programInfo.TCShaderFileName = "";
+    programInfo.TEShaderFileName = "";
+    programInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                  ShaderType::ST_Fragment;
+    Pass* passScreenQuad = new Pass(programInfo);
+    Technique* techScreenQuad = new Technique();
+    techScreenQuad->AddPass(passScreenQuad);
+    MaterialTemplate* mtScreenQuad = new MaterialTemplate();
+    mtScreenQuad->AddTechnique(techScreenQuad);
+
+    // Create shadow map render target.
+    mShadowMapTexture = new Texture2D();
+    mShadowMapTexture->CreateRenderTarget(512, 512, Texture2D::RTF_RGBF);
+
+    // Create shadow map frame buffer.
+    Texture2D* renderTargets[] = { mShadowMapTexture };
+    mShadowMapFB = new FrameBuffer();
+    mShadowMapFB->SetRenderTargets(1, renderTargets);
 
 	// Create scene.
 	mat4 rotM;
@@ -119,6 +140,15 @@ void ISMApp::Initialize()
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
 
+    material = new Material(mtScreenQuad);
+    mShadowMapScreenQuad = new ISMTempScreenQuad(material);
+    mShadowMapScreenQuad->LoadFromFile("screenquad.ply");
+    mShadowMapScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+    mShadowMapScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+    mShadowMapScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+    mShadowMapScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+    mShadowMapScreenQuad->CreateDeviceResource();
+    mShadowMapScreenQuad->TempTexture = mShadowMapTexture;
 }
 //----------------------------------------------------------------------------
 void ISMApp::DrawScene()
@@ -147,8 +177,15 @@ void ISMApp::DrawScene()
 //----------------------------------------------------------------------------
 void ISMApp::Run()
 {
+    mShadowMapFB->Enable();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	DrawScene();
+    mShadowMapFB->Disable();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    mShadowMapScreenQuad->Render(0, 0);
 
 	glutSwapBuffers();
 }
@@ -158,6 +195,10 @@ void ISMApp::Terminate()
 	// Release all resources.
 
 	delete mCamera;
+
+    mShadowMapTexture = 0;
+    mShadowMapFB = 0;
+    mShadowMapScreenQuad = 0;
 
 	mGround = 0;
 	mCeiling = 0;

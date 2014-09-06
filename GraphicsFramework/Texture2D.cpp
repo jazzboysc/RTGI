@@ -212,6 +212,12 @@ void Texture2D::CreateRenderTarget(int width, int height,
 #endif
 		break;
 
+    case RTGI::Texture2D::RTF_R32F:
+        mInternalFormat = GL_R32F;
+        mFormat = GL_RED;
+        mType = GL_FLOAT;
+        break;
+
 	case RTGI::Texture2D::RTF_Depth:
 		mInternalFormat = GL_DEPTH_COMPONENT24;
 		mFormat = GL_DEPTH_COMPONENT;

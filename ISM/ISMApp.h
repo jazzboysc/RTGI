@@ -3,6 +3,7 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "ISMTriMesh.h"
+#include "ISMTempScreenQuad.h"
 
 namespace RTGI
 {
@@ -35,6 +36,11 @@ private:
 	std::string mWindowTitle;
 
 	Camera* mCamera;
+
+    Texture2DPtr mShadowMapTexture;
+    FrameBufferPtr mShadowMapFB;
+
+    ISMTempScreenQuadPtr mShadowMapScreenQuad;
 
 	ISMTriMeshPtr mGround;
 	ISMTriMeshPtr mCeiling;

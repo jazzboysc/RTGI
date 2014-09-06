@@ -35,6 +35,7 @@ public:
 private:
 	GLuint mFBO;
 
+    GLsizei mWidth, mHeight;
 	unsigned int mColorTextureCount;
 	std::vector<Texture2D*> mColorTextures;
 	GLenum* mColorBuffers;

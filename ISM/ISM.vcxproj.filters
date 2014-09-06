@@ -13,6 +13,12 @@
     <None Include="teScene.glsl">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="fISMTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vISMTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="GLSL">
@@ -23,9 +29,11 @@
     <ClCompile Include="ISMApp.cpp" />
     <ClCompile Include="ISMTriMesh.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ISMTempScreenQuad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ISMApp.h" />
     <ClInclude Include="ISMTriMesh.h" />
+    <ClInclude Include="ISMTempScreenQuad.h" />
   </ItemGroup>
 </Project>

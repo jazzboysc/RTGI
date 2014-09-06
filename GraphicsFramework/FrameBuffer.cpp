@@ -11,6 +11,8 @@ using namespace RTGI;
 FrameBuffer::FrameBuffer()
 {
 	glGenFramebuffersEXT (1, &mFBO);
+    mWidth = 0;
+    mHeight = 0;
 	mColorTextureCount = 0;
 	mColorBuffers = 0;
 	mDepthTexture = 0;
@@ -47,6 +49,11 @@ void FrameBuffer::SetRenderTargets(unsigned int colorTextureCount,
 
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, mFBO);
 
+    // TODO:
+    // Only support uniform size targets for now.
+    mWidth = colorTextures[0]->Width;
+    mHeight = colorTextures[0]->Height;
+
 	for( unsigned int i = 0; i < colorTextureCount; ++i )
 	{
 		texture = colorTextures[i]->GetTexture();
@@ -75,14 +82,23 @@ void FrameBuffer::SetRenderTargets(unsigned int colorTextureCount,
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }
 //--------------------------------------------------------------------------
+static GLint oldViewport[4];
+//--------------------------------------------------------------------------
 void FrameBuffer::Enable()
 {
+    // Cache old viewport values and set new values.
+    glGetIntegerv(GL_VIEWPORT, oldViewport);
+    glViewport(0, 0, mWidth, mHeight);
+
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, mFBO);
 	glDrawBuffers(mColorTextureCount, mColorBuffers);
 }
 //--------------------------------------------------------------------------
 void FrameBuffer::Disable()
 {
+    glViewport(oldViewport[0], oldViewport[1], oldViewport[2], 
+        oldViewport[3]);
+
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }
 //--------------------------------------------------------------------------
