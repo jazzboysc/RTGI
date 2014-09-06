@@ -50,6 +50,7 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
 
     if( enableTessellation )
     {
+        glPatchParameteri(GL_PATCH_VERTICES, 3);
         glDrawElements(GL_PATCHES, (GLsizei)mIndexData.size(),
             GL_UNSIGNED_SHORT, 0);
     }
