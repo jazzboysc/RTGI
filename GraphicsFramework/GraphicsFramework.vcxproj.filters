@@ -126,6 +126,9 @@
     <ClCompile Include="TessellationEvaluationShader.cpp">
       <Filter>Material</Filter>
     </ClCompile>
+    <ClCompile Include="GeometryShader.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -264,6 +267,9 @@
       <Filter>Material</Filter>
     </ClInclude>
     <ClInclude Include="TessellationEvaluationShader.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryShader.h">
       <Filter>Material</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,38 +3,26 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#ifndef RTGI_Pass_H
-#define RTGI_Pass_H
+#ifndef RTGI_GeometryShader_H
+#define RTGI_GeometryShader_H
 
-#include "FrameworkCommon.h"
-#include "RefObject.h"
-#include "ShaderProgram.h"
+#include "Shader.h"
 
 namespace RTGI
 {
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: 05/18/2014
+// Date: 09/05/2014
 //----------------------------------------------------------------------------
-class Pass : public RefObject
+class GeometryShader : public Shader
 {
 public:
-    Pass(const ShaderProgramInfo& programInfo);
-	Pass(ShaderProgram* shaderProgram);
-	~Pass();
-
-	void Enable();
-	void Disable();
-
-	ShaderProgram* GetShaderProgram();
-	void CreateDeviceResource();
-
-protected:
-	ShaderProgramPtr mShaderProgram;
+    GeometryShader(const std::string& shaderFileName);
+    virtual ~GeometryShader();
 };
 
-typedef RefPointer<Pass> PassPtr;
+typedef RefPointer<GeometryShader> GeometryShaderPtr;
 
 }
 

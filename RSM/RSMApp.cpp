@@ -45,21 +45,31 @@ void RSMApp::Initialize()
 
 	// Create material templates.
 	Material* material = 0;
-	Pass* passRSMBuffer = new Pass("vRSMBuffer.glsl", "fRSMBuffer.glsl");
-    Pass* passRSMGBuffer = new Pass("vRSMGBuffer.glsl", "fRSMGBuffer.glsl");
+    ShaderProgramInfo programInfo;
+    programInfo.ShaderStageFlag = ShaderType::ST_Vertex | ShaderType::ST_Fragment;
+    programInfo.VShaderFileName = "vRSMBuffer.glsl";
+    programInfo.FShaderFileName = "fRSMBuffer.glsl";
+    Pass* passRSMBuffer = new Pass(programInfo);
+    programInfo.VShaderFileName = "vRSMGBuffer.glsl";
+    programInfo.FShaderFileName = "fRSMGBuffer.glsl";
+    Pass* passRSMGBuffer = new Pass(programInfo);
 	Technique* techRSM = new Technique();
 	techRSM->AddPass(passRSMBuffer);
     techRSM->AddPass(passRSMGBuffer);
 	MaterialTemplate* mtRSM = new MaterialTemplate();
 	mtRSM->AddTechnique(techRSM);
 
-	Pass* passRSMTemp = new Pass("vRSMTemp.glsl", "fRSMTemp.glsl");
+    programInfo.VShaderFileName = "vRSMTemp.glsl";
+    programInfo.FShaderFileName = "fRSMTemp.glsl";
+    Pass* passRSMTemp = new Pass(programInfo);
 	Technique* techRSMTemp = new Technique();
 	techRSMTemp->AddPass(passRSMTemp);
 	MaterialTemplate* mtRSMTemp = new MaterialTemplate();
 	mtRSMTemp->AddTechnique(techRSMTemp);
 
-	Pass* passDeferredLighting = new Pass("vRSMDeferredLighting.glsl", "fRSMDeferredLighting.glsl");
+    programInfo.VShaderFileName = "vRSMDeferredLighting.glsl";
+    programInfo.FShaderFileName = "fRSMDeferredLighting.glsl";
+    Pass* passDeferredLighting = new Pass(programInfo);
 	Technique* techDeferredLighting = new Technique();
 	techDeferredLighting->AddPass(passDeferredLighting);
 	MaterialTemplate* mtDeferredLighting = new MaterialTemplate();

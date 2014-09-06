@@ -8,9 +8,9 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-Pass::Pass(const std::string& vShaderFileName, const std::string& fShaderFileName)
+Pass::Pass(const ShaderProgramInfo& programInfo)
 {
-	mShaderProgram = new ShaderProgram(vShaderFileName, fShaderFileName);
+    mShaderProgram = new ShaderProgram(programInfo);
 }
 //----------------------------------------------------------------------------
 Pass::Pass(ShaderProgram* shaderProgram)

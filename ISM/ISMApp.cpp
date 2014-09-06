@@ -35,7 +35,11 @@ void ISMApp::Initialize()
 
 	// Create material templates.
 	Material* material = 0;
-	Pass* passScene = new Pass("vScene.glsl", "fScene.glsl");
+    ShaderProgramInfo programInfo;
+    programInfo.VShaderFileName = "vScene.glsl";
+    programInfo.FShaderFileName = "fScene.glsl";
+    programInfo.ShaderStageFlag = ShaderType::ST_Vertex | ShaderType::ST_Fragment;
+    Pass* passScene = new Pass(programInfo);
 	Technique* techScene = new Technique();
 	techScene->AddPass(passScene);
 	MaterialTemplate* mtScene = new MaterialTemplate();

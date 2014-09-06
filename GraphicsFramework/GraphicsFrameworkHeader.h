@@ -29,10 +29,11 @@
 // Material
 #include "Shader.h"
 #include "VertexShader.h"
-#include "TessellationControlShader.h"
-#include "TessellationEvaluationShader.h"
+#include "GeometryShader.h"
 #include "FragmentShader.h"
 #include "ComputeShader.h"
+#include "TessellationControlShader.h"
+#include "TessellationEvaluationShader.h"
 #include "ShaderProgram.h"
 #include "Pass.h"
 #include "PassInfo.h"

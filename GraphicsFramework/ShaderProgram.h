@@ -10,9 +10,37 @@
 #include "RefObject.h"
 #include "VertexShader.h"
 #include "FragmentShader.h"
+#include "GeometryShader.h"
+#include "ComputeShader.h"
+#include "TessellationControlShader.h"
+#include "TessellationEvaluationShader.h"
 
 namespace RTGI
 {
+
+enum ShaderType
+{
+    ST_Unknown                = 0,
+    ST_Vertex                 = 1,
+    ST_Fragment               = 2,
+    ST_Geometry               = 4,
+    ST_Compute                = 8,
+    ST_TessellationControl    = 16,
+    ST_TessellationEvaluation = 32
+};
+
+struct ShaderProgramInfo
+{
+    std::string VShaderFileName;
+    std::string FShaderFileName;
+    std::string GShaderFileName;
+    std::string CShaderFileName;
+    std::string TCShaderFileName;
+    std::string TEShaderFileName;
+    unsigned char ShaderStageFlag;
+
+    ShaderProgramInfo(){ ShaderStageFlag = ShaderType::ST_Unknown; }
+};
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -21,8 +49,7 @@ namespace RTGI
 class ShaderProgram : public RefObject
 {
 public:
-	ShaderProgram(const std::string& vShaderFileName, 
-		const std::string& fShaderFileName);
+    ShaderProgram(const ShaderProgramInfo& programInfo);
 	ShaderProgram(VertexShader* vShader, FragmentShader* fShader);
 	virtual ~ShaderProgram();
 
@@ -31,17 +58,24 @@ public:
 	GLuint GetProgram() const;
 	GLuint GetVertexShader() const;
 	GLuint GetFragmentShader() const;
+    GLuint GetGeometryShader() const;
+    GLuint GetComputeShader() const;
+    GLuint GetTessellationControlShader() const;
+    GLuint GetTessellationEvaluationShader() const;
 
 	void Enable();
 	void Disable();
 
 protected:
-	// TODO:
-	// Get vertex attribute locations, uniform locations here?
-	//virtual void OnInitDeviceResource() = 0;
+    ShaderProgramInfo mProgramInfo;
 
 	VertexShaderPtr mVertexShader;
 	FragmentShaderPtr mFragmentShader;
+    GeometryShaderPtr mGeometryShader;
+    ComputeShaderPtr mComputeShader;
+    TessellationControlShaderPtr mTessellationControlShader;
+    TessellationEvaluationShaderPtr mTessellationEvaluationShader;
+
 	GLuint mProgram;
 };
 
