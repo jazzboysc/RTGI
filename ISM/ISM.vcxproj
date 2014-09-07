@@ -13,10 +13,12 @@
   <ItemGroup>
     <None Include="fISMTemp.glsl" />
     <None Include="fScene.glsl" />
-    <None Include="tcScene.glsl" />
-    <None Include="teScene.glsl" />
+    <None Include="fShadow.glsl" />
+    <None Include="tcShadow.glsl" />
+    <None Include="teShadow.glsl" />
     <None Include="vISMTemp.glsl" />
     <None Include="vScene.glsl" />
+    <None Include="vShadow.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ISMApp.cpp" />

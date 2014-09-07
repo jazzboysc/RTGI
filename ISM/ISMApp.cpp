@@ -21,7 +21,7 @@ void ISMApp::Initialize()
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
-	float color = 0.0f;
+	float color = 1.0f;
 	glClearColor(color, color, color, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
@@ -33,13 +33,19 @@ void ISMApp::Initialize()
 	mCamera->SetLookAt(vec3(0.0f, 10.0f, 10.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
+    // Create light projector.
+    mLightProjector = new Camera();
+    mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 0.0f, 50.0f);
+    mLightProjector->SetLookAt(vec3(-10.0f, 10.0f, 0.0f), vec3(0.0f, 10.0f, 0.0f),
+        vec3(0.0f, 1.0f, 0.0f));
+
 	// Create material templates.
 	Material* material = 0;
     ShaderProgramInfo programInfo;
-    programInfo.VShaderFileName = "vScene.glsl";
-    programInfo.FShaderFileName = "fScene.glsl";
-    programInfo.TCShaderFileName = "tcScene.glsl";
-    programInfo.TEShaderFileName = "teScene.glsl";
+    programInfo.VShaderFileName = "vShadow.glsl";
+    programInfo.FShaderFileName = "fShadow.glsl";
+    programInfo.TCShaderFileName = "tcShadow.glsl";
+    programInfo.TEShaderFileName = "teShadow.glsl";
     programInfo.ShaderStageFlag = ShaderType::ST_Vertex | 
                                   ShaderType::ST_Fragment | 
                                   ShaderType::ST_TessellationControl |
@@ -78,7 +84,7 @@ void ISMApp::Initialize()
 	mat4 rotM;
 	material = new Material(mtScene);
 	mModel = new ISMTriMesh(material, mCamera);
-	mModel->LoadFromFile("cow.ply");
+	mModel->LoadFromFile("beethoven.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
 	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, 5.0f));
@@ -156,25 +162,25 @@ void ISMApp::Initialize()
 //----------------------------------------------------------------------------
 void ISMApp::DrawScene()
 {
-	mGround->SetCamera(mCamera);
+    mGround->SetCamera(mLightProjector);
 	mGround->Render(0, 0);
 
-	mCeiling->SetCamera(mCamera);
+    mCeiling->SetCamera(mLightProjector);
 	mCeiling->Render(0, 0);
 
-	mLight->SetCamera(mCamera);
+    mLight->SetCamera(mLightProjector);
 	mLight->Render(0, 0);
 
-	mBackWall->SetCamera(mCamera);
+    mBackWall->SetCamera(mLightProjector);
 	mBackWall->Render(0, 0);
 
-	mLeftWall->SetCamera(mCamera);
+    mLeftWall->SetCamera(mLightProjector);
 	mLeftWall->Render(0, 0);
 
-	mRightWall->SetCamera(mCamera);
+    mRightWall->SetCamera(mLightProjector);
 	mRightWall->Render(0, 0);
 
-	mModel->SetCamera(mCamera);
+    mModel->SetCamera(mLightProjector);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
@@ -206,6 +212,7 @@ void ISMApp::Terminate()
 	// Release all resources.
 
 	delete mCamera;
+    delete mLightProjector;
 
     mShadowMapTexture = 0;
     mShadowMapDepthTexture = 0;

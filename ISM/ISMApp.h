@@ -36,6 +36,7 @@ private:
 	std::string mWindowTitle;
 
 	Camera* mCamera;
+    Camera* mLightProjector;
 
     Texture2DPtr mShadowMapTexture;
     Texture2DPtr mShadowMapDepthTexture;
