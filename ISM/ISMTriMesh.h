@@ -23,6 +23,10 @@ public:
 
 	bool IsLight;
 	vec3 MaterialColor;
+
+private:
+    // pass 2 uniform locations.
+    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
 };
 
 typedef RefPointer<ISMTriMesh> ISMTriMeshPtr;

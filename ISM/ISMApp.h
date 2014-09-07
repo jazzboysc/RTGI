@@ -30,7 +30,16 @@ public:
 	void OnReshape(int x, int y);
 
 private:
-	void DrawScene();
+    enum ShowMode
+    {
+        SM_Shadow,
+        SM_Scene
+    };
+
+    ShowMode mShowMode;
+
+	void DrawShadow();
+    void DrawScene();
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;
@@ -46,7 +55,6 @@ private:
 
 	ISMTriMeshPtr mGround;
 	ISMTriMeshPtr mCeiling;
-	ISMTriMeshPtr mLight;
 	ISMTriMeshPtr mBackWall;
 	ISMTriMeshPtr mLeftWall;
 	ISMTriMeshPtr mRightWall;

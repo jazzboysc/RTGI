@@ -10,6 +10,7 @@ ISMApp::ISMApp(int width, int height)
 	mHeight(height),
 	mWindowTitle("ISM demo")
 {
+    mShowMode = SM_Scene;
 }
 //----------------------------------------------------------------------------
 ISMApp::~ISMApp()
@@ -29,8 +30,8 @@ void ISMApp::Initialize()
     
     // Create scene camera.
 	mCamera = new Camera();
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 0.0f, 50.0f);
-	mCamera->SetLookAt(vec3(0.0f, 10.0f, 10.0f), vec3(0.0f, 10.0f, 0.0f),
+	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 0.01f, 50.0f);
+	mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
     // Create light projector.
@@ -50,11 +51,19 @@ void ISMApp::Initialize()
                                   ShaderType::ST_Fragment | 
                                   ShaderType::ST_TessellationControl |
                                   ShaderType::ST_TessellationEvaluation;
+    Pass* passShadow = new Pass(programInfo);
+    programInfo.VShaderFileName = "vScene.glsl";
+    programInfo.FShaderFileName = "fScene.glsl";
+    programInfo.TCShaderFileName = "";
+    programInfo.TEShaderFileName = "";
+    programInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                  ShaderType::ST_Fragment;
     Pass* passScene = new Pass(programInfo);
-	Technique* techScene = new Technique();
-	techScene->AddPass(passScene);
-	MaterialTemplate* mtScene = new MaterialTemplate();
-	mtScene->AddTechnique(techScene);
+	Technique* techISM = new Technique();
+    techISM->AddPass(passShadow);
+    techISM->AddPass(passScene);
+	MaterialTemplate* mtISM = new MaterialTemplate();
+	mtISM->AddTechnique(techISM);
 
     programInfo.VShaderFileName = "vISMTemp.glsl";
     programInfo.FShaderFileName = "fISMTemp.glsl";
@@ -82,22 +91,24 @@ void ISMApp::Initialize()
 
 	// Create scene.
 	mat4 rotM;
-	material = new Material(mtScene);
+	material = new Material(mtISM);
 	mModel = new ISMTriMesh(material, mCamera);
-	mModel->LoadFromFile("beethoven.ply");
+	mModel->LoadFromFile("cow.ply");
+    mat4 scale = Scale(vec3(2.0f));
+    mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
-	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, 5.0f));
+	mModel->SetWorldTranslation(vec3(-2.0f, 3.0f, 3.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
 
-	material = new Material(mtScene);
+    material = new Material(mtISM);
 	mGround = new ISMTriMesh(material, mCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
 
-	material = new Material(mtScene);
+    material = new Material(mtISM);
 	mCeiling = new ISMTriMesh(material, mCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
@@ -107,19 +118,7 @@ void ISMApp::Initialize()
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
 
-	material = new Material(mtScene);
-	mLight = new ISMTriMesh(material, mCamera);
-	mLight->LoadFromFile("square.ply");
-	mLight->GenerateNormals();
-	mLight->CreateDeviceResource();
-	rotM = RotateX(180.0f);
-	mLight->SetWorldTransform(rotM);
-	mLight->SetWorldScale(vec3(0.5f));
-	mLight->SetWorldTranslation(vec3(0.0f, 19.0f, 3.0f));
-	mLight->MaterialColor = vec3(0.0f, 0.0f, 0.0f);
-	mLight->IsLight = true;
-
-	material = new Material(mtScene);
+    material = new Material(mtISM);
 	mBackWall = new ISMTriMesh(material, mCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
@@ -129,7 +128,7 @@ void ISMApp::Initialize()
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
 
-	material = new Material(mtScene);
+    material = new Material(mtISM);
 	mLeftWall = new ISMTriMesh(material, mCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
@@ -139,7 +138,7 @@ void ISMApp::Initialize()
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
 
-	material = new Material(mtScene);
+    material = new Material(mtISM);
 	mRightWall = new ISMTriMesh(material, mCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
@@ -160,16 +159,13 @@ void ISMApp::Initialize()
     mShadowMapScreenQuad->TempTexture = mShadowMapTexture;
 }
 //----------------------------------------------------------------------------
-void ISMApp::DrawScene()
+void ISMApp::DrawShadow()
 {
     mGround->SetCamera(mLightProjector);
 	mGround->Render(0, 0);
 
     mCeiling->SetCamera(mLightProjector);
 	mCeiling->Render(0, 0);
-
-    mLight->SetCamera(mLightProjector);
-	mLight->Render(0, 0);
 
     mBackWall->SetCamera(mLightProjector);
 	mBackWall->Render(0, 0);
@@ -182,6 +178,27 @@ void ISMApp::DrawScene()
 
     mModel->SetCamera(mLightProjector);
 	mModel->Render(0, 0);
+}
+//----------------------------------------------------------------------------
+void ISMApp::DrawScene()
+{
+    mGround->SetCamera(mCamera);
+    mGround->Render(0, 1);
+
+    mCeiling->SetCamera(mCamera);
+    mCeiling->Render(0, 1);
+
+    mBackWall->SetCamera(mCamera);
+    mBackWall->Render(0, 1);
+
+    mLeftWall->SetCamera(mCamera);
+    mLeftWall->Render(0, 1);
+
+    mRightWall->SetCamera(mCamera);
+    mRightWall->Render(0, 1);
+
+    mModel->SetCamera(mCamera);
+    mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
 void ISMApp::Run()
@@ -197,12 +214,19 @@ void ISMApp::Run()
     mShadowMapFB->Enable();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	DrawScene();
+    DrawShadow();
     mShadowMapFB->Disable();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    mShadowMapScreenQuad->Render(0, 0);
+    if( mShowMode == SM_Scene )
+    {
+        DrawScene();
+    }
+    else if( mShowMode == SM_Shadow )
+    {
+        mShadowMapScreenQuad->Render(0, 0);
+    }
 
 	glutSwapBuffers();
 }
@@ -221,7 +245,6 @@ void ISMApp::Terminate()
 
 	mGround = 0;
 	mCeiling = 0;
-	mLight = 0;
 	mBackWall = 0;
 	mLeftWall = 0;
 	mRightWall = 0;
@@ -230,6 +253,19 @@ void ISMApp::Terminate()
 //----------------------------------------------------------------------------
 void ISMApp::OnKeyboard(unsigned char key, int x, int y)
 {
+    switch( key )
+    {
+    case '1':
+        mShowMode = SM_Scene;
+        break;
+
+    case '2':
+        mShowMode = SM_Shadow;
+        break;
+
+    default:
+        break;
+    }
 }
 //----------------------------------------------------------------------------
 void ISMApp::OnKeyboardUp(unsigned char key, int x, int y)
