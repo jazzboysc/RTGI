@@ -38,6 +38,7 @@ private:
 	Camera* mCamera;
 
     Texture2DPtr mShadowMapTexture;
+    Texture2DPtr mShadowMapDepthTexture;
     FrameBufferPtr mShadowMapFB;
 
     ISMTempScreenQuadPtr mShadowMapScreenQuad;

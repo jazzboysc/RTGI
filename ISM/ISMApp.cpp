@@ -66,10 +66,13 @@ void ISMApp::Initialize()
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(256, 256, Texture2D::RTF_RGBF);
 
+    mShadowMapDepthTexture = new Texture2D();
+    mShadowMapDepthTexture->CreateRenderTarget(256, 256, Texture2D::RTF_Depth);
+
     // Create shadow map frame buffer.
     Texture2D* renderTargets[] = { mShadowMapTexture };
     mShadowMapFB = new FrameBuffer();
-    mShadowMapFB->SetRenderTargets(1, renderTargets);
+    mShadowMapFB->SetRenderTargets(1, renderTargets, mShadowMapDepthTexture);
 
 	// Create scene.
 	mat4 rotM;
@@ -205,6 +208,7 @@ void ISMApp::Terminate()
 	delete mCamera;
 
     mShadowMapTexture = 0;
+    mShadowMapDepthTexture = 0;
     mShadowMapFB = 0;
     mShadowMapScreenQuad = 0;
 
