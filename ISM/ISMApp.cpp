@@ -21,7 +21,7 @@ void ISMApp::Initialize()
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
-	float color = 0.5f;
+	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
@@ -29,8 +29,8 @@ void ISMApp::Initialize()
     
     // Create scene camera.
 	mCamera = new Camera();
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
-	mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
+	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 0.0f, 50.0f);
+	mCamera->SetLookAt(vec3(0.0f, 10.0f, 10.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
 	// Create material templates.
@@ -64,7 +64,7 @@ void ISMApp::Initialize()
 
     // Create shadow map render target.
     mShadowMapTexture = new Texture2D();
-    mShadowMapTexture->CreateRenderTarget(512, 512, Texture2D::RTF_RGBF);
+    mShadowMapTexture->CreateRenderTarget(256, 256, Texture2D::RTF_RGBF);
 
     // Create shadow map frame buffer.
     Texture2D* renderTargets[] = { mShadowMapTexture };
@@ -75,10 +75,10 @@ void ISMApp::Initialize()
 	mat4 rotM;
 	material = new Material(mtScene);
 	mModel = new ISMTriMesh(material, mCamera);
-	mModel->LoadFromFile("beethoven.ply");
+	mModel->LoadFromFile("cow.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
-	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
+	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, 5.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
 
 	material = new Material(mtScene);
@@ -177,8 +177,16 @@ void ISMApp::DrawScene()
 //----------------------------------------------------------------------------
 void ISMApp::Run()
 {
+    static float angle = 0.0f;
+    angle += 1.0f;
+    mat4 rot;
+    rot = RotateY(angle);
+    vec3 trans = mModel->GetWorldTranslation();
+    mModel->SetWorldTransform(rot);
+    mModel->SetWorldTranslation(trans);
+
     mShadowMapFB->Enable();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	DrawScene();
     mShadowMapFB->Disable();
