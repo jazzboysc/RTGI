@@ -6,7 +6,7 @@ uniform mat4 Proj;
 layout(triangles, equal_spacing, ccw) in;
 
 in vec4 tcNormalWorld[];
-out vec4 teNormalWorld;
+out float teViewPosZ;
 
 void main()
 {	
@@ -24,10 +24,7 @@ void main()
     halfDir.y = -halfDir.y / halfDir.z;
     halfDir.z = (len - 0.0) / 40.0;
 
+    teViewPosZ = viewPos.z;
     gl_Position.xyz = halfDir;
     gl_Position.w = 1.0;
-
-    teNormalWorld.xyzw = tcNormalWorld[0].xyzw * gl_TessCoord.x +
-        tcNormalWorld[1].xyzw * gl_TessCoord.y +
-        tcNormalWorld[2].xyzw * gl_TessCoord.z;
 }
