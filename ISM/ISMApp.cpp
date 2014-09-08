@@ -11,6 +11,7 @@ ISMApp::ISMApp(int width, int height)
 	mWindowTitle("ISM demo")
 {
     mShowMode = SM_Scene;
+    mIsWireframe = false;
 }
 //----------------------------------------------------------------------------
 ISMApp::~ISMApp()
@@ -36,8 +37,8 @@ void ISMApp::Initialize()
 
     // Create light projector.
     mLightProjector = new Camera();
-    mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 0.0f, 50.0f);
-    mLightProjector->SetLookAt(vec3(-10.0f, 10.0f, 0.0f), vec3(0.0f, 10.0f, 0.0f),
+    mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 0.01f, 50.0f);
+    mLightProjector->SetLookAt(vec3(-9.5f, 10.0f, 0.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
 	// Create material templates.
@@ -78,11 +79,16 @@ void ISMApp::Initialize()
     mtScreenQuad->AddTechnique(techScreenQuad);
 
     // Create shadow map render target.
+    int shadowMapWidth, shadowMapHeight;
+    shadowMapWidth = 1024;
+    shadowMapHeight = 1024;
     mShadowMapTexture = new Texture2D();
-    mShadowMapTexture->CreateRenderTarget(256, 256, Texture2D::RTF_RGBF);
+    mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
+        Texture2D::RTF_RGBF);
 
     mShadowMapDepthTexture = new Texture2D();
-    mShadowMapDepthTexture->CreateRenderTarget(256, 256, Texture2D::RTF_Depth);
+    mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
+        Texture2D::RTF_Depth);
 
     // Create shadow map frame buffer.
     Texture2D* renderTargets[] = { mShadowMapTexture };
@@ -100,6 +106,8 @@ void ISMApp::Initialize()
 	mModel->CreateDeviceResource();
 	mModel->SetWorldTranslation(vec3(-2.0f, 3.0f, 3.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
+    mModel->LightProjector = mLightProjector;
+    mModel->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
 	mGround = new ISMTriMesh(material, mCamera);
@@ -107,6 +115,8 @@ void ISMApp::Initialize()
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
+    mGround->LightProjector = mLightProjector;
+    mGround->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
 	mCeiling = new ISMTriMesh(material, mCamera);
@@ -117,6 +127,8 @@ void ISMApp::Initialize()
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
+    mCeiling->LightProjector = mLightProjector;
+    mCeiling->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
 	mBackWall = new ISMTriMesh(material, mCamera);
@@ -127,6 +139,8 @@ void ISMApp::Initialize()
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
+    mBackWall->LightProjector = mLightProjector;
+    mBackWall->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
 	mLeftWall = new ISMTriMesh(material, mCamera);
@@ -137,6 +151,8 @@ void ISMApp::Initialize()
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+    mLeftWall->LightProjector = mLightProjector;
+    mLeftWall->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
 	mRightWall = new ISMTriMesh(material, mCamera);
@@ -147,6 +163,8 @@ void ISMApp::Initialize()
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
+    mRightWall->LightProjector = mLightProjector;
+    mRightWall->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtScreenQuad);
     mShadowMapScreenQuad = new ISMTempScreenQuad(material);
@@ -211,13 +229,20 @@ void ISMApp::Run()
     mModel->SetWorldTransform(rot);
     mModel->SetWorldTranslation(trans);
 
+    if( mIsWireframe )
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
     mShadowMapFB->Enable();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     DrawShadow();
     mShadowMapFB->Disable();
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if( mShowMode == SM_Scene )
     {
@@ -225,6 +250,7 @@ void ISMApp::Run()
     }
     else if( mShowMode == SM_Shadow )
     {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         mShadowMapScreenQuad->Render(0, 0);
     }
 
@@ -261,6 +287,10 @@ void ISMApp::OnKeyboard(unsigned char key, int x, int y)
 
     case '2':
         mShowMode = SM_Shadow;
+        break;
+
+    case 'w':
+        mIsWireframe = !mIsWireframe;
         break;
 
     default:

@@ -7,6 +7,7 @@ layout(triangles, equal_spacing, ccw) in;
 
 in vec4 tcNormalWorld[];
 out float teViewPosZ;
+out float teDepth;
 
 void main()
 {	
@@ -22,9 +23,10 @@ void main()
     vec3 halfDir = viewDir + vec3(0.0, 0.0, -1.0);
     halfDir.x = -halfDir.x / halfDir.z;
     halfDir.y = -halfDir.y / halfDir.z;
-    halfDir.z = (len - 0.0) / 40.0;
+    halfDir.z = (len - 0.01) / 50.0;
 
     teViewPosZ = viewPos.z;
+    teDepth = halfDir.z;
     gl_Position.xyz = halfDir;
     gl_Position.w = 1.0;
 }

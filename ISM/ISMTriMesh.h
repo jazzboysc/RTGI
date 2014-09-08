@@ -23,10 +23,17 @@ public:
 
 	bool IsLight;
 	vec3 MaterialColor;
+    Camera* LightProjector;
+    Texture2DPtr ShadowMap;
 
 private:
     // pass 2 uniform locations.
     GLint mWorldLoc2, mViewLoc2, mProjLoc2;
+    GLint mLightProjectorViewLoc;
+    GLint mShadowMapSamplerLoc;
+    GLint mLightPositionWorldLoc;
+    GLint mLightColorLoc;
+    GLint mMaterialColorLoc;
 };
 
 typedef RefPointer<ISMTriMesh> ISMTriMeshPtr;

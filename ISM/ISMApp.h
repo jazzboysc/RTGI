@@ -36,6 +36,7 @@ private:
         SM_Scene
     };
 
+    bool mIsWireframe;
     ShowMode mShowMode;
 
 	void DrawShadow();

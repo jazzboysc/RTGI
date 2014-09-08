@@ -1,6 +1,7 @@
 #version 430 core
 
 in float teViewPosZ;
+in float teDepth;
 
 void main()
 {
@@ -9,5 +10,5 @@ void main()
         discard;
     }
     
-    gl_FragData[0] = vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1.0);
+    gl_FragData[0] = vec4(teDepth, teDepth, teDepth, 1.0);
 }
