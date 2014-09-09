@@ -22,6 +22,7 @@ public:
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 
 	bool IsLight;
+    bool IsSSS;
 	vec3 MaterialColor;
     Camera* LightProjector;
     Texture2DPtr ShadowMap;
@@ -35,9 +36,11 @@ private:
     GLint mLightProjectorViewLoc;
     GLint mShadowMapSamplerLoc;
     GLint mLightPositionWorldLoc;
+    GLint mCameraPositionWorldLoc;
     GLint mLightColorLoc;
     GLint mMaterialColorLoc;
     GLint mLightProjectorNearFarLoc2;
+    GLint mIsSSSLoc;
 };
 
 typedef RefPointer<SSSviaPSMTriMesh> SSSviaPSMTriMeshPtr;

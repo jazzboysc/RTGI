@@ -7,6 +7,7 @@ SSSviaPSMTriMesh::SSSviaPSMTriMesh(Material* material, Camera* camera)
 	:
 	TriangleMesh(material, camera),
 	IsLight(false),
+    IsSSS(false),
 	MaterialColor(0.75f, 0.75f, 0.75f)
 {
     mWorldLoc2 = -1; 
@@ -19,6 +20,7 @@ SSSviaPSMTriMesh::SSSviaPSMTriMesh(Material* material, Camera* camera)
     mMaterialColorLoc = -1;
     mLightProjectorNearFarLoc = -1;
     mLightProjectorNearFarLoc2 = -1;
+    mIsSSSLoc = -1;
 
     LightProjector = 0;
     ShadowMap = 0;
@@ -45,10 +47,12 @@ void SSSviaPSMTriMesh::OnGetShaderConstants()
     mLightProjectorViewLoc = glGetUniformLocation(program, "LightProjectorView");
     mShadowMapSamplerLoc = glGetUniformLocation(program, "shadowMapSampler");
     mLightPositionWorldLoc = glGetUniformLocation(program, "LightPositionWorld");
+    mCameraPositionWorldLoc = glGetUniformLocation(program, "CameraPositionWorld");
     mLightColorLoc = glGetUniformLocation(program, "LightColor");
     mMaterialColorLoc = glGetUniformLocation(program, "MaterialColor");
     mLightProjectorNearFarLoc2 =
         glGetUniformLocation(program, "LightProjectorNearFar");
+    mIsSSSLoc = glGetUniformLocation(program, "IsSSS");
 }
 //----------------------------------------------------------------------------
 void SSSviaPSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -71,6 +75,7 @@ void SSSviaPSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
     {
         glUniformMatrix4fv(mWorldLoc2, 1, GL_TRUE, mWorldTransform);
         glUniform3fv(mMaterialColorLoc, 1, (GLfloat*)&MaterialColor);
+        glUniform1i(mIsSSSLoc, IsSSS);
 
         if( mCamera )
         {
@@ -79,6 +84,9 @@ void SSSviaPSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
 
             mat4 projTrans = mCamera->GetProjectionTransform();
             glUniformMatrix4fv(mProjLoc2, 1, GL_TRUE, projTrans);
+
+            vec3 cameraPosition = mCamera->GetLocation();
+            glUniform3fv(mCameraPositionWorldLoc, 1, (GLfloat*)&cameraPosition);
         }
 
         if( LightProjector )

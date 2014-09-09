@@ -8,7 +8,7 @@ SSSviaPSMApp::SSSviaPSMApp(int width, int height)
 	:
 	mWidth(width),
 	mHeight(height),
-	mWindowTitle("SSS via PSM demo")
+	mWindowTitle("Subsurface Scattering via PSM demo")
 {
     mShowMode = SM_Scene;
     mIsWireframe = false;
@@ -101,20 +101,23 @@ void SSSviaPSMApp::Initialize()
 	mModel = new SSSviaPSMTriMesh(material, mCamera);
 	mModel->LoadFromFile("dragon_s.ply");
     mat4 scale = Scale(vec3(60.0f));
+    //mat4 scale = Scale(vec3(1.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
-	mModel->SetWorldTranslation(vec3(0.0f, 3.0f, 0.0f));
-	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
+	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 0.0f));
+    //mModel->SetWorldTranslation(vec3(0.0f, 6.0f, 0.0f));
+	mModel->MaterialColor = vec3(0.15f, 0.55f, 0.35f);
     mModel->LightProjector = mLightProjector;
     mModel->ShadowMap = mShadowMapTexture;
+    mModel->IsSSS = true;
 
     material = new Material(mtISM);
 	mGround = new SSSviaPSMTriMesh(material, mCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-    mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
+    mGround->MaterialColor = vec3(0.8f, 0.8f, 0.8f);
     mGround->LightProjector = mLightProjector;
     mGround->ShadowMap = mShadowMapTexture;
 
