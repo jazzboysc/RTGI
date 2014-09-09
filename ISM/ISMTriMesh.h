@@ -27,6 +27,9 @@ public:
     Texture2DPtr ShadowMap;
 
 private:
+    // pass 1 uniform locations.
+    GLint mLightProjectorNearFarLoc;
+
     // pass 2 uniform locations.
     GLint mWorldLoc2, mViewLoc2, mProjLoc2;
     GLint mLightProjectorViewLoc;
@@ -34,6 +37,7 @@ private:
     GLint mLightPositionWorldLoc;
     GLint mLightColorLoc;
     GLint mMaterialColorLoc;
+    GLint mLightProjectorNearFarLoc2;
 };
 
 typedef RefPointer<ISMTriMesh> ISMTriMeshPtr;

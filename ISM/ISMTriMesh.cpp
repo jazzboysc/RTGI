@@ -17,6 +17,8 @@ ISMTriMesh::ISMTriMesh(Material* material, Camera* camera)
     mLightPositionWorldLoc = -1;
     mLightColorLoc = -1;
     mMaterialColorLoc = -1;
+    mLightProjectorNearFarLoc = -1;
+    mLightProjectorNearFarLoc2 = -1;
 
     LightProjector = 0;
     ShadowMap = 0;
@@ -31,9 +33,12 @@ void ISMTriMesh::OnGetShaderConstants()
 	TriangleMesh::OnGetShaderConstants();
 
 	// Get pass 1 uniform locations.
+    GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+    mLightProjectorNearFarLoc = 
+        glGetUniformLocation(program, "LightProjectorNearFar");
 
     // Get pass 2 uniform locations.
-    GLuint program = mMaterial->GetProgram(0, 1)->GetProgram();
+    program = mMaterial->GetProgram(0, 1)->GetProgram();
     mWorldLoc2 = glGetUniformLocation(program, "World");
     mViewLoc2 = glGetUniformLocation(program, "View");
     mProjLoc2 = glGetUniformLocation(program, "Proj");
@@ -42,6 +47,8 @@ void ISMTriMesh::OnGetShaderConstants()
     mLightPositionWorldLoc = glGetUniformLocation(program, "LightPositionWorld");
     mLightColorLoc = glGetUniformLocation(program, "LightColor");
     mMaterialColorLoc = glGetUniformLocation(program, "MaterialColor");
+    mLightProjectorNearFarLoc2 =
+        glGetUniformLocation(program, "LightProjectorNearFar");
 }
 //----------------------------------------------------------------------------
 void ISMTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -50,6 +57,13 @@ void ISMTriMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == 0 )
     {
 		TriangleMesh::OnUpdateShaderConstants(technique, pass);
+
+        if( mCamera )
+        {
+            float nearFarPlane[2];
+            mCamera->GetNearFarPlane(nearFarPlane);
+            glUniform2fv(mLightProjectorNearFarLoc, 1, nearFarPlane);
+        }
 	}
 
     // Update pass 2 uniform data.
@@ -74,6 +88,10 @@ void ISMTriMesh::OnUpdateShaderConstants(int technique, int pass)
 
             vec3 lightPosition = LightProjector->GetLocation();
             glUniform3fv(mLightPositionWorldLoc, 1, (GLfloat*)&lightPosition);
+
+            float nearFarPlane[2];
+            LightProjector->GetNearFarPlane(nearFarPlane);
+            glUniform2fv(mLightProjectorNearFarLoc2, 1, nearFarPlane);
         }
 
         if( ShadowMap )

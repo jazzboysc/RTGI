@@ -2,6 +2,7 @@
 
 uniform mat4 View;
 uniform mat4 Proj;
+uniform vec2 LightProjectorNearFar;
 
 layout(triangles, equal_spacing, ccw) in;
 
@@ -23,7 +24,8 @@ void main()
     vec3 halfDir = viewDir + vec3(0.0, 0.0, -1.0);
     halfDir.x = -halfDir.x / halfDir.z;
     halfDir.y = -halfDir.y / halfDir.z;
-    halfDir.z = (len - 0.01) / 50.0;
+    halfDir.z = (len - LightProjectorNearFar.x) / 
+        (LightProjectorNearFar.y - LightProjectorNearFar.x);
 
     teViewPosZ = viewPos.z;
     teDepth = halfDir.z;
