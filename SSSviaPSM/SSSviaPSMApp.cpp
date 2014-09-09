@@ -11,6 +11,7 @@ SSSviaPSMApp::SSSviaPSMApp(int width, int height)
 	mWindowTitle("Subsurface Scattering via PSM demo")
 {
     mShowMode = SM_Scene;
+    mIsRotatingModel = false;
     mIsWireframe = false;
 }
 //----------------------------------------------------------------------------
@@ -225,12 +226,15 @@ void SSSviaPSMApp::DrawScene()
 void SSSviaPSMApp::Run()
 {
     static float angle = 0.0f;
-    angle += 1.0f;
-    mat4 rot;
-    rot = RotateY(angle);
-    vec3 trans = mModel->GetWorldTranslation();
-    mModel->SetWorldTransform(rot);
-    mModel->SetWorldTranslation(trans);
+    if( mIsRotatingModel )
+    {
+        angle += 1.0f;
+        mat4 rot;
+        rot = RotateY(angle);
+        vec3 trans = mModel->GetWorldTranslation();
+        mModel->SetWorldTransform(rot);
+        mModel->SetWorldTranslation(trans);
+    }
 
     if( mIsWireframe )
     {
@@ -294,6 +298,10 @@ void SSSviaPSMApp::OnKeyboard(unsigned char key, int x, int y)
 
     case 'w':
         mIsWireframe = !mIsWireframe;
+        break;
+
+    case 'r':
+        mIsRotatingModel = !mIsRotatingModel;
         break;
 
     default:

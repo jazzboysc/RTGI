@@ -36,6 +36,7 @@ private:
         SM_Scene
     };
 
+    bool mIsRotatingModel;
     bool mIsWireframe;
     ShowMode mShowMode;
 
