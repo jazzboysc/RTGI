@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GLSL">
+      <UniqueIdentifier>{62467c9c-def6-4135-9218-e4e4684012fc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="SIIApp.cpp" />
+    <ClCompile Include="SIITempScreenQuad.cpp" />
+    <ClCompile Include="SIITriMesh.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SIIApp.h" />
+    <ClInclude Include="SIITempScreenQuad.h" />
+    <ClInclude Include="SIITriMesh.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fScene.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fSIITemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fVPLShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="tcVPLShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="teVPLShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vScene.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vSIITemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vVPLShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fRSMBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vRSMBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+  </ItemGroup>
+</Project>

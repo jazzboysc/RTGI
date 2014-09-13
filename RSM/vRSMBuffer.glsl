@@ -15,7 +15,5 @@ void main()
 	vNormalView = View * World * vec4(vNormal, 0.0);
     vPositionView = View * World * vPosition;
 	vec4 vPositionH = Proj * vPositionView;
-	//vPositionView.xyzw = vPositionH.xyzw / vPositionH.w;
-	//vPositionView.xy = (vPositionView.xy+1.0)*0.5;
     gl_Position =  vPositionH;
 }

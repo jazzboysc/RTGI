@@ -15,7 +15,12 @@ void main()
 {
     vec3 normal = normalize(vNormalWorld).xyz;
 
+    bool skipShadow = false;
     vec4 viewPos = LightProjectorView * vPositionWorld;
+    if( viewPos.z > 0.0 )
+    {
+        skipShadow = true;
+    }
     vec3 viewDir = viewPos.xyz;
     float len = length(viewDir);
     viewDir = normalize(viewDir);
@@ -29,7 +34,7 @@ void main()
     texCoords = texCoords*0.5 + 0.5;
     float depth = texture2D(shadowMapSampler, texCoords).r;
 
-    if( currDepth - depth > 0.01 )
+    if( currDepth - depth > 0.01 && !skipShadow )
     {
         // Shadow.
         gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0);
