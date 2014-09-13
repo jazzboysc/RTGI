@@ -55,3 +55,27 @@ void Texture1D::BindToImageUnit(GLuint unit, GLenum access)
 #endif
 }
 //--------------------------------------------------------------------------
+void Texture1D::CreateUniformRandomTextureRG(int sampleCount)
+{
+    float* pixels = new float[sampleCount * 2];
+    for( int i = 0; i < sampleCount; ++i )
+    {
+        pixels[2 * i    ] = (float)UniformRandom();
+        pixels[2 * i + 1] = (float)UniformRandom();
+    }
+
+    glGenTextures(1, &mTexture);
+    glBindTexture(GL_TEXTURE_1D, mTexture);
+    glTexImage1D(GL_TEXTURE_1D, 0, GL_RG32F, sampleCount, 0, GL_RG, GL_FLOAT,
+        pixels);
+
+    delete[] pixels;
+
+    Width = sampleCount;
+    mInternalFormat = GL_RG32F;
+    mFormat = GL_RG;
+    mType = GL_FLOAT;
+
+    glBindTexture(GL_TEXTURE_1D, 0);
+}
+//--------------------------------------------------------------------------

@@ -74,7 +74,7 @@ void SSDOApp::Initialize()
 
 	// Create LD random texture.
 	mRandomTexture = new Texture2D();
-	mRandomTexture->CreateLDRandomTexture(16, 2);
+	mRandomTexture->CreateLDRandomTextureRGBF(16, 2);
 
 	// Create MRT textures.
 	mPositionTexture = new Texture2D();

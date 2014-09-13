@@ -15,20 +15,24 @@
     <ClCompile Include="SIIApp.cpp" />
     <ClCompile Include="SIITempScreenQuad.cpp" />
     <ClCompile Include="SIITriMesh.cpp" />
+    <ClCompile Include="SIIVPLQuad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SIIApp.h" />
     <ClInclude Include="SIITempScreenQuad.h" />
     <ClInclude Include="SIITriMesh.h" />
+    <ClInclude Include="SIIVPLQuad.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fRSMBuffer.glsl" />
+    <None Include="fSampleRSMBuffer.glsl" />
     <None Include="fScene.glsl" />
     <None Include="fSIITemp.glsl" />
     <None Include="fVPLShadow.glsl" />
     <None Include="tcVPLShadow.glsl" />
     <None Include="teVPLShadow.glsl" />
     <None Include="vRSMBuffer.glsl" />
+    <None Include="vSampleRSMBuffer.glsl" />
     <None Include="vScene.glsl" />
     <None Include="vSIITemp.glsl" />
     <None Include="vVPLShadow.glsl" />

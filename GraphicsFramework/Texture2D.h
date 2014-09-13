@@ -58,7 +58,7 @@ public:
 
 	// Generate random positions inside a unit hemisphere based on halton 
 	// numbers.
-	void CreateLDRandomTexture(int maxSampleCount, int patternSize);
+	void CreateLDRandomTextureRGBF(int maxSampleCount, int patternSize);
 
 	int Width, Height;
 	bool IsRenderTarget;

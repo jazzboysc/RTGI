@@ -258,7 +258,8 @@ void Texture2D::BindToImageUnit(GLuint unit, GLenum access)
 #endif
 }
 //--------------------------------------------------------------------------
-void Texture2D::CreateLDRandomTexture(int maxSampleCount, int patternSize)
+void Texture2D::CreateLDRandomTextureRGBF(int maxSampleCount, 
+    int patternSize)
 {
 	// This function is based on the PFM loader of Thorsten Grosch and 
 	// Tobias Ritschel's demo.
@@ -289,12 +290,16 @@ void Texture2D::CreateLDRandomTexture(int maxSampleCount, int patternSize)
 			pixels[(i * maxSampleCount + j) * 3 + 2] = sample[2];
 		}
 	}
+
+    mInternalFormat = GL_RGB32F_ARB;
+    mFormat = GL_RGB;
+    mType = GL_FLOAT;
 	
 	glGenTextures(1, &mTexture);
 	glBindTexture(GL_TEXTURE_2D, mTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F_ARB, maxSampleCount, 
 		patternSizeSquared, 0, GL_RGB, GL_FLOAT, pixels); 
 			
-	delete pixels;
+	delete[] pixels;
 }
 //--------------------------------------------------------------------------

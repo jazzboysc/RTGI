@@ -4,6 +4,7 @@
 #include "GraphicsFrameworkHeader.h"
 #include "SIITriMesh.h"
 #include "SIITempScreenQuad.h"
+#include "SIIVPLQuad.h"
 
 namespace RTGI
 {
@@ -33,6 +34,9 @@ private:
     enum ShowMode
     {
         SM_Shadow,
+        SM_RSMPosition,
+        SM_RSMNormal,
+        SM_RSMFlux,
         SM_Scene
     };
 
@@ -41,6 +45,7 @@ private:
 
 	void DrawShadow();
     void DrawRSMs();
+    void SampleRSMs();
     void DrawScene();
 
 	int mWidth, mHeight;
@@ -59,6 +64,11 @@ private:
     Texture2DPtr mRSMNormalTexturePX;
     Texture2DPtr mRSMFluxTexturePX;
     Texture2DPtr mRSMDepthTexturePX;
+
+    Texture1DPtr mRSMSampleTexture;
+
+    // VPL quad.
+    SIIVPLQuadPtr mVPLQuad;
 
     SIITempScreenQuadPtr mShadowMapScreenQuad;
 

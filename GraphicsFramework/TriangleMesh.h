@@ -62,6 +62,10 @@ public:
 
 	void UpdateModelSpaceVertices(const mat4& trans);
 
+    // TODO:
+    // Modify TriangleMesh to support quad mesh and change the name to Mesh.
+    bool IsQuad;
+
 protected:
 	void CreateVertexBufferDeviceResource();
 	void CreateIndexBufferDeviceResource();

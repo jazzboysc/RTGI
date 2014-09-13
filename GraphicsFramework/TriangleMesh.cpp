@@ -21,6 +21,7 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
 	mCamera(camera)
 {
 	mWorldLoc = mViewLoc = mProjLoc = -1;
+    IsQuad = false;
 }
 //----------------------------------------------------------------------------
 TriangleMesh::~TriangleMesh()
@@ -56,8 +57,17 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
     }
     else
     {
-        glDrawElements(GL_TRIANGLES, (GLsizei)mIndexData.size(),
-            GL_UNSIGNED_SHORT, 0);
+        if( !IsQuad )
+        {
+            glDrawElements(GL_TRIANGLES, (GLsizei)mIndexData.size(),
+                GL_UNSIGNED_SHORT, 0);
+        }
+        else
+        {
+            // TODO:
+            // Modify TriangleMesh to support quad mesh and change the name to Mesh.
+            glDrawArrays(GL_QUADS, 0, 4);
+        }
     }
 }
 //----------------------------------------------------------------------------

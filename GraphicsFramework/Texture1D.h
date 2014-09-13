@@ -32,6 +32,8 @@ public:
 
 	void BindToImageUnit(GLuint unit, GLenum access);
 
+    void CreateUniformRandomTextureRG(int sampleCount);
+
 	int Width;
 
 private:

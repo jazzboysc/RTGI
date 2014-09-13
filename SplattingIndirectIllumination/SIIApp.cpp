@@ -23,7 +23,7 @@ void SIIApp::Initialize()
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
-	float color = 1.0f;
+	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
@@ -37,7 +37,7 @@ void SIIApp::Initialize()
 
     // Create light projector.
     mLightProjector = new Camera();
-    mLightProjector->SetPerspectiveFrustum(90.0f, 1.0f, 0.01f, 50.0f);
+    mLightProjector->SetPerspectiveFrustum(85.0f, 1.0f, 0.01f, 50.0f);
     mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
 
@@ -76,6 +76,19 @@ void SIIApp::Initialize()
     techSII->AddPass(passScene);
 	MaterialTemplate* mtSII = new MaterialTemplate();
     mtSII->AddTechnique(techSII);
+
+    programInfo.VShaderFileName = "vSampleRSMBuffer.glsl";
+    programInfo.FShaderFileName = "fSampleRSMBuffer.glsl";
+    programInfo.TCShaderFileName = "";
+    programInfo.TEShaderFileName = "";
+    programInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+        ShaderType::ST_Fragment;
+    Pass* passVPLQuad = new Pass(programInfo);
+
+    Technique* techVPLQuad = new Technique();
+    techVPLQuad->AddPass(passVPLQuad);
+    MaterialTemplate* mtVPLQuad = new MaterialTemplate();
+    mtVPLQuad->AddTechnique(techVPLQuad);
 
     programInfo.VShaderFileName = "vSIITemp.glsl";
     programInfo.FShaderFileName = "fSIITemp.glsl";
@@ -123,6 +136,21 @@ void SIIApp::Initialize()
     Texture2D* rsmTextures[3] = { mRSMPositionTexturePX, mRSMNormalTexturePX, mRSMFluxTexturePX };
     mRSMBufferPX = new FrameBuffer();
     mRSMBufferPX->SetRenderTargets(3, rsmTextures, mRSMDepthTexturePX);
+
+    // Create RSM sample texture.
+    mRSMSampleTexture = new Texture1D();
+    mRSMSampleTexture->CreateUniformRandomTextureRG(1);
+
+    // Create VPL quad.
+    material = new Material(mtVPLQuad);
+    mVPLQuad = new SIIVPLQuad(material, mCamera);
+    mVPLQuad->LoadFromFile("screenquad.ply");
+    mVPLQuad->CreateDeviceResource();
+    mVPLQuad->IsQuad = true;
+    mVPLQuad->RSMPositionTexture = mRSMPositionTexturePX;
+    mVPLQuad->RSMNormalTexture = mRSMNormalTexturePX;
+    mVPLQuad->RSMFluxTexture = mRSMFluxTexturePX;
+    mVPLQuad->RSMSampleTexture = mRSMSampleTexture;
 
 	// Create scene.
 	mat4 rotM;
@@ -235,6 +263,30 @@ void SIIApp::DrawRSMs()
     // Positive X.
     mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), 
         vec3(10.0f, 10.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+
+
+    mGround->SetCamera(mLightProjector);
+    mGround->Render(0, 1);
+
+    mCeiling->SetCamera(mLightProjector);
+    mCeiling->Render(0, 1);
+
+    mBackWall->SetCamera(mLightProjector);
+    mBackWall->Render(0, 1);
+
+    mLeftWall->SetCamera(mLightProjector);
+    mLeftWall->Render(0, 1);
+
+    mRightWall->SetCamera(mLightProjector);
+    mRightWall->Render(0, 1);
+
+    mModel->SetCamera(mLightProjector);
+    mModel->Render(0, 1);
+}
+//----------------------------------------------------------------------------
+void SIIApp::SampleRSMs()
+{
+    mVPLQuad->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void SIIApp::DrawScene()
@@ -280,22 +332,28 @@ void SIIApp::Run()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    // Shadow pass.
     mShadowMapFB->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     DrawShadow();
     mShadowMapFB->Disable();
 
+    // RSM pass.
     mRSMBufferPX->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     DrawRSMs();
     mRSMBufferPX->Disable();
 
+    // Final pass.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if( mShowMode == SM_Scene )
     {
         DrawScene();
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        SampleRSMs();
     }
-    else if( mShowMode == SM_Shadow )
+    else
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         mShadowMapScreenQuad->Render(0, 0);
@@ -322,6 +380,10 @@ void SIIApp::Terminate()
     mRSMFluxTexturePX = 0;
     mRSMDepthTexturePX = 0;
 
+    mRSMSampleTexture = 0;
+
+    mVPLQuad = 0;
+
 	mGround = 0;
 	mCeiling = 0;
 	mBackWall = 0;
@@ -340,6 +402,22 @@ void SIIApp::OnKeyboard(unsigned char key, int x, int y)
 
     case '2':
         mShowMode = SM_Shadow;
+        mShadowMapScreenQuad->TempTexture = mShadowMapTexture;
+        break;
+
+    case '3':
+        mShowMode = SM_RSMPosition;
+        mShadowMapScreenQuad->TempTexture = mRSMPositionTexturePX;
+        break;
+
+    case '4':
+        mShowMode = SM_RSMNormal;
+        mShadowMapScreenQuad->TempTexture = mRSMNormalTexturePX;
+        break;
+
+    case '5':
+        mShowMode = SM_RSMFlux;
+        mShadowMapScreenQuad->TempTexture = mRSMFluxTexturePX;
         break;
 
     case 'w':
