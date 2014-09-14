@@ -44,23 +44,23 @@ void VPLviaRSMApp::Initialize()
 	// Create material templates.
 	Material* material = 0;
     ShaderProgramInfo programInfo;
-    programInfo.VShaderFileName = "vVPLShadow.glsl";
-    programInfo.FShaderFileName = "fVPLShadow.glsl";
-    programInfo.TCShaderFileName = "tcVPLShadow.glsl";
-    programInfo.TEShaderFileName = "teVPLShadow.glsl";
+    programInfo.VShaderFileName = "vShadow.glsl";
+    programInfo.FShaderFileName = "fShadow.glsl";
+    programInfo.TCShaderFileName = "tcShadow.glsl";
+    programInfo.TEShaderFileName = "teShadow.glsl";
     programInfo.ShaderStageFlag = ShaderType::ST_Vertex | 
                                   ShaderType::ST_Fragment | 
                                   ShaderType::ST_TessellationControl |
                                   ShaderType::ST_TessellationEvaluation;
     Pass* passShadow = new Pass(programInfo);
 
-    programInfo.VShaderFileName = "vScene.glsl";
-    programInfo.FShaderFileName = "fScene.glsl";
+    programInfo.VShaderFileName = "vDirectLighting.glsl";
+    programInfo.FShaderFileName = "fDirectLighting.glsl";
     programInfo.TCShaderFileName = "";
     programInfo.TEShaderFileName = "";
     programInfo.ShaderStageFlag = ShaderType::ST_Vertex |
                                   ShaderType::ST_Fragment;
-    Pass* passScene = new Pass(programInfo);
+    Pass* passDirectLighting = new Pass(programInfo);
 
     programInfo.VShaderFileName = "vRSMBuffer.glsl";
     programInfo.FShaderFileName = "fRSMBuffer.glsl";
@@ -70,25 +70,23 @@ void VPLviaRSMApp::Initialize()
         ShaderType::ST_Fragment;
     Pass* passRSMBuffer = new Pass(programInfo);
 
+    programInfo.VShaderFileName = "vVPLShadow.glsl";
+    programInfo.FShaderFileName = "fVPLShadow.glsl";
+    programInfo.TCShaderFileName = "tcVPLShadow.glsl";
+    programInfo.TEShaderFileName = "teVPLShadow.glsl";
+    programInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+        ShaderType::ST_Fragment |
+        ShaderType::ST_TessellationControl |
+        ShaderType::ST_TessellationEvaluation;
+    Pass* passVPLShadow = new Pass(programInfo);
+
 	Technique* techVPLviaRSM = new Technique();
     techVPLviaRSM->AddPass(passShadow);
     techVPLviaRSM->AddPass(passRSMBuffer);
-    techVPLviaRSM->AddPass(passScene);
+    techVPLviaRSM->AddPass(passDirectLighting);
+    techVPLviaRSM->AddPass(passVPLShadow);
 	MaterialTemplate* mtVPLviaRSM = new MaterialTemplate();
     mtVPLviaRSM->AddTechnique(techVPLviaRSM);
-
-    programInfo.VShaderFileName = "vSampleRSMBuffer.glsl";
-    programInfo.FShaderFileName = "fSampleRSMBuffer.glsl";
-    programInfo.TCShaderFileName = "";
-    programInfo.TEShaderFileName = "";
-    programInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-        ShaderType::ST_Fragment;
-    Pass* passVPLQuad = new Pass(programInfo);
-
-    Technique* techVPLQuad = new Technique();
-    techVPLQuad->AddPass(passVPLQuad);
-    MaterialTemplate* mtVPLQuad = new MaterialTemplate();
-    mtVPLQuad->AddTechnique(techVPLQuad);
 
     programInfo.VShaderFileName = "vVPLviaRSMTemp.glsl";
     programInfo.FShaderFileName = "fVPLviaRSMTemp.glsl";
@@ -110,15 +108,30 @@ void VPLviaRSMApp::Initialize()
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
         Texture2D::RTF_RGBF);
-
     mShadowMapDepthTexture = new Texture2D();
-    mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
+    mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight,
         Texture2D::RTF_Depth);
 
     // Create shadow map frame buffer.
     Texture2D* renderTargets[] = { mShadowMapTexture };
     mShadowMapFB = new FrameBuffer();
     mShadowMapFB->SetRenderTargets(1, renderTargets, mShadowMapDepthTexture);
+
+    // Create VPL shadow map render target.
+    int vplShadowMapWidth, vplShadowMapHeight;
+    vplShadowMapWidth = 256;
+    vplShadowMapHeight = 256;
+    mVPLShadowMapTexture = new Texture2D();
+    mVPLShadowMapTexture->CreateRenderTarget(vplShadowMapWidth, vplShadowMapHeight,
+        Texture2D::RTF_RGBF);
+    mVPLShadowMapDepthTexture = new Texture2D();
+    mVPLShadowMapDepthTexture->CreateRenderTarget(vplShadowMapWidth, vplShadowMapHeight,
+        Texture2D::RTF_Depth);
+
+    // Create VPL shadow map frame buffer.
+    Texture2D* vplRenderTargets[] = { mVPLShadowMapTexture };
+    mVPLShadowMapFB = new FrameBuffer();
+    mVPLShadowMapFB->SetRenderTargets(1, vplRenderTargets, mVPLShadowMapDepthTexture);
 
     // Create RSM-buffer MRT textures.
     int RSMWidth = 1024;
@@ -140,17 +153,6 @@ void VPLviaRSMApp::Initialize()
     // Create RSM sample texture.
     mRSMSampleTexture = new Texture1D();
     mRSMSampleTexture->CreateUniformRandomTextureRG(128);
-
-    // Create VPL quad.
-    material = new Material(mtVPLQuad);
-    mVPLQuad = new VPLQuad(material, mCamera);
-    mVPLQuad->LoadFromFile("screenquad.ply");
-    mVPLQuad->CreateDeviceResource();
-    mVPLQuad->IsQuad = true;
-    mVPLQuad->RSMPositionTexture = mRSMPositionTexturePX;
-    mVPLQuad->RSMNormalTexture = mRSMNormalTexturePX;
-    mVPLQuad->RSMFluxTexture = mRSMFluxTexturePX;
-    mVPLQuad->RSMSampleTexture = mRSMSampleTexture;
 
 	// Create scene.
 	mat4 rotM;
@@ -234,82 +236,69 @@ void VPLviaRSMApp::Initialize()
     mShadowMapScreenQuad->TempTexture = mShadowMapTexture;
 }
 //----------------------------------------------------------------------------
-void VPLviaRSMApp::DrawShadow()
+void VPLviaRSMApp::ShadowPass()
 {
     mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
 
     mGround->SetCamera(mLightProjector);
-	mGround->Render(0, 0);
-
     mCeiling->SetCamera(mLightProjector);
-	mCeiling->Render(0, 0);
-
     mBackWall->SetCamera(mLightProjector);
-	mBackWall->Render(0, 0);
-
     mLeftWall->SetCamera(mLightProjector);
-	mLeftWall->Render(0, 0);
-
     mRightWall->SetCamera(mLightProjector);
-	mRightWall->Render(0, 0);
-
     mModel->SetCamera(mLightProjector);
+
+	mGround->Render(0, 0);
+	mCeiling->Render(0, 0);
+	mBackWall->Render(0, 0);
+	mLeftWall->Render(0, 0);
+	mRightWall->Render(0, 0);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
-void VPLviaRSMApp::DrawRSMs()
+void VPLviaRSMApp::RSMPass()
 {
     // Positive X.
     mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), 
         vec3(10.0f, 10.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
-
     mGround->SetCamera(mLightProjector);
-    mGround->Render(0, 1);
-
     mCeiling->SetCamera(mLightProjector);
-    mCeiling->Render(0, 1);
-
     mBackWall->SetCamera(mLightProjector);
-    mBackWall->Render(0, 1);
-
     mLeftWall->SetCamera(mLightProjector);
-    mLeftWall->Render(0, 1);
-
     mRightWall->SetCamera(mLightProjector);
-    mRightWall->Render(0, 1);
-
     mModel->SetCamera(mLightProjector);
+
+    mGround->Render(0, 1);
+    mCeiling->Render(0, 1);
+    mBackWall->Render(0, 1);
+    mLeftWall->Render(0, 1);
+    mRightWall->Render(0, 1);
     mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
-void VPLviaRSMApp::SampleRSMs()
+void VPLviaRSMApp::VPLShadowPass()
 {
-    mVPLQuad->Render(0, 0);
+    // VPL projector is created in shader.
 }
 //----------------------------------------------------------------------------
-void VPLviaRSMApp::DrawScene()
+void VPLviaRSMApp::DirectLightingPass()
 {
     mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
 
     mGround->SetCamera(mCamera);
-    mGround->Render(0, 2);
-
     mCeiling->SetCamera(mCamera);
-    mCeiling->Render(0, 2);
-
     mBackWall->SetCamera(mCamera);
-    mBackWall->Render(0, 2);
-
     mLeftWall->SetCamera(mCamera);
-    mLeftWall->Render(0, 2);
-
     mRightWall->SetCamera(mCamera);
-    mRightWall->Render(0, 2);
-
     mModel->SetCamera(mCamera);
+
+    mGround->Render(0, 2);
+    mCeiling->Render(0, 2);
+    mBackWall->Render(0, 2);
+    mLeftWall->Render(0, 2);
+    mRightWall->Render(0, 2);
     mModel->Render(0, 2);
 }
 //----------------------------------------------------------------------------
@@ -335,23 +324,26 @@ void VPLviaRSMApp::Run()
     // Shadow pass.
     mShadowMapFB->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    DrawShadow();
+    ShadowPass();
     mShadowMapFB->Disable();
 
     // RSM pass.
     mRSMBufferPX->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    DrawRSMs();
+    RSMPass();
     mRSMBufferPX->Disable();
 
-    // Final pass.
+    // VPL Shadow pass.
+    mVPLShadowMapFB->Enable();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    VPLShadowPass();
+    mVPLShadowMapFB->Disable();
+
+    // Direct lighting pass.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if( mShowMode == SM_Scene )
     {
-        DrawScene();
-
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        SampleRSMs();
+        DirectLightingPass();
     }
     else
     {
@@ -374,6 +366,10 @@ void VPLviaRSMApp::Terminate()
     mShadowMapFB = 0;
     mShadowMapScreenQuad = 0;
 
+    mVPLShadowMapTexture = 0;
+    mVPLShadowMapDepthTexture = 0;
+    mVPLShadowMapFB = 0;
+
     mRSMBufferPX = 0;
     mRSMPositionTexturePX = 0;
     mRSMNormalTexturePX = 0;
@@ -381,8 +377,6 @@ void VPLviaRSMApp::Terminate()
     mRSMDepthTexturePX = 0;
 
     mRSMSampleTexture = 0;
-
-    mVPLQuad = 0;
 
 	mGround = 0;
 	mCeiling = 0;

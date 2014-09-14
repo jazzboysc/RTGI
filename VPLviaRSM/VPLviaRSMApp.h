@@ -4,7 +4,6 @@
 #include "GraphicsFrameworkHeader.h"
 #include "VPLviaRSMTriMesh.h"
 #include "VPLviaRSMTempScreenQuad.h"
-#include "VPLQuad.h"
 
 namespace RTGI
 {
@@ -43,10 +42,11 @@ private:
     bool mIsWireframe;
     ShowMode mShowMode;
 
-	void DrawShadow();
-    void DrawRSMs();
+	void ShadowPass();
+    void RSMPass();
+    void VPLShadowPass();
     void SampleRSMs();
-    void DrawScene();
+    void DirectLightingPass();
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;
@@ -54,6 +54,7 @@ private:
 	Camera* mCamera;
     Camera* mLightProjector;
 
+    // Scene light shadow map.
     FrameBufferPtr mShadowMapFB;
     Texture2DPtr mShadowMapTexture;
     Texture2DPtr mShadowMapDepthTexture;
@@ -65,10 +66,12 @@ private:
     Texture2DPtr mRSMFluxTexturePX;
     Texture2DPtr mRSMDepthTexturePX;
 
-    Texture1DPtr mRSMSampleTexture;
+    // VPL shadow map.
+    FrameBufferPtr mVPLShadowMapFB;
+    Texture2DPtr mVPLShadowMapTexture;
+    Texture2DPtr mVPLShadowMapDepthTexture;
 
-    // VPL quad.
-    VPLQuadPtr mVPLQuad;
+    Texture1DPtr mRSMSampleTexture;
 
     VPLviaRSMTempScreenQuadPtr mShadowMapScreenQuad;
 

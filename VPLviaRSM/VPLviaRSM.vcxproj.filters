@@ -9,12 +9,6 @@
     <None Include="fRSMBuffer.glsl">
       <Filter>GLSL</Filter>
     </None>
-    <None Include="fSampleRSMBuffer.glsl">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="fScene.glsl">
-      <Filter>GLSL</Filter>
-    </None>
     <None Include="fVPLShadow.glsl">
       <Filter>GLSL</Filter>
     </None>
@@ -30,28 +24,38 @@
     <None Include="vRSMBuffer.glsl">
       <Filter>GLSL</Filter>
     </None>
-    <None Include="vSampleRSMBuffer.glsl">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="vScene.glsl">
-      <Filter>GLSL</Filter>
-    </None>
     <None Include="vVPLShadow.glsl">
       <Filter>GLSL</Filter>
     </None>
     <None Include="vVPLviaRSMTemp.glsl">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="fShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="tcShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="teShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vDirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fDirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="VPLQuad.h" />
     <ClInclude Include="VPLviaRSMApp.h" />
     <ClInclude Include="VPLviaRSMTempScreenQuad.h" />
     <ClInclude Include="VPLviaRSMTriMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="VPLQuad.cpp" />
     <ClCompile Include="VPLviaRSMApp.cpp" />
     <ClCompile Include="VPLviaRSMTempScreenQuad.cpp" />
     <ClCompile Include="VPLviaRSMTriMesh.cpp" />
