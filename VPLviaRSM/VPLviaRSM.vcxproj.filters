@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GLSL">
+      <UniqueIdentifier>{63889338-57d3-44f0-a48e-e31c227a9979}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fRSMBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fSampleRSMBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fScene.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fVPLShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fVPLviaRSMTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="tcVPLShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="teVPLShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vRSMBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vSampleRSMBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vScene.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vVPLShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vVPLviaRSMTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="VPLQuad.h" />
+    <ClInclude Include="VPLviaRSMApp.h" />
+    <ClInclude Include="VPLviaRSMTempScreenQuad.h" />
+    <ClInclude Include="VPLviaRSMTriMesh.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="VPLQuad.cpp" />
+    <ClCompile Include="VPLviaRSMApp.cpp" />
+    <ClCompile Include="VPLviaRSMTempScreenQuad.cpp" />
+    <ClCompile Include="VPLviaRSMTriMesh.cpp" />
+  </ItemGroup>
+</Project>
