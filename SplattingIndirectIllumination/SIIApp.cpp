@@ -139,7 +139,7 @@ void SIIApp::Initialize()
 
     // Create RSM sample texture.
     mRSMSampleTexture = new Texture1D();
-    mRSMSampleTexture->CreateUniformRandomTextureRG(1);
+    mRSMSampleTexture->CreateUniformRandomTextureRG(128);
 
     // Create VPL quad.
     material = new Material(mtVPLQuad);

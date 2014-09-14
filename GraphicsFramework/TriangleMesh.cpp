@@ -66,7 +66,7 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
         {
             // TODO:
             // Modify TriangleMesh to support quad mesh and change the name to Mesh.
-            glDrawArrays(GL_QUADS, 0, 4);
+            glDrawArraysInstanced(GL_QUADS, 0, 4, 128);
         }
     }
 }
