@@ -303,3 +303,10 @@ void Texture2D::CreateLDRandomTextureRGBF(int maxSampleCount,
 	delete[] pixels;
 }
 //--------------------------------------------------------------------------
+void Texture2D::GetImageData(void* dstPixels)
+{
+    glBindTexture(GL_TEXTURE_2D, mTexture);
+    glGetTexImage(GL_TEXTURE_2D, 0, mFormat, mType, dstPixels);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+//--------------------------------------------------------------------------

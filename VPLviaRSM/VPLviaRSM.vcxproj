@@ -14,16 +14,12 @@
     <None Include="fRSMBuffer.glsl" />
     <None Include="fDirectLighting.glsl" />
     <None Include="fShadow.glsl" />
-    <None Include="fVPLShadow.glsl" />
     <None Include="fVPLviaRSMTemp.glsl" />
     <None Include="tcShadow.glsl" />
-    <None Include="tcVPLShadow.glsl" />
     <None Include="teShadow.glsl" />
-    <None Include="teVPLShadow.glsl" />
     <None Include="vRSMBuffer.glsl" />
     <None Include="vDirectLighting.glsl" />
     <None Include="vShadow.glsl" />
-    <None Include="vVPLShadow.glsl" />
     <None Include="vVPLviaRSMTemp.glsl" />
   </ItemGroup>
   <ItemGroup>

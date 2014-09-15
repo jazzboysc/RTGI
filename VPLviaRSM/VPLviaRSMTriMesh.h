@@ -3,6 +3,7 @@
 
 #include "TriangleMesh.h"
 #include "Texture2D.h"
+#include "Texture1D.h"
 
 namespace RTGI
 {
@@ -42,9 +43,6 @@ private:
     GLint mLightColorLoc3;
     GLint mMaterialColorLoc3;
     GLint mLightProjectorNearFarLoc3;
-
-    // pass 4 uniform locations.
-    GLint mWorldLoc4;
 };
 
 typedef RefPointer<VPLviaRSMTriMesh> VPLviaRSMTriMeshPtr;

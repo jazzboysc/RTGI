@@ -119,6 +119,20 @@ inline bool GetInverseMatrix(mat4& srcM, mat4& dstM)
 	return true;
 }
 //----------------------------------------------------------------------------
+inline void GetOrthogonalBasis(const vec3& d, vec3& r, vec3& u)
+{
+    if( d.x > d.y )
+    {
+        r = vec3(d.z, 0.0, -d.x);
+    }
+    else
+    {
+        r = vec3(0.0, d.z, -d.y);
+    }
+    r = normalize(r);
+    u = cross(d, r);
+}
+//----------------------------------------------------------------------------
 // Based on PBRT Rotate function.
 // See http://pbrt.org/
 //----------------------------------------------------------------------------

@@ -9,22 +9,10 @@
     <None Include="fRSMBuffer.glsl">
       <Filter>GLSL</Filter>
     </None>
-    <None Include="fVPLShadow.glsl">
-      <Filter>GLSL</Filter>
-    </None>
     <None Include="fVPLviaRSMTemp.glsl">
       <Filter>GLSL</Filter>
     </None>
-    <None Include="tcVPLShadow.glsl">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="teVPLShadow.glsl">
-      <Filter>GLSL</Filter>
-    </None>
     <None Include="vRSMBuffer.glsl">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="vVPLShadow.glsl">
       <Filter>GLSL</Filter>
     </None>
     <None Include="vVPLviaRSMTemp.glsl">

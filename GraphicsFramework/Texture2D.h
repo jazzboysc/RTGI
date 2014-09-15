@@ -60,6 +60,8 @@ public:
 	// numbers.
 	void CreateLDRandomTextureRGBF(int maxSampleCount, int patternSize);
 
+    void GetImageData(void* dstPixels);
+
 	int Width, Height;
 	bool IsRenderTarget;
 	bool IsHDRTexture;

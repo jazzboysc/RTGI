@@ -25,14 +25,13 @@ VPLviaRSMTriMesh::VPLviaRSMTriMesh(Material* material, Camera* camera)
     mLightProjectorNearFarLoc = -1;
     mLightProjectorNearFarLoc3 = -1;
 
-    mWorldLoc4 = -1;
-
     LightProjector = 0;
     ShadowMap = 0;
 }
 //----------------------------------------------------------------------------
 VPLviaRSMTriMesh::~VPLviaRSMTriMesh()
 {
+    ShadowMap = 0;
 }
 //----------------------------------------------------------------------------
 void VPLviaRSMTriMesh::OnGetShaderConstants()
@@ -63,9 +62,6 @@ void VPLviaRSMTriMesh::OnGetShaderConstants()
     mMaterialColorLoc3 = glGetUniformLocation(program, "MaterialColor");
     mLightProjectorNearFarLoc3 =
         glGetUniformLocation(program, "LightProjectorNearFar");
-
-    program = mMaterial->GetProgram(0, 3)->GetProgram();
-    mWorldLoc4 = glGetUniformLocation(program, "World");
 }
 //----------------------------------------------------------------------------
 void VPLviaRSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -137,12 +133,6 @@ void VPLviaRSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
         }
-    }
-
-    // Update pass 4 uniform data.
-    if( pass == 3 )
-    {
-        glUniformMatrix4fv(mWorldLoc4, 1, GL_TRUE, mWorldTransform);
     }
 }
 //----------------------------------------------------------------------------
