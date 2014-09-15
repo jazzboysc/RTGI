@@ -24,8 +24,10 @@ public:
 
 	bool IsLight;
 	vec3 MaterialColor;
+    vec3 LightColor;
     Camera* LightProjector;
     Texture2DPtr ShadowMap;
+    Texture2DPtr VPLShadowMap;
 
 private:
     // pass 1 uniform locations.
@@ -43,6 +45,15 @@ private:
     GLint mLightColorLoc3;
     GLint mMaterialColorLoc3;
     GLint mLightProjectorNearFarLoc3;
+
+    // pass 4 uniform locations.
+    GLint mWorldLoc4, mViewLoc4, mProjLoc4;
+    GLint mLightProjectorViewLoc4;
+    GLint mShadowMapSamplerLoc4;
+    GLint mLightPositionWorldLoc4;
+    GLint mLightColorLoc4;
+    GLint mMaterialColorLoc4;
+    GLint mLightProjectorNearFarLoc4;
 };
 
 typedef RefPointer<VPLviaRSMTriMesh> VPLviaRSMTriMeshPtr;

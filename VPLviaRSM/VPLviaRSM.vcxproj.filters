@@ -36,16 +36,30 @@
     <None Include="fDirectLighting.glsl">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="fIndirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vIndirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fVPLviaRSMFinal.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vVPLviaRSMFinal.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VPLviaRSMApp.h" />
     <ClInclude Include="VPLviaRSMTempScreenQuad.h" />
     <ClInclude Include="VPLviaRSMTriMesh.h" />
+    <ClInclude Include="VPLviaRSMFinalScreenQuad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="VPLviaRSMApp.cpp" />
     <ClCompile Include="VPLviaRSMTempScreenQuad.cpp" />
     <ClCompile Include="VPLviaRSMTriMesh.cpp" />
+    <ClCompile Include="VPLviaRSMFinalScreenQuad.cpp" />
   </ItemGroup>
 </Project>

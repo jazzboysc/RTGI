@@ -7,8 +7,11 @@ VPLviaRSMTriMesh::VPLviaRSMTriMesh(Material* material, Camera* camera)
 	:
 	TriangleMesh(material, camera),
 	IsLight(false),
-	MaterialColor(0.75f, 0.75f, 0.75f)
+	MaterialColor(0.75f, 0.75f, 0.75f),
+    LightColor(1.0f, 1.0f, 1.0f)
 {
+    mLightProjectorNearFarLoc = -1;
+
     mWorldLoc2 = -1;
     mViewLoc2 = -1;
     mProjLoc2 = -1;
@@ -22,16 +25,27 @@ VPLviaRSMTriMesh::VPLviaRSMTriMesh(Material* material, Camera* camera)
     mLightPositionWorldLoc3 = -1;
     mLightColorLoc3 = -1;
     mMaterialColorLoc3 = -1;
-    mLightProjectorNearFarLoc = -1;
     mLightProjectorNearFarLoc3 = -1;
+
+    mWorldLoc4 = -1;
+    mViewLoc4 = -1;
+    mProjLoc4 = -1;
+    mLightProjectorViewLoc4 = -1;
+    mShadowMapSamplerLoc4 = -1;
+    mLightPositionWorldLoc4 = -1;
+    mLightColorLoc4 = -1;
+    mMaterialColorLoc4 = -1;
+    mLightProjectorNearFarLoc4 = -1;
 
     LightProjector = 0;
     ShadowMap = 0;
+    VPLShadowMap = 0;
 }
 //----------------------------------------------------------------------------
 VPLviaRSMTriMesh::~VPLviaRSMTriMesh()
 {
     ShadowMap = 0;
+    VPLShadowMap = 0;
 }
 //----------------------------------------------------------------------------
 void VPLviaRSMTriMesh::OnGetShaderConstants()
@@ -61,6 +75,19 @@ void VPLviaRSMTriMesh::OnGetShaderConstants()
     mLightColorLoc3 = glGetUniformLocation(program, "LightColor");
     mMaterialColorLoc3 = glGetUniformLocation(program, "MaterialColor");
     mLightProjectorNearFarLoc3 =
+        glGetUniformLocation(program, "LightProjectorNearFar");
+
+    // Get pass 4 uniform locations.
+    program = mMaterial->GetProgram(0, 3)->GetProgram();
+    mWorldLoc4 = glGetUniformLocation(program, "World");
+    mViewLoc4 = glGetUniformLocation(program, "View");
+    mProjLoc4 = glGetUniformLocation(program, "Proj");
+    mLightProjectorViewLoc4 = glGetUniformLocation(program, "LightProjectorView");
+    mShadowMapSamplerLoc4 = glGetUniformLocation(program, "shadowMapSampler");
+    mLightPositionWorldLoc4 = glGetUniformLocation(program, "LightPositionWorld");
+    mLightColorLoc4 = glGetUniformLocation(program, "LightColor");
+    mMaterialColorLoc4 = glGetUniformLocation(program, "MaterialColor");
+    mLightProjectorNearFarLoc4 =
         glGetUniformLocation(program, "LightProjectorNearFar");
 }
 //----------------------------------------------------------------------------
@@ -128,6 +155,47 @@ void VPLviaRSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, ShadowMap->GetTexture());
             glUniform1i(mShadowMapSamplerLoc3, 0);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        }
+    }
+
+    // Update pass 4 uniform data.
+    if( pass == 3 )
+    {
+        glUniformMatrix4fv(mWorldLoc4, 1, GL_TRUE, mWorldTransform);
+        glUniform3fv(mMaterialColorLoc4, 1, (GLfloat*)&MaterialColor);
+        glUniform3fv(mLightColorLoc4, 1, (GLfloat*)&LightColor);
+
+        if( mCamera )
+        {
+            mat4 viewTrans = mCamera->GetViewTransform();
+            glUniformMatrix4fv(mViewLoc4, 1, GL_TRUE, viewTrans);
+
+            mat4 projTrans = mCamera->GetProjectionTransform();
+            glUniformMatrix4fv(mProjLoc4, 1, GL_TRUE, projTrans);
+        }
+
+        if( LightProjector )
+        {
+            mat4 viewTrans = LightProjector->GetViewTransform();
+            glUniformMatrix4fv(mLightProjectorViewLoc4, 1, GL_TRUE, viewTrans);
+
+            vec3 lightPosition = LightProjector->GetLocation();
+            glUniform3fv(mLightPositionWorldLoc4, 1, (GLfloat*)&lightPosition);
+
+            float nearFarPlane[2];
+            LightProjector->GetNearFarPlane(nearFarPlane);
+            glUniform2fv(mLightProjectorNearFarLoc4, 1, nearFarPlane);
+        }
+
+        if( VPLShadowMap )
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, VPLShadowMap->GetTexture());
+            glUniform1i(mShadowMapSamplerLoc4, 0);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);

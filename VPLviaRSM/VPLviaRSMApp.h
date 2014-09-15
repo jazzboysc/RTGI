@@ -4,6 +4,7 @@
 #include "GraphicsFrameworkHeader.h"
 #include "VPLviaRSMTriMesh.h"
 #include "VPLviaRSMTempScreenQuad.h"
+#include "VPLviaRSMFinalScreenQuad.h"
 
 namespace RTGI
 {
@@ -46,7 +47,9 @@ private:
         SM_RSMNormal,
         SM_RSMFlux,
         SM_DirectLighting,
-        SM_VPLShadow
+        SM_VPLShadow,
+        SM_IndirectLighting,
+        SM_Final
     };
 
     bool mIsWireframe;
@@ -55,8 +58,8 @@ private:
 	void ShadowPass();
     void RSMPass();
     void VPLShadowPass(const VPL& vpl);
-    void SampleRSMs();
     void DirectLightingPass();
+    void IndirectLightingPass(const VPL& vpl);
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;
@@ -93,9 +96,15 @@ private:
     Texture2DPtr mDirectLightingTexture;
     Texture2DPtr mDirectLightingDepthTexture;
 
+    // Indirect lighting buffer.
+    FrameBufferPtr mIndirectLightingFB;
+    Texture2DPtr mIndirectLightingTexture;
+    Texture2DPtr mIndirectLightingDepthTexture;
+
     Texture1DPtr mRSMSampleTexture;
 
     VPLviaRSMTempScreenQuadPtr mTempResultScreenQuad;
+    VPLviaRSMFinalScreenQuadPtr mFinalResultScreenQuad;
 
 	VPLviaRSMTriMeshPtr mGround;
 	VPLviaRSMTriMeshPtr mCeiling;
