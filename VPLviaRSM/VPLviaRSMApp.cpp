@@ -450,15 +450,19 @@ void VPLviaRSMApp::Run()
 
     // Create VPLs.
     VPL tempVPL;
-    mRSMPositionTexturePX->GetImageData(mRSMPositionData);
-    mRSMNormalTexturePX->GetImageData(mRSMNormalData);
-    mRSMFluxTexturePX->GetImageData(mRSMFluxData);
-    int sampleX = int(mRSMSamplePos[0] * mRSMWidth);
-    int sampleY = int(mRSMSamplePos[1] * mRSMHeight);
-    int sampleIndex = sampleY*mRSMWidth + sampleX;
-    tempVPL.E = *(vec3*)&mRSMPositionData[3 * sampleIndex];
-    tempVPL.D = *(vec3*)&mRSMNormalData[3 * sampleIndex];
-    tempVPL.Flux = *(vec3*)&mRSMFluxData[3 * sampleIndex];
+    //mRSMPositionTexturePX->GetImageData(mRSMPositionData);
+    //mRSMNormalTexturePX->GetImageData(mRSMNormalData);
+    //mRSMFluxTexturePX->GetImageData(mRSMFluxData);
+    //int sampleX = int(mRSMSamplePos[0] * mRSMWidth);
+    //int sampleY = int(mRSMSamplePos[1] * mRSMHeight);
+    //int sampleIndex = sampleY*mRSMWidth + sampleX;
+    //tempVPL.E = *(vec3*)&mRSMPositionData[3 * sampleIndex];
+    //tempVPL.D = *(vec3*)&mRSMNormalData[3 * sampleIndex];
+    //tempVPL.Flux = *(vec3*)&mRSMFluxData[3 * sampleIndex];
+    //tempVPL.D = -(tempVPL.D*2.0f - 1.0f);
+    tempVPL.E = vec3(10.0f, 2.93f, 6.12f);
+    tempVPL.D = vec3(0.0f, 0.5f, 0.5f);
+    tempVPL.Flux = vec3(0.0f, 0.73f, 0.0f);
     tempVPL.D = -(tempVPL.D*2.0f - 1.0f);
     GetOrthogonalBasis(tempVPL.D, tempVPL.R, tempVPL.U);
 
