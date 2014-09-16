@@ -22,12 +22,11 @@ public:
 	virtual void OnGetShaderConstants();
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 
-	bool IsLight;
 	vec3 MaterialColor;
-    vec3 LightColor;
-    Camera* LightProjector;
-    Texture2DPtr ShadowMap;
-    Texture2DPtr VPLShadowMap;
+    //vec3 LightColor;
+    //Camera* LightProjector;
+    //Texture2DPtr ShadowMap;
+    //Texture2DPtr VPLShadowMap;
 
 private:
     // pass 1 uniform locations.
@@ -39,21 +38,25 @@ private:
 
     // pass 3 uniform locations.
     GLint mWorldLoc3, mViewLoc3, mProjLoc3;
-    GLint mLightProjectorViewLoc3;
-    GLint mShadowMapSamplerLoc3;
-    GLint mLightPositionWorldLoc3;
-    GLint mLightColorLoc3;
     GLint mMaterialColorLoc3;
-    GLint mLightProjectorNearFarLoc3;
 
-    // pass 4 uniform locations.
-    GLint mWorldLoc4, mViewLoc4, mProjLoc4;
-    GLint mLightProjectorViewLoc4;
-    GLint mShadowMapSamplerLoc4;
-    GLint mLightPositionWorldLoc4;
-    GLint mLightColorLoc4;
-    GLint mMaterialColorLoc4;
-    GLint mLightProjectorNearFarLoc4;
+    //// pass 3 uniform locations.
+    //GLint mWorldLoc3, mViewLoc3, mProjLoc3;
+    //GLint mLightProjectorViewLoc3;
+    //GLint mShadowMapSamplerLoc3;
+    //GLint mLightPositionWorldLoc3;
+    //GLint mLightColorLoc3;
+    //GLint mMaterialColorLoc3;
+    //GLint mLightProjectorNearFarLoc3;
+
+    //// pass 4 uniform locations.
+    //GLint mWorldLoc4, mViewLoc4, mProjLoc4;
+    //GLint mLightProjectorViewLoc4;
+    //GLint mShadowMapSamplerLoc4;
+    //GLint mLightPositionWorldLoc4;
+    //GLint mLightColorLoc4;
+    //GLint mMaterialColorLoc4;
+    //GLint mLightProjectorNearFarLoc4;
 };
 
 typedef RefPointer<VPLviaRSMTriMesh> VPLviaRSMTriMeshPtr;

@@ -1,23 +1,27 @@
 #version 410 core
 
-in vec4 vNormalWorld;
-in vec4 vPositionWorld;
+in vec2 pTCoord;
 
 uniform mat4 LightProjectorView;
 uniform vec3 LightPositionWorld;
 uniform vec3 LightColor;
-uniform vec3 MaterialColor;
 uniform vec2 LightProjectorNearFar;
 
-uniform sampler2D shadowMapSampler;
+uniform sampler2D GBufferPositionSampler;
+uniform sampler2D GBufferNormalSampler;
+uniform sampler2D GBufferDiffuseSampler;
+uniform sampler2D ShadowMapSampler;
 
 void main()
 {
-    vec3 normal = normalize(vNormalWorld).xyz;
+    vec3 position = texture(GBufferPositionSampler, pTCoord).rgb;
+    vec3 normal = texture(GBufferNormalSampler, pTCoord).rgb;
+    normal = normal*2.0 - 1.0;
+    vec3 diffuse = texture(GBufferDiffuseSampler, pTCoord).rgb;
 
     bool skipShadow = false;
-    vec4 viewPos = LightProjectorView * vPositionWorld;
-    if( viewPos.z > 0.0 )
+    vec4 viewPos = LightProjectorView * vec4(position, 1.0);
+    if( viewPos.z >= 0.0 )
     {
         skipShadow = true;
     }
@@ -32,9 +36,9 @@ void main()
 
     vec2 texCoords = vec2(u, v);
     texCoords = texCoords*0.5 + 0.5;
-    float depth = texture2D(shadowMapSampler, texCoords).r;
+    float depth = texture(ShadowMapSampler, texCoords).r;
 
-    if( currDepth - depth > 0.01 && !skipShadow )
+    if( currDepth - depth > 0.001 && !skipShadow )
     {
         // Shadow.
         gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0);
@@ -42,10 +46,10 @@ void main()
     else
     {
         // Direct lighting.
-        vec3 lightDir = LightPositionWorld - vPositionWorld.xyz;
+        vec3 lightDir = LightPositionWorld - position.xyz;
         lightDir = normalize(lightDir);
         float d = max(0.0, dot(lightDir, normal));
-        vec3 color = MaterialColor * d;
+        vec3 color = diffuse * d;
         gl_FragData[0] = vec4(color, 1.0);
     }
 }

@@ -10,7 +10,7 @@ VPLviaRSMApp::VPLviaRSMApp(int width, int height)
 	mHeight(height),
 	mWindowTitle("VPL via RSM demo")
 {
-    mShowMode = SM_Final;
+    mShowMode = SM_DirectLighting;
     mIsWireframe = false;
     mRSMPositionData = 0;
     mRSMNormalData = 0;
@@ -57,6 +57,14 @@ void VPLviaRSMApp::Initialize()
                                   ShaderType::ST_TessellationEvaluation;
     Pass* passShadow = new Pass(programInfo);
 
+    programInfo.VShaderFileName = "vGBuffer.glsl";
+    programInfo.FShaderFileName = "fGBuffer.glsl";
+    programInfo.TCShaderFileName = "";
+    programInfo.TEShaderFileName = "";
+    programInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+        ShaderType::ST_Fragment;
+    Pass* passGBuffer = new Pass(programInfo);
+
     programInfo.VShaderFileName = "vRSMBuffer.glsl";
     programInfo.FShaderFileName = "fRSMBuffer.glsl";
     programInfo.TCShaderFileName = "";
@@ -73,6 +81,11 @@ void VPLviaRSMApp::Initialize()
         ShaderType::ST_Fragment;
     Pass* passDirectLighting = new Pass(programInfo);
 
+    Technique* techDirectLighting = new Technique();
+    techDirectLighting->AddPass(passDirectLighting);
+    MaterialTemplate* mtDirectLighting = new MaterialTemplate();
+    mtDirectLighting->AddTechnique(techDirectLighting);
+
     programInfo.VShaderFileName = "vIndirectLighting.glsl";
     programInfo.FShaderFileName = "fIndirectLighting.glsl";
     programInfo.TCShaderFileName = "";
@@ -84,8 +97,9 @@ void VPLviaRSMApp::Initialize()
 	Technique* techVPLviaRSM = new Technique();
     techVPLviaRSM->AddPass(passShadow);
     techVPLviaRSM->AddPass(passRSMBuffer);
-    techVPLviaRSM->AddPass(passDirectLighting);
-    techVPLviaRSM->AddPass(passIndirectLighting);
+    techVPLviaRSM->AddPass(passGBuffer);
+    //techVPLviaRSM->AddPass(passDirectLighting);
+    //techVPLviaRSM->AddPass(passIndirectLighting);
 	MaterialTemplate* mtVPLviaRSM = new MaterialTemplate();
     mtVPLviaRSM->AddTechnique(techVPLviaRSM);
 
@@ -183,6 +197,21 @@ void VPLviaRSMApp::Initialize()
         mRSMSamplePos[2 * i + 1] = (float)UniformRandom();
     }
 
+    // Create G-buffer MRT textures.
+    mGBufferPositionTexture = new Texture2D();
+    mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+    mGBufferNormalTexture = new Texture2D();
+    mGBufferNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+    mGBufferDiffuseTexture = new Texture2D();
+    mGBufferDiffuseTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+    mGBufferDepthTexture = new Texture2D();
+    mGBufferDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
+
+    // Create G-buffer.
+    Texture2D* gbufferTextures[3] = { mGBufferPositionTexture, mGBufferNormalTexture, mGBufferDiffuseTexture };
+    mGBuffer = new FrameBuffer();
+    mGBuffer->SetRenderTargets(3, gbufferTextures, mGBufferDepthTexture);
+
     // Create direct lighting render target.
     mDirectLightingTexture = new Texture2D();
     mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight,
@@ -198,18 +227,21 @@ void VPLviaRSMApp::Initialize()
         mDirectLightingDepthTexture);
 
     // Create indirect lighting render target.
-    mIndirectLightingTexture = new Texture2D();
-    mIndirectLightingTexture->CreateRenderTarget(mWidth, mHeight,
-        Texture2D::RTF_RGBF);
-    mIndirectLightingDepthTexture = new Texture2D();
-    mIndirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight,
-        Texture2D::RTF_Depth);
+    for( int i = 0; i < 2; ++i )
+    {
+        mIndirectLightingTexture[i] = new Texture2D();
+        mIndirectLightingTexture[i]->CreateRenderTarget(mWidth, mHeight,
+            Texture2D::RTF_RGBF);
+        mIndirectLightingDepthTexture[i] = new Texture2D();
+        mIndirectLightingDepthTexture[i]->CreateRenderTarget(mWidth, mHeight,
+            Texture2D::RTF_Depth);
 
-    // Create indirect lighting frame buffer.
-    Texture2D* indirectLightingRenderTargets[] = { mIndirectLightingTexture };
-    mIndirectLightingFB = new FrameBuffer();
-    mIndirectLightingFB->SetRenderTargets(1, indirectLightingRenderTargets,
-        mIndirectLightingDepthTexture);
+        // Create indirect lighting frame buffer.
+        Texture2D* indirectLightingRenderTargets[] = { mIndirectLightingTexture[i] };
+        mIndirectLightingFB[i] = new FrameBuffer();
+        mIndirectLightingFB[i]->SetRenderTargets(1, indirectLightingRenderTargets,
+            mIndirectLightingDepthTexture[i]);
+    }
 
 	// Create scene.
 	mat4 rotM;
@@ -222,19 +254,13 @@ void VPLviaRSMApp::Initialize()
 	mModel->CreateDeviceResource();
 	mModel->SetWorldTranslation(vec3(2.0f, 2.6f, 3.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
-    mModel->LightProjector = mLightProjector;
-    mModel->ShadowMap = mShadowMapTexture;
-    mModel->VPLShadowMap = mVPLShadowMapTexture;
 
     material = new Material(mtVPLviaRSM);
 	mGround = new VPLviaRSMTriMesh(material, mCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-    mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
-    mGround->LightProjector = mLightProjector;
-    mGround->ShadowMap = mShadowMapTexture;
-    mGround->VPLShadowMap = mVPLShadowMapTexture;
+    mGround->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
 
     material = new Material(mtVPLviaRSM);
 	mCeiling = new VPLviaRSMTriMesh(material, mCamera);
@@ -244,10 +270,7 @@ void VPLviaRSMApp::Initialize()
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
-    mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
-    mCeiling->LightProjector = mLightProjector;
-    mCeiling->ShadowMap = mShadowMapTexture;
-    mCeiling->VPLShadowMap = mVPLShadowMapTexture;
+    mCeiling->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
 
     material = new Material(mtVPLviaRSM);
 	mBackWall = new VPLviaRSMTriMesh(material, mCamera);
@@ -258,9 +281,6 @@ void VPLviaRSMApp::Initialize()
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
-    mBackWall->LightProjector = mLightProjector;
-    mBackWall->ShadowMap = mShadowMapTexture;
-    mBackWall->VPLShadowMap = mVPLShadowMapTexture;
 
     material = new Material(mtVPLviaRSM);
 	mLeftWall = new VPLviaRSMTriMesh(material, mCamera);
@@ -271,9 +291,6 @@ void VPLviaRSMApp::Initialize()
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
-    mLeftWall->LightProjector = mLightProjector;
-    mLeftWall->ShadowMap = mShadowMapTexture;
-    mLeftWall->VPLShadowMap = mVPLShadowMapTexture;
 
     material = new Material(mtVPLviaRSM);
 	mRightWall = new VPLviaRSMTriMesh(material, mCamera);
@@ -284,9 +301,20 @@ void VPLviaRSMApp::Initialize()
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
-    mRightWall->LightProjector = mLightProjector;
-    mRightWall->ShadowMap = mShadowMapTexture;
-    mRightWall->VPLShadowMap = mVPLShadowMapTexture;
+
+    material = new Material(mtDirectLighting);
+    mDirectLightingQuad = new VPLviaRSMDirectLightingQuad(material);
+    mDirectLightingQuad->LoadFromFile("screenquad.ply");
+    mDirectLightingQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+    mDirectLightingQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+    mDirectLightingQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+    mDirectLightingQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+    mDirectLightingQuad->CreateDeviceResource();
+    mDirectLightingQuad->GBufferPositionTexture = mGBufferPositionTexture;
+    mDirectLightingQuad->GBufferNormalTexture = mGBufferNormalTexture;
+    mDirectLightingQuad->GBufferDiffuseTexture = mGBufferDiffuseTexture;
+    mDirectLightingQuad->ShadowMap = mShadowMapTexture;
+    mDirectLightingQuad->LightProjector = mLightProjector;
 
     material = new Material(mtScreenQuad);
     mTempResultScreenQuad = new VPLviaRSMTempScreenQuad(material);
@@ -307,7 +335,7 @@ void VPLviaRSMApp::Initialize()
     mFinalResultScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mFinalResultScreenQuad->CreateDeviceResource();
     mFinalResultScreenQuad->DirectLightingTexture = mDirectLightingTexture;
-    mFinalResultScreenQuad->IndirectLightingTexture = mIndirectLightingTexture;
+    mFinalResultScreenQuad->IndirectLightingTexture = mIndirectLightingTexture[0];
 }
 //----------------------------------------------------------------------------
 void VPLviaRSMApp::ShadowPass()
@@ -348,7 +376,24 @@ void VPLviaRSMApp::RSMPass()
     mBackWall->Render(0, 1);
     mLeftWall->Render(0, 1);
     mRightWall->Render(0, 1);
-    mModel->Render(0, 1);
+    //mModel->Render(0, 1);
+}
+//----------------------------------------------------------------------------
+void VPLviaRSMApp::GBufferPass()
+{
+    mGround->SetCamera(mCamera);
+    mCeiling->SetCamera(mCamera);
+    mBackWall->SetCamera(mCamera);
+    mLeftWall->SetCamera(mCamera);
+    mRightWall->SetCamera(mCamera);
+    mModel->SetCamera(mCamera);
+
+    mGround->Render(0, 2);
+    mCeiling->Render(0, 2);
+    mBackWall->Render(0, 2);
+    mLeftWall->Render(0, 2);
+    mRightWall->Render(0, 2);
+    mModel->Render(0, 2);
 }
 //----------------------------------------------------------------------------
 void VPLviaRSMApp::VPLShadowPass(const VPL& vpl)
@@ -376,49 +421,22 @@ void VPLviaRSMApp::DirectLightingPass()
     mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
 
-    mGround->SetCamera(mCamera);
-    mCeiling->SetCamera(mCamera);
-    mBackWall->SetCamera(mCamera);
-    mLeftWall->SetCamera(mCamera);
-    mRightWall->SetCamera(mCamera);
-    mModel->SetCamera(mCamera);
-
-    mGround->Render(0, 2);
-    mCeiling->Render(0, 2);
-    mBackWall->Render(0, 2);
-    mLeftWall->Render(0, 2);
-    mRightWall->Render(0, 2);
-    mModel->Render(0, 2);
+    mDirectLightingQuad->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void VPLviaRSMApp::IndirectLightingPass(const VPL& vpl)
 {
-    mLightProjector->SetAxes(vpl.R, vpl.U, vpl.D);
-    mLightProjector->SetLocation(vpl.E);
-
-    mGround->SetCamera(mCamera);
-    mGround->LightColor = vpl.Flux;
-    mCeiling->SetCamera(mCamera);
-    mCeiling->LightColor = vpl.Flux;
-    mBackWall->SetCamera(mCamera);
-    mBackWall->LightColor = vpl.Flux;
-    mLeftWall->SetCamera(mCamera);
-    mLeftWall->LightColor = vpl.Flux;
-    mRightWall->SetCamera(mCamera);
-    mRightWall->LightColor = vpl.Flux;
-    mModel->SetCamera(mCamera);
-    mModel->LightColor = vpl.Flux;
-
-    mGround->Render(0, 3);
-    mCeiling->Render(0, 3);
-    mBackWall->Render(0, 3);
-    mLeftWall->Render(0, 3);
-    mRightWall->Render(0, 3);
-    mModel->Render(0, 3);
+    //mLightProjector->SetAxes(vpl.R, vpl.U, vpl.D);
+    //mLightProjector->SetLocation(vpl.E);
 }
 //----------------------------------------------------------------------------
 void VPLviaRSMApp::Run()
 {
+    static unsigned int mFrameCount = 0;
+    mFrameCount++;
+    int src = mFrameCount % 2;
+    int dst = (mFrameCount+1) % 2;
+
     static float angle = 0.0f;
     angle += 1.0f;
     mat4 rot;
@@ -448,29 +466,50 @@ void VPLviaRSMApp::Run()
     RSMPass();
     mRSMBufferPX->Disable();
 
-    // Create VPLs.
-    VPL tempVPL;
-    //mRSMPositionTexturePX->GetImageData(mRSMPositionData);
-    //mRSMNormalTexturePX->GetImageData(mRSMNormalData);
-    //mRSMFluxTexturePX->GetImageData(mRSMFluxData);
-    //int sampleX = int(mRSMSamplePos[0] * mRSMWidth);
-    //int sampleY = int(mRSMSamplePos[1] * mRSMHeight);
-    //int sampleIndex = sampleY*mRSMWidth + sampleX;
-    //tempVPL.E = *(vec3*)&mRSMPositionData[3 * sampleIndex];
-    //tempVPL.D = *(vec3*)&mRSMNormalData[3 * sampleIndex];
-    //tempVPL.Flux = *(vec3*)&mRSMFluxData[3 * sampleIndex];
-    //tempVPL.D = -(tempVPL.D*2.0f - 1.0f);
-    tempVPL.E = vec3(10.0f, 2.93f, 6.12f);
-    tempVPL.D = vec3(0.0f, 0.5f, 0.5f);
-    tempVPL.Flux = vec3(0.0f, 0.73f, 0.0f);
-    tempVPL.D = -(tempVPL.D*2.0f - 1.0f);
-    GetOrthogonalBasis(tempVPL.D, tempVPL.R, tempVPL.U);
-
-    // VPL Shadow pass.
-    mVPLShadowMapFB->Enable();
+    // G-buffer pass.
+    mGBuffer->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    VPLShadowPass(tempVPL);
-    mVPLShadowMapFB->Disable();
+    GBufferPass();
+    mGBuffer->Disable();
+
+    // Create VPLs.
+    mRSMPositionTexturePX->GetImageData(mRSMPositionData);
+    mRSMNormalTexturePX->GetImageData(mRSMNormalData);
+    mRSMFluxTexturePX->GetImageData(mRSMFluxData);
+
+    for( int i = 0; i < VPLSampleCount; ++i )
+    {
+        int sampleX = int(mRSMSamplePos[2*i    ] * mRSMWidth);
+        int sampleY = int(mRSMSamplePos[2*i + 1] * mRSMHeight);
+        int sampleIndex = sampleY*mRSMWidth + sampleX;
+        //printf("sampleIndex: %d\n", sampleIndex);
+
+        mVPLs[i].E = *(vec3*)&mRSMPositionData[3 * sampleIndex];
+        vec3 tempNormal = *(vec3*)&mRSMNormalData[3 * sampleIndex];
+        //mVPLs[i].E = mVPLs[i].E + tempNormal*0.8f;
+        tempNormal = tempNormal*2.0f - 1.0f;
+        mVPLs[i].Flux = *(vec3*)&mRSMFluxData[3 * sampleIndex];
+        mVPLs[i].D = -tempNormal;
+        //mVPLs[i].E = vec3(10.0f, 2.93f, 6.12f);
+        //mVPLs[i].D = vec3(0.0f, 0.5f, 0.5f);
+        //mVPLs[i].Flux = vec3(0.0f, 0.73f, 0.0f);
+        //mVPLs[i].D = -(mVPLs[i].D*2.0f - 1.0f);
+        GetOrthogonalBasis(mVPLs[i].D, mVPLs[i].R, mVPLs[i].U);
+
+        //printf("VPL D: %f, %f, %f\n", mVPLs[i].D.x, mVPLs[i].D.y, mVPLs[i].D.z);
+
+        // VPL Shadow pass.
+        mVPLShadowMapFB->Enable();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        VPLShadowPass(mVPLs[i]);
+        mVPLShadowMapFB->Disable();
+
+        //// VPL lighting pass.
+        //mIndirectLightingFB[dst]->Enable();
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //IndirectLightingPass(mVPLs[i]);
+        //mIndirectLightingFB[dst]->Disable();
+    }
 
     // Direct lighting pass.
     mDirectLightingFB->Enable();
@@ -478,15 +517,10 @@ void VPLviaRSMApp::Run()
     DirectLightingPass();
     mDirectLightingFB->Disable();
 
-    // Indirect lighting pass.
-    mIndirectLightingFB->Enable();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    IndirectLightingPass(tempVPL);
-    mIndirectLightingFB->Disable();
-
     if( mShowMode == SM_Final )
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        mFinalResultScreenQuad->IndirectLightingTexture = mIndirectLightingTexture[dst];
         mFinalResultScreenQuad->Render(0, 0);
     }
     else
@@ -526,14 +560,24 @@ void VPLviaRSMApp::Terminate()
 
     mRSMSampleTexture = 0;
 
+    mGBuffer = 0;
+    mGBufferPositionTexture = 0;
+    mGBufferNormalTexture = 0;
+    mGBufferDiffuseTexture = 0;
+    mGBufferDepthTexture = 0;
+
     mDirectLightingFB = 0;
     mDirectLightingTexture = 0;
     mDirectLightingDepthTexture = 0;
 
-    mIndirectLightingFB = 0;
-    mIndirectLightingTexture = 0;
-    mIndirectLightingDepthTexture = 0;
+    for( int i = 0; i < 2; ++i )
+    {
+        mIndirectLightingFB[i] = 0;
+        mIndirectLightingTexture[i] = 0;
+        mIndirectLightingDepthTexture[i] = 0;
+    }
 
+    mDirectLightingQuad = 0;
     mTempResultScreenQuad = 0;
     mFinalResultScreenQuad = 0;
 
@@ -579,14 +623,14 @@ void VPLviaRSMApp::OnKeyboard(unsigned char key, int x, int y)
         mTempResultScreenQuad->TempTexture = mVPLShadowMapTexture;
         break;
 
-    case '7':
-        mShowMode = SM_IndirectLighting;
-        mTempResultScreenQuad->TempTexture = mIndirectLightingTexture;
-        break;
+    //case '7':
+    //    mShowMode = SM_IndirectLighting;
+    //    mTempResultScreenQuad->TempTexture = mIndirectLightingTexture[0];
+    //    break;
 
-    case '0':
-        mShowMode = SM_Final;
-        break;
+    //case '0':
+    //    mShowMode = SM_Final;
+    //    break;
 
     case 'w':
         mIsWireframe = !mIsWireframe;

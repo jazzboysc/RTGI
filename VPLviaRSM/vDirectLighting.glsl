@@ -1,18 +1,13 @@
-#version 410 core
+#version 410
 
 in vec4 vPosition;
-in vec3 vNormal;
+in vec2 vTCoord;
 
-out vec4 vNormalWorld;
-out vec4 vPositionWorld;
-
-uniform mat4 World;
-uniform mat4 View;
-uniform mat4 Proj;
+out vec2 pTCoord;
 
 void main()
 {
-    vPositionWorld = World * vPosition;
-	vNormalWorld = World * vec4(vNormal, 0.0);
-    gl_Position = Proj * View * vPositionWorld;
+    gl_Position = vPosition;
+    gl_Position.w = 1.0;
+    pTCoord = vTCoord;
 }

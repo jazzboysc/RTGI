@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="fGBuffer.glsl" />
     <None Include="fIndirectLighting.glsl" />
     <None Include="fRSMBuffer.glsl" />
     <None Include="fDirectLighting.glsl" />
@@ -19,6 +20,7 @@
     <None Include="fVPLviaRSMTemp.glsl" />
     <None Include="tcShadow.glsl" />
     <None Include="teShadow.glsl" />
+    <None Include="vGBuffer.glsl" />
     <None Include="vIndirectLighting.glsl" />
     <None Include="vRSMBuffer.glsl" />
     <None Include="vDirectLighting.glsl" />
@@ -28,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VPLviaRSMApp.h" />
+    <ClInclude Include="VPLviaRSMDirectLightingQuad.h" />
     <ClInclude Include="VPLviaRSMFinalScreenQuad.h" />
     <ClInclude Include="VPLviaRSMTempScreenQuad.h" />
     <ClInclude Include="VPLviaRSMTriMesh.h" />
@@ -35,6 +38,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="VPLviaRSMApp.cpp" />
+    <ClCompile Include="VPLviaRSMDirectLightingQuad.cpp" />
     <ClCompile Include="VPLviaRSMFinalScreenQuad.cpp" />
     <ClCompile Include="VPLviaRSMTempScreenQuad.cpp" />
     <ClCompile Include="VPLviaRSMTriMesh.cpp" />

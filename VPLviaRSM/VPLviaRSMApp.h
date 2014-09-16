@@ -3,6 +3,7 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "VPLviaRSMTriMesh.h"
+#include "VPLviaRSMDirectLightingQuad.h"
 #include "VPLviaRSMTempScreenQuad.h"
 #include "VPLviaRSMFinalScreenQuad.h"
 
@@ -57,6 +58,7 @@ private:
 
 	void ShadowPass();
     void RSMPass();
+    void GBufferPass();
     void VPLShadowPass(const VPL& vpl);
     void DirectLightingPass();
     void IndirectLightingPass(const VPL& vpl);
@@ -83,8 +85,16 @@ private:
     float* mRSMNormalData;
     float* mRSMFluxData;
 
-    enum { VPLSampleCount = 1 };
+    enum { VPLSampleCount = 4 };
     float mRSMSamplePos[VPLSampleCount * 2];
+    VPL mVPLs[VPLSampleCount];
+
+    // G-buffer.
+    FrameBufferPtr mGBuffer;
+    Texture2DPtr mGBufferPositionTexture;
+    Texture2DPtr mGBufferNormalTexture;
+    Texture2DPtr mGBufferDiffuseTexture;
+    Texture2DPtr mGBufferDepthTexture;
 
     // VPL shadow map.
     FrameBufferPtr mVPLShadowMapFB;
@@ -97,12 +107,13 @@ private:
     Texture2DPtr mDirectLightingDepthTexture;
 
     // Indirect lighting buffer.
-    FrameBufferPtr mIndirectLightingFB;
-    Texture2DPtr mIndirectLightingTexture;
-    Texture2DPtr mIndirectLightingDepthTexture;
+    FrameBufferPtr mIndirectLightingFB[2];
+    Texture2DPtr mIndirectLightingTexture[2];
+    Texture2DPtr mIndirectLightingDepthTexture[2];
 
     Texture1DPtr mRSMSampleTexture;
 
+    VPLviaRSMDirectLightingQuadPtr mDirectLightingQuad;
     VPLviaRSMTempScreenQuadPtr mTempResultScreenQuad;
     VPLviaRSMFinalScreenQuadPtr mFinalResultScreenQuad;
 

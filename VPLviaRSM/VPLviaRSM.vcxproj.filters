@@ -48,12 +48,19 @@
     <None Include="vVPLviaRSMFinal.glsl">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="fGBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vGBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VPLviaRSMApp.h" />
     <ClInclude Include="VPLviaRSMTempScreenQuad.h" />
     <ClInclude Include="VPLviaRSMTriMesh.h" />
     <ClInclude Include="VPLviaRSMFinalScreenQuad.h" />
+    <ClInclude Include="VPLviaRSMDirectLightingQuad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -61,5 +68,6 @@
     <ClCompile Include="VPLviaRSMTempScreenQuad.cpp" />
     <ClCompile Include="VPLviaRSMTriMesh.cpp" />
     <ClCompile Include="VPLviaRSMFinalScreenQuad.cpp" />
+    <ClCompile Include="VPLviaRSMDirectLightingQuad.cpp" />
   </ItemGroup>
 </Project>
