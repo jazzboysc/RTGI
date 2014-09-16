@@ -86,7 +86,7 @@ private:
     float* mRSMNormalData;
     float* mRSMFluxData;
 
-    enum { VPLSampleCount = 4 };
+    enum { VPLSampleCount = 3 };
     float mRSMSamplePos[VPLSampleCount * 2];
     VPL mVPLs[VPLSampleCount];
 

@@ -31,8 +31,10 @@ void main()
     vec3 halfDir = viewDir + vec3(0.0, 0.0, -1.0);
     float u = -halfDir.x / halfDir.z;
     float v = -halfDir.y / halfDir.z;
-    float currDepth = (len - LightProjectorNearFar.x) /
-        (LightProjectorNearFar.y - LightProjectorNearFar.x);
+    //float currDepth = (len - LightProjectorNearFar.x) /
+    //    (LightProjectorNearFar.y - LightProjectorNearFar.x);
+    // FIXME:
+    float currDepth = (len - 0.01) / (50.0 - 0.01);
 
     vec2 texCoords = vec2(u, v);
     texCoords = texCoords*0.5 + 0.5;

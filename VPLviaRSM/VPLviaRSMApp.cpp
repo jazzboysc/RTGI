@@ -153,8 +153,8 @@ void VPLviaRSMApp::Initialize()
 
     // Create VPL shadow map render target.
     int vplShadowMapWidth, vplShadowMapHeight;
-    vplShadowMapWidth = 128;
-    vplShadowMapHeight = 128;
+    vplShadowMapWidth = 256;
+    vplShadowMapHeight = 256;
     mVPLShadowMapTexture = new Texture2D();
     mVPLShadowMapTexture->CreateRenderTarget(vplShadowMapWidth, vplShadowMapHeight,
         Texture2D::RTF_RGBF);

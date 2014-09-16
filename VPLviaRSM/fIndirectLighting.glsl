@@ -34,23 +34,30 @@ void main()
         {
             skipShadow = true;
         }
+
         vec3 viewDir = viewPos.xyz;
         float len = length(viewDir);
         viewDir = normalize(viewDir);
         vec3 halfDir = viewDir + vec3(0.0, 0.0, -1.0);
         float u = -halfDir.x / halfDir.z;
         float v = -halfDir.y / halfDir.z;
-        float currDepth = (len - VPLProjectorNearFar.x) /
-            (VPLProjectorNearFar.y - VPLProjectorNearFar.x);
+        //float currDepth = (len - VPLProjectorNearFar.x) /
+        //    (VPLProjectorNearFar.y - VPLProjectorNearFar.x);
+        // FIXME:
+        float currDepth = (len - 0.01) / (50.0 - 0.01);
 
         vec2 texCoords = vec2(u, v);
         texCoords = texCoords*0.5 + 0.5;
         float depth = texture(VPLShadowMapSampler, texCoords).r;
 
-        if( currDepth - depth > 0.01 && !skipShadow )
+        if( skipShadow )
+        {
+            gl_FragData[0] = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+        else if( currDepth - depth > 0.01 )
         {
             // Indirect shadow.
-            gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0);
+            gl_FragData[0] = vec4(0.0, 0.0, 1.0, 1.0);
         }
         else
         {
@@ -60,7 +67,7 @@ void main()
             lightDir = lightDir / len;
             float d0 = max(0.0, dot(lightDir, normal));
             float d1 = max(0.0, dot(-lightDir, VPLNormalWorld));
-            vec3 color = diffuse * VPLColor * d0 * d1 * 10.0/ len;
+            vec3 color = diffuse * VPLColor * d0 * d1;
             gl_FragData[0] = vec4(color, 1.0);
         }
     }

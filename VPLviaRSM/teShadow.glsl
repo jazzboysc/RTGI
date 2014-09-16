@@ -23,8 +23,10 @@ void main()
     vec3 halfDir = viewDir + vec3(0.0, 0.0, -1.0);
     halfDir.x = -halfDir.x / halfDir.z;
     halfDir.y = -halfDir.y / halfDir.z;
-    halfDir.z = (len - LightProjectorNearFar.x) / 
-        (LightProjectorNearFar.y - LightProjectorNearFar.x);
+    //halfDir.z = (len - LightProjectorNearFar.x) / 
+    //    (LightProjectorNearFar.y - LightProjectorNearFar.x);
+    // FIXME:
+    halfDir.z = (len - 0.01) / (50.0 - 0.01);
 
     teViewPosZ = viewPos.z;
     teDepth = halfDir.z;
