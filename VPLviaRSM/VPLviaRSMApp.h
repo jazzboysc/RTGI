@@ -4,6 +4,7 @@
 #include "GraphicsFrameworkHeader.h"
 #include "VPLviaRSMTriMesh.h"
 #include "VPLviaRSMDirectLightingQuad.h"
+#include "VPLviaRSMIndirectLightingQuad.h"
 #include "VPLviaRSMTempScreenQuad.h"
 #include "VPLviaRSMFinalScreenQuad.h"
 
@@ -114,6 +115,7 @@ private:
     Texture1DPtr mRSMSampleTexture;
 
     VPLviaRSMDirectLightingQuadPtr mDirectLightingQuad;
+    VPLviaRSMIndirectLightingQuadPtr mIndirectLightingQuad;
     VPLviaRSMTempScreenQuadPtr mTempResultScreenQuad;
     VPLviaRSMFinalScreenQuadPtr mFinalResultScreenQuad;
 

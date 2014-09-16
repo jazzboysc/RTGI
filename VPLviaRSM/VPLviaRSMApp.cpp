@@ -3,6 +3,9 @@
 
 using namespace RTGI;
 
+int src;
+int dst;
+
 //----------------------------------------------------------------------------
 VPLviaRSMApp::VPLviaRSMApp(int width, int height)
 	:
@@ -94,12 +97,15 @@ void VPLviaRSMApp::Initialize()
         ShaderType::ST_Fragment;
     Pass* passIndirectLighting = new Pass(programInfo);
 
+    Technique* techIndirectLighting = new Technique();
+    techIndirectLighting->AddPass(passIndirectLighting);
+    MaterialTemplate* mtIndirectLighting = new MaterialTemplate();
+    mtIndirectLighting->AddTechnique(techIndirectLighting);
+
 	Technique* techVPLviaRSM = new Technique();
     techVPLviaRSM->AddPass(passShadow);
     techVPLviaRSM->AddPass(passRSMBuffer);
     techVPLviaRSM->AddPass(passGBuffer);
-    //techVPLviaRSM->AddPass(passDirectLighting);
-    //techVPLviaRSM->AddPass(passIndirectLighting);
 	MaterialTemplate* mtVPLviaRSM = new MaterialTemplate();
     mtVPLviaRSM->AddTechnique(techVPLviaRSM);
 
@@ -316,6 +322,20 @@ void VPLviaRSMApp::Initialize()
     mDirectLightingQuad->ShadowMap = mShadowMapTexture;
     mDirectLightingQuad->LightProjector = mLightProjector;
 
+    material = new Material(mtIndirectLighting);
+    mIndirectLightingQuad = new VPLviaRSMIndirectLightingQuad(material);
+    mIndirectLightingQuad->LoadFromFile("screenquad.ply");
+    mIndirectLightingQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+    mIndirectLightingQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+    mIndirectLightingQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+    mIndirectLightingQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+    mIndirectLightingQuad->CreateDeviceResource();
+    mIndirectLightingQuad->GBufferPositionTexture = mGBufferPositionTexture;
+    mIndirectLightingQuad->GBufferNormalTexture = mGBufferNormalTexture;
+    mIndirectLightingQuad->GBufferDiffuseTexture = mGBufferDiffuseTexture;
+    mIndirectLightingQuad->VPLShadowMap = mShadowMapTexture;
+    mIndirectLightingQuad->VPLProjector = mLightProjector;
+
     material = new Material(mtScreenQuad);
     mTempResultScreenQuad = new VPLviaRSMTempScreenQuad(material);
     mTempResultScreenQuad->LoadFromFile("screenquad.ply");
@@ -426,16 +446,19 @@ void VPLviaRSMApp::DirectLightingPass()
 //----------------------------------------------------------------------------
 void VPLviaRSMApp::IndirectLightingPass(const VPL& vpl)
 {
-    //mLightProjector->SetAxes(vpl.R, vpl.U, vpl.D);
-    //mLightProjector->SetLocation(vpl.E);
+    mLightProjector->SetAxes(vpl.R, vpl.U, vpl.D);
+    mLightProjector->SetLocation(vpl.E);
+
+    mIndirectLightingQuad->VPLColor = vpl.Flux;
+    mIndirectLightingQuad->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void VPLviaRSMApp::Run()
 {
     static unsigned int mFrameCount = 0;
     mFrameCount++;
-    int src = mFrameCount % 2;
-    int dst = (mFrameCount+1) % 2;
+    src = mFrameCount % 2;
+    dst = (mFrameCount+1) % 2;
 
     static float angle = 0.0f;
     angle += 1.0f;
@@ -504,11 +527,11 @@ void VPLviaRSMApp::Run()
         VPLShadowPass(mVPLs[i]);
         mVPLShadowMapFB->Disable();
 
-        //// VPL lighting pass.
-        //mIndirectLightingFB[dst]->Enable();
-        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //IndirectLightingPass(mVPLs[i]);
-        //mIndirectLightingFB[dst]->Disable();
+        // VPL lighting pass.
+        mIndirectLightingFB[dst]->Enable();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        IndirectLightingPass(mVPLs[i]);
+        mIndirectLightingFB[dst]->Disable();
     }
 
     // Direct lighting pass.
@@ -578,6 +601,7 @@ void VPLviaRSMApp::Terminate()
     }
 
     mDirectLightingQuad = 0;
+    mIndirectLightingQuad = 0;
     mTempResultScreenQuad = 0;
     mFinalResultScreenQuad = 0;
 
@@ -623,14 +647,14 @@ void VPLviaRSMApp::OnKeyboard(unsigned char key, int x, int y)
         mTempResultScreenQuad->TempTexture = mVPLShadowMapTexture;
         break;
 
-    //case '7':
-    //    mShowMode = SM_IndirectLighting;
-    //    mTempResultScreenQuad->TempTexture = mIndirectLightingTexture[0];
-    //    break;
+    case '7':
+        mShowMode = SM_IndirectLighting;
+        mTempResultScreenQuad->TempTexture = mIndirectLightingTexture[dst];
+        break;
 
-    //case '0':
-    //    mShowMode = SM_Final;
-    //    break;
+    case '0':
+        mShowMode = SM_Final;
+        break;
 
     case 'w':
         mIsWireframe = !mIsWireframe;

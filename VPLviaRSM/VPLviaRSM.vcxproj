@@ -32,6 +32,7 @@
     <ClInclude Include="VPLviaRSMApp.h" />
     <ClInclude Include="VPLviaRSMDirectLightingQuad.h" />
     <ClInclude Include="VPLviaRSMFinalScreenQuad.h" />
+    <ClInclude Include="VPLviaRSMIndirectLightingQuad.h" />
     <ClInclude Include="VPLviaRSMTempScreenQuad.h" />
     <ClInclude Include="VPLviaRSMTriMesh.h" />
   </ItemGroup>
@@ -40,6 +41,7 @@
     <ClCompile Include="VPLviaRSMApp.cpp" />
     <ClCompile Include="VPLviaRSMDirectLightingQuad.cpp" />
     <ClCompile Include="VPLviaRSMFinalScreenQuad.cpp" />
+    <ClCompile Include="VPLviaRSMIndirectLightingQuad.cpp" />
     <ClCompile Include="VPLviaRSMTempScreenQuad.cpp" />
     <ClCompile Include="VPLviaRSMTriMesh.cpp" />
   </ItemGroup>

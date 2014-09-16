@@ -61,6 +61,7 @@
     <ClInclude Include="VPLviaRSMTriMesh.h" />
     <ClInclude Include="VPLviaRSMFinalScreenQuad.h" />
     <ClInclude Include="VPLviaRSMDirectLightingQuad.h" />
+    <ClInclude Include="VPLviaRSMIndirectLightingQuad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -69,5 +70,6 @@
     <ClCompile Include="VPLviaRSMTriMesh.cpp" />
     <ClCompile Include="VPLviaRSMFinalScreenQuad.cpp" />
     <ClCompile Include="VPLviaRSMDirectLightingQuad.cpp" />
+    <ClCompile Include="VPLviaRSMIndirectLightingQuad.cpp" />
   </ItemGroup>
 </Project>
