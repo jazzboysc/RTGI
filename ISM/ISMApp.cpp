@@ -38,8 +38,10 @@ void ISMApp::Initialize()
     // Create light projector.
     mLightProjector = new Camera();
     mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 0.01f, 50.0f);
-    mLightProjector->SetLookAt(vec3(-9.5f, 10.0f, 0.0f), vec3(0.0f, 10.0f, 0.0f),
-        vec3(0.0f, 1.0f, 0.0f));
+    //mLightProjector->SetLookAt(vec3(-10.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f),
+    //    vec3(0.0f, 1.0f, 0.0f));
+    mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
+        vec3(1.0f, 0.0f, 0.0f));
 
 	// Create material templates.
 	Material* material = 0;
@@ -80,8 +82,8 @@ void ISMApp::Initialize()
 
     // Create shadow map render target.
     int shadowMapWidth, shadowMapHeight;
-    shadowMapWidth = 1024;
-    shadowMapHeight = 1024;
+    shadowMapWidth = 256;
+    shadowMapHeight = 256;
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
         Texture2D::RTF_RGBF);
