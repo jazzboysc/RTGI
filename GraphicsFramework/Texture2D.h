@@ -28,6 +28,7 @@ public:
 	{
 		RTF_RGB,
 		RTF_RGBF,
+        RTF_RGBAF,
 		RTF_R32UI,
         RTF_R32F,
 		RTF_Depth

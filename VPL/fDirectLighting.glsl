@@ -15,16 +15,15 @@ uniform sampler2D ShadowMapSampler;
 void main()
 {
     vec4 PositionWorld = texture(GBufferPositionSampler, pTCoord);
+    if( PositionWorld.w == 0.0 )
+    {
+        discard;
+    }
 
-    vec3 NormalWorld = texture(GBufferNormalSampler, pTCoord).xyz;
+    vec3 NormalWorld = texture(GBufferNormalSampler, pTCoord).rgb;
     NormalWorld = NormalWorld*2.0 - 1.0;
 
     vec4 MaterialColor = texture(GBufferAlbedoSampler, pTCoord);
-    if( MaterialColor.rgb == vec3(0.5, 0.5, 0.5) )
-    {
-        gl_FragData[0] = vec4(1.0, 0.0, 0.0, 1.0);
-        return;
-    }
 
     bool skipShadow = false;
     vec4 viewPos = LightProjectorView * PositionWorld;

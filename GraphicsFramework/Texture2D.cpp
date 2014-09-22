@@ -202,6 +202,12 @@ void Texture2D::CreateRenderTarget(int width, int height,
 		mType = GL_FLOAT;
 		break;
 
+    case RTGI::Texture2D::RTF_RGBAF:
+        mInternalFormat = GL_RGBA32F_ARB;
+        mFormat = GL_RGBA;
+        mType = GL_FLOAT;
+        break;
+
 	case RTGI::Texture2D::RTF_R32UI:
 #ifndef __APPLE__
 		mInternalFormat = GL_R32UI;

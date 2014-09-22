@@ -24,7 +24,7 @@ void VPLApp::Initialize()
 	glutSetWindowTitle(title.c_str());
 
 	float color = 0.5f;
-    glClearColor(color, color, color, color);
+    glClearColor(color, color, color, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -38,10 +38,10 @@ void VPLApp::Initialize()
     // Create light projector.
     mLightProjector = new Camera();
     mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 0.01f, 50.0f);
-    //mLightProjector->SetLookAt(vec3(-10.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f),
-    //    vec3(0.0f, 1.0f, 0.0f));
-    mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
-        vec3(1.0f, 0.0f, 0.0f));
+    mLightProjector->SetLookAt(vec3(-10.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f),
+        vec3(0.0f, 1.0f, 0.0f));
+    //mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
+    //    vec3(1.0f, 0.0f, 0.0f));
 
 	// Create material templates.
 	Material* material = 0;
@@ -103,11 +103,11 @@ void VPLApp::Initialize()
 
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();
-    mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+    mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBAF);
     mGBufferNormalTexture = new Texture2D();
-    mGBufferNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+    mGBufferNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBAF);
     mGBufferAlbedoTexture = new Texture2D();
-    mGBufferAlbedoTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+    mGBufferAlbedoTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBAF);
     mGBufferDepthTexture = new Texture2D();
     mGBufferDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
 
@@ -122,7 +122,7 @@ void VPLApp::Initialize()
     shadowMapHeight = 256;
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture2D::RTF_RGBF);
+        Texture2D::RTF_RGBAF);
 
     mShadowMapDepthTexture = new Texture2D();
     mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
@@ -135,7 +135,7 @@ void VPLApp::Initialize()
 
     // Create direct lighting render target.
     mDirectLightingTexture = new Texture2D();
-    mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+    mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBAF);
 
     mDirectLightingDepthTexture = new Texture2D();
     mDirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
