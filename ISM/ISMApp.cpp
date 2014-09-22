@@ -93,7 +93,7 @@ void ISMApp::Initialize()
         Texture2D::RTF_Depth);
 
     // Create shadow map frame buffer.
-    Texture2D* renderTargets[] = { mShadowMapTexture };
+    Texture* renderTargets[] = { mShadowMapTexture };
     mShadowMapFB = new FrameBuffer();
     mShadowMapFB->SetRenderTargets(1, renderTargets, mShadowMapDepthTexture);
 

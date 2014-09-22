@@ -65,3 +65,8 @@ bool TextureCube::LoadFromFile(const std::string& pX, const std::string& nX,
 	return true;
 }
 //----------------------------------------------------------------------------
+Texture::TextureType TextureCube::GetType()
+{
+    return Texture::TT_TextureCube;
+}
+//--------------------------------------------------------------------------

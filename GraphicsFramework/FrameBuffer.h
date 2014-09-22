@@ -8,7 +8,11 @@
 
 #include "FrameworkCommon.h"
 #include "RefObject.h"
+#include "Texture1D.h"
 #include "Texture2D.h"
+#include "Texture3D.h"
+#include "TextureCube.h"
+#include "Texture2DArray.h"
 
 namespace RTGI
 {
@@ -26,8 +30,8 @@ public:
 	GLuint GetFBO();
 
 	void SetRenderTargets(unsigned int colorTextureCount, 
-		Texture2D** colorTextures, Texture2D* depthTexture = 0, 
-		Texture2D* stencilTexture = 0);
+		Texture** colorTextures, Texture* depthTexture = 0, 
+		Texture* stencilTexture = 0);
 
 	void Enable();
 	void Disable();
@@ -35,12 +39,12 @@ public:
 private:
 	GLuint mFBO;
 
-    GLsizei mWidth, mHeight;
+    GLsizei mWidth, mHeight, mDepth;
 	unsigned int mColorTextureCount;
-	std::vector<Texture2D*> mColorTextures;
+	std::vector<Texture*> mColorTextures;
 	GLenum* mColorBuffers;
-	Texture2D* mDepthTexture;
-	Texture2D* mStencilTexture;
+	Texture* mDepthTexture;
+	Texture* mStencilTexture;
 };
 
 typedef RefPointer<FrameBuffer> FrameBufferPtr;

@@ -86,7 +86,7 @@ void RSMApp::Initialize()
 	mRSMDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
 
 	// Create RSM-buffer.
-	Texture2D* rsmTextures[3] = {mRSMPositionTexture, mRSMNormalTexture, mRSMFluxTexture};
+	Texture* rsmTextures[3] = {mRSMPositionTexture, mRSMNormalTexture, mRSMFluxTexture};
 	mRSMBuffer = new FrameBuffer();
 	mRSMBuffer->SetRenderTargets(3, rsmTextures, mRSMDepthTexture);
     
@@ -103,7 +103,7 @@ void RSMApp::Initialize()
 	mIndirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
     
 	// Create G-buffer.
-	Texture2D* gbufferTextures[4] = {mPositionTexture, mNormalTexture, mColorTexture, mIndirectLightingTexture};
+	Texture* gbufferTextures[4] = {mPositionTexture, mNormalTexture, mColorTexture, mIndirectLightingTexture};
 	mGBuffer = new FrameBuffer();
 	mGBuffer->SetRenderTargets(4, gbufferTextures, mDepthTexture);
     

@@ -116,7 +116,7 @@ void SIIApp::Initialize()
         Texture2D::RTF_Depth);
 
     // Create shadow map frame buffer.
-    Texture2D* renderTargets[] = { mShadowMapTexture };
+    Texture* renderTargets[] = { mShadowMapTexture };
     mShadowMapFB = new FrameBuffer();
     mShadowMapFB->SetRenderTargets(1, renderTargets, mShadowMapDepthTexture);
 
@@ -133,7 +133,7 @@ void SIIApp::Initialize()
     mRSMDepthTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::RTF_Depth);
 
     // Create RSM-buffer.
-    Texture2D* rsmTextures[3] = { mRSMPositionTexturePX, mRSMNormalTexturePX, mRSMFluxTexturePX };
+    Texture* rsmTextures[3] = { mRSMPositionTexturePX, mRSMNormalTexturePX, mRSMFluxTexturePX };
     mRSMBufferPX = new FrameBuffer();
     mRSMBufferPX->SetRenderTargets(3, rsmTextures, mRSMDepthTexturePX);
 

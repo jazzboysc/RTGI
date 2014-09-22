@@ -129,6 +129,9 @@
     <ClCompile Include="GeometryShader.cpp">
       <Filter>Material</Filter>
     </ClCompile>
+    <ClCompile Include="Texture2DArray.cpp">
+      <Filter>Textures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -271,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="GeometryShader.h">
       <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2DArray.h">
+      <Filter>Textures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

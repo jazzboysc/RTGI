@@ -37,7 +37,7 @@ void VPLApp::Initialize()
 
     // Create light projector.
     mLightProjector = new Camera();
-    mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 0.01f, 50.0f);
+    mLightProjector->SetPerspectiveFrustum(85.0f, 1.0f, 0.01f, 50.0f);
     mLightProjector->SetLookAt(vec3(-10.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
     //mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
@@ -112,7 +112,7 @@ void VPLApp::Initialize()
     mGBufferDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
 
     // Create G-buffer.
-    Texture2D* gbufferTextures[3] = { mGBufferPositionTexture, mGBufferNormalTexture, mGBufferAlbedoTexture };
+    Texture* gbufferTextures[3] = { mGBufferPositionTexture, mGBufferNormalTexture, mGBufferAlbedoTexture };
     mGBufferFB = new FrameBuffer();
     mGBufferFB->SetRenderTargets(3, gbufferTextures, mGBufferDepthTexture);
 
@@ -129,7 +129,7 @@ void VPLApp::Initialize()
         Texture2D::RTF_Depth);
 
     // Create shadow map frame buffer.
-    Texture2D* renderTargets[] = { mShadowMapTexture };
+    Texture* renderTargets[] = { mShadowMapTexture };
     mShadowMapFB = new FrameBuffer();
     mShadowMapFB->SetRenderTargets(1, renderTargets, mShadowMapDepthTexture);
 
@@ -141,7 +141,7 @@ void VPLApp::Initialize()
     mDirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
 
     // Create direct lighting frame buffer.
-    Texture2D* dlRenderTargets[] = { mDirectLightingTexture };
+    Texture* dlRenderTargets[] = { mDirectLightingTexture };
     mDirectLightingFB = new FrameBuffer();
     mDirectLightingFB->SetRenderTargets(1, dlRenderTargets, mDirectLightingDepthTexture);
 

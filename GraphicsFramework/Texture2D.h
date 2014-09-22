@@ -24,16 +24,6 @@ public:
 	Texture2D();
 	~Texture2D();
 
-	enum RenderTargetFormat
-	{
-		RTF_RGB,
-		RTF_RGBF,
-        RTF_RGBAF,
-		RTF_R32UI,
-        RTF_R32F,
-		RTF_Depth
-	};
-
 	// Load a ".bmp" file and create its resource.
 	bool LoadBMPFromFile(const std::string& fileName);
 
@@ -62,6 +52,8 @@ public:
 	void CreateLDRandomTextureRGBF(int maxSampleCount, int patternSize);
 
     void GetImageData(void* dstPixels);
+
+    virtual TextureType GetType();
 
 	int Width, Height;
 	bool IsRenderTarget;

@@ -17,6 +17,7 @@
 #include "Texture2D.h"
 #include "Texture3D.h"
 #include "TextureCube.h"
+#include "Texture2DArray.h"
 #include "FrameBuffer.h"
 
 // Buffers

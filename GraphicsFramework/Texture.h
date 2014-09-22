@@ -19,13 +19,34 @@ namespace RTGI
 class Texture : public RefObject
 {
 public:
+    enum RenderTargetFormat
+    {
+        RTF_RGB,
+        RTF_RGBF,
+        RTF_RGBAF,
+        RTF_R32UI,
+        RTF_R32F,
+        RTF_Depth
+    };
+
+    enum TextureType
+    {
+        TT_Texture1D,
+        TT_Texture2D,
+        TT_Texture3D,
+        TT_TextureCube,
+        TT_Texture2DArray
+    };
+
 	Texture();
 	virtual ~Texture();
 
 	GLuint GetTexture() const;
+    virtual TextureType GetType() = 0;
 
 protected:
 	GLuint mTexture;
+    TextureType mType;
 };
 
 typedef RefPointer<Texture> TexturePtr;

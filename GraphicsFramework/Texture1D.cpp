@@ -79,3 +79,8 @@ void Texture1D::CreateUniformRandomTextureRG(int sampleCount)
     glBindTexture(GL_TEXTURE_1D, 0);
 }
 //--------------------------------------------------------------------------
+Texture::TextureType Texture1D::GetType()
+{
+    return Texture::TT_Texture1D;
+}
+//--------------------------------------------------------------------------

@@ -60,3 +60,8 @@ void Texture3D::BindToImageUnit(GLuint unit, GLenum access)
 #endif
 }
 //--------------------------------------------------------------------------
+Texture::TextureType Texture3D::GetType()
+{
+    return Texture::TT_Texture3D;
+}
+//--------------------------------------------------------------------------

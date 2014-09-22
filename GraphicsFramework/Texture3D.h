@@ -33,6 +33,8 @@ public:
 
 	void BindToImageUnit(GLuint unit, GLenum access);
 
+    virtual TextureType GetType();
+
 	int Width, Height, Depth;
 
 private:

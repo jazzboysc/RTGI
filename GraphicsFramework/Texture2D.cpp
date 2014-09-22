@@ -316,3 +316,8 @@ void Texture2D::GetImageData(void* dstPixels)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 //--------------------------------------------------------------------------
+Texture::TextureType Texture2D::GetType()
+{
+    return Texture::TT_Texture2D;
+}
+//--------------------------------------------------------------------------

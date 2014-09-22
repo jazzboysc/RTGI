@@ -34,6 +34,8 @@ public:
 
     void CreateUniformRandomTextureRG(int sampleCount);
 
+    virtual TextureType GetType();
+
 	int Width;
 
 private:

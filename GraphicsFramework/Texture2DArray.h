@@ -3,8 +3,8 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#ifndef RTGI_TextureCube_H
-#define RTGI_TextureCube_H
+#ifndef RTGI_Texture2DArray_H
+#define RTGI_Texture2DArray_H
 
 #include "FrameworkCommon.h"
 #include "Texture.h"
@@ -14,23 +14,30 @@ namespace RTGI
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: 11/07/2013
+// Date: 09/22/2014
 //----------------------------------------------------------------------------
-class TextureCube : public Texture
+class Texture2DArray : public Texture
 {
 public:
-	TextureCube();
-	~TextureCube();
+    Texture2DArray();
+    ~Texture2DArray();
 
-	// Load six ".bmp" files and create a cube-map resource.
-	bool LoadFromFile(const std::string& pX, const std::string& nX, 
-		const std::string& pY, const std::string& nY, const std::string& pZ, 
-		const std::string& nZ);
+	void CreateRenderTarget(int width, int height, int depth, 
+        RenderTargetFormat format);
+
+	int Width, Height, Depth;
+	bool IsRenderTarget;
+	RenderTargetFormat RTFormat;
 
     virtual TextureType GetType();
+
+private:
+	GLint mInternalFormat;
+	GLenum mFormat;
+	GLenum mType;
 };
 
-typedef RefPointer<TextureCube> TextureCubePtr;
+typedef RefPointer<Texture2DArray> Texture2DArrayPtr;
 
 }
 
