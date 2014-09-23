@@ -11,7 +11,7 @@ void main()
 {
     if( !UsingArray )
     {
-        gl_FragData[0] = texture(tempSamplerArray, vec3(pTCoord, 2));
+        gl_FragData[0] = texture(tempSamplerArray, vec3(pTCoord, 3));
     }
     else
     {
