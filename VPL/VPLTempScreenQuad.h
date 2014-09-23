@@ -3,6 +3,7 @@
 
 #include "ScreenQuad.h"
 #include "Texture2D.h"
+#include "Texture2DArray.h"
 
 namespace RTGI
 {
@@ -22,9 +23,13 @@ public:
 	virtual void OnGetShaderConstants();
 
 	Texture2DPtr TempTexture;
+    Texture2DArrayPtr TempTextureArray;
+    bool UsingArray;
 
 private:
+    GLint mUsingArrayLoc;
 	GLint mTempSamplerLoc;
+    GLint mTempSamplerArrayLoc;
 };
 
 typedef RefPointer<VPLTempScreenQuad> VPLTempScreenQuadPtr;

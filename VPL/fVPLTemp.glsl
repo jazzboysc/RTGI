@@ -2,9 +2,19 @@
 
 in vec2 pTCoord;
 
+uniform bool UsingArray;
+
 uniform sampler2D tempSampler;
+uniform sampler2DArray tempSamplerArray;
 
 void main()
 {
-    gl_FragData[0] = texture(tempSampler, pTCoord);
+    if( !UsingArray )
+    {
+        gl_FragData[0] = texture(tempSamplerArray, vec3(pTCoord, 2));
+    }
+    else
+    {
+        gl_FragData[0] = texture(tempSampler, pTCoord);
+    }
 }

@@ -13,14 +13,15 @@
   <ItemGroup>
     <None Include="fDirectLighting.glsl" />
     <None Include="fGBuffer.glsl" />
-    <None Include="fScene.glsl" />
+    <None Include="fRSM.glsl" />
     <None Include="fShadow.glsl" />
     <None Include="fVPLTemp.glsl" />
+    <None Include="gRSM.glsl" />
     <None Include="tcShadow.glsl" />
     <None Include="teShadow.glsl" />
     <None Include="vDirectLighting.glsl" />
     <None Include="vGBuffer.glsl" />
-    <None Include="vScene.glsl" />
+    <None Include="vRSM.glsl" />
     <None Include="vShadow.glsl" />
     <None Include="vVPLTemp.glsl" />
   </ItemGroup>

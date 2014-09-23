@@ -45,6 +45,7 @@ private:
 
 	void ShadowPass();
     void GBufferPass();
+    void RSMPass();
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;
@@ -52,19 +53,28 @@ private:
 	Camera* mCamera;
     Camera* mLightProjector;
 
+    // G-buffer.
     FrameBufferPtr mGBufferFB;
     Texture2DPtr mGBufferPositionTexture;
     Texture2DPtr mGBufferNormalTexture;
     Texture2DPtr mGBufferAlbedoTexture;
     Texture2DPtr mGBufferDepthTexture;
 
+    // Scene shadow map.
     FrameBufferPtr mShadowMapFB;
     Texture2DPtr mShadowMapTexture;
     Texture2DPtr mShadowMapDepthTexture;
 
+    // Direct illumination buffer.
     FrameBufferPtr mDirectLightingFB;
     Texture2DPtr mDirectLightingTexture;
     Texture2DPtr mDirectLightingDepthTexture;
+
+    // Scene light RSM.
+    FrameBufferPtr mRSMFB;
+    Texture2DArrayPtr mRSMPositionTextureArray;
+    Texture2DArrayPtr mRSMNormalTextureArray;
+    Texture2DArrayPtr mRSMDepthTextureArray;
 
     VPLTempScreenQuadPtr mTempScreenQuad;
     VPLDirectLightingScreenQuadPtr mDirectLightingScreenQuad;

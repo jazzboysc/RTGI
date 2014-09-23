@@ -6,9 +6,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="fScene.glsl">
-      <Filter>GLSL</Filter>
-    </None>
     <None Include="fShadow.glsl">
       <Filter>GLSL</Filter>
     </None>
@@ -19,9 +16,6 @@
       <Filter>GLSL</Filter>
     </None>
     <None Include="teShadow.glsl">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="vScene.glsl">
       <Filter>GLSL</Filter>
     </None>
     <None Include="vShadow.glsl">
@@ -40,6 +34,15 @@
       <Filter>GLSL</Filter>
     </None>
     <None Include="vDirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fRSM.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="gRSM.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vRSM.glsl">
       <Filter>GLSL</Filter>
     </None>
   </ItemGroup>

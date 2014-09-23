@@ -8,7 +8,7 @@ VPLApp::VPLApp(int width, int height)
 	:
 	mWidth(width),
 	mHeight(height),
-	mWindowTitle("ISM demo")
+	mWindowTitle("VPL demo")
 {
     mShowMode = SM_Shadow;
     mIsWireframe = false;
@@ -38,10 +38,10 @@ void VPLApp::Initialize()
     // Create light projector.
     mLightProjector = new Camera();
     mLightProjector->SetPerspectiveFrustum(85.0f, 1.0f, 0.01f, 50.0f);
-    mLightProjector->SetLookAt(vec3(-10.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f),
-        vec3(0.0f, 1.0f, 0.0f));
-    //mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
-    //    vec3(1.0f, 0.0f, 0.0f));
+    //mLightProjector->SetLookAt(vec3(-10.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f),
+    //    vec3(0.0f, 1.0f, 0.0f));
+    mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
+        vec3(1.0f, 0.0f, 0.0f));
 
 	// Create material templates.
 	Material* material = 0;
@@ -64,16 +64,19 @@ void VPLApp::Initialize()
         ShaderType::ST_Fragment;
     Pass* passGBuffer = new Pass(gbufferProgramInfo);
 
-    ShaderProgramInfo sceneProgramInfo;
-    sceneProgramInfo.VShaderFileName = "vScene.glsl";
-    sceneProgramInfo.FShaderFileName = "fScene.glsl";
-    sceneProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                       ShaderType::ST_Fragment;
-    Pass* passScene = new Pass(sceneProgramInfo);
+    ShaderProgramInfo rsmProgramInfo;
+    rsmProgramInfo.VShaderFileName = "vRSM.glsl";
+    rsmProgramInfo.GShaderFileName = "gRSM.glsl";
+    rsmProgramInfo.FShaderFileName = "fRSM.glsl";
+    rsmProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                     ShaderType::ST_Geometry |
+                                     ShaderType::ST_Fragment;
+    Pass* passRSM = new Pass(rsmProgramInfo);
 
 	Technique* techVPL = new Technique();
     techVPL->AddPass(passShadow);
     techVPL->AddPass(passGBuffer);
+    techVPL->AddPass(passRSM);
 	MaterialTemplate* mtVPL = new MaterialTemplate();
 	mtVPL->AddTechnique(techVPL);
 
@@ -103,13 +106,13 @@ void VPLApp::Initialize()
 
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();
-    mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBAF);
+    mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_RGBAF);
     mGBufferNormalTexture = new Texture2D();
-    mGBufferNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBAF);
+    mGBufferNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_RGBAF);
     mGBufferAlbedoTexture = new Texture2D();
-    mGBufferAlbedoTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBAF);
+    mGBufferAlbedoTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_RGBAF);
     mGBufferDepthTexture = new Texture2D();
-    mGBufferDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
+    mGBufferDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_Depth);
 
     // Create G-buffer.
     Texture* gbufferTextures[3] = { mGBufferPositionTexture, mGBufferNormalTexture, mGBufferAlbedoTexture };
@@ -122,11 +125,11 @@ void VPLApp::Initialize()
     shadowMapHeight = 256;
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture2D::RTF_RGBAF);
+        Texture::RTF_RGBAF);
 
     mShadowMapDepthTexture = new Texture2D();
     mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture2D::RTF_Depth);
+        Texture::RTF_Depth);
 
     // Create shadow map frame buffer.
     Texture* renderTargets[] = { mShadowMapTexture };
@@ -135,15 +138,33 @@ void VPLApp::Initialize()
 
     // Create direct lighting render target.
     mDirectLightingTexture = new Texture2D();
-    mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBAF);
+    mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_RGBAF);
 
     mDirectLightingDepthTexture = new Texture2D();
-    mDirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
+    mDirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_Depth);
 
     // Create direct lighting frame buffer.
     Texture* dlRenderTargets[] = { mDirectLightingTexture };
     mDirectLightingFB = new FrameBuffer();
     mDirectLightingFB->SetRenderTargets(1, dlRenderTargets, mDirectLightingDepthTexture);
+
+    // Create RSM render targets.
+    int rsmWidth, rsmHeight;
+    rsmWidth = 512;
+    rsmHeight = 512;
+    mRSMPositionTextureArray = new Texture2DArray();
+    mRSMPositionTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_RGBAF);
+
+    mRSMNormalTextureArray = new Texture2DArray();
+    mRSMNormalTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_RGBAF);
+
+    mRSMDepthTextureArray = new Texture2DArray();
+    mRSMDepthTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_Depth);
+
+    // Create RSM frame buffer.
+    Texture* rsmRenderTargets[] = { mRSMPositionTextureArray, mRSMNormalTextureArray };
+    mRSMFB = new FrameBuffer();
+    mRSMFB->SetRenderTargets(2, rsmRenderTargets, mRSMDepthTextureArray);
 
 	// Create scene.
 	mat4 rotM;
@@ -225,6 +246,7 @@ void VPLApp::Initialize()
     mTempScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mTempScreenQuad->CreateDeviceResource();
     mTempScreenQuad->TempTexture = mShadowMapTexture;
+    mTempScreenQuad->TempTextureArray = mRSMNormalTextureArray;
 
     material = new Material(mtDirectLighting);
     mDirectLightingScreenQuad = new VPLDirectLightingScreenQuad(material);
@@ -283,6 +305,16 @@ void VPLApp::GBufferPass()
     mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
+void VPLApp::RSMPass()
+{
+    mGround->Render(0, 2);
+    mCeiling->Render(0, 2);
+    mBackWall->Render(0, 2);
+    mLeftWall->Render(0, 2);
+    mRightWall->Render(0, 2);
+    mModel->Render(0, 2);
+}
+//----------------------------------------------------------------------------
 void VPLApp::Run()
 {
     static float angle = 0.0f;
@@ -312,8 +344,14 @@ void VPLApp::Run()
     GBufferPass();
     mGBufferFB->Disable();
 
+    mRSMFB->Enable();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    RSMPass();
+    mRSMFB->Disable();
+
     mDirectLightingFB->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     mDirectLightingScreenQuad->Render(0, 0);
     mDirectLightingFB->Disable();
 
@@ -344,6 +382,11 @@ void VPLApp::Terminate()
     mDirectLightingFB = 0;
     mDirectLightingTexture = 0;
     mDirectLightingDepthTexture = 0;
+
+    mRSMFB = 0;
+    mRSMPositionTextureArray = 0;
+    mRSMNormalTextureArray = 0;
+    mRSMDepthTextureArray = 0;
 
     mTempScreenQuad = 0;
     mDirectLightingScreenQuad = 0;

@@ -27,12 +27,16 @@ public:
     Texture2DPtr ShadowMap;
 
 private:
-    // pass 1 uniform locations.
+    // pass 1, scene shadow pass.
     GLint mLightProjectorNearFarLoc;
 
-    // pass 2 uniform locations.
+    // pass 2, G-buffer pass.
     GLint mWorldLoc2, mViewLoc2, mProjLoc2;
     GLint mMaterialColorLoc;
+
+    // pass 3, RSM pass.
+    GLint mWorldLoc3, mProjLoc3;
+    GLint mLightPositionWorldLoc;
 };
 
 typedef RefPointer<VPLTriMesh> VPLTriMeshPtr;
