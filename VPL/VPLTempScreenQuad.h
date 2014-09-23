@@ -25,11 +25,13 @@ public:
 	Texture2DPtr TempTexture;
     Texture2DArrayPtr TempTextureArray;
     bool UsingArray;
+    int RSMFaceIndex;
 
 private:
     GLint mUsingArrayLoc;
 	GLint mTempSamplerLoc;
     GLint mTempSamplerArrayLoc;
+    GLint mRSMFaceIndexLoc;
 };
 
 typedef RefPointer<VPLTempScreenQuad> VPLTempScreenQuadPtr;

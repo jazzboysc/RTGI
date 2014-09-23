@@ -33,13 +33,14 @@ void VPLTriMesh::OnGetShaderConstants()
     mWorldLoc2 = glGetUniformLocation(program, "World");
     mViewLoc2 = glGetUniformLocation(program, "View");
     mProjLoc2 = glGetUniformLocation(program, "Proj");
-    mMaterialColorLoc = glGetUniformLocation(program, "MaterialColor");
+    mMaterialColorLoc2 = glGetUniformLocation(program, "MaterialColor");
 
     // Get pass 3 uniform locations.
     program = mMaterial->GetProgram(0, 2)->GetProgram();
     mWorldLoc3 = glGetUniformLocation(program, "World");
     mProjLoc3 = glGetUniformLocation(program, "Proj");
     mLightPositionWorldLoc = glGetUniformLocation(program, "LightPositionWorld");
+    mMaterialColorLoc3 = glGetUniformLocation(program, "MaterialColor");
 }
 //----------------------------------------------------------------------------
 void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -61,7 +62,7 @@ void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == 1 )
     {
         glUniformMatrix4fv(mWorldLoc2, 1, GL_TRUE, mWorldTransform);
-        glUniform3fv(mMaterialColorLoc, 1, (GLfloat*)&MaterialColor);
+        glUniform3fv(mMaterialColorLoc2, 1, (GLfloat*)&MaterialColor);
 
         if( mCamera )
         {
@@ -77,6 +78,7 @@ void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == 2 )
     {
         glUniformMatrix4fv(mWorldLoc3, 1, GL_TRUE, mWorldTransform);
+        glUniform3fv(mMaterialColorLoc3, 1, (GLfloat*)&MaterialColor);
 
         assert( LightProjector );
         if( LightProjector )

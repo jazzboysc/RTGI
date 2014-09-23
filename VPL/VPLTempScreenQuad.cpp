@@ -8,6 +8,7 @@ VPLTempScreenQuad::VPLTempScreenQuad(Material* material)
 	ScreenQuad(material, 0)
 {
     UsingArray = false;
+    RSMFaceIndex = 0;
 }
 //----------------------------------------------------------------------------
 VPLTempScreenQuad::~VPLTempScreenQuad()
@@ -19,6 +20,7 @@ VPLTempScreenQuad::~VPLTempScreenQuad()
 void VPLTempScreenQuad::OnUpdateShaderConstants(int, int)
 {
     glUniform1i(mUsingArrayLoc, UsingArray);
+    glUniform1i(mRSMFaceIndexLoc, RSMFaceIndex);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, TempTexture->GetTexture());
@@ -43,5 +45,6 @@ void VPLTempScreenQuad::OnGetShaderConstants()
 	mTempSamplerLoc = glGetUniformLocation(program, "tempSampler");
     mTempSamplerArrayLoc = glGetUniformLocation(program, "tempSamplerArray");
     mUsingArrayLoc = glGetUniformLocation(program, "UsingArray");
+    mRSMFaceIndexLoc = glGetUniformLocation(program, "RSMFaceIndex");
 }
 //----------------------------------------------------------------------------

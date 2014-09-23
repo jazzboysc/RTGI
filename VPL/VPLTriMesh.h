@@ -32,11 +32,12 @@ private:
 
     // pass 2, G-buffer pass.
     GLint mWorldLoc2, mViewLoc2, mProjLoc2;
-    GLint mMaterialColorLoc;
+    GLint mMaterialColorLoc2;
 
     // pass 3, RSM pass.
     GLint mWorldLoc3, mProjLoc3;
     GLint mLightPositionWorldLoc;
+    GLint mMaterialColorLoc3;
 };
 
 typedef RefPointer<VPLTriMesh> VPLTriMeshPtr;

@@ -154,17 +154,17 @@ void VPLApp::Initialize()
     rsmHeight = 512;
     mRSMPositionTextureArray = new Texture2DArray();
     mRSMPositionTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_RGBAF);
-
     mRSMNormalTextureArray = new Texture2DArray();
     mRSMNormalTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_RGBAF);
-
+    mRSMFluxTextureArray = new Texture2DArray();
+    mRSMFluxTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_RGBAF);
     mRSMDepthTextureArray = new Texture2DArray();
     mRSMDepthTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_Depth);
 
     // Create RSM frame buffer.
-    Texture* rsmRenderTargets[] = { mRSMPositionTextureArray, mRSMNormalTextureArray };
+    Texture* rsmRenderTargets[] = { mRSMPositionTextureArray, mRSMNormalTextureArray, mRSMFluxTextureArray };
     mRSMFB = new FrameBuffer();
-    mRSMFB->SetRenderTargets(2, rsmRenderTargets, mRSMDepthTextureArray);
+    mRSMFB->SetRenderTargets(3, rsmRenderTargets, mRSMDepthTextureArray);
 
 	// Create scene.
 	mat4 rotM;
@@ -246,7 +246,7 @@ void VPLApp::Initialize()
     mTempScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mTempScreenQuad->CreateDeviceResource();
     mTempScreenQuad->TempTexture = mShadowMapTexture;
-    mTempScreenQuad->TempTextureArray = mRSMNormalTextureArray;
+    mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
 
     material = new Material(mtDirectLighting);
     mDirectLightingScreenQuad = new VPLDirectLightingScreenQuad(material);
@@ -386,6 +386,7 @@ void VPLApp::Terminate()
     mRSMFB = 0;
     mRSMPositionTextureArray = 0;
     mRSMNormalTextureArray = 0;
+    mRSMFluxTextureArray = 0;
     mRSMDepthTextureArray = 0;
 
     mTempScreenQuad = 0;
@@ -405,27 +406,73 @@ void VPLApp::OnKeyboard(unsigned char key, int x, int y)
     {
     case '1':
         mShowMode = SM_Shadow;
+        mTempScreenQuad->UsingArray = false;
         mTempScreenQuad->TempTexture = mShadowMapTexture;
         break;
 
     case '2':
         mShowMode = SM_GBufferPosition;
+        mTempScreenQuad->UsingArray = false;
         mTempScreenQuad->TempTexture = mGBufferPositionTexture;
         break;
 
     case '3':
         mShowMode = SM_GBufferNormal;
+        mTempScreenQuad->UsingArray = false;
         mTempScreenQuad->TempTexture = mGBufferNormalTexture;
         break;
 
     case '4':
         mShowMode = SM_GBufferAlbedo;
+        mTempScreenQuad->UsingArray = false;
         mTempScreenQuad->TempTexture = mGBufferAlbedoTexture;
+        break;
+
+    case '5':
+        mShowMode = SM_RSMPosition;
+        mTempScreenQuad->UsingArray = true;
+        mTempScreenQuad->TempTextureArray = mRSMPositionTextureArray;
+        break;
+
+    case '6':
+        mShowMode = SM_RSMNormal;
+        mTempScreenQuad->UsingArray = true;
+        mTempScreenQuad->TempTextureArray = mRSMNormalTextureArray;
+        break;
+
+    case '7':
+        mShowMode = SM_RSMFlux;
+        mTempScreenQuad->UsingArray = true;
+        mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
         break;
 
     case '9':
         mShowMode = SM_DirectLighting;
+        mTempScreenQuad->UsingArray = false;
         mTempScreenQuad->TempTexture = mDirectLightingTexture;
+        break;
+
+    case 'X':
+        mTempScreenQuad->RSMFaceIndex = 0;
+        break;
+
+    case 'x':
+        mTempScreenQuad->RSMFaceIndex = 1;
+        break;
+
+    case 'Y':
+        mTempScreenQuad->RSMFaceIndex = 2;
+        break;
+
+    case 'y':
+        mTempScreenQuad->RSMFaceIndex = 3;
+        break;
+
+    case 'Z':
+        break;
+
+    case 'z':
+        mTempScreenQuad->RSMFaceIndex = 4;
         break;
 
     case 'w':

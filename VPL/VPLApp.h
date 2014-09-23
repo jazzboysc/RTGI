@@ -37,6 +37,9 @@ private:
         SM_GBufferPosition,
         SM_GBufferNormal,
         SM_GBufferAlbedo,
+        SM_RSMPosition,
+        SM_RSMNormal,
+        SM_RSMFlux,
         SM_DirectLighting
     };
 
@@ -74,6 +77,7 @@ private:
     FrameBufferPtr mRSMFB;
     Texture2DArrayPtr mRSMPositionTextureArray;
     Texture2DArrayPtr mRSMNormalTextureArray;
+    Texture2DArrayPtr mRSMFluxTextureArray;
     Texture2DArrayPtr mRSMDepthTextureArray;
 
     VPLTempScreenQuadPtr mTempScreenQuad;
