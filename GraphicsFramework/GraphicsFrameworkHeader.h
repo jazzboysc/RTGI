@@ -26,6 +26,8 @@
 #include "AtomicCounterBuffer.h"
 #include "TextureBuffer.h"
 #include "StructuredBuffer.h"
+#include "DispatchIndirectBuffer.h"
+#include "UniformBuffer.h"
 
 // Material
 #include "Shader.h"
@@ -36,11 +38,17 @@
 #include "TessellationControlShader.h"
 #include "TessellationEvaluationShader.h"
 #include "ShaderProgram.h"
+#include "PassBase.h"
 #include "Pass.h"
 #include "PassInfo.h"
+#include "PassManager.h"
 #include "Technique.h"
 #include "TechniqueInfo.h"
 #include "MaterialTemplate.h"
+
+// GPGPU
+#include "ComputePass.h"
+#include "ComputeTask.h"
 
 // Math
 #include "vec.h"

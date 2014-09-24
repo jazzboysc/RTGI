@@ -24,7 +24,7 @@ void Material::Apply(int techniqueNum, int passNum)
 	Technique* tech = mMaterialTemplate->GetTechnique(techniqueNum);
     assert( tech );
 
-    Pass* pass = tech->GetPass(passNum);
+    Pass* pass = (Pass*)tech->GetPass(passNum);
     assert( pass );
 
 	PassInfo* passInfo = mTechniqueInfo[techniqueNum]->GetPassInfo(passNum);
@@ -60,7 +60,7 @@ void Material::CreateDeviceResource(GeometryAttributes* geometryAttr)
 ShaderProgram* Material::GetProgram(int technique, int pass)
 {
 	Technique* t = mMaterialTemplate->GetTechnique(technique);
-	Pass* p = t->GetPass(pass);
+	Pass* p = (Pass*)t->GetPass(pass);
 	ShaderProgram* program = p->GetShaderProgram();
 	return program;
 }

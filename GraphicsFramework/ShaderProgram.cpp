@@ -206,3 +206,12 @@ bool ShaderProgram::IsTessellationEnabled() const
     return false;
 }
 //----------------------------------------------------------------------------
+bool ShaderProgram::IsComputeEnabled() const
+{
+    if( mProgramInfo.ShaderStageFlag & ShaderType::ST_Compute )
+    {
+        return true;
+    }
+    return false;
+}
+//----------------------------------------------------------------------------

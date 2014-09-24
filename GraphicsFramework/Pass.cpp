@@ -9,18 +9,19 @@ using namespace RTGI;
 
 //----------------------------------------------------------------------------
 Pass::Pass(const ShaderProgramInfo& programInfo)
+    :
+    PassBase(programInfo)
 {
-    mShaderProgram = new ShaderProgram(programInfo);
 }
 //----------------------------------------------------------------------------
 Pass::Pass(ShaderProgram* shaderProgram)
+    :
+    PassBase(shaderProgram)
 {
-	mShaderProgram = shaderProgram;
 }
 //----------------------------------------------------------------------------
 Pass::~Pass()
 {
-	mShaderProgram = 0;
 }
 //----------------------------------------------------------------------------
 void Pass::Enable()
@@ -36,15 +37,5 @@ void Pass::Disable()
 bool Pass::IsTessellationEnabled() const
 {
     return mShaderProgram->IsTessellationEnabled();
-}
-//----------------------------------------------------------------------------
-ShaderProgram* Pass::GetShaderProgram()
-{
-	return mShaderProgram;
-}
-//----------------------------------------------------------------------------
-void Pass::CreateDeviceResource()
-{
-	mShaderProgram->CreateDeviceResource();
 }
 //----------------------------------------------------------------------------

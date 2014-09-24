@@ -9,6 +9,7 @@
 #include "FrameworkCommon.h"
 #include "RefObject.h"
 #include "Material.h"
+#include "Pass.h"
 
 namespace RTGI
 {

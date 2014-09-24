@@ -7,8 +7,7 @@
 #define RTGI_Technique_H
 
 #include "FrameworkCommon.h"
-#include "RefObject.h"
-#include "Pass.h"
+#include "PassManager.h"
 
 namespace RTGI
 {
@@ -17,20 +16,11 @@ namespace RTGI
 // Author: Che Sun
 // Date: 05/18/2014
 //----------------------------------------------------------------------------
-class Technique : public RefObject
+class Technique : public PassManager
 {
 public:
 	Technique();
 	~Technique();
-
-	void AddPass(Pass* pass);
-	unsigned int GetPassCount() const;
-	Pass* GetPass(unsigned int i) const;
-
-	void CreateDeviceResource();
-
-protected:
-	std::vector<Pass*> mPasses;
 };
 
 typedef RefPointer<Technique> TechniquePtr;

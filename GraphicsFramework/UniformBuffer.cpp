@@ -1,0 +1,20 @@
+//----------------------------------------------------------------------------
+// Graphics framework for real-time GI study.
+// Che Sun at Worcester Polytechnic Institute, Fall 2013.
+//----------------------------------------------------------------------------
+#include "GraphicsFrameworkPCH.h"
+#include "UniformBuffer.h"
+
+using namespace RTGI;
+
+//----------------------------------------------------------------------------
+UniformBuffer::UniformBuffer()
+    :
+    Buffer(GL_UNIFORM_BUFFER)
+{
+}
+//----------------------------------------------------------------------------
+UniformBuffer::~UniformBuffer()
+{
+}
+//----------------------------------------------------------------------------

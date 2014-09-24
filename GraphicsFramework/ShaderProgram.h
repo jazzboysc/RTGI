@@ -64,6 +64,7 @@ public:
     GLuint GetTessellationEvaluationShader() const;
 
     bool IsTessellationEnabled() const;
+    bool IsComputeEnabled() const;
 
 	void Enable();
 	void Disable();

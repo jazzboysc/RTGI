@@ -117,7 +117,10 @@ copy /y *.inl ..\SDK\Include</Command>
     </ClCompile>
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ComputePass.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
+    <ClCompile Include="ComputeTask.cpp" />
+    <ClCompile Include="DispatchIndirectBuffer.cpp" />
     <ClCompile Include="Fog.cpp" />
     <ClCompile Include="FragmentShader.cpp" />
     <ClCompile Include="Expression.cpp" />
@@ -133,7 +136,9 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialTemplate.cpp" />
     <ClCompile Include="Pass.cpp" />
+    <ClCompile Include="PassBase.cpp" />
     <ClCompile Include="PassInfo.cpp" />
+    <ClCompile Include="PassManager.cpp" />
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="PointSet.cpp" />
     <ClCompile Include="PolyCylinder.cpp" />
@@ -158,6 +163,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="TextureCube.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="TriangleMesh.cpp" />
+    <ClCompile Include="UniformBuffer.cpp" />
     <ClCompile Include="VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,7 +175,10 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CheckError.h" />
+    <ClInclude Include="ComputePass.h" />
     <ClInclude Include="ComputeShader.h" />
+    <ClInclude Include="ComputeTask.h" />
+    <ClInclude Include="DispatchIndirectBuffer.h" />
     <ClInclude Include="Fog.h" />
     <ClInclude Include="FragmentShader.h" />
     <ClInclude Include="Expression.h" />
@@ -185,7 +194,9 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialTemplate.h" />
     <ClInclude Include="Pass.h" />
+    <ClInclude Include="PassBase.h" />
     <ClInclude Include="PassInfo.h" />
+    <ClInclude Include="PassManager.h" />
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="PointSet.h" />
     <ClInclude Include="PolyCylinder.h" />
@@ -211,6 +222,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="TextureCube.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="TriangleMesh.h" />
+    <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="vec.h" />
     <ClInclude Include="VertexShader.h" />
   </ItemGroup>

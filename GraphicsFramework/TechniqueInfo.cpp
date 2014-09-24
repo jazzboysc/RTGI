@@ -23,7 +23,7 @@ void TechniqueInfo::CreatePassInfo(Technique* technique,
 	mPassInfoArray.reserve(pcount);
 	for( unsigned int i = 0; i < pcount; ++i )
 	{
-		Pass* pass = technique->GetPass(i);
+		Pass* pass = (Pass*)technique->GetPass(i);
 		ShaderProgram* program = pass->GetShaderProgram();
 
 		PassInfo* passInfo = new PassInfo();

@@ -334,27 +334,32 @@ void VPLApp::Run()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    // Scene shadow pass.
     mShadowMapFB->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ShadowPass();
     mShadowMapFB->Disable();
 
+    // Scene G-buffer pass.
     mGBufferFB->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     GBufferPass();
     mGBufferFB->Disable();
 
+    // Scene light RSM pass.
     mRSMFB->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     RSMPass();
     mRSMFB->Disable();
 
+    // Deferred direct illumination pass.
     mDirectLightingFB->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     mDirectLightingScreenQuad->Render(0, 0);
     mDirectLightingFB->Disable();
 
+    // Show rendering result.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     mTempScreenQuad->Render(0, 0);
