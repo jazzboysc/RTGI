@@ -45,12 +45,16 @@
     <None Include="vRSM.glsl">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="cSampleRSM.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VPLApp.h" />
     <ClInclude Include="VPLTempScreenQuad.h" />
     <ClInclude Include="VPLTriMesh.h" />
     <ClInclude Include="VPLDirectLightingScreenQuad.h" />
+    <ClInclude Include="VPLSampleRSM.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -58,5 +62,6 @@
     <ClCompile Include="VPLTempScreenQuad.cpp" />
     <ClCompile Include="VPLTriMesh.cpp" />
     <ClCompile Include="VPLDirectLightingScreenQuad.cpp" />
+    <ClCompile Include="VPLSampleRSM.cpp" />
   </ItemGroup>
 </Project>

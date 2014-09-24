@@ -104,6 +104,16 @@ void VPLApp::Initialize()
     MaterialTemplate* mtDirectLighting = new MaterialTemplate();
     mtDirectLighting->AddTechnique(techDirectLighting);
 
+    // Create compute tasks.
+    ShaderProgramInfo sampleRSMProgramInfo;
+    sampleRSMProgramInfo.CShaderFileName = "cSampleRSM.glsl";
+    sampleRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+
+    ComputePass* passSampleRSM = new ComputePass(sampleRSMProgramInfo);
+    mSampleRSMTask = new VPLSampleRSM();
+    mSampleRSMTask->AddPass(passSampleRSM);
+    mSampleRSMTask->CreateDeviceResource();
+
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();
     mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_RGBAF);
@@ -359,6 +369,9 @@ void VPLApp::Run()
     mDirectLightingScreenQuad->Render(0, 0);
     mDirectLightingFB->Disable();
 
+    // Sample RSM pass (VPL generation).
+    mSampleRSMTask->Run(0, 1, 1, 1);
+
     // Show rendering result.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -393,6 +406,8 @@ void VPLApp::Terminate()
     mRSMNormalTextureArray = 0;
     mRSMFluxTextureArray = 0;
     mRSMDepthTextureArray = 0;
+
+    mSampleRSMTask = 0;
 
     mTempScreenQuad = 0;
     mDirectLightingScreenQuad = 0;

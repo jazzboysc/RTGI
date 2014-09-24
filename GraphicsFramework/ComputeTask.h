@@ -21,6 +21,12 @@ class ComputeTask : public PassManager
 public:
     ComputeTask();
     virtual ~ComputeTask();
+
+    void Run(unsigned int pass, unsigned int globalX, unsigned int globalY, 
+        unsigned int globalZ);
+
+    virtual void OnPreRun(unsigned int pass){};
+    virtual void OnPostRun(unsigned int pass){};
 };
 
 typedef RefPointer<ComputeTask> ComputeTaskPtr;

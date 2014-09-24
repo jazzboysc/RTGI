@@ -5,6 +5,7 @@
 #include "VPLTriMesh.h"
 #include "VPLTempScreenQuad.h"
 #include "VPLDirectLightingScreenQuad.h"
+#include "VPLSampleRSM.h"
 
 namespace RTGI
 {
@@ -79,6 +80,9 @@ private:
     Texture2DArrayPtr mRSMNormalTextureArray;
     Texture2DArrayPtr mRSMFluxTextureArray;
     Texture2DArrayPtr mRSMDepthTextureArray;
+
+    // Sample RSM.
+    VPLSampleRSMPtr mSampleRSMTask;
 
     VPLTempScreenQuadPtr mTempScreenQuad;
     VPLDirectLightingScreenQuadPtr mDirectLightingScreenQuad;
