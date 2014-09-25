@@ -78,13 +78,13 @@ void SSDOApp::Initialize()
 
 	// Create MRT textures.
 	mPositionTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mNormalTexture = new Texture2D();
-	mNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mColorTexture = new Texture2D();
-	mColorTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mColorTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mDepthTexture = new Texture2D();
-	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
+	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_Depth);
 
 	// Create G-buffer.
 	Texture2D* colorTextures[3] = {mPositionTexture, mNormalTexture, mColorTexture};
@@ -93,7 +93,7 @@ void SSDOApp::Initialize()
 
 	// Create direct lighting render target.
 	mDirectLightingTexture = new Texture2D();
-	mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 
 	// Create direct lighting framebuffer.
 	Texture2D* directLightingTexture[1] = {mDirectLightingTexture};
@@ -102,7 +102,7 @@ void SSDOApp::Initialize()
 
 	// Create SSDO render target.
 	mSSDOTexture = new Texture2D();
-	mSSDOTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mSSDOTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 
 	// Create SSDO framebuffer.
 	Texture2D* ssdoTexture[1] = {mSSDOTexture};

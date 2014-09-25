@@ -116,13 +116,13 @@ void VPLApp::Initialize()
 
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();
-    mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_RGBAF);
+    mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
     mGBufferNormalTexture = new Texture2D();
-    mGBufferNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_RGBAF);
+    mGBufferNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
     mGBufferAlbedoTexture = new Texture2D();
-    mGBufferAlbedoTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_RGBAF);
+    mGBufferAlbedoTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
     mGBufferDepthTexture = new Texture2D();
-    mGBufferDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_Depth);
+    mGBufferDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_Depth);
 
     // Create G-buffer.
     Texture* gbufferTextures[3] = { mGBufferPositionTexture, mGBufferNormalTexture, mGBufferAlbedoTexture };
@@ -135,11 +135,11 @@ void VPLApp::Initialize()
     shadowMapHeight = 256;
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture::RTF_RGBAF);
+        Texture::TF_RGBAF);
 
     mShadowMapDepthTexture = new Texture2D();
     mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture::RTF_Depth);
+        Texture::TF_Depth);
 
     // Create shadow map frame buffer.
     Texture* renderTargets[] = { mShadowMapTexture };
@@ -148,10 +148,10 @@ void VPLApp::Initialize()
 
     // Create direct lighting render target.
     mDirectLightingTexture = new Texture2D();
-    mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_RGBAF);
+    mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
 
     mDirectLightingDepthTexture = new Texture2D();
-    mDirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::RTF_Depth);
+    mDirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_Depth);
 
     // Create direct lighting frame buffer.
     Texture* dlRenderTargets[] = { mDirectLightingTexture };
@@ -163,13 +163,13 @@ void VPLApp::Initialize()
     rsmWidth = 512;
     rsmHeight = 512;
     mRSMPositionTextureArray = new Texture2DArray();
-    mRSMPositionTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_RGBAF);
+    mRSMPositionTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
     mRSMNormalTextureArray = new Texture2DArray();
-    mRSMNormalTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_RGBAF);
+    mRSMNormalTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
     mRSMFluxTextureArray = new Texture2DArray();
-    mRSMFluxTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_RGBAF);
+    mRSMFluxTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
     mRSMDepthTextureArray = new Texture2DArray();
-    mRSMDepthTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::RTF_Depth);
+    mRSMDepthTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_Depth);
 
     // Create RSM frame buffer.
     Texture* rsmRenderTargets[] = { mRSMPositionTextureArray, mRSMNormalTextureArray, mRSMFluxTextureArray };

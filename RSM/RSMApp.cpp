@@ -77,13 +77,13 @@ void RSMApp::Initialize()
 
 	// Create RSM-buffer MRT textures.
 	mRSMPositionTexture = new Texture2D();
-	mRSMPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mRSMPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mRSMNormalTexture = new Texture2D();
-	mRSMNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mRSMNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mRSMFluxTexture = new Texture2D();
-	mRSMFluxTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mRSMFluxTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mRSMDepthTexture = new Texture2D();
-	mRSMDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
+	mRSMDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_Depth);
 
 	// Create RSM-buffer.
 	Texture* rsmTextures[3] = {mRSMPositionTexture, mRSMNormalTexture, mRSMFluxTexture};
@@ -92,15 +92,15 @@ void RSMApp::Initialize()
     
 	// Create G-buffer MRT textures.
 	mPositionTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mNormalTexture = new Texture2D();
-	mNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mColorTexture = new Texture2D();
-	mColorTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mColorTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mDepthTexture = new Texture2D();
-	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
+	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_Depth);
 	mIndirectLightingTexture = new Texture2D();
-	mIndirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mIndirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
     
 	// Create G-buffer.
 	Texture* gbufferTextures[4] = {mPositionTexture, mNormalTexture, mColorTexture, mIndirectLightingTexture};

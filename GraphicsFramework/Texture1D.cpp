@@ -55,26 +55,48 @@ void Texture1D::BindToImageUnit(GLuint unit, GLenum access)
 #endif
 }
 //--------------------------------------------------------------------------
-void Texture1D::CreateUniformRandomTextureRG(int sampleCount)
+void Texture1D::CreateUniformRandomTexture(int sampleCount, int channelCount)
 {
-    float* pixels = new float[sampleCount * 2];
+    Width = sampleCount;
+    mType = GL_FLOAT;
+
+    switch( channelCount )
+    {
+    case 1:
+        mInternalFormat = GL_R32F;
+        mFormat = GL_R;
+        break;
+
+    case 2:
+        mInternalFormat = GL_RG32F;
+        mFormat = GL_RG;
+        break;
+
+    case 3:
+        mInternalFormat = GL_RGB32F;
+        mFormat = GL_RGB;
+        break;
+
+    default:
+        assert(false);
+        break;
+    }
+
+    float* pixels = new float[sampleCount * channelCount];
     for( int i = 0; i < sampleCount; ++i )
     {
-        pixels[2 * i    ] = (float)UniformRandom();
-        pixels[2 * i + 1] = (float)UniformRandom();
+        for( int j = 0; j < channelCount; ++j )
+        {
+            pixels[channelCount * i + j] = (float)UniformRandom();
+        }
     }
 
     glGenTextures(1, &mTexture);
     glBindTexture(GL_TEXTURE_1D, mTexture);
-    glTexImage1D(GL_TEXTURE_1D, 0, GL_RG32F, sampleCount, 0, GL_RG, GL_FLOAT,
-        pixels);
+    glTexImage1D(GL_TEXTURE_1D, 0, mInternalFormat, sampleCount, 0, mFormat, 
+        mType, pixels);
 
     delete[] pixels;
-
-    Width = sampleCount;
-    mInternalFormat = GL_RG32F;
-    mFormat = GL_RG;
-    mType = GL_FLOAT;
 
     glBindTexture(GL_TEXTURE_1D, 0);
 }

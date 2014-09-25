@@ -48,11 +48,11 @@ void GPGPUPostProcessingApp::Initialize()
     
 	// Create render target.
 	mRenderTexture = new Texture2D();
-	mRenderTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+	mRenderTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 	mDepthTexture = new Texture2D();
-	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_Depth);
+	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_Depth);
     mResultTexture = new Texture2D();
-    mResultTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::RTF_RGBF);
+    mResultTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
     
 	// Create framebuffer.
 	Texture2D* renderTexture[1] = {mRenderTexture};

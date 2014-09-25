@@ -32,7 +32,7 @@ public:
 
 	void BindToImageUnit(GLuint unit, GLenum access);
 
-    void CreateUniformRandomTextureRG(int sampleCount);
+    void CreateUniformRandomTexture(int sampleCount, int channelCount);
 
     virtual TextureType GetType();
 

@@ -23,11 +23,11 @@ public:
     ~Texture2DArray();
 
 	void CreateRenderTarget(int width, int height, int depth, 
-        RenderTargetFormat format);
+        TextureFormat format);
 
 	int Width, Height, Depth;
 	bool IsRenderTarget;
-	RenderTargetFormat RTFormat;
+	TextureFormat RTFormat;
 
     virtual TextureType GetType();
 

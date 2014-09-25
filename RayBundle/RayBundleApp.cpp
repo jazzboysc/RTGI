@@ -187,7 +187,7 @@ void RayBundleApp::Initialize()
 	// Create ray head pointer texture.
 	mRayHeadPointerTexture = new Texture2D();
 	mRayHeadPointerTexture->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, 
-		Texture2D::RTF_R32UI);
+		Texture2D::TF_R32UI);
 
 	// Create ray head pointer texture init data.
 	pixelCount = mRayBundleRTWidth * mRayBundleRTHeight;
@@ -232,9 +232,9 @@ void RayBundleApp::Initialize()
 
 	// Create ray-bundle render target.
 	mRayBundleRT = new Texture2D();
-	mRayBundleRT->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, Texture2D::RTF_RGBF);
+	mRayBundleRT->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, Texture2D::TF_RGBF);
 	mRayBundleDepth = new Texture2D();
-	mRayBundleDepth->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, Texture2D::RTF_Depth);
+	mRayBundleDepth->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, Texture2D::TF_Depth);
 
 	Texture2D* rayBundleRT[1] = {mRayBundleRT};
 	mRayBundleFB = new FrameBuffer();

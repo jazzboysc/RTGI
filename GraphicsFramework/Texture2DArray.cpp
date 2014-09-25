@@ -22,7 +22,7 @@ Texture2DArray::~Texture2DArray()
 }
 //----------------------------------------------------------------------------
 void Texture2DArray::CreateRenderTarget(int width, int height, int depth,
-	RenderTargetFormat format)
+	TextureFormat format)
 {
 	Width = width;
 	Height = height;
@@ -35,24 +35,24 @@ void Texture2DArray::CreateRenderTarget(int width, int height, int depth,
 
 	switch (RTFormat)
 	{
-	case RTGI::Texture::RTF_RGB:
+	case RTGI::Texture::TF_RGB:
 		// TODO:
 		assert( false );
 		break;
 
-	case RTGI::Texture::RTF_RGBF:
+	case RTGI::Texture::TF_RGBF:
 		mInternalFormat = GL_RGB32F_ARB;
 		mFormat = GL_RGB;
 		mType = GL_FLOAT;
 		break;
 
-    case RTGI::Texture::RTF_RGBAF:
+    case RTGI::Texture::TF_RGBAF:
         mInternalFormat = GL_RGBA32F_ARB;
         mFormat = GL_RGBA;
         mType = GL_FLOAT;
         break;
 
-	case RTGI::Texture::RTF_R32UI:
+	case RTGI::Texture::TF_R32UI:
 #ifndef __APPLE__
 		mInternalFormat = GL_R32UI;
 		mFormat = GL_RED_INTEGER;
@@ -62,13 +62,13 @@ void Texture2DArray::CreateRenderTarget(int width, int height, int depth,
 #endif
 		break;
 
-    case RTGI::Texture::RTF_R32F:
+    case RTGI::Texture::TF_R32F:
         mInternalFormat = GL_R32F;
         mFormat = GL_RED;
         mType = GL_FLOAT;
         break;
 
-	case RTGI::Texture::RTF_Depth:
+	case RTGI::Texture::TF_Depth:
 		mInternalFormat = GL_DEPTH_COMPONENT24;
 		mFormat = GL_DEPTH_COMPONENT;
 		mType = GL_UNSIGNED_BYTE;

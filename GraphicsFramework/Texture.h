@@ -19,14 +19,14 @@ namespace RTGI
 class Texture : public RefObject
 {
 public:
-    enum RenderTargetFormat
+    enum TextureFormat
     {
-        RTF_RGB,
-        RTF_RGBF,
-        RTF_RGBAF,
-        RTF_R32UI,
-        RTF_R32F,
-        RTF_Depth
+        TF_RGB,
+        TF_RGBF,
+        TF_RGBAF,
+        TF_R32UI,
+        TF_R32F,
+        TF_Depth
     };
 
     enum TextureType

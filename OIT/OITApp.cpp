@@ -76,7 +76,7 @@ void OITApp::Initialize()
 	// Create head pointer texture.
 	mHeadPointerTexture = new Texture2D();
 	mHeadPointerTexture->CreateRenderTarget(mWidth, mHeight, 
-		Texture2D::RTF_R32UI);
+		Texture2D::TF_R32UI);
 
 	// Create head pointer texture init data.
 	int pixelCount = mWidth * mHeight;

@@ -40,7 +40,7 @@ public:
 	bool LoadFromTextureBuffer(TextureBuffer* textureBuffer, GLenum internalFormat);
 #endif
 
-	void CreateRenderTarget(int width, int height, RenderTargetFormat format);
+	void CreateRenderTarget(int width, int height, TextureFormat format);
 
 	// Update a render target from pixel buffer.
 	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
@@ -61,7 +61,7 @@ public:
 	bool IsTextureBuffer;
 	float LMax;
 	float RevGamma;
-	RenderTargetFormat RTFormat;
+	TextureFormat RTFormat;
 
 private:
 	GLint mInternalFormat;

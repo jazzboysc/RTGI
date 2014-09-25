@@ -109,11 +109,11 @@ void SIIApp::Initialize()
     shadowMapHeight = 1024;
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture2D::RTF_RGBF);
+        Texture2D::TF_RGBF);
 
     mShadowMapDepthTexture = new Texture2D();
     mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture2D::RTF_Depth);
+        Texture2D::TF_Depth);
 
     // Create shadow map frame buffer.
     Texture* renderTargets[] = { mShadowMapTexture };
@@ -124,13 +124,13 @@ void SIIApp::Initialize()
     int RSMWidth = 1024;
     int RSMHeight = 1024;
     mRSMPositionTexturePX = new Texture2D();
-    mRSMPositionTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::RTF_RGBF);
+    mRSMPositionTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::TF_RGBF);
     mRSMNormalTexturePX = new Texture2D();
-    mRSMNormalTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::RTF_RGBF);
+    mRSMNormalTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::TF_RGBF);
     mRSMFluxTexturePX = new Texture2D();
-    mRSMFluxTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::RTF_RGBF);
+    mRSMFluxTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::TF_RGBF);
     mRSMDepthTexturePX = new Texture2D();
-    mRSMDepthTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::RTF_Depth);
+    mRSMDepthTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::TF_Depth);
 
     // Create RSM-buffer.
     Texture* rsmTextures[3] = { mRSMPositionTexturePX, mRSMNormalTexturePX, mRSMFluxTexturePX };
@@ -139,7 +139,7 @@ void SIIApp::Initialize()
 
     // Create RSM sample texture.
     mRSMSampleTexture = new Texture1D();
-    mRSMSampleTexture->CreateUniformRandomTextureRG(128);
+    mRSMSampleTexture->CreateUniformRandomTexture(128, 2);
 
     // Create VPL quad.
     material = new Material(mtVPLQuad);
