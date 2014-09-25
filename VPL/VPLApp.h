@@ -88,6 +88,7 @@ private:
     enum { VPL_SAMPLE_COUNT = 16 };
     Texture1DPtr mVPLSamplePattern;
     Texture1DPtr mVPLSampleTest;
+    StructuredBufferPtr mVPLBuffer;
 
     VPLTempScreenQuadPtr mTempScreenQuad;
     VPLDirectLightingScreenQuadPtr mDirectLightingScreenQuad;

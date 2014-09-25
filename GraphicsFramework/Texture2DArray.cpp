@@ -87,6 +87,16 @@ void Texture2DArray::CreateRenderTarget(int width, int height, int depth,
     glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
 //--------------------------------------------------------------------------
+void Texture2DArray::BindToImageUnit(GLuint unit, GLenum access)
+{
+#if defined(__APPLE__)
+    assert(false);
+#else
+    glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access,
+        mInternalFormat);
+#endif
+}
+//--------------------------------------------------------------------------
 Texture::TextureType Texture2DArray::GetType()
 {
     return Texture::TT_Texture2DArray;

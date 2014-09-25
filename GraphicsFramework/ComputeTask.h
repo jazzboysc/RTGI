@@ -8,6 +8,7 @@
 
 #include "FrameworkCommon.h"
 #include "PassManager.h"
+#include "ComputePass.h"
 
 namespace RTGI
 {

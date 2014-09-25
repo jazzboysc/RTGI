@@ -104,24 +104,6 @@ void VPLApp::Initialize()
     MaterialTemplate* mtDirectLighting = new MaterialTemplate();
     mtDirectLighting->AddTechnique(techDirectLighting);
 
-    // Create VPL sample pattern.
-    mVPLSamplePattern = new Texture1D();
-    mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
-    mVPLSampleTest = new Texture1D();
-    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
-
-    // Create VPL sample compute tasks.
-    ShaderProgramInfo sampleRSMProgramInfo;
-    sampleRSMProgramInfo.CShaderFileName = "cSampleRSM.glsl";
-    sampleRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-
-    ComputePass* passSampleRSM = new ComputePass(sampleRSMProgramInfo);
-    mSampleRSMTask = new VPLSampleRSM();
-    mSampleRSMTask->AddPass(passSampleRSM);
-    mSampleRSMTask->CreateDeviceResource();
-    mSampleRSMTask->VPLSamplePattern = mVPLSamplePattern;
-    mSampleRSMTask->VPLSampleTest = mVPLSampleTest;
-
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();
     mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
@@ -183,6 +165,33 @@ void VPLApp::Initialize()
     Texture* rsmRenderTargets[] = { mRSMPositionTextureArray, mRSMNormalTextureArray, mRSMFluxTextureArray };
     mRSMFB = new FrameBuffer();
     mRSMFB->SetRenderTargets(3, rsmRenderTargets, mRSMDepthTextureArray);
+
+    // Create VPL sample pattern.
+    mVPLSamplePattern = new Texture1D();
+    mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
+    mVPLSampleTest = new Texture1D();
+    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
+
+    // Create VPL buffer.
+    GLuint vplBufferSize = sizeof(vec4)* 3 * VPL_SAMPLE_COUNT;
+    mVPLBuffer = new StructuredBuffer();
+    mVPLBuffer->ReserveDeviceResource(vplBufferSize, GL_DYNAMIC_COPY);
+
+    // Create VPL sample compute tasks.
+    ShaderProgramInfo sampleRSMProgramInfo;
+    sampleRSMProgramInfo.CShaderFileName = "cSampleRSM.glsl";
+    sampleRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+
+    ComputePass* passSampleRSM = new ComputePass(sampleRSMProgramInfo);
+    mSampleRSMTask = new VPLSampleRSM();
+    mSampleRSMTask->AddPass(passSampleRSM);
+    mSampleRSMTask->CreateDeviceResource();
+    mSampleRSMTask->VPLSamplePattern = mVPLSamplePattern;
+    mSampleRSMTask->VPLSampleTest = mVPLSampleTest;
+    mSampleRSMTask->RSMPosition = mRSMPositionTextureArray;
+    mSampleRSMTask->RSMNormal = mRSMNormalTextureArray;
+    mSampleRSMTask->RSMFlux = mRSMFluxTextureArray;
+    mSampleRSMTask->VPLBuffer = mVPLBuffer;
 
 	// Create scene.
 	mat4 rotM;
@@ -418,6 +427,7 @@ void VPLApp::Terminate()
     mSampleRSMTask = 0;
     mVPLSamplePattern = 0;
     mVPLSampleTest = 0;
+    mVPLBuffer = 0;
 
     mTempScreenQuad = 0;
     mDirectLightingScreenQuad = 0;

@@ -3,6 +3,8 @@
 
 #include "ComputeTask.h"
 #include "Texture1D.h"
+#include "Texture2DArray.h"
+#include "StructuredBuffer.h"
 
 namespace RTGI
 {
@@ -18,11 +20,21 @@ public:
     ~VPLSampleRSM();
 
     // Implement base class interface.
+    virtual void OnGetShaderConstants();
     virtual void OnPreDispatch(unsigned int pass);
     virtual void OnPostDispatch(unsigned int pass);
 
     Texture1DPtr VPLSamplePattern;
     Texture1DPtr VPLSampleTest;
+    Texture2DArrayPtr RSMPosition;
+    Texture2DArrayPtr RSMNormal;
+    Texture2DArrayPtr RSMFlux;
+    StructuredBufferPtr VPLBuffer;
+
+private:
+    GLint mRSMPositionLoc;
+    GLint mRSMNormalLoc;
+    GLint mRSMFluxLoc;
 };
 
 typedef RefPointer<VPLSampleRSM> VPLSampleRSMPtr;

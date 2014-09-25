@@ -25,6 +25,8 @@ public:
 	void CreateRenderTarget(int width, int height, int depth, 
         TextureFormat format);
 
+    void BindToImageUnit(GLuint unit, GLenum access);
+
 	int Width, Height, Depth;
 	bool IsRenderTarget;
 	TextureFormat RTFormat;
