@@ -2,6 +2,7 @@
 #define RTGI_VPLSampleRSM_H
 
 #include "ComputeTask.h"
+#include "Texture1D.h"
 
 namespace RTGI
 {
@@ -17,11 +18,11 @@ public:
     ~VPLSampleRSM();
 
     // Implement base class interface.
-    virtual void OnPreRun(unsigned int pass);
-    virtual void OnPostRun(unsigned int pass);
+    virtual void OnPreDispatch(unsigned int pass);
+    virtual void OnPostDispatch(unsigned int pass);
 
-private:
-
+    Texture1DPtr VPLSamplePattern;
+    Texture1DPtr VPLSampleTest;
 };
 
 typedef RefPointer<VPLSampleRSM> VPLSampleRSMPtr;

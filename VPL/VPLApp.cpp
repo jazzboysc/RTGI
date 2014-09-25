@@ -113,6 +113,14 @@ void VPLApp::Initialize()
     mSampleRSMTask = new VPLSampleRSM();
     mSampleRSMTask->AddPass(passSampleRSM);
     mSampleRSMTask->CreateDeviceResource();
+    mSampleRSMTask->VPLSamplePattern = mVPLSamplePattern;
+    mSampleRSMTask->VPLSampleTest = mVPLSampleTest;
+
+    // Create VPL sample pattern.
+    mVPLSamplePattern = new Texture1D();
+    mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
+    mVPLSampleTest = new Texture1D();
+    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
 
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();
@@ -370,7 +378,7 @@ void VPLApp::Run()
     mDirectLightingFB->Disable();
 
     // Sample RSM pass (VPL generation).
-    mSampleRSMTask->Run(0, 1, 1, 1);
+    mSampleRSMTask->Dispatch(0, 1, 1, 1);
 
     // Show rendering result.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -408,6 +416,8 @@ void VPLApp::Terminate()
     mRSMDepthTextureArray = 0;
 
     mSampleRSMTask = 0;
+    mVPLSamplePattern = 0;
+    mVPLSampleTest = 0;
 
     mTempScreenQuad = 0;
     mDirectLightingScreenQuad = 0;

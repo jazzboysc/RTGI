@@ -22,11 +22,14 @@ public:
     ComputeTask();
     virtual ~ComputeTask();
 
-    void Run(unsigned int pass, unsigned int globalX, unsigned int globalY, 
-        unsigned int globalZ);
+    void CreateDeviceResource();
 
-    virtual void OnPreRun(unsigned int pass){};
-    virtual void OnPostRun(unsigned int pass){};
+    void Dispatch(unsigned int pass, unsigned int globalX, 
+        unsigned int globalY, unsigned int globalZ);
+
+    virtual void OnGetShaderConstants(){};
+    virtual void OnPreDispatch(unsigned int pass){};
+    virtual void OnPostDispatch(unsigned int pass){};
 };
 
 typedef RefPointer<ComputeTask> ComputeTaskPtr;

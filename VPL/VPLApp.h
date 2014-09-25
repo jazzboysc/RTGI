@@ -84,6 +84,11 @@ private:
     // Sample RSM.
     VPLSampleRSMPtr mSampleRSMTask;
 
+    // VPL stuff.
+    enum { VPL_SAMPLE_COUNT = 16 };
+    Texture1DPtr mVPLSamplePattern;
+    Texture1DPtr mVPLSampleTest;
+
     VPLTempScreenQuadPtr mTempScreenQuad;
     VPLDirectLightingScreenQuadPtr mDirectLightingScreenQuad;
 

@@ -77,6 +77,11 @@ void Texture1D::CreateUniformRandomTexture(int sampleCount, int channelCount)
         mFormat = GL_RGB;
         break;
 
+    case 4:
+        mInternalFormat = GL_RGBA32F;
+        mFormat = GL_RGBA;
+        break;
+
     default:
         assert(false);
         break;
