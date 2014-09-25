@@ -106,6 +106,13 @@ void Texture1D::CreateUniformRandomTexture(int sampleCount, int channelCount)
     glBindTexture(GL_TEXTURE_1D, 0);
 }
 //--------------------------------------------------------------------------
+void Texture1D::GetDataFromGPUMemory(void* dstData)
+{
+    glBindTexture(GL_TEXTURE_1D, mTexture);
+    glGetTexImage(GL_TEXTURE_1D, 0, mFormat, mType, dstData);
+    glBindTexture(GL_TEXTURE_1D, 0);
+}
+//--------------------------------------------------------------------------
 Texture::TextureType Texture1D::GetType()
 {
     return Texture::TT_Texture1D;

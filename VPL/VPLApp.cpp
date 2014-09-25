@@ -104,7 +104,13 @@ void VPLApp::Initialize()
     MaterialTemplate* mtDirectLighting = new MaterialTemplate();
     mtDirectLighting->AddTechnique(techDirectLighting);
 
-    // Create compute tasks.
+    // Create VPL sample pattern.
+    mVPLSamplePattern = new Texture1D();
+    mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
+    mVPLSampleTest = new Texture1D();
+    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
+
+    // Create VPL sample compute tasks.
     ShaderProgramInfo sampleRSMProgramInfo;
     sampleRSMProgramInfo.CShaderFileName = "cSampleRSM.glsl";
     sampleRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
@@ -115,12 +121,6 @@ void VPLApp::Initialize()
     mSampleRSMTask->CreateDeviceResource();
     mSampleRSMTask->VPLSamplePattern = mVPLSamplePattern;
     mSampleRSMTask->VPLSampleTest = mVPLSampleTest;
-
-    // Create VPL sample pattern.
-    mVPLSamplePattern = new Texture1D();
-    mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
-    mVPLSampleTest = new Texture1D();
-    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
 
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();

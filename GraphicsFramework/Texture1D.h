@@ -34,6 +34,8 @@ public:
 
     void CreateUniformRandomTexture(int sampleCount, int channelCount);
 
+    void GetDataFromGPUMemory(void* dstData);
+
     virtual TextureType GetType();
 
 	int Width;
