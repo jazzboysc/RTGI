@@ -43,9 +43,11 @@ private:
         SM_RSMNormal,
         SM_RSMFlux,
         SM_DirectLighting,
-        SM_IndirectLighting
+        SM_IndirectLighting,
+        SM_Final
     };
 
+    bool mIsRotatingModel;
     bool mIsWireframe;
     ShowMode mShowMode;
 
@@ -92,7 +94,7 @@ private:
     VPLSampleRSMPtr mSampleRSMTask;
 
     // VPL stuff.
-    enum { VPL_SAMPLE_COUNT = 256 };
+    enum { VPL_SAMPLE_COUNT = 128 };
     Texture1DPtr mVPLSamplePattern;
     Texture1DPtr mVPLSampleTest;
     StructuredBufferPtr mVPLBuffer;

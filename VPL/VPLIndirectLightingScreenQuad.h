@@ -23,6 +23,7 @@ public:
 	virtual void OnGetShaderConstants();
 
     int VPLCount;
+    float BounceSingularity;
     Texture2DPtr GBufferPositionTexture;
     Texture2DPtr GBufferNormalTexture;
     Texture2DPtr GBufferAlbedoTexture;
@@ -30,6 +31,7 @@ public:
 
 private:
     GLint mVPLCountLoc;
+    GLint mBounceSingularityLoc;
 	GLint mGBufferPositionSamplerLoc;
     GLint mGBufferNormalSamplerLoc;
     GLint mGBufferAlbedoSamplerLoc;

@@ -7,6 +7,7 @@ VPLIndirectLightingScreenQuad::VPLIndirectLightingScreenQuad(Material* material)
 	:
 	ScreenQuad(material, 0)
 {
+    BounceSingularity = 80.0f;
 }
 //----------------------------------------------------------------------------
 VPLIndirectLightingScreenQuad::~VPLIndirectLightingScreenQuad()
@@ -20,6 +21,7 @@ VPLIndirectLightingScreenQuad::~VPLIndirectLightingScreenQuad()
 void VPLIndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 {
     glUniform1i(mVPLCountLoc, VPLCount);
+    glUniform1f(mBounceSingularityLoc, BounceSingularity);
 
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, GBufferPositionTexture->GetTexture());
@@ -53,6 +55,7 @@ void VPLIndirectLightingScreenQuad::OnGetShaderConstants()
 	GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
 
     mVPLCountLoc = glGetUniformLocation(program, "VPLCount");
+    mBounceSingularityLoc = glGetUniformLocation(program, "BounceSingularity");
     mGBufferPositionSamplerLoc = glGetUniformLocation(program, "GBufferPositionSampler");
     mGBufferNormalSamplerLoc = glGetUniformLocation(program, "GBufferNormalSampler");
     mGBufferAlbedoSamplerLoc = glGetUniformLocation(program, "GBufferAlbedoSampler");

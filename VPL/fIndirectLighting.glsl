@@ -2,7 +2,10 @@
 
 in vec2 pTCoord;
 
+#define PI 3.141593
+
 uniform int VPLCount;
+uniform float BounceSingularity;
 uniform sampler2D GBufferPositionSampler;
 uniform sampler2D GBufferNormalSampler;
 uniform sampler2D GBufferAlbedoSampler;
@@ -36,6 +39,7 @@ void main()
     for( int i = 0; i < VPLCount; ++i )
     {
         VPL vpl = VPLBuffer.vpls[i];
+        vpl.WorldNormal = vpl.WorldNormal*2.0 - 1.0;
 
         vec3 incidentDir = PositionWorld.xyz - vpl.WorldPosition.xyz;
         float len = length(incidentDir);
@@ -43,11 +47,12 @@ void main()
 
         float cos0 = max(0.0, dot(NormalWorld, -incidentDir));
         float cos1 = max(0.0, dot(incidentDir, vpl.WorldNormal.xyz));
+        float geometricTerm = cos0 * cos1 / max(len*len, BounceSingularity);
 
-        indirectColor += (MaterialColor.rgb * vpl.Flux.rgb * cos0 * cos1);
+        indirectColor += MaterialColor.rgb * vpl.Flux.rgb * geometricTerm;
     }
-    indirectColor /= VPLCount;
-    indirectColor = indirectColor * 2 * 3.1415926;
+
+    indirectColor = indirectColor * 2 * PI;
 
     gl_FragData[0] = vec4(indirectColor, 1.0);
 }

@@ -53,7 +53,8 @@ void main()
     {
         // Direct lighting.
         vec3 lightDir = LightPositionWorld - PositionWorld.xyz;
-        lightDir = normalize(lightDir);
+        float len = length(lightDir);
+        lightDir = lightDir / len;
         float d = max(0.0, dot(lightDir, NormalWorld));
         vec3 color = MaterialColor.rgb * d;
         gl_FragData[0] = vec4(color, 1.0);

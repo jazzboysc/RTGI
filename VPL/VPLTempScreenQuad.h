@@ -23,13 +23,15 @@ public:
 	virtual void OnGetShaderConstants();
 
 	Texture2DPtr TempTexture;
+    Texture2DPtr TempTexture2;
     Texture2DArrayPtr TempTextureArray;
-    bool UsingArray;
+    int ShowMode;
     int RSMFaceIndex;
 
 private:
-    GLint mUsingArrayLoc;
+    GLint mShowModeLoc;
 	GLint mTempSamplerLoc;
+    GLint mTempSampler2Loc;
     GLint mTempSamplerArrayLoc;
     GLint mRSMFaceIndexLoc;
 };

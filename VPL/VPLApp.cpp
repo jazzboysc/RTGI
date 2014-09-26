@@ -11,6 +11,7 @@ VPLApp::VPLApp(int width, int height)
 	mWindowTitle("VPL demo")
 {
     mShowMode = SM_Shadow;
+    mIsRotatingModel = false;
     mIsWireframe = false;
 }
 //----------------------------------------------------------------------------
@@ -32,7 +33,7 @@ void VPLApp::Initialize()
     // Create scene camera.
 	mCamera = new Camera();
 	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 0.01f, 50.0f);
-	mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
+	mCamera->SetLookAt(vec3(0.0f, 10.0f, 33.2f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
     // Create light projector.
@@ -133,8 +134,8 @@ void VPLApp::Initialize()
 
     // Create shadow map render target.
     int shadowMapWidth, shadowMapHeight;
-    shadowMapWidth = 256;
-    shadowMapHeight = 256;
+    shadowMapWidth = 512;
+    shadowMapHeight = 512;
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
         Texture::TF_RGBAF);
@@ -221,13 +222,13 @@ void VPLApp::Initialize()
 	mat4 rotM;
 	material = new Material(mtVPL);
 	mModel = new VPLTriMesh(material, mCamera);
-	mModel->LoadFromFile("cow.ply");
-    mat4 scale = Scale(vec3(2.0f));
+	mModel->LoadFromFile("dragon_s.ply");
+    mat4 scale = Scale(vec3(60.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
-	mModel->SetWorldTranslation(vec3(-2.0f, 3.0f, 3.0f));
-	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
+	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
+	mModel->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
     mModel->LightProjector = mLightProjector;
     mModel->ShadowMap = mShadowMapTexture;
 
@@ -236,7 +237,7 @@ void VPLApp::Initialize()
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-    mGround->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
+    mGround->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mGround->LightProjector = mLightProjector;
     mGround->ShadowMap = mShadowMapTexture;
 
@@ -248,7 +249,7 @@ void VPLApp::Initialize()
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
-    mCeiling->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
+    mCeiling->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mCeiling->LightProjector = mLightProjector;
     mCeiling->ShadowMap = mShadowMapTexture;
 
@@ -260,7 +261,7 @@ void VPLApp::Initialize()
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
-    mBackWall->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
+    mBackWall->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mBackWall->LightProjector = mLightProjector;
     mBackWall->ShadowMap = mShadowMapTexture;
 
@@ -272,7 +273,7 @@ void VPLApp::Initialize()
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
-    mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+    mLeftWall->MaterialColor = vec3(1.0f, 0.2f, 0.2f);
     mLeftWall->LightProjector = mLightProjector;
     mLeftWall->ShadowMap = mShadowMapTexture;
 
@@ -284,7 +285,7 @@ void VPLApp::Initialize()
 	rotM = RotateZ(90.0f);
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
-    mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
+    mRightWall->MaterialColor = vec3(0.2f, 1.0f, 0.2f);
     mRightWall->LightProjector = mLightProjector;
     mRightWall->ShadowMap = mShadowMapTexture;
 
@@ -383,12 +384,15 @@ void VPLApp::RSMPass()
 void VPLApp::Run()
 {
     static float angle = 0.0f;
-    angle += 1.0f;
-    mat4 rot;
-    rot = RotateY(angle);
-    vec3 trans = mModel->GetWorldTranslation();
-    mModel->SetWorldTransform(rot);
-    mModel->SetWorldTranslation(trans);
+    if( mIsRotatingModel )
+    {
+        angle += 1.0f;
+        mat4 rot;
+        rot = RotateY(angle);
+        vec3 trans = mModel->GetWorldTranslation();
+        mModel->SetWorldTransform(rot);
+        mModel->SetWorldTranslation(trans);
+    }
 
     if( mIsWireframe )
     {
@@ -417,6 +421,9 @@ void VPLApp::Run()
     RSMPass();
     mRSMFB->Disable();
 
+    // Sample RSM pass (VPL generation).
+    mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
+
     // Deferred direct illumination pass.
     mDirectLightingFB->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -430,9 +437,6 @@ void VPLApp::Run()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     mIndirectLightingScreenQuad->Render(0, 0);
     mIndirectLightingFB->Disable();
-
-    // Sample RSM pass (VPL generation).
-    mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
 
     // Show rendering result.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -496,56 +500,63 @@ void VPLApp::OnKeyboard(unsigned char key, int x, int y)
     {
     case '1':
         mShowMode = SM_Shadow;
-        mTempScreenQuad->UsingArray = false;
+        mTempScreenQuad->ShowMode = 0;
         mTempScreenQuad->TempTexture = mShadowMapTexture;
         break;
 
     case '2':
         mShowMode = SM_GBufferPosition;
-        mTempScreenQuad->UsingArray = false;
+        mTempScreenQuad->ShowMode = 0;
         mTempScreenQuad->TempTexture = mGBufferPositionTexture;
         break;
 
     case '3':
         mShowMode = SM_GBufferNormal;
-        mTempScreenQuad->UsingArray = false;
+        mTempScreenQuad->ShowMode = 0;
         mTempScreenQuad->TempTexture = mGBufferNormalTexture;
         break;
 
     case '4':
         mShowMode = SM_GBufferAlbedo;
-        mTempScreenQuad->UsingArray = false;
+        mTempScreenQuad->ShowMode = 0;
         mTempScreenQuad->TempTexture = mGBufferAlbedoTexture;
         break;
 
     case '5':
         mShowMode = SM_RSMPosition;
-        mTempScreenQuad->UsingArray = true;
+        mTempScreenQuad->ShowMode = 1;
         mTempScreenQuad->TempTextureArray = mRSMPositionTextureArray;
         break;
 
     case '6':
         mShowMode = SM_RSMNormal;
-        mTempScreenQuad->UsingArray = true;
+        mTempScreenQuad->ShowMode = 1;
         mTempScreenQuad->TempTextureArray = mRSMNormalTextureArray;
         break;
 
     case '7':
         mShowMode = SM_RSMFlux;
-        mTempScreenQuad->UsingArray = true;
+        mTempScreenQuad->ShowMode = 1;
         mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
         break;
 
     case '8':
         mShowMode = SM_DirectLighting;
-        mTempScreenQuad->UsingArray = false;
+        mTempScreenQuad->ShowMode = 0;
         mTempScreenQuad->TempTexture = mDirectLightingTexture;
         break;
 
     case '9':
         mShowMode = SM_IndirectLighting;
-        mTempScreenQuad->UsingArray = false;
+        mTempScreenQuad->ShowMode = 0;
         mTempScreenQuad->TempTexture = mIndirectLightingTexture;
+        break;
+
+    case '0':
+        mShowMode = SM_Final;
+        mTempScreenQuad->ShowMode = 2;
+        mTempScreenQuad->TempTexture = mIndirectLightingTexture;
+        mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
         break;
 
     case 'X':
@@ -573,6 +584,10 @@ void VPLApp::OnKeyboard(unsigned char key, int x, int y)
 
     case 'w':
         mIsWireframe = !mIsWireframe;
+        break;
+
+    case 'r':
+        mIsRotatingModel = !mIsRotatingModel;
         break;
 
     default:
