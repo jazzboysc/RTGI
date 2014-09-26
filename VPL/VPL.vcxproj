@@ -14,6 +14,7 @@
     <None Include="cSampleRSM.glsl" />
     <None Include="fDirectLighting.glsl" />
     <None Include="fGBuffer.glsl" />
+    <None Include="fIndirectLighting.glsl" />
     <None Include="fRSM.glsl" />
     <None Include="fShadow.glsl" />
     <None Include="fVPLTemp.glsl" />
@@ -22,6 +23,7 @@
     <None Include="teShadow.glsl" />
     <None Include="vDirectLighting.glsl" />
     <None Include="vGBuffer.glsl" />
+    <None Include="vIndirectLighting.glsl" />
     <None Include="vRSM.glsl" />
     <None Include="vShadow.glsl" />
     <None Include="vVPLTemp.glsl" />
@@ -29,6 +31,7 @@
   <ItemGroup>
     <ClInclude Include="VPLApp.h" />
     <ClInclude Include="VPLDirectLightingScreenQuad.h" />
+    <ClInclude Include="VPLIndirectLightingScreenQuad.h" />
     <ClInclude Include="VPLSampleRSM.h" />
     <ClInclude Include="VPLTempScreenQuad.h" />
     <ClInclude Include="VPLTriMesh.h" />
@@ -37,6 +40,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="VPLApp.cpp" />
     <ClCompile Include="VPLDirectLightingScreenQuad.cpp" />
+    <ClCompile Include="VPLIndirectLightingScreenQuad.cpp" />
     <ClCompile Include="VPLSampleRSM.cpp" />
     <ClCompile Include="VPLTempScreenQuad.cpp" />
     <ClCompile Include="VPLTriMesh.cpp" />

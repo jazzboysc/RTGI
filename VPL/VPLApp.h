@@ -5,6 +5,7 @@
 #include "VPLTriMesh.h"
 #include "VPLTempScreenQuad.h"
 #include "VPLDirectLightingScreenQuad.h"
+#include "VPLIndirectLightingScreenQuad.h"
 #include "VPLSampleRSM.h"
 
 namespace RTGI
@@ -41,7 +42,8 @@ private:
         SM_RSMPosition,
         SM_RSMNormal,
         SM_RSMFlux,
-        SM_DirectLighting
+        SM_DirectLighting,
+        SM_IndirectLighting
     };
 
     bool mIsWireframe;
@@ -74,6 +76,11 @@ private:
     Texture2DPtr mDirectLightingTexture;
     Texture2DPtr mDirectLightingDepthTexture;
 
+    // Indirect illumination buffer.
+    FrameBufferPtr mIndirectLightingFB;
+    Texture2DPtr mIndirectLightingTexture;
+    Texture2DPtr mIndirectLightingDepthTexture;
+
     // Scene light RSM.
     FrameBufferPtr mRSMFB;
     Texture2DArrayPtr mRSMPositionTextureArray;
@@ -85,13 +92,14 @@ private:
     VPLSampleRSMPtr mSampleRSMTask;
 
     // VPL stuff.
-    enum { VPL_SAMPLE_COUNT = 16 };
+    enum { VPL_SAMPLE_COUNT = 256 };
     Texture1DPtr mVPLSamplePattern;
     Texture1DPtr mVPLSampleTest;
     StructuredBufferPtr mVPLBuffer;
 
     VPLTempScreenQuadPtr mTempScreenQuad;
     VPLDirectLightingScreenQuadPtr mDirectLightingScreenQuad;
+    VPLIndirectLightingScreenQuadPtr mIndirectLightingScreenQuad;
 
 	VPLTriMeshPtr mGround;
 	VPLTriMeshPtr mCeiling;

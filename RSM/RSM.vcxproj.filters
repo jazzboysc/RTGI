@@ -31,12 +31,6 @@
     <None Include="vRSMTemp.glsl">
       <Filter>GLSL</Filter>
     </None>
-    <None Include="fIndirectLighting.glsl">
-      <Filter>GLSL</Filter>
-    </None>
-    <None Include="vIndirectLighting.glsl">
-      <Filter>GLSL</Filter>
-    </None>
     <None Include="fRSMDeferredLighting.glsl">
       <Filter>GLSL</Filter>
     </None>

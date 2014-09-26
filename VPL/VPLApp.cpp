@@ -104,6 +104,18 @@ void VPLApp::Initialize()
     MaterialTemplate* mtDirectLighting = new MaterialTemplate();
     mtDirectLighting->AddTechnique(techDirectLighting);
 
+    ShaderProgramInfo indirectLightingProgramInfo;
+    indirectLightingProgramInfo.VShaderFileName = "vIndirectLighting.glsl";
+    indirectLightingProgramInfo.FShaderFileName = "fIndirectLighting.glsl";
+    indirectLightingProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                                  ShaderType::ST_Fragment;
+    Pass* passIndirectLighting = new Pass(indirectLightingProgramInfo);
+
+    Technique* techIndirectLighting = new Technique();
+    techIndirectLighting->AddPass(passIndirectLighting);
+    MaterialTemplate* mtIndirectLighting = new MaterialTemplate();
+    mtIndirectLighting->AddTechnique(techIndirectLighting);
+
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();
     mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
@@ -148,6 +160,18 @@ void VPLApp::Initialize()
     mDirectLightingFB = new FrameBuffer();
     mDirectLightingFB->SetRenderTargets(1, dlRenderTargets, mDirectLightingDepthTexture);
 
+    // Create indirect lighting render target.
+    mIndirectLightingTexture = new Texture2D();
+    mIndirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
+
+    mIndirectLightingDepthTexture = new Texture2D();
+    mIndirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_Depth);
+
+    // Create indirect lighting frame buffer.
+    Texture* indlRenderTargets[] = { mIndirectLightingTexture };
+    mIndirectLightingFB = new FrameBuffer();
+    mIndirectLightingFB->SetRenderTargets(1, indlRenderTargets, mIndirectLightingDepthTexture);
+
     // Create RSM render targets.
     int rsmWidth, rsmHeight;
     rsmWidth = 512;
@@ -173,7 +197,7 @@ void VPLApp::Initialize()
     mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
 
     // Create VPL buffer.
-    GLuint vplBufferSize = sizeof(vec4)* 3 * VPL_SAMPLE_COUNT;
+    GLuint vplBufferSize = (sizeof(vec4)* 3) * VPL_SAMPLE_COUNT;
     mVPLBuffer = new StructuredBuffer();
     mVPLBuffer->ReserveDeviceResource(vplBufferSize, GL_DYNAMIC_COPY);
 
@@ -212,7 +236,7 @@ void VPLApp::Initialize()
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-    mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
+    mGround->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
     mGround->LightProjector = mLightProjector;
     mGround->ShadowMap = mShadowMapTexture;
 
@@ -224,7 +248,7 @@ void VPLApp::Initialize()
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
-    mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
+    mCeiling->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
     mCeiling->LightProjector = mLightProjector;
     mCeiling->ShadowMap = mShadowMapTexture;
 
@@ -288,6 +312,20 @@ void VPLApp::Initialize()
     mDirectLightingScreenQuad->GBufferAlbedoTexture = mGBufferAlbedoTexture;
     mDirectLightingScreenQuad->ShadowMapTexture = mShadowMapTexture;
     mDirectLightingScreenQuad->LightProjector = mLightProjector;
+
+    material = new Material(mtIndirectLighting);
+    mIndirectLightingScreenQuad = new VPLIndirectLightingScreenQuad(material);
+    mIndirectLightingScreenQuad->LoadFromFile("screenquad.ply");
+    mIndirectLightingScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+    mIndirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+    mIndirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+    mIndirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+    mIndirectLightingScreenQuad->CreateDeviceResource();
+    mIndirectLightingScreenQuad->VPLCount = VPL_SAMPLE_COUNT;
+    mIndirectLightingScreenQuad->GBufferPositionTexture = mGBufferPositionTexture;
+    mIndirectLightingScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;
+    mIndirectLightingScreenQuad->GBufferAlbedoTexture = mGBufferAlbedoTexture;
+    mIndirectLightingScreenQuad->VPLBuffer = mVPLBuffer;
 }
 //----------------------------------------------------------------------------
 void VPLApp::ShadowPass()
@@ -386,8 +424,15 @@ void VPLApp::Run()
     mDirectLightingScreenQuad->Render(0, 0);
     mDirectLightingFB->Disable();
 
+    // Deferred indirect illumination pass.
+    mIndirectLightingFB->Enable();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    mIndirectLightingScreenQuad->Render(0, 0);
+    mIndirectLightingFB->Disable();
+
     // Sample RSM pass (VPL generation).
-    mSampleRSMTask->Dispatch(0, 1, 1, 1);
+    mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
 
     // Show rendering result.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -418,6 +463,10 @@ void VPLApp::Terminate()
     mDirectLightingTexture = 0;
     mDirectLightingDepthTexture = 0;
 
+    mIndirectLightingFB = 0;
+    mIndirectLightingTexture = 0;
+    mIndirectLightingDepthTexture = 0;
+
     mRSMFB = 0;
     mRSMPositionTextureArray = 0;
     mRSMNormalTextureArray = 0;
@@ -431,6 +480,7 @@ void VPLApp::Terminate()
 
     mTempScreenQuad = 0;
     mDirectLightingScreenQuad = 0;
+    mIndirectLightingScreenQuad = 0;
 
 	mGround = 0;
 	mCeiling = 0;
@@ -486,10 +536,16 @@ void VPLApp::OnKeyboard(unsigned char key, int x, int y)
         mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
         break;
 
-    case '9':
+    case '8':
         mShowMode = SM_DirectLighting;
         mTempScreenQuad->UsingArray = false;
         mTempScreenQuad->TempTexture = mDirectLightingTexture;
+        break;
+
+    case '9':
+        mShowMode = SM_IndirectLighting;
+        mTempScreenQuad->UsingArray = false;
+        mTempScreenQuad->TempTexture = mIndirectLightingTexture;
         break;
 
     case 'X':
