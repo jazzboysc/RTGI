@@ -21,8 +21,8 @@ public:
 	virtual void OnGetShaderConstants();
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 
-	bool IsLight;
 	vec3 MaterialColor;
+    vec3 LightColor;
     Camera* LightProjector;
     Texture2DPtr ShadowMap;
 
@@ -37,6 +37,7 @@ private:
     // pass 3, RSM pass.
     GLint mWorldLoc3, mProjLoc3;
     GLint mLightPositionWorldLoc;
+    GLint mLightColorLoc;
     GLint mMaterialColorLoc3;
 };
 

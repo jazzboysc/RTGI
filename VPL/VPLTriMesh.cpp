@@ -6,11 +6,10 @@ using namespace RTGI;
 VPLTriMesh::VPLTriMesh(Material* material, Camera* camera)
 	:
 	TriangleMesh(material, camera),
-	IsLight(false),
 	MaterialColor(0.75f, 0.75f, 0.75f)
 {
     mLightProjectorNearFarLoc = -1;
-
+    LightColor = vec3(1.0f, 0.9f, 0.6f)*0.8f;
     LightProjector = 0;
     ShadowMap = 0;
 }
@@ -40,6 +39,7 @@ void VPLTriMesh::OnGetShaderConstants()
     mWorldLoc3 = glGetUniformLocation(program, "World");
     mProjLoc3 = glGetUniformLocation(program, "Proj");
     mLightPositionWorldLoc = glGetUniformLocation(program, "LightPositionWorld");
+    mLightColorLoc = glGetUniformLocation(program, "LightColor");
     mMaterialColorLoc3 = glGetUniformLocation(program, "MaterialColor");
 }
 //----------------------------------------------------------------------------
@@ -78,6 +78,7 @@ void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == 2 )
     {
         glUniformMatrix4fv(mWorldLoc3, 1, GL_TRUE, mWorldTransform);
+        glUniform3fv(mLightColorLoc, 1, (GLfloat*)&LightColor);
         glUniform3fv(mMaterialColorLoc3, 1, (GLfloat*)&MaterialColor);
 
         assert( LightProjector );

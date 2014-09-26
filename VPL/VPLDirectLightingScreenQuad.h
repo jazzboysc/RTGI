@@ -26,6 +26,7 @@ public:
     Texture2DPtr GBufferAlbedoTexture;
     Texture2DPtr ShadowMapTexture;
     Camera* LightProjector;
+    vec3 LightColor;
 
 private:
 	GLint mGBufferPositionSamplerLoc;

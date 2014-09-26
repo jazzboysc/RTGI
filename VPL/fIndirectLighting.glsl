@@ -52,7 +52,7 @@ void main()
         indirectColor += MaterialColor.rgb * vpl.Flux.rgb * geometricTerm;
     }
 
-    indirectColor = indirectColor * 2 * PI;
+    //indirectColor = indirectColor * 2 * PI;
 
     gl_FragData[0] = vec4(indirectColor, 1.0);
 }

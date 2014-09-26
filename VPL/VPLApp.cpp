@@ -228,7 +228,7 @@ void VPLApp::Initialize()
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
 	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
-	mModel->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
+	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
     mModel->ShadowMap = mShadowMapTexture;
 
@@ -332,42 +332,34 @@ void VPLApp::Initialize()
 void VPLApp::ShadowPass()
 {
     mGround->SetCamera(mLightProjector);
-	mGround->Render(0, 0);
-
     mCeiling->SetCamera(mLightProjector);
-	mCeiling->Render(0, 0);
-
     mBackWall->SetCamera(mLightProjector);
-	mBackWall->Render(0, 0);
-
     mLeftWall->SetCamera(mLightProjector);
-	mLeftWall->Render(0, 0);
-
     mRightWall->SetCamera(mLightProjector);
-	mRightWall->Render(0, 0);
-
     mModel->SetCamera(mLightProjector);
+
+	mGround->Render(0, 0);
+	mCeiling->Render(0, 0);
+	mBackWall->Render(0, 0);
+	mLeftWall->Render(0, 0);
+	mRightWall->Render(0, 0);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void VPLApp::GBufferPass()
 {
     mGround->SetCamera(mCamera);
-    mGround->Render(0, 1);
-
     mCeiling->SetCamera(mCamera);
-    mCeiling->Render(0, 1);
-
     mBackWall->SetCamera(mCamera);
-    mBackWall->Render(0, 1);
-
     mLeftWall->SetCamera(mCamera);
-    mLeftWall->Render(0, 1);
-
     mRightWall->SetCamera(mCamera);
-    mRightWall->Render(0, 1);
-
     mModel->SetCamera(mCamera);
+
+    mGround->Render(0, 1);
+    mCeiling->Render(0, 1);
+    mBackWall->Render(0, 1);
+    mLeftWall->Render(0, 1);
+    mRightWall->Render(0, 1);
     mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------

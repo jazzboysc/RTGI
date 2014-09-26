@@ -7,6 +7,7 @@ VPLDirectLightingScreenQuad::VPLDirectLightingScreenQuad(Material* material)
 	:
 	ScreenQuad(material, 0)
 {
+    LightColor = vec3(1.0f, 0.9f, 0.6f)*0.8f;
 }
 //----------------------------------------------------------------------------
 VPLDirectLightingScreenQuad::~VPLDirectLightingScreenQuad()
@@ -64,6 +65,7 @@ void VPLDirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
         LightProjector->GetNearFarPlane(nearFarPlane);
         glUniform2fv(mLightProjectorNearFarLoc, 1, nearFarPlane);
     }
+    glUniform3fv(mLightColorLoc, 1, (GLfloat*)&LightColor);
 }
 //----------------------------------------------------------------------------
 void VPLDirectLightingScreenQuad::OnGetShaderConstants()

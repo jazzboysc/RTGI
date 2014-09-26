@@ -56,7 +56,7 @@ void main()
         float len = length(lightDir);
         lightDir = lightDir / len;
         float d = max(0.0, dot(lightDir, NormalWorld));
-        vec3 color = MaterialColor.rgb * d;
+        vec3 color = MaterialColor.rgb * LightColor * d;
         gl_FragData[0] = vec4(color, 1.0);
     }
 }
