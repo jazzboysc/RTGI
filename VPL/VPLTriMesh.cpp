@@ -9,7 +9,7 @@ VPLTriMesh::VPLTriMesh(Material* material, Camera* camera)
 	MaterialColor(0.75f, 0.75f, 0.75f)
 {
     mLightProjectorNearFarLoc = -1;
-    LightColor = vec3(1.0f, 0.9f, 0.6f)*0.8f;
+    LightColor = vec3(0.9686f, 0.9333f, 0.8392f)*0.8f;
     LightProjector = 0;
     ShadowMap = 0;
 }

@@ -7,7 +7,7 @@ VPLDirectLightingScreenQuad::VPLDirectLightingScreenQuad(Material* material)
 	:
 	ScreenQuad(material, 0)
 {
-    LightColor = vec3(1.0f, 0.9f, 0.6f)*0.8f;
+    LightColor = vec3(0.9686f, 0.9333f, 0.8392f)*0.8f;
 }
 //----------------------------------------------------------------------------
 VPLDirectLightingScreenQuad::~VPLDirectLightingScreenQuad()
