@@ -104,7 +104,7 @@ private:
     Texture2DArrayPtr mVPLShadowMapDepthTextureArray;
 
     // VPL stuff.
-    enum { VPL_SAMPLE_COUNT = 64 };
+    enum { VPL_SAMPLE_COUNT = 128 };
     Texture1DPtr mVPLSamplePattern;
     Texture1DPtr mVPLSampleTest;
     StructuredBufferPtr mVPLBuffer;
