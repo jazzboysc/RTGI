@@ -1,7 +1,7 @@
 #version 430 core
 
 layout (triangles) in;
-layout (triangle_strip, max_vertices = 15) out;
+layout (triangle_strip) out;
 
 in vec4 vPositionWorld[];
 in vec4 vNormalWorld[];

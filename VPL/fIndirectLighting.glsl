@@ -15,6 +15,7 @@ struct VPL
     vec4 WorldPosition;
     vec4 WorldNormal;
     vec4 Flux;
+    mat4 View;
 };
 
 layout(std430, binding = 0)  buffer _VPLBuffer

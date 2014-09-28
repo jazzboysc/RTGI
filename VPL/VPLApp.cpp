@@ -191,6 +191,20 @@ void VPLApp::Initialize()
     mRSMFB = new FrameBuffer();
     mRSMFB->SetRenderTargets(3, rsmRenderTargets, mRSMDepthTextureArray);
 
+    // Create VPL shadow maps render target.
+    int vplSMWidth, vplSMHeight;
+    vplSMWidth = 128;
+    vplSMHeight = 128;
+    mVPLShadowMapTextureArray = new Texture2DArray();
+    mVPLShadowMapTextureArray->CreateRenderTarget(vplSMWidth, vplSMHeight, VPL_SAMPLE_COUNT, Texture::TF_RGBAF);
+    mVPLShadowMapDepthTextureArray = new Texture2DArray();
+    mVPLShadowMapDepthTextureArray->CreateRenderTarget(vplSMWidth, vplSMHeight, VPL_SAMPLE_COUNT, Texture::TF_Depth);
+
+    // Create VPL shaodw maps frame buffer.
+    Texture* vplSMRenderTargets[] = { mVPLShadowMapTextureArray };
+    mVPLShadowMapFB = new FrameBuffer();
+    mVPLShadowMapFB->SetRenderTargets(1, vplSMRenderTargets, mVPLShadowMapDepthTextureArray);
+
     // Create VPL sample pattern.
     mVPLSamplePattern = new Texture1D();
     mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
@@ -198,7 +212,7 @@ void VPLApp::Initialize()
     mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
 
     // Create VPL buffer.
-    GLuint vplBufferSize = (sizeof(vec4)* 3) * VPL_SAMPLE_COUNT;
+    GLuint vplBufferSize = (sizeof(vec4)* 3 + sizeof(mat4)) * VPL_SAMPLE_COUNT;
     mVPLBuffer = new StructuredBuffer();
     mVPLBuffer->ReserveDeviceResource(vplBufferSize, GL_DYNAMIC_COPY);
 
@@ -373,6 +387,11 @@ void VPLApp::RSMPass()
     mModel->Render(0, 2);
 }
 //----------------------------------------------------------------------------
+void VPLApp::VPLShadowPass()
+{
+
+}
+//----------------------------------------------------------------------------
 void VPLApp::Run()
 {
     static float angle = 0.0f;
@@ -415,6 +434,12 @@ void VPLApp::Run()
 
     // Sample RSM pass (VPL generation).
     mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
+
+    // VPL shadow pass.
+    mVPLShadowMapFB->Enable();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    VPLShadowPass();
+    mVPLShadowMapFB->Disable();
 
     // Deferred direct illumination pass.
     mDirectLightingFB->Enable();
@@ -468,6 +493,10 @@ void VPLApp::Terminate()
     mRSMNormalTextureArray = 0;
     mRSMFluxTextureArray = 0;
     mRSMDepthTextureArray = 0;
+
+    mVPLShadowMapFB = 0;
+    mVPLShadowMapTextureArray = 0;
+    mVPLShadowMapDepthTextureArray = 0;
 
     mSampleRSMTask = 0;
     mVPLSamplePattern = 0;

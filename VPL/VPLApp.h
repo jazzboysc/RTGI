@@ -33,6 +33,8 @@ public:
 	void OnReshape(int x, int y);
 
 private:
+    friend class VPLTriMesh;
+
     enum ShowMode
     {
         SM_Shadow,
@@ -54,6 +56,7 @@ private:
 	void ShadowPass();
     void GBufferPass();
     void RSMPass();
+    void VPLShadowPass();
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;
@@ -84,6 +87,7 @@ private:
     Texture2DPtr mIndirectLightingDepthTexture;
 
     // Scene light RSM.
+    enum { RSM_FACE_COUNT = 5 };
     FrameBufferPtr mRSMFB;
     Texture2DArrayPtr mRSMPositionTextureArray;
     Texture2DArrayPtr mRSMNormalTextureArray;
@@ -93,8 +97,13 @@ private:
     // Sample RSM.
     VPLSampleRSMPtr mSampleRSMTask;
 
+    // VPL shadow maps.
+    FrameBufferPtr mVPLShadowMapFB;
+    Texture2DArrayPtr mVPLShadowMapTextureArray;
+    Texture2DArrayPtr mVPLShadowMapDepthTextureArray;
+
     // VPL stuff.
-    enum { VPL_SAMPLE_COUNT = 128 };
+    enum { VPL_SAMPLE_COUNT = 64 };
     Texture1DPtr mVPLSamplePattern;
     Texture1DPtr mVPLSampleTest;
     StructuredBufferPtr mVPLBuffer;
@@ -103,6 +112,7 @@ private:
     VPLDirectLightingScreenQuadPtr mDirectLightingScreenQuad;
     VPLIndirectLightingScreenQuadPtr mIndirectLightingScreenQuad;
 
+    // Scene models.
 	VPLTriMeshPtr mGround;
 	VPLTriMeshPtr mCeiling;
 	VPLTriMeshPtr mBackWall;

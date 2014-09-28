@@ -1,4 +1,5 @@
 #include "VPLTriMesh.h"
+#include "VPLApp.h"
 
 using namespace RTGI;
 
@@ -41,6 +42,7 @@ void VPLTriMesh::OnGetShaderConstants()
     mLightPositionWorldLoc = glGetUniformLocation(program, "LightPositionWorld");
     mLightColorLoc = glGetUniformLocation(program, "LightColor");
     mMaterialColorLoc3 = glGetUniformLocation(program, "MaterialColor");
+    glProgramParameteri(program, GL_GEOMETRY_VERTICES_OUT_EXT, VPLApp::RSM_FACE_COUNT * 3);
 }
 //----------------------------------------------------------------------------
 void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
