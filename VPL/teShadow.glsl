@@ -16,7 +16,6 @@ void main()
 				    gl_in[1].gl_Position.xyzw * gl_TessCoord.y +
 					gl_in[2].gl_Position.xyzw * gl_TessCoord.z;
 
-
     vec4 viewPos = View * worldPos;
     vec3 viewDir = viewPos.xyz;
     float len = length(viewDir);

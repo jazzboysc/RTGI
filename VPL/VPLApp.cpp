@@ -74,10 +74,24 @@ void VPLApp::Initialize()
                                      ShaderType::ST_Fragment;
     Pass* passRSM = new Pass(rsmProgramInfo);
 
+    ShaderProgramInfo vplShadowProgramInfo;
+    vplShadowProgramInfo.VShaderFileName = "vVPLShadow.glsl";
+    vplShadowProgramInfo.FShaderFileName = "fVPLShadow.glsl";
+    vplShadowProgramInfo.TCShaderFileName = "tcVPLShadow.glsl";
+    vplShadowProgramInfo.TEShaderFileName = "teVPLShadow.glsl";
+    vplShadowProgramInfo.GShaderFileName = "gVPLShadow.glsl";
+    vplShadowProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                           ShaderType::ST_Fragment |
+                                           ShaderType::ST_TessellationControl |
+                                           ShaderType::ST_TessellationEvaluation |
+                                           ShaderType::ST_Geometry;
+    Pass* passVPLShadow = new Pass(vplShadowProgramInfo);
+
 	Technique* techVPL = new Technique();
     techVPL->AddPass(passShadow);
     techVPL->AddPass(passGBuffer);
     techVPL->AddPass(passRSM);
+    techVPL->AddPass(passVPLShadow);
 	MaterialTemplate* mtVPL = new MaterialTemplate();
 	mtVPL->AddTechnique(techVPL);
 
@@ -245,6 +259,7 @@ void VPLApp::Initialize()
 	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
     mModel->ShadowMap = mShadowMapTexture;
+    mModel->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
 	mGround = new VPLTriMesh(material, mCamera);
@@ -254,6 +269,7 @@ void VPLApp::Initialize()
     mGround->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mGround->LightProjector = mLightProjector;
     mGround->ShadowMap = mShadowMapTexture;
+    mGround->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
 	mCeiling = new VPLTriMesh(material, mCamera);
@@ -266,6 +282,7 @@ void VPLApp::Initialize()
     mCeiling->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mCeiling->LightProjector = mLightProjector;
     mCeiling->ShadowMap = mShadowMapTexture;
+    mCeiling->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
 	mBackWall = new VPLTriMesh(material, mCamera);
@@ -278,6 +295,7 @@ void VPLApp::Initialize()
     mBackWall->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mBackWall->LightProjector = mLightProjector;
     mBackWall->ShadowMap = mShadowMapTexture;
+    mBackWall->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
 	mLeftWall = new VPLTriMesh(material, mCamera);
@@ -290,6 +308,7 @@ void VPLApp::Initialize()
     mLeftWall->MaterialColor = vec3(1.0f, 0.2f, 0.2f);
     mLeftWall->LightProjector = mLightProjector;
     mLeftWall->ShadowMap = mShadowMapTexture;
+    mLeftWall->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
 	mRightWall = new VPLTriMesh(material, mCamera);
@@ -302,7 +321,9 @@ void VPLApp::Initialize()
     mRightWall->MaterialColor = vec3(0.2f, 1.0f, 0.2f);
     mRightWall->LightProjector = mLightProjector;
     mRightWall->ShadowMap = mShadowMapTexture;
+    mRightWall->VPLBuffer = mVPLBuffer;
 
+    // Create screen quads.
     material = new Material(mtScreenQuad);
     mTempScreenQuad = new VPLTempScreenQuad(material);
     mTempScreenQuad->LoadFromFile("screenquad.ply");
@@ -389,7 +410,12 @@ void VPLApp::RSMPass()
 //----------------------------------------------------------------------------
 void VPLApp::VPLShadowPass()
 {
-
+    mGround->Render(0, 3);
+    mCeiling->Render(0, 3);
+    mBackWall->Render(0, 3);
+    mLeftWall->Render(0, 3);
+    mRightWall->Render(0, 3);
+    mModel->Render(0, 3);
 }
 //----------------------------------------------------------------------------
 void VPLApp::Run()

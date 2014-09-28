@@ -3,6 +3,7 @@
 
 #include "TriangleMesh.h"
 #include "Texture2D.h"
+#include "StructuredBuffer.h"
 
 namespace RTGI
 {
@@ -25,6 +26,7 @@ public:
     vec3 LightColor;
     Camera* LightProjector;
     Texture2DPtr ShadowMap;
+    StructuredBufferPtr VPLBuffer;
 
 private:
     // pass 1, scene shadow pass.
@@ -39,6 +41,10 @@ private:
     GLint mLightPositionWorldLoc;
     GLint mLightColorLoc;
     GLint mMaterialColorLoc3;
+
+    // pass 4, VPL shadow pass.
+    GLint mWorldLoc4;
+    GLint mLightProjectorNearFarLoc4;
 };
 
 typedef RefPointer<VPLTriMesh> VPLTriMeshPtr;

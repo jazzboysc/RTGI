@@ -6,17 +6,17 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 VPLTriMesh::VPLTriMesh(Material* material, Camera* camera)
 	:
-	TriangleMesh(material, camera),
-	MaterialColor(0.75f, 0.75f, 0.75f)
+	TriangleMesh(material, camera)
 {
-    mLightProjectorNearFarLoc = -1;
+    MaterialColor = vec3(0.75f, 0.75f, 0.75f);
     LightColor = vec3(0.9686f, 0.9333f, 0.8392f)*0.8f;
     LightProjector = 0;
-    ShadowMap = 0;
 }
 //----------------------------------------------------------------------------
 VPLTriMesh::~VPLTriMesh()
 {
+    ShadowMap = 0;
+    VPLBuffer = 0;
 }
 //----------------------------------------------------------------------------
 void VPLTriMesh::OnGetShaderConstants()
@@ -25,8 +25,7 @@ void VPLTriMesh::OnGetShaderConstants()
 
 	// Get pass 1 uniform locations.
     GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
-    mLightProjectorNearFarLoc = 
-        glGetUniformLocation(program, "LightProjectorNearFar");
+    mLightProjectorNearFarLoc = glGetUniformLocation(program, "LightProjectorNearFar");
 
     // Get pass 2 uniform locations.
     program = mMaterial->GetProgram(0, 1)->GetProgram();
@@ -43,6 +42,12 @@ void VPLTriMesh::OnGetShaderConstants()
     mLightColorLoc = glGetUniformLocation(program, "LightColor");
     mMaterialColorLoc3 = glGetUniformLocation(program, "MaterialColor");
     glProgramParameteri(program, GL_GEOMETRY_VERTICES_OUT_EXT, VPLApp::RSM_FACE_COUNT * 3);
+
+    // Get pass 4 uniform locations.
+    program = mMaterial->GetProgram(0, 3)->GetProgram();
+    mWorldLoc4 = glGetUniformLocation(program, "World");
+    mLightProjectorNearFarLoc4 = glGetUniformLocation(program, "LightProjectorNearFar");
+    glProgramParameteri(program, GL_GEOMETRY_VERTICES_OUT_EXT, VPLApp::VPL_SAMPLE_COUNT * 3);
 }
 //----------------------------------------------------------------------------
 void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -92,6 +97,17 @@ void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
             mat4 projTrans = LightProjector->GetProjectionTransform();
             glUniformMatrix4fv(mProjLoc3, 1, GL_TRUE, projTrans);
         }
+    }
+
+    // Update pass 4 uniform data.
+    if( pass == 3 )
+    {
+        glUniformMatrix4fv(mWorldLoc4, 1, GL_TRUE, mWorldTransform);
+        float nearFarPlane[2];
+        nearFarPlane[0] = 0.01f;
+        nearFarPlane[1] = 50.0f;
+        glUniform2fv(mLightProjectorNearFarLoc4, 1, nearFarPlane);
+        VPLBuffer->Bind(0);
     }
 }
 //----------------------------------------------------------------------------

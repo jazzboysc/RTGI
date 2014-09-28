@@ -17,15 +17,20 @@
     <None Include="fIndirectLighting.glsl" />
     <None Include="fRSM.glsl" />
     <None Include="fShadow.glsl" />
+    <None Include="fVPLShadow.glsl" />
     <None Include="fVPLTemp.glsl" />
     <None Include="gRSM.glsl" />
+    <None Include="gVPLShadow.glsl" />
     <None Include="tcShadow.glsl" />
+    <None Include="tcVPLShadow.glsl" />
     <None Include="teShadow.glsl" />
+    <None Include="teVPLShadow.glsl" />
     <None Include="vDirectLighting.glsl" />
     <None Include="vGBuffer.glsl" />
     <None Include="vIndirectLighting.glsl" />
     <None Include="vRSM.glsl" />
     <None Include="vShadow.glsl" />
+    <None Include="vVPLShadow.glsl" />
     <None Include="vVPLTemp.glsl" />
   </ItemGroup>
   <ItemGroup>
