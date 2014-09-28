@@ -47,7 +47,7 @@ void VPLTriMesh::OnGetShaderConstants()
     program = mMaterial->GetProgram(0, 3)->GetProgram();
     mWorldLoc4 = glGetUniformLocation(program, "World");
     mLightProjectorNearFarLoc4 = glGetUniformLocation(program, "LightProjectorNearFar");
-    glProgramParameteri(program, GL_GEOMETRY_VERTICES_OUT_EXT, VPLApp::VPL_SAMPLE_COUNT * 3);
+    //glProgramParameteri(program, GL_GEOMETRY_VERTICES_OUT_EXT, VPLApp::VPL_SAMPLE_COUNT * 3);
 }
 //----------------------------------------------------------------------------
 void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)

@@ -38,6 +38,7 @@ private:
     enum ShowMode
     {
         SM_Shadow,
+        SM_VPLShadow,
         SM_GBufferPosition,
         SM_GBufferNormal,
         SM_GBufferAlbedo,

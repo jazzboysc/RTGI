@@ -189,8 +189,8 @@ void VPLApp::Initialize()
 
     // Create RSM render targets.
     int rsmWidth, rsmHeight;
-    rsmWidth = 512;
-    rsmHeight = 512;
+    rsmWidth = 256;
+    rsmHeight = 256;
     mRSMPositionTextureArray = new Texture2DArray();
     mRSMPositionTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
     mRSMNormalTextureArray = new Texture2DArray();
@@ -207,8 +207,8 @@ void VPLApp::Initialize()
 
     // Create VPL shadow maps render target.
     int vplSMWidth, vplSMHeight;
-    vplSMWidth = 128;
-    vplSMHeight = 128;
+    vplSMWidth = 256;
+    vplSMHeight = 256;
     mVPLShadowMapTextureArray = new Texture2DArray();
     mVPLShadowMapTextureArray->CreateRenderTarget(vplSMWidth, vplSMHeight, VPL_SAMPLE_COUNT, Texture::TF_RGBAF);
     mVPLShadowMapDepthTextureArray = new Texture2DArray();
@@ -462,10 +462,10 @@ void VPLApp::Run()
     mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
 
     // VPL shadow pass.
-    mVPLShadowMapFB->Enable();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    VPLShadowPass();
-    mVPLShadowMapFB->Disable();
+    //mVPLShadowMapFB->Enable();
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //VPLShadowPass();
+    //mVPLShadowMapFB->Disable();
 
     // Deferred direct illumination pass.
     mDirectLightingFB->Enable();
@@ -607,26 +607,26 @@ void VPLApp::OnKeyboard(unsigned char key, int x, int y)
         break;
 
     case 'X':
-        mTempScreenQuad->RSMFaceIndex = 0;
+        mTempScreenQuad->TextureArrayIndex = 0;
         break;
 
     case 'x':
-        mTempScreenQuad->RSMFaceIndex = 1;
+        mTempScreenQuad->TextureArrayIndex = 1;
         break;
 
     case 'Y':
-        mTempScreenQuad->RSMFaceIndex = 2;
+        mTempScreenQuad->TextureArrayIndex = 2;
         break;
 
     case 'y':
-        mTempScreenQuad->RSMFaceIndex = 3;
+        mTempScreenQuad->TextureArrayIndex = 3;
         break;
 
     case 'Z':
         break;
 
     case 'z':
-        mTempScreenQuad->RSMFaceIndex = 4;
+        mTempScreenQuad->TextureArrayIndex = 4;
         break;
 
     case 'w':
@@ -635,6 +635,28 @@ void VPLApp::OnKeyboard(unsigned char key, int x, int y)
 
     case 'r':
         mIsRotatingModel = !mIsRotatingModel;
+        break;
+
+    case 'v':
+        mShowMode = SM_VPLShadow;
+        mTempScreenQuad->ShowMode = 3;
+        mTempScreenQuad->TempTextureArray = mVPLShadowMapTextureArray;
+        break;
+
+    case '=':
+        if( mShowMode == SM_VPLShadow )
+        {
+            mTempScreenQuad->TextureArrayIndex++;
+            mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
+        }
+        break;
+
+    case '-':
+        if( mShowMode == SM_VPLShadow )
+        {
+            mTempScreenQuad->TextureArrayIndex--;
+            mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
+        }
         break;
 
     default:

@@ -3,7 +3,7 @@
 in vec2 pTCoord;
 
 uniform int ShowMode;
-uniform int RSMFaceIndex;
+uniform int TextureArrayIndex;
 
 uniform sampler2D tempSampler;
 uniform sampler2D tempSampler2;
@@ -18,9 +18,9 @@ void main()
     }
     else if( ShowMode == 1 )
     {
-        gl_FragData[0] = texture(tempSamplerArray, vec3(pTCoord, RSMFaceIndex));
+        gl_FragData[0] = texture(tempSamplerArray, vec3(pTCoord, TextureArrayIndex));
     }
-    else
+    else if( ShowMode == 2 )
     {
         vec4 result = texture(tempSampler, pTCoord) + texture(tempSampler2, pTCoord);
 
@@ -31,5 +31,9 @@ void main()
         result.w = 1.0;
 
         gl_FragData[0] = result;
+    }
+    else if( ShowMode == 3 )
+    {
+        gl_FragData[0] = texture(tempSamplerArray, vec3(pTCoord, TextureArrayIndex));
     }
 }

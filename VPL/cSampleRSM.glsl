@@ -65,8 +65,11 @@ void main()
     tempVPL.WorldNormal   = texture(RSMNormal, vec3(sampleValue.x, sampleValue.y, z));
     tempVPL.Flux          = texture(RSMFlux, vec3(sampleValue.x, sampleValue.y, z));
 
+    vec3 normal = tempVPL.WorldNormal.xyz*2.0 - 1.0;
+    tempVPL.WorldPosition.xyz = tempVPL.WorldPosition.xyz + normal*0.000001;  // Avoid self-intersection.
+
     vec3 E = tempVPL.WorldPosition.xyz;
-    vec3 D = -(tempVPL.WorldNormal.xyz*2.0 - 1.0);
+    vec3 D = -normal;
     tempVPL.View = GetVPLViewTransform(E, D);
 
     VPLBuffer.vpls[gl_GlobalInvocationID.x] = tempVPL;
