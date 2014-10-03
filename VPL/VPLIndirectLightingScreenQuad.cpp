@@ -7,7 +7,7 @@ VPLIndirectLightingScreenQuad::VPLIndirectLightingScreenQuad(Material* material)
 	:
 	ScreenQuad(material, 0)
 {
-    BounceSingularity = 80.0f;
+    BounceSingularity = 60.0f;
 }
 //----------------------------------------------------------------------------
 VPLIndirectLightingScreenQuad::~VPLIndirectLightingScreenQuad()

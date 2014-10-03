@@ -38,31 +38,56 @@ void SSDOApp::Initialize()
 
 	// Create material templates.
 	Material* material = 0;
-	Pass* passGBuffer = new Pass("vGBuffer.glsl", "fGBuffer.glsl");
+    ShaderProgramInfo gbufferProgramInfo;
+    gbufferProgramInfo.VShaderFileName = "vGBuffer.glsl";
+    gbufferProgramInfo.FShaderFileName = "fGBuffer.glsl";
+    gbufferProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                         ShaderType::ST_Fragment;
+    Pass* passGBuffer = new Pass(gbufferProgramInfo);
 	Technique* techGBuffer = new Technique();
 	techGBuffer->AddPass(passGBuffer);
 	MaterialTemplate* mtGBuffer = new MaterialTemplate();
 	mtGBuffer->AddTechnique(techGBuffer);
 
-	Pass* passDirectLighting = new Pass("vDirectLighting.glsl", "fDirectLighting.glsl");
+    ShaderProgramInfo directLightingProgramInfo;
+    directLightingProgramInfo.VShaderFileName = "vDirectLighting.glsl";
+    directLightingProgramInfo.FShaderFileName = "fDirectLighting.glsl";
+    directLightingProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                                ShaderType::ST_Fragment;
+    Pass* passDirectLighting = new Pass(directLightingProgramInfo);
 	Technique* techDirectLighting = new Technique();
 	techDirectLighting->AddPass(passDirectLighting);
 	MaterialTemplate* mtDirectLighting = new MaterialTemplate();
 	mtDirectLighting->AddTechnique(techDirectLighting);
 
-	Pass* passSSDO = new Pass("vSSDO.glsl", "fSSDO.glsl");
+    ShaderProgramInfo ssdoProgramInfo;
+    ssdoProgramInfo.VShaderFileName = "vSSDO.glsl";
+    ssdoProgramInfo.FShaderFileName = "fSSDO.glsl";
+    ssdoProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                      ShaderType::ST_Fragment;
+    Pass* passSSDO = new Pass(ssdoProgramInfo);
 	Technique* techSSDO = new Technique();
 	techSSDO->AddPass(passSSDO);
 	MaterialTemplate* mtSSDO = new MaterialTemplate();
 	mtSSDO->AddTechnique(techSSDO);
 
-	Pass* passSSDOFilter = new Pass("vSSDOFilter.glsl", "fSSDOFilter.glsl");
+    ShaderProgramInfo ssdoFilterProgramInfo;
+    ssdoFilterProgramInfo.VShaderFileName = "vSSDOFilter.glsl";
+    ssdoFilterProgramInfo.FShaderFileName = "fSSDOFilter.glsl";
+    ssdoFilterProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                            ShaderType::ST_Fragment;
+    Pass* passSSDOFilter = new Pass(ssdoFilterProgramInfo);
 	Technique* techSSDOFilter = new Technique();
 	techSSDOFilter->AddPass(passSSDOFilter);
 	MaterialTemplate* mtSSDOFilter = new MaterialTemplate();
 	mtSSDOFilter->AddTechnique(techSSDOFilter);
 
-	Pass* passSSDOTemp = new Pass("vSSDOTemp.glsl", "fSSDOTemp.glsl");
+    ShaderProgramInfo ssdoTempProgramInfo;
+    ssdoTempProgramInfo.VShaderFileName = "vSSDOTemp.glsl";
+    ssdoTempProgramInfo.FShaderFileName = "fSSDOTemp.glsl";
+    ssdoTempProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                          ShaderType::ST_Fragment;
+    Pass* passSSDOTemp = new Pass(ssdoTempProgramInfo);
 	Technique* techSSDOTemp = new Technique();
 	techSSDOTemp->AddPass(passSSDOTemp);
 	MaterialTemplate* mtSSDOTemp = new MaterialTemplate();
@@ -87,7 +112,7 @@ void SSDOApp::Initialize()
 	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_Depth);
 
 	// Create G-buffer.
-	Texture2D* colorTextures[3] = {mPositionTexture, mNormalTexture, mColorTexture};
+	Texture* colorTextures[3] = {mPositionTexture, mNormalTexture, mColorTexture};
 	mGBuffer = new FrameBuffer();
 	mGBuffer->SetRenderTargets(3, colorTextures, mDepthTexture);
 
@@ -96,7 +121,7 @@ void SSDOApp::Initialize()
 	mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 
 	// Create direct lighting framebuffer.
-	Texture2D* directLightingTexture[1] = {mDirectLightingTexture};
+	Texture* directLightingTexture[1] = {mDirectLightingTexture};
 	mDirectLightingBuffer = new FrameBuffer();
 	mDirectLightingBuffer->SetRenderTargets(1, directLightingTexture, mDepthTexture);
 
@@ -105,7 +130,7 @@ void SSDOApp::Initialize()
 	mSSDOTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
 
 	// Create SSDO framebuffer.
-	Texture2D* ssdoTexture[1] = {mSSDOTexture};
+	Texture* ssdoTexture[1] = {mSSDOTexture};
 	mSSDOBuffer = new FrameBuffer();
 	mSSDOBuffer->SetRenderTargets(1, ssdoTexture, mDepthTexture);
 
