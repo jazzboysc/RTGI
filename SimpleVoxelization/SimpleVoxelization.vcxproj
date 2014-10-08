@@ -21,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fVoxelization.glsl" />
+    <None Include="gVoxelization.glsl" />
     <None Include="vVoxelization.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

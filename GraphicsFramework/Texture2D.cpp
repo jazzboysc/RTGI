@@ -14,9 +14,6 @@ Texture2D::Texture2D()
 {
 	Width = 0;
 	Height = 0;
-	IsRenderTarget = false;
-	IsHDRTexture = false;
-	IsTextureBuffer = false;
 	LMax = 0.0f;
 	RevGamma = 0.0f;
 }

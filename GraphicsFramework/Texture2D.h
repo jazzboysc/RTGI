@@ -56,12 +56,8 @@ public:
     virtual TextureType GetType();
 
 	int Width, Height;
-	bool IsRenderTarget;
-	bool IsHDRTexture;
-	bool IsTextureBuffer;
 	float LMax;
 	float RevGamma;
-	TextureFormat RTFormat;
 
 private:
 	GLint mInternalFormat;

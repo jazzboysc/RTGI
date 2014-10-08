@@ -29,7 +29,6 @@ public:
 
 	int Width, Height, Depth;
 	bool IsRenderTarget;
-	TextureFormat RTFormat;
 
     virtual TextureType GetType();
 

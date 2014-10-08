@@ -104,8 +104,9 @@ equal_spacing
 ccw
 cw
 coherent
+offset
 
-//GLSL built in variables and constants
+// GLSL built in variables and constants
 location
 gl_Position
 gl_PointSize
@@ -210,11 +211,11 @@ gl_TessLevelInner
 gl_InvocationID
 gl_GlobalInvocationID
 
-//GLSL statements
+// GLSL statements
 discard
 main
 
-//GLSL functions
+// GLSL functions
 radians
 degrees
 sin
@@ -297,3 +298,7 @@ imageAtomicExchange
 imageAtomicCompSwap
 imageLoad
 imageStore
+
+// GLSL image format
+rgba32f
+r32ui

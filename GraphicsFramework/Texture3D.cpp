@@ -39,6 +39,69 @@ bool Texture3D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 	return true;
 }
 //----------------------------------------------------------------------------
+void Texture3D::CreateRenderTarget(int width, int height, int depth,
+    TextureFormat format)
+{
+    Width = width;
+    Height = height;
+    Depth = depth;
+    IsRenderTarget = true;
+    RTFormat = format;
+
+    glGenTextures(1, &mTexture);
+    glBindTexture(GL_TEXTURE_3D, mTexture);
+
+    switch( RTFormat )
+    {
+    case RTGI::Texture::TF_RGB:
+        // TODO:
+        assert(false);
+        break;
+
+    case RTGI::Texture::TF_RGBF:
+        mInternalFormat = GL_RGB32F_ARB;
+        mFormat = GL_RGB;
+        mType = GL_FLOAT;
+        break;
+
+    case RTGI::Texture::TF_RGBAF:
+        mInternalFormat = GL_RGBA32F_ARB;
+        mFormat = GL_RGBA;
+        mType = GL_FLOAT;
+        break;
+
+    case RTGI::Texture::TF_R32UI:
+#ifndef __APPLE__
+        mInternalFormat = GL_R32UI;
+        mFormat = GL_RED_INTEGER;
+        mType = GL_UNSIGNED_INT;
+#else
+        assert(false);
+#endif
+        break;
+
+    case RTGI::Texture::TF_R32F:
+        mInternalFormat = GL_R32F;
+        mFormat = GL_RED;
+        mType = GL_FLOAT;
+        break;
+
+    case RTGI::Texture::TF_Depth:
+        mInternalFormat = GL_DEPTH_COMPONENT24;
+        mFormat = GL_DEPTH_COMPONENT;
+        mType = GL_UNSIGNED_BYTE;
+        break;
+
+    default:
+        break;
+    }
+
+    glTexImage3D(GL_TEXTURE_3D, 0, mInternalFormat, width, height, depth, 0,
+        mFormat, mType, 0);
+
+    glBindTexture(GL_TEXTURE_3D, 0);
+}
+//----------------------------------------------------------------------------
 void Texture3D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 {
 	GLuint buffer = pixelBuffer->GetBuffer();

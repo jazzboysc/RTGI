@@ -28,6 +28,9 @@ public:
 		GLsizei height, GLsizei depth, GLenum format, GLenum type, 
 		void* pixels);
 
+    void CreateRenderTarget(int width, int height, int depth, 
+        TextureFormat format);
+
 		// Update a render target from pixel buffer.
 	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
 

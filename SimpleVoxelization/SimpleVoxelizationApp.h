@@ -29,12 +29,15 @@ public:
 	void OnReshape(int x, int y);
 
 private:
-	void DrawScene();
+	void VoxelizeScene();
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;
 
 	Camera* mCamera;
+
+    enum { VOXEL_DIMENSION = 256 };
+    Texture3DPtr mSceneVoxels;
 
 	SimpleVoxelizationTriMeshPtr mGround;
 	SimpleVoxelizationTriMeshPtr mCeiling;

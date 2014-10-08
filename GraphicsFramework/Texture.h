@@ -41,6 +41,12 @@ public:
 	Texture();
 	virtual ~Texture();
 
+    bool IsRenderTarget;
+    bool IsHDRTexture;
+    bool IsTextureBuffer;
+
+    TextureFormat RTFormat;
+
 	GLuint GetTexture() const;
     virtual TextureType GetType() = 0;
 

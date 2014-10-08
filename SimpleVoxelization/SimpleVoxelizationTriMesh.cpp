@@ -13,6 +13,7 @@ SimpleVoxelizationTriMesh::SimpleVoxelizationTriMesh(Material* material,
 //----------------------------------------------------------------------------
 SimpleVoxelizationTriMesh::~SimpleVoxelizationTriMesh()
 {
+    SceneVoxels = 0;
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationTriMesh::OnGetShaderConstants()
@@ -28,6 +29,8 @@ void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == 0 )
     {
 		TriangleMesh::OnUpdateShaderConstants(technique, pass);
+
+        SceneVoxels->BindToImageUnit(0, GL_READ_WRITE);
 	}
 }
 //----------------------------------------------------------------------------

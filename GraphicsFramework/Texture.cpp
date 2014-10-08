@@ -9,6 +9,10 @@ using namespace RTGI;
 
 //----------------------------------------------------------------------------
 Texture::Texture()
+    :
+    IsRenderTarget(false),
+    IsHDRTexture(false),
+    IsTextureBuffer(false)
 {
 }
 //----------------------------------------------------------------------------

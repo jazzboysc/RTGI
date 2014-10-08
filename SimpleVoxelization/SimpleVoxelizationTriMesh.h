@@ -2,7 +2,7 @@
 #define RTGI_SimpleVoxelizationTriMesh_H
 
 #include "TriangleMesh.h"
-#include "Texture2D.h"
+#include "Texture3D.h"
 
 namespace RTGI
 {
@@ -21,6 +21,7 @@ public:
 	virtual void OnGetShaderConstants();
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 
+    Texture3DPtr SceneVoxels;
 	vec3 MaterialColor;
 };
 
