@@ -1,4 +1,6 @@
 // GLSL Data Types
+int
+uint
 atomic_uint
 bvec2
 bvec3
@@ -63,6 +65,16 @@ imageCubeArray
 imageBuffer
 image2DMS
 image2DMSArray
+uimage1D
+uimage2D
+uimage3D
+uimageCube
+uimage2DRect
+uimage1DArray
+uimage2DArray
+uimageCubeArray
+uimageBuffer
+buffer
 
 // GLSL Type Qualifiers
 attribute
@@ -80,6 +92,18 @@ noperspective
 centroid
 smooth
 layout
+local_size_x
+local_size_y
+local_size_z
+binding
+std430
+triangles
+triangle_strip
+max_vertices
+equal_spacing
+ccw
+cw
+coherent
 
 //GLSL built in variables and constants
 location
@@ -179,6 +203,12 @@ gl_ObjectPlaneS
 gl_ObjectPlaneT
 gl_ObjectPlaneR
 gl_ObjectPlaneQ
+gl_in
+gl_out
+gl_TessLevelOuter
+gl_TessLevelInner
+gl_InvocationID
+gl_GlobalInvocationID
 
 //GLSL statements
 discard
@@ -262,3 +292,8 @@ shadow1DProj
 shadow2DProj
 EmitVertex
 EndPrimitive
+atomicCounterIncrement
+imageAtomicExchange
+imageAtomicCompSwap
+imageLoad
+imageStore

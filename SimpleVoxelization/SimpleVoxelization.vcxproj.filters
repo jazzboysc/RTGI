@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GLSL">
+      <UniqueIdentifier>{b08e08cb-1ab9-4278-a25f-6b3f027ee90f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SimpleVoxelizationApp.h" />
+    <ClInclude Include="SimpleVoxelizationTriMesh.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="SimpleVoxelizationApp.cpp" />
+    <ClCompile Include="SimpleVoxelizationTriMesh.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vVoxelization.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fVoxelization.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+  </ItemGroup>
+</Project>
