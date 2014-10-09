@@ -181,6 +181,8 @@ void SimpleVoxelizationApp::Run()
     glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
 	VoxelizeScene();
 
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glViewport(0, 0, mWidth, mHeight);

@@ -12,6 +12,7 @@ uniform vec3 MaterialColor;
 ivec3 GetImageCoords(vec3 worldPosition)
 {
     vec3 imageDim = imageSize(voxelImage);
+    imageDim = imageDim - vec3(1.0, 1.0, 1.0);
 
     vec3 offsets = (worldPosition - SceneBBCenter + SceneBBExtension) / (2 * SceneBBExtension);
 

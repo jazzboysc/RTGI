@@ -61,6 +61,13 @@ void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
 
             mat4 projTrans = mCamera->GetProjectionTransform();
             glUniformMatrix4fv(mProjLoc2, 1, GL_TRUE, projTrans);
+
+            vec3 center = SceneBB->GetBoxCenter();
+            vec3 extension = SceneBB->GetExtension();
+            glUniform3fv(mSceneBBCenterLoc2, 1, (GLfloat*)&center);
+            glUniform3fv(mSceneBBExtensionLoc2, 1, (GLfloat*)&extension);
+
+            SceneVoxels->BindToImageUnit(0, GL_READ_ONLY);
         }
     }
 }

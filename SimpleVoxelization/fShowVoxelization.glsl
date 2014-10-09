@@ -11,6 +11,7 @@ uniform vec3 SceneBBExtension;
 ivec3 GetImageCoords(vec3 worldPosition)
 {
     vec3 imageDim = imageSize(voxelImage);
+    imageDim = imageDim - vec3(1.0, 1.0, 1.0);
 
     vec3 offsets = (worldPosition - SceneBBCenter + SceneBBExtension) / (2 * SceneBBExtension);
 
@@ -26,6 +27,6 @@ void main()
     vec3 normal = normalize(vNormalWorld).xyz;
     normal = normal*0.5 + 0.5;
 
-    //gl_FragData[0] = color;
-    gl_FragData[0] = vec4(normal, 0);
+    gl_FragData[0] = color;
+    //gl_FragData[0] = vec4(normal, 0);
 }
