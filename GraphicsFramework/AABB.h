@@ -23,6 +23,7 @@ public:
 
 	float GetDiagonal();
 	vec3 GetBoxCenter();
+    vec3 GetExtension();
 
 	void Merge(const AABB& box);
 

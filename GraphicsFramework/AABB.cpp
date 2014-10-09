@@ -33,6 +33,11 @@ vec3 AABB::GetBoxCenter()
 	return 0.5f*(Min + Max);
 }
 //----------------------------------------------------------------------------
+vec3 AABB::GetExtension()
+{
+    return 0.5f*(Max - Min);
+}
+//----------------------------------------------------------------------------
 void AABB::Merge(const AABB& box)
 {
 	Min.x = RTGI_MIN(Min.x, box.Min.x);

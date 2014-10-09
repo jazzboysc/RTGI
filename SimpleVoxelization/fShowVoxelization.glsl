@@ -1,13 +1,12 @@
 #version 430 core
 
-in vec4 gPositionWorld;
-in vec4 gNormalWorld;
+in vec4 vPositionWorld;
+in vec4 vNormalWorld;
 
 layout(binding = 0, rgba32f) uniform image3D voxelImage;
 
 uniform vec3 SceneBBCenter;
 uniform vec3 SceneBBExtension;
-uniform vec3 MaterialColor;
 
 ivec3 GetImageCoords(vec3 worldPosition)
 {
@@ -21,9 +20,12 @@ ivec3 GetImageCoords(vec3 worldPosition)
 
 void main()
 {
-	vec3 normal = normalize(gNormalWorld).xyz;
-	normal = normal*0.5 + 0.5;
+    ivec3 coords = GetImageCoords(vPositionWorld.xyz);
+    vec4 color = imageLoad(voxelImage, coords);
 
-    ivec3 coords = GetImageCoords(gPositionWorld.xyz);
-    imageStore(voxelImage, coords, vec4(MaterialColor, 0.0));
+    vec3 normal = normalize(vNormalWorld).xyz;
+    normal = normal*0.5 + 0.5;
+
+    //gl_FragData[0] = color;
+    gl_FragData[0] = vec4(normal, 0);
 }

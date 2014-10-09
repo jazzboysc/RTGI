@@ -30,14 +30,17 @@ public:
 
 private:
 	void VoxelizeScene();
+    void ShowVoxelization();
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;
 
-	Camera* mCamera;
+    Camera* mCamera;
+	Camera* mVoxelizationProjector;
 
     enum { VOXEL_DIMENSION = 256 };
     Texture3DPtr mSceneVoxels;
+    AABB mSceneBB;
 
 	SimpleVoxelizationTriMeshPtr mGround;
 	SimpleVoxelizationTriMeshPtr mCeiling;

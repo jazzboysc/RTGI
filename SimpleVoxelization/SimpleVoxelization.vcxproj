@@ -20,8 +20,10 @@
     <ClCompile Include="SimpleVoxelizationTriMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="fShowVoxelization.glsl" />
     <None Include="fVoxelization.glsl" />
     <None Include="gVoxelization.glsl" />
+    <None Include="vShowVoxelization.glsl" />
     <None Include="vVoxelization.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

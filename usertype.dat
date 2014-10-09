@@ -298,6 +298,7 @@ imageAtomicExchange
 imageAtomicCompSwap
 imageLoad
 imageStore
+imageSize
 
 // GLSL image format
 rgba32f

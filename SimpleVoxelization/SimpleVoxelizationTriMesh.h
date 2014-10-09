@@ -3,6 +3,7 @@
 
 #include "TriangleMesh.h"
 #include "Texture3D.h"
+#include "AABB.h"
 
 namespace RTGI
 {
@@ -22,7 +23,19 @@ public:
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 
     Texture3DPtr SceneVoxels;
+    AABB* SceneBB;
 	vec3 MaterialColor;
+
+private:
+    // pass 1.
+    GLint mSceneBBCenterLoc;
+    GLint mSceneBBExtensionLoc;
+    GLint mMaterialColorLoc;
+
+    // pass 2.
+    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
+    GLint mSceneBBCenterLoc2;
+    GLint mSceneBBExtensionLoc2;
 };
 
 typedef RefPointer<SimpleVoxelizationTriMesh> SimpleVoxelizationTriMeshPtr;

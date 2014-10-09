@@ -24,5 +24,11 @@
     <None Include="gVoxelization.glsl">
       <Filter>GLSL</Filter>
     </None>
+    <None Include="fShowVoxelization.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vShowVoxelization.glsl">
+      <Filter>GLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>
