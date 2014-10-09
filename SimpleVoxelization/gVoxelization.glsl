@@ -13,14 +13,15 @@ uniform vec3 SceneBBCenter;
 uniform vec3 SceneBBExtension;
 uniform mat4 Proj;
 
+const vec3 X = vec3(1.0, 0.0, 0.0);
+const vec3 Y = vec3(0.0, 1.0, 0.0);
+const vec3 Z = vec3(0.0, 0.0, 1.0);
+
 mat4 GetAxisViewTransform(int axis)
 {
     mat4 res;
 
-    vec3 X, Y, Z, E, R, U, D;
-    X = vec3(1.0, 0.0, 0.0);
-    Y = vec3(0.0, 1.0, 0.0);
-    Z = vec3(0.0, 0.0, 1.0);
+    vec3 E, R, U, D;
 
     float offset = 0.5;
 
@@ -63,18 +64,22 @@ void main()
     vec3 faceNormalWorld = vNormalWorld[0].xyz + vNormalWorld[1].xyz + vNormalWorld[2].xyz;
     faceNormalWorld = normalize(faceNormalWorld);
 
+    float absNdX = abs(dot(faceNormalWorld, X));
+    float absNdY = abs(dot(faceNormalWorld, Y));
+    float absNdZ = abs(dot(faceNormalWorld, Z));
+
     int axis = 0;
-    if( faceNormalWorld.y > faceNormalWorld.x )
+    if( absNdY > absNdX )
     {
         axis = 1;
-        if( faceNormalWorld.z > faceNormalWorld.y )
+        if( absNdZ > absNdY )
         {
             axis = 2;
         }
     }
     else
     {
-        if( faceNormalWorld.z > faceNormalWorld.x )
+        if( absNdZ > absNdX )
         {
             axis = 2;
         }
