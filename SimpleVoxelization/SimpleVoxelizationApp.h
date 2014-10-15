@@ -38,7 +38,7 @@ private:
     Camera* mCamera;
 	Camera* mVoxelizationProjector;
 
-    enum { VOXEL_DIMENSION = 256 };
+    enum { VOXEL_DIMENSION = 64 };
     Texture3DPtr mSceneVoxels;
     AABB mSceneBB;
 
