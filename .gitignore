@@ -1,5 +1,6 @@
 Debug/SSDO.exe
 Debug/RSM.exe
+GUIFramework/Debug
 SDK/Include/*.h
 SDK/Include/*.inl
 SDK/Lib/Debug/*.lib
@@ -25,10 +26,7 @@ SDK/Lib/Release/*.lib
 
 RTGI.xcworkspace/xcuserdata/ches.xcuserdatad/UserInterfaceState.xcuserstate
 *.exe
-*.exe
-*.exe
-*.exe
-*.exe
 *.opensdf
 *.metagen
 *.dll
+*.cache
