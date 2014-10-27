@@ -150,6 +150,9 @@
     <ClCompile Include="PassManager.cpp">
       <Filter>Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="GPUTimer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -314,6 +317,9 @@
     <ClInclude Include="PassManager.h">
       <Filter>Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="GPUTimer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="RefObject.inl">
@@ -344,6 +350,9 @@
     </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{2880ec38-9c01-4f96-ae49-7756e9cc51ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{1445339b-5c1a-4c15-a624-afd8dd5a48ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

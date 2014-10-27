@@ -7,6 +7,7 @@
 #include "VPLDirectLightingScreenQuad.h"
 #include "VPLIndirectLightingScreenQuad.h"
 #include "VPLSampleRSM.h"
+#include "GPUTimer.h"
 
 namespace RTGI
 {
@@ -104,7 +105,7 @@ private:
     Texture2DArrayPtr mVPLShadowMapDepthTextureArray;
 
     // VPL stuff.
-    enum { VPL_SAMPLE_COUNT = 128 };
+    enum { VPL_SAMPLE_COUNT = 32 };
     Texture1DPtr mVPLSamplePattern;
     Texture1DPtr mVPLSampleTest;
     StructuredBufferPtr mVPLBuffer;
@@ -120,6 +121,8 @@ private:
 	VPLTriMeshPtr mLeftWall;
 	VPLTriMeshPtr mRightWall;
 	VPLTriMeshPtr mModel;
+
+    GPUTimerPtr mTimer;
 };
 
 }

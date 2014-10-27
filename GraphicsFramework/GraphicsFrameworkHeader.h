@@ -75,4 +75,7 @@
 #include "PolyCylinder.h"
 #include "Token.h"
 
+// Utils
+#include "GPUTimer.h"
+
 #endif

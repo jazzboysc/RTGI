@@ -362,6 +362,10 @@ void VPLApp::Initialize()
     mIndirectLightingScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;
     mIndirectLightingScreenQuad->GBufferAlbedoTexture = mGBufferAlbedoTexture;
     mIndirectLightingScreenQuad->VPLBuffer = mVPLBuffer;
+
+    // Create GPU timer.
+    mTimer = new GPUTimer();
+    mTimer->CreateDeviceResource();
 }
 //----------------------------------------------------------------------------
 void VPLApp::ShadowPass()
@@ -440,26 +444,40 @@ void VPLApp::Run()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    static double workLoad = 0.0;
+
     // Scene shadow pass.
+    mTimer->Start();
     mShadowMapFB->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ShadowPass();
     mShadowMapFB->Disable();
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
 
     // Scene G-buffer pass.
+    mTimer->Start();
     mGBufferFB->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     GBufferPass();
     mGBufferFB->Disable();
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
 
     // Scene light RSM pass.
+    mTimer->Start();
     mRSMFB->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     RSMPass();
     mRSMFB->Disable();
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
 
     // Sample RSM pass (VPL generation).
+    mTimer->Start();
     mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
 
     // VPL shadow pass.
     //mVPLShadowMapFB->Enable();
@@ -468,18 +486,24 @@ void VPLApp::Run()
     //mVPLShadowMapFB->Disable();
 
     // Deferred direct illumination pass.
+    mTimer->Start();
     mDirectLightingFB->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     mDirectLightingScreenQuad->Render(0, 0);
     mDirectLightingFB->Disable();
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
 
     // Deferred indirect illumination pass.
+    mTimer->Start();
     mIndirectLightingFB->Enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     mIndirectLightingScreenQuad->Render(0, 0);
     mIndirectLightingFB->Disable();
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
 
     // Show rendering result.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -539,6 +563,8 @@ void VPLApp::Terminate()
 	mLeftWall = 0;
 	mRightWall = 0;
 	mModel = 0;
+
+    mTimer = 0;
 }
 //----------------------------------------------------------------------------
 void VPLApp::OnKeyboard(unsigned char key, int x, int y)
