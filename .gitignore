@@ -30,3 +30,5 @@ RTGI.xcworkspace/xcuserdata/ches.xcuserdatad/UserInterfaceState.xcuserstate
 *.exe
 *.exe
 *.opensdf
+*.metagen
+*.dll

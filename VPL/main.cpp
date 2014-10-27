@@ -1,8 +1,10 @@
 #include "VPLApp.h"
+#include "GUIFramework.h"
 
 using namespace RTGI;
+using namespace RTGI::GUIFramework;
 
-Application* app = 0;
+RTGI::Application* app = 0;
 
 //----------------------------------------------------------------------------
 void OnIdle()
@@ -69,6 +71,9 @@ int main(int argc, char **argv)
 	// Initialize application.
 	app = new VPLApp(width, height);
 	app->Initialize();
+
+    InformationPanel^ infoPanel = gcnew InformationPanel();
+    infoPanel->Show();
 
 	// assign handlers
     glutDisplayFunc(OnIdle);

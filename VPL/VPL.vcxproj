@@ -50,6 +50,12 @@
     <ClCompile Include="VPLTempScreenQuad.cpp" />
     <ClCompile Include="VPLTriMesh.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1A1FA5D7-ECFC-42EA-A9FD-E3A27B75D7F8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -61,6 +67,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
+    <CLRSupport>true</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>

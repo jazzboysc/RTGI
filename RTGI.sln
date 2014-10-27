@@ -68,6 +68,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SII", "SplattingIndirectIll
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VPL", "VPL\VPL.vcxproj", "{1A1FA5D7-ECFC-42EA-A9FD-E3A27B75D7F8}"
 	ProjectSection(ProjectDependencies) = postProject
+		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4} = {4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}
 		{1654A1CC-FA42-415F-8E83-6905FA03B52A} = {1654A1CC-FA42-415F-8E83-6905FA03B52A}
 	EndProjectSection
 EndProject
@@ -75,6 +76,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleVoxelization", "Simpl
 	ProjectSection(ProjectDependencies) = postProject
 		{1654A1CC-FA42-415F-8E83-6905FA03B52A} = {1654A1CC-FA42-415F-8E83-6905FA03B52A}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GUIFramework", "GUIFramework\GUIFramework.vcxproj", "{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -138,6 +141,10 @@ Global
 		{73B66A3F-94FB-4A57-AEC7-C29121C6EDB7}.Debug|Win32.Build.0 = Debug|Win32
 		{73B66A3F-94FB-4A57-AEC7-C29121C6EDB7}.Release|Win32.ActiveCfg = Release|Win32
 		{73B66A3F-94FB-4A57-AEC7-C29121C6EDB7}.Release|Win32.Build.0 = Release|Win32
+		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}.Debug|Win32.Build.0 = Debug|Win32
+		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}.Release|Win32.ActiveCfg = Release|Win32
+		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
