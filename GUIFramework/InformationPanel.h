@@ -20,9 +20,21 @@ namespace RTGI {
             InformationPanel(void)
             {
                 InitializeComponent();
-                //
-                //TODO: Add the constructor code here
-                //
+
+                if( !mInfoPanel )
+                {
+                    mInfoPanel = this;
+                }
+            }
+
+            void UpdateIndirectLighting(double value)
+            {
+                textBoxIndirectLighting->Text = value.ToString();
+            }
+
+            static InformationPanel^ GetInstance()
+            {
+                return mInfoPanel;
             }
 
         protected:
@@ -38,6 +50,9 @@ namespace RTGI {
             }
 
         protected:
+            static InformationPanel^ mInfoPanel = nullptr;
+        private: System::Windows::Forms::TextBox^  textBoxIndirectLighting;
+        protected:
 
         private:
             /// <summary>
@@ -52,16 +67,25 @@ namespace RTGI {
             /// </summary>
             void InitializeComponent(void)
             {
+                this->textBoxIndirectLighting = (gcnew System::Windows::Forms::TextBox());
                 this->SuspendLayout();
+                // 
+                // textBoxIndirectLighting
+                // 
+                this->textBoxIndirectLighting->Location = System::Drawing::Point(56, 64);
+                this->textBoxIndirectLighting->Name = L"textBoxIndirectLighting";
+                this->textBoxIndirectLighting->Size = System::Drawing::Size(100, 20);
+                this->textBoxIndirectLighting->TabIndex = 0;
                 // 
                 // InformationPanel
                 // 
                 this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
                 this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
                 this->ClientSize = System::Drawing::Size(212, 499);
+                this->Controls->Add(this->textBoxIndirectLighting);
                 this->Name = L"InformationPanel";
-                this->Text = L"InformationPanel";
                 this->ResumeLayout(false);
+                this->PerformLayout();
 
             }
 #pragma endregion

@@ -1,7 +1,9 @@
 #include "VPLApp.h"
 #include "RNG.h"
+#include "InformationPanel.h"
 
 using namespace RTGI;
+using namespace RTGI::GUIFramework;
 
 //----------------------------------------------------------------------------
 VPLApp::VPLApp(int width, int height)
@@ -444,6 +446,7 @@ void VPLApp::Run()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    InformationPanel^ infoPanel = InformationPanel::GetInstance();
     static double workLoad = 0.0;
 
     // Scene shadow pass.
@@ -504,6 +507,7 @@ void VPLApp::Run()
     mIndirectLightingFB->Disable();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
+    infoPanel->UpdateIndirectLighting(workLoad);
 
     // Show rendering result.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
