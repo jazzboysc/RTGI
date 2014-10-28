@@ -27,9 +27,33 @@ namespace RTGI {
                 }
             }
 
-            void UpdateIndirectLighting(double value)
+            void AddLabel(String^ labelName, int x, int y)
             {
-                textBoxIndirectLighting->Text = value.ToString();
+                Label^ label = gcnew Label();
+
+                label->AutoSize = true;
+                label->Location = System::Drawing::Point(x, y);
+                label->Name = labelName;
+                label->Text = labelName;
+                label->Size = System::Drawing::Size(32, 13);
+                label->TabIndex = 0;
+
+                groupBoxWorkloadTiming->Controls->Add(label);
+            }
+
+            void SetLabelValue(String^ labelName, double value)
+            {
+                array<Control^, 1>^ res = groupBoxWorkloadTiming->Controls->Find(labelName, true);
+                if( res->Length == 0 )
+                {
+                    return;
+                }
+
+                Label^ label = (Label^)res[0];
+                if( label )
+                {
+                    label->Text = label->Name + ": " + value.ToString();
+                }
             }
 
             static InformationPanel^ GetInstance()
@@ -51,7 +75,11 @@ namespace RTGI {
 
         protected:
             static InformationPanel^ mInfoPanel = nullptr;
-        private: System::Windows::Forms::TextBox^  textBoxIndirectLighting;
+        private: System::Windows::Forms::GroupBox^  groupBoxWorkloadTiming;
+        protected:
+
+        protected:
+
         protected:
 
         private:
@@ -67,25 +95,26 @@ namespace RTGI {
             /// </summary>
             void InitializeComponent(void)
             {
-                this->textBoxIndirectLighting = (gcnew System::Windows::Forms::TextBox());
+                this->groupBoxWorkloadTiming = (gcnew System::Windows::Forms::GroupBox());
                 this->SuspendLayout();
                 // 
-                // textBoxIndirectLighting
+                // groupBoxWorkloadTiming
                 // 
-                this->textBoxIndirectLighting->Location = System::Drawing::Point(56, 64);
-                this->textBoxIndirectLighting->Name = L"textBoxIndirectLighting";
-                this->textBoxIndirectLighting->Size = System::Drawing::Size(100, 20);
-                this->textBoxIndirectLighting->TabIndex = 0;
+                this->groupBoxWorkloadTiming->Location = System::Drawing::Point(12, 12);
+                this->groupBoxWorkloadTiming->Name = L"groupBoxWorkloadTiming";
+                this->groupBoxWorkloadTiming->Size = System::Drawing::Size(214, 272);
+                this->groupBoxWorkloadTiming->TabIndex = 0;
+                this->groupBoxWorkloadTiming->TabStop = false;
+                this->groupBoxWorkloadTiming->Text = L"Workload Timing (ms):";
                 // 
                 // InformationPanel
                 // 
                 this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
                 this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-                this->ClientSize = System::Drawing::Size(212, 499);
-                this->Controls->Add(this->textBoxIndirectLighting);
+                this->ClientSize = System::Drawing::Size(238, 295);
+                this->Controls->Add(this->groupBoxWorkloadTiming);
                 this->Name = L"InformationPanel";
                 this->ResumeLayout(false);
-                this->PerformLayout();
 
             }
 #pragma endregion

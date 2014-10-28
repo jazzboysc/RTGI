@@ -68,12 +68,16 @@ int main(int argc, char **argv)
     glewInit();
 #endif
 
-	// Initialize application.
-	app = new VPLApp(width, height);
-	app->Initialize();
-
+    // Create information panel.
+    int screenX = glutGet(GLUT_WINDOW_X);
+    int screenY = glutGet(GLUT_WINDOW_Y);
     InformationPanel^ infoPanel = gcnew InformationPanel();
     infoPanel->Show();
+    infoPanel->SetDesktopLocation(screenX + width + 12, screenY - 30);
+
+    // Initialize application.
+    app = new VPLApp(width, height);
+    app->Initialize();
 
 	// assign handlers
     glutDisplayFunc(OnIdle);
