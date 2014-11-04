@@ -3,6 +3,7 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "SimpleVoxelizationTriMesh.h"
+#include "GPUTimer.h"
 
 namespace RTGI
 {
@@ -50,6 +51,8 @@ private:
 	SimpleVoxelizationTriMeshPtr mLeftWall;
 	SimpleVoxelizationTriMeshPtr mRightWall;
 	SimpleVoxelizationTriMeshPtr mModel;
+
+    GPUTimerPtr mTimer;
 };
 
 }

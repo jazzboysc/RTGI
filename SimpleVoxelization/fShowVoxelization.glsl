@@ -41,9 +41,9 @@ void main()
     normal = normal*0.5 + 0.5;
     float a = float(index) / float(dim*dim*dim - 1);
     //gl_FragData[0] = vec4(a, a, a, 1.0);
-    gl_FragData[0] = vec4(float(float(res.x) / float(dim - 1)), 
-                          float(float(res.y) / float(dim - 1)), 
-                          float(float(res.z) / float(dim - 1)), 
-                          1.0);
-    //gl_FragData[0] = color;
+    //gl_FragData[0] = vec4(float(float(res.x) / float(dim - 1)), 
+    //                      float(float(res.y) / float(dim - 1)), 
+    //                      float(float(res.z) / float(dim - 1)), 
+    //                      1.0);
+    gl_FragData[0] = color;
 }

@@ -1,7 +1,9 @@
 #include "SimpleVoxelizationApp.h"
 #include "RNG.h"
+#include "InformationPanel.h"
 
 using namespace RTGI;
+using namespace RTGI::GUIFramework;
 
 //----------------------------------------------------------------------------
 SimpleVoxelizationApp::SimpleVoxelizationApp(int width, int height)
@@ -136,6 +138,13 @@ void SimpleVoxelizationApp::Initialize()
     mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
+
+    // Create labels.
+    InformationPanel::GetInstance()->AddLabel("Voxelization Pass", 16, 20);
+
+    // Create GPU timer.
+    mTimer = new GPUTimer();
+    mTimer->CreateDeviceResource();
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::VoxelizeScene()
@@ -180,11 +189,18 @@ void SimpleVoxelizationApp::Run()
     memset(bufferData, 0x00, mSceneVoxels->GetSize());
     mSceneVoxels->Unmap();
 
+    InformationPanel^ infoPanel = InformationPanel::GetInstance();
+    static double workLoad = 0.0;
+
+    mTimer->Start();
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glViewport(0, 0, VOXEL_DIMENSION*2, VOXEL_DIMENSION*2);
 	VoxelizeScene();
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
+    infoPanel->SetLabelValue("Voxelization Pass", workLoad);
 
     //glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     //bufferData = (vec4*)mSceneVoxels->Map(GL_WRITE_ONLY);
@@ -216,6 +232,8 @@ void SimpleVoxelizationApp::Terminate()
 	mLeftWall = 0;
 	mRightWall = 0;
 	mModel = 0;
+
+    mTimer = 0;
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::OnKeyboard(unsigned char key, int x, int y)

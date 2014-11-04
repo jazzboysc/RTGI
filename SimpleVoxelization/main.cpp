@@ -1,8 +1,10 @@
 #include "SimpleVoxelizationApp.h"
+#include "GUIFramework.h"
 
 using namespace RTGI;
+using namespace RTGI::GUIFramework;
 
-Application* app = 0;
+RTGI::Application* app = 0;
 
 //----------------------------------------------------------------------------
 void OnIdle()
@@ -65,6 +67,13 @@ int main(int argc, char **argv)
 #ifndef __APPLE__
     glewInit();
 #endif
+
+    // Create information panel.
+    int screenX = glutGet(GLUT_WINDOW_X);
+    int screenY = glutGet(GLUT_WINDOW_Y);
+    InformationPanel^ infoPanel = gcnew InformationPanel();
+    infoPanel->Show();
+    infoPanel->SetDesktopLocation(screenX + width + 12, screenY - 30);
 
 	// Initialize application.
 	app = new SimpleVoxelizationApp(width, height);
