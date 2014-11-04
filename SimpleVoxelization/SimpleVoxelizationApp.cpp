@@ -196,7 +196,7 @@ void SimpleVoxelizationApp::Run()
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glViewport(0, 0, VOXEL_DIMENSION*2, VOXEL_DIMENSION*2);
+    glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
 	VoxelizeScene();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();

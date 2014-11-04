@@ -27,6 +27,7 @@ void SimpleVoxelizationTriMesh::OnGetShaderConstants()
     mSceneBBExtensionLoc = glGetUniformLocation(program, "SceneBBExtension");
     mMaterialColorLoc = glGetUniformLocation(program, "MaterialColor");
     mDimLoc = glGetUniformLocation(program, "dim");
+    mInv2SceneBBExtensionLoc = glGetUniformLocation(program, "Inv2SceneBBExtension");
 
     // Get pass 2 uniform locations.
     program = mMaterial->GetProgram(0, 1)->GetProgram();
@@ -47,10 +48,12 @@ void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
 
         vec3 center = SceneBB->GetBoxCenter();
         vec3 extension = SceneBB->GetExtension();
+        vec3 inv2extension = vec3(1.0f / (2.0f*extension.x), 1.0f / (2.0f*extension.y), 1.0f / (2.0f*extension.z));
         glUniform3fv(mSceneBBCenterLoc, 1, (GLfloat*)&center);
         glUniform3fv(mSceneBBExtensionLoc, 1, (GLfloat*)&extension);
         glUniform3fv(mMaterialColorLoc, 1, (GLfloat*)&MaterialColor);
         glUniform1i(mDimLoc, SimpleVoxelizationApp::VOXEL_DIMENSION);
+        glUniform3fv(mInv2SceneBBExtensionLoc, 1, (GLfloat*)&inv2extension);
 	}
 
     if( pass == 1 )

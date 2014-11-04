@@ -9,64 +9,153 @@ in vec4 vNormalWorld[];
 out vec4 gPositionWorld;
 out vec4 gNormalWorld;
 
-uniform vec3 SceneBBCenter;
-uniform vec3 SceneBBExtension;
 uniform mat4 Proj;
 
 const vec3 X = vec3(1.0, 0.0, 0.0);
 const vec3 Y = vec3(0.0, 1.0, 0.0);
 const vec3 Z = vec3(0.0, 0.0, 1.0);
 
-mat4 GetAxisViewTransform(int axis)
+mat4 GetAxisViewTransform(int axis, vec3 bbCenter, vec3 bbExtension)
 {
     mat4 res;
-
     vec3 E, R, U, D;
-
     float offset = 0.5;
 
     if( axis == 0 )
     {
-        E = SceneBBCenter - X*(SceneBBExtension.x + offset);
+        E = bbCenter - X*(bbExtension.x + offset);
         R = Z;
         U = Y;
         D = -X;
     }
     else if( axis == 1 )
     {
-        E = SceneBBCenter - Y*(SceneBBExtension.y + offset);
+        E = bbCenter - Y*(bbExtension.y + offset);
         R = X;
         U = Z;
         D = -Y;
     }
     else
     {
-        E = SceneBBCenter - Z*(SceneBBExtension.z + offset);
+        E = bbCenter - Z*(bbExtension.z + offset);
         R = -X;
         U = Y;
         D = -Z;
     }
 
-    float EdR = dot(E, R);
-    float EdU = dot(E, U);
-    float EdD = dot(E, D);
-
+    mat3 matRUD = mat3(R, U, D);
+    vec3 EdRUD = E*matRUD;
     res = mat4(vec4(R.x, U.x, D.x, 0.0),
                vec4(R.y, U.y, D.y, 0.0),
                vec4(R.z, U.z, D.z, 0.0),
-               vec4(-EdR, -EdU, -EdD, 1.0));
+               vec4(-EdRUD.x, -EdRUD.y, -EdRUD.z, 1.0));
 
     return res;
 }
 
+struct AABB
+{
+    vec3 Min;
+    vec3 Max;
+};
+
+AABB GetTriangleAABB(vec3 p0, vec3 p1, vec3 p2)
+{
+    AABB res;
+
+    res.Min.x = min(min(p0.x, p1.x), p2.x);
+    res.Min.y = min(min(p0.y, p1.y), p2.y);
+    res.Min.z = min(min(p0.z, p1.z), p2.z);
+    res.Max.x = max(max(p0.x, p1.x), p2.x);
+    res.Max.y = max(max(p0.y, p1.y), p2.y);
+    res.Max.z = max(max(p0.z, p1.z), p2.z);
+
+    return res;
+}
+
+vec3 GetAABBCenter(AABB bb)
+{
+    vec3 res;
+    res = 0.5 * (bb.Max + bb.Min);
+    return res;
+}
+
+vec3 GetAABBExtension(AABB bb)
+{
+    vec3 res;
+    res = 0.5 * (bb.Max - bb.Min);
+    return res;
+}
+
+mat4 GetOrthoProjTransform(int axis, vec3 bbExtension)
+{
+    float left, right, bottom, top, near, far;
+    float offset = 0.5;
+
+    if( axis == 0 )
+    {
+        left = -bbExtension.z;
+        right = bbExtension.z;
+        bottom = -bbExtension.y;
+        top = bbExtension.y;
+        near = 0.01;
+        far = 2.0*bbExtension.x + offset;
+    }
+    else if( axis == 1 )
+    {
+        left = -bbExtension.x;
+        right = bbExtension.x;
+        bottom = -bbExtension.z;
+        top = bbExtension.z;
+        near = 0.01;
+        far = 2.0*bbExtension.y + offset;
+    }
+    else
+    {
+        left = -bbExtension.x;
+        right = bbExtension.x;
+        bottom = -bbExtension.y;
+        top = bbExtension.y;
+        near = 0.01;
+        far = 2.0*bbExtension.z + offset;
+    }
+
+    mat4 res;
+
+    float invRmL = 1.0 / (right - left);
+    float invTmB = 1.0 / (top - bottom);
+    float invNmF = 1.0 / (near - far);
+    float m00 = 2.0 * invRmL;
+    float m11 = 2.0 * invTmB;
+    float m22 = 2.0 * invNmF;
+    float m03 = -(right + left) * invRmL;
+    float m13 = -(top + bottom) * invTmB;
+    float m23 = -(far + near) * -invNmF;
+
+    res = mat4(vec4(m00, 0.0, 0.0, 0.0),
+               vec4(0.0, m11, 0.0, 0.0),
+               vec4(0.0, 0.0, m22, 0.0),
+               vec4(m03, m13, m23, 1.0));
+
+    return res;
+}
+
+
 void main()
 {
+    AABB bb = GetTriangleAABB(vPositionWorld[0].xyz, vPositionWorld[1].xyz, vPositionWorld[2].xyz);
+    vec3 bbCenter = GetAABBCenter(bb);
+    vec3 bbExtension = GetAABBExtension(bb);
+
     vec3 faceNormalWorld = vNormalWorld[0].xyz + vNormalWorld[1].xyz + vNormalWorld[2].xyz;
     faceNormalWorld = normalize(faceNormalWorld);
 
-    float absNdX = abs(dot(faceNormalWorld, X));
-    float absNdY = abs(dot(faceNormalWorld, Y));
-    float absNdZ = abs(dot(faceNormalWorld, Z));
+    mat3 matXYZ = mat3(X, Y, Z);
+    vec3 NdXYZ = faceNormalWorld * matXYZ;
+
+    float absNdX = abs(NdXYZ.x);
+    float absNdY = abs(NdXYZ.y);
+    float absNdZ = abs(NdXYZ.z);
 
     int axis = 0;
     if( absNdY > absNdX )
@@ -85,13 +174,14 @@ void main()
         }
     }
 
-    mat4 View = GetAxisViewTransform(axis);
+    mat4 View = GetAxisViewTransform(axis, bbCenter, bbExtension);
+    mat4 OrthoProj = GetOrthoProjTransform(axis, bbExtension);
 
     for( int i = 0; i < gl_in.length(); ++i )
     {
         gPositionWorld = vPositionWorld[i];
         gNormalWorld = vNormalWorld[i];
-        gl_Position = Proj * View * gl_in[i].gl_Position;
+        gl_Position = OrthoProj * View * gl_in[i].gl_Position;
 
         EmitVertex();
     }

@@ -30,7 +30,7 @@ public:
 	void OnReshape(int x, int y);
 
 public:
-    enum { VOXEL_DIMENSION = 128 };
+    enum { VOXEL_DIMENSION = 64 };
 
 private:
 	void VoxelizeScene();

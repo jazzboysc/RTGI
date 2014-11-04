@@ -31,6 +31,7 @@ private:
     GLint mSceneBBExtensionLoc;
     GLint mMaterialColorLoc;
     GLint mDimLoc;
+    GLint mInv2SceneBBExtensionLoc;
 
     // pass 2.
     GLint mWorldLoc2, mViewLoc2, mProjLoc2;
