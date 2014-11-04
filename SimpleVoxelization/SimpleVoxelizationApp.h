@@ -28,6 +28,9 @@ public:
 	void OnMouseMove(int x, int y);
 	void OnReshape(int x, int y);
 
+public:
+    enum { VOXEL_DIMENSION = 128 };
+
 private:
 	void VoxelizeScene();
     void ShowVoxelization();
@@ -38,8 +41,7 @@ private:
     Camera* mCamera;
 	Camera* mVoxelizationProjector;
 
-    enum { VOXEL_DIMENSION = 64 };
-    Texture3DPtr mSceneVoxels;
+    StructuredBufferPtr mSceneVoxels;
     AABB mSceneBB;
 
 	SimpleVoxelizationTriMeshPtr mGround;

@@ -1,4 +1,5 @@
 #include "SimpleVoxelizationTriMesh.h"
+#include "SimpleVoxelizationApp.h"
 
 using namespace RTGI;
 
@@ -14,7 +15,6 @@ SimpleVoxelizationTriMesh::SimpleVoxelizationTriMesh(Material* material,
 //----------------------------------------------------------------------------
 SimpleVoxelizationTriMesh::~SimpleVoxelizationTriMesh()
 {
-    SceneVoxels = 0;
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationTriMesh::OnGetShaderConstants()
@@ -26,6 +26,7 @@ void SimpleVoxelizationTriMesh::OnGetShaderConstants()
     mSceneBBCenterLoc = glGetUniformLocation(program, "SceneBBCenter");
     mSceneBBExtensionLoc = glGetUniformLocation(program, "SceneBBExtension");
     mMaterialColorLoc = glGetUniformLocation(program, "MaterialColor");
+    mDimLoc = glGetUniformLocation(program, "dim");
 
     // Get pass 2 uniform locations.
     program = mMaterial->GetProgram(0, 1)->GetProgram();
@@ -34,6 +35,7 @@ void SimpleVoxelizationTriMesh::OnGetShaderConstants()
     mWorldLoc2 = glGetUniformLocation(program, "World");
     mViewLoc2 = glGetUniformLocation(program, "View");
     mProjLoc2 = glGetUniformLocation(program, "Proj");
+    mDimLoc2 = glGetUniformLocation(program, "dim");
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -48,7 +50,7 @@ void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
         glUniform3fv(mSceneBBCenterLoc, 1, (GLfloat*)&center);
         glUniform3fv(mSceneBBExtensionLoc, 1, (GLfloat*)&extension);
         glUniform3fv(mMaterialColorLoc, 1, (GLfloat*)&MaterialColor);
-        SceneVoxels->BindToImageUnit(0, GL_READ_WRITE);
+        glUniform1i(mDimLoc, SimpleVoxelizationApp::VOXEL_DIMENSION);
 	}
 
     if( pass == 1 )
@@ -66,8 +68,7 @@ void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
             vec3 extension = SceneBB->GetExtension();
             glUniform3fv(mSceneBBCenterLoc2, 1, (GLfloat*)&center);
             glUniform3fv(mSceneBBExtensionLoc2, 1, (GLfloat*)&extension);
-
-            SceneVoxels->BindToImageUnit(0, GL_READ_ONLY);
+            glUniform1i(mDimLoc2, SimpleVoxelizationApp::VOXEL_DIMENSION);
         }
     }
 }

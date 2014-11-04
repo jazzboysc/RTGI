@@ -22,7 +22,6 @@ public:
 	virtual void OnGetShaderConstants();
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 
-    Texture3DPtr SceneVoxels;
     AABB* SceneBB;
 	vec3 MaterialColor;
 
@@ -31,11 +30,13 @@ private:
     GLint mSceneBBCenterLoc;
     GLint mSceneBBExtensionLoc;
     GLint mMaterialColorLoc;
+    GLint mDimLoc;
 
     // pass 2.
     GLint mWorldLoc2, mViewLoc2, mProjLoc2;
     GLint mSceneBBCenterLoc2;
     GLint mSceneBBExtensionLoc2;
+    GLint mDimLoc2;
 };
 
 typedef RefPointer<SimpleVoxelizationTriMesh> SimpleVoxelizationTriMeshPtr;

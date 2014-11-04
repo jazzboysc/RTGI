@@ -33,7 +33,7 @@ void SimpleVoxelizationApp::Initialize()
 
     // Create voxelization projector.
 	mVoxelizationProjector = new Camera(false);
-    mVoxelizationProjector->SetOrthogonalFrustum(11.0f, 1.0f, 0.01f, 20.5f);
+    mVoxelizationProjector->SetOrthogonalFrustum(10.5f, 1.0f, 0.01f, 20.5f);
 
 	// Create material templates.
 	Material* material = 0;
@@ -60,8 +60,10 @@ void SimpleVoxelizationApp::Initialize()
     mtVoxelization->AddTechnique(techVoxelization);
 
     // Create scene voxel texture.
-    mSceneVoxels = new Texture3D();
-    mSceneVoxels->CreateRenderTarget(VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION, Texture::TF_RGBAF);
+    mSceneVoxels = new StructuredBuffer();
+    GLuint voxelCount = VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION;
+    GLuint bufferSize = voxelCount * sizeof(float) * 4;
+    mSceneVoxels->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
 	// Create scene.
 	mat4 rotM;
@@ -72,7 +74,6 @@ void SimpleVoxelizationApp::Initialize()
 	mModel->CreateDeviceResource();
 	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
-    mModel->SceneVoxels = mSceneVoxels;
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
@@ -81,8 +82,10 @@ void SimpleVoxelizationApp::Initialize()
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-    mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
-    mGround->SceneVoxels = mSceneVoxels;
+    //rotM = RotateZ(-70.0f);
+    //mGround->SetWorldTransform(rotM);
+    //mGround->SetWorldTranslation(vec3(0.0f, 7.0f, 0.0f));
+    mGround->MaterialColor = vec3(0.8f, 0.8f, 0.0f);
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
@@ -95,7 +98,6 @@ void SimpleVoxelizationApp::Initialize()
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
-    mCeiling->SceneVoxels = mSceneVoxels;
     mCeiling->SceneBB = &mSceneBB;
     mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
@@ -108,7 +110,6 @@ void SimpleVoxelizationApp::Initialize()
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
-    mBackWall->SceneVoxels = mSceneVoxels;
     mBackWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
@@ -121,7 +122,6 @@ void SimpleVoxelizationApp::Initialize()
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
-    mLeftWall->SceneVoxels = mSceneVoxels;
     mLeftWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
@@ -134,7 +134,6 @@ void SimpleVoxelizationApp::Initialize()
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
-    mRightWall->SceneVoxels = mSceneVoxels;
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 }
@@ -175,13 +174,22 @@ void SimpleVoxelizationApp::ShowVoxelization()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::Run()
 {
+    mSceneVoxels->Bind(0);
+    vec4* bufferData = (vec4*)mSceneVoxels->Map(GL_WRITE_ONLY);
+    assert(bufferData);
+    memset(bufferData, 0x00, mSceneVoxels->GetSize());
+    mSceneVoxels->Unmap();
+
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
+    glViewport(0, 0, VOXEL_DIMENSION*2, VOXEL_DIMENSION*2);
 	VoxelizeScene();
 
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    //glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    //bufferData = (vec4*)mSceneVoxels->Map(GL_WRITE_ONLY);
+    //assert(bufferData);
+    //mSceneVoxels->Unmap();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
