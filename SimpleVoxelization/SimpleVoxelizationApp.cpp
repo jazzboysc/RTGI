@@ -20,6 +20,12 @@ SimpleVoxelizationApp::~SimpleVoxelizationApp()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::Initialize()
 {
+    GLint globalX, globalY, globalZ;
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &globalX);
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &globalY);
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &globalZ);
+    assert(globalX >= VOXEL_DIMENSION && globalY >= VOXEL_DIMENSION && globalZ >= VOXEL_DIMENSION);
+
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -61,11 +67,22 @@ void SimpleVoxelizationApp::Initialize()
     MaterialTemplate* mtVoxelization = new MaterialTemplate();
     mtVoxelization->AddTechnique(techVoxelization);
 
+    // Create reset voxel buffer task.
+    ShaderProgramInfo resetVoxelBufferProgramInfo;
+    resetVoxelBufferProgramInfo.CShaderFileName = "cResetVoxelBuffer.glsl";
+    resetVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+
+    ComputePass* passResetVoxelBuffer = new ComputePass(resetVoxelBufferProgramInfo);
+    mResetVoxelBufferTask = new ResetVoxelBuffer();
+    mResetVoxelBufferTask->AddPass(passResetVoxelBuffer);
+    mResetVoxelBufferTask->CreateDeviceResource();
+
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
-    GLuint bufferSize = voxelCount * sizeof(float) * 12;
+    GLuint bufferSize = voxelCount * sizeof(GLuint);
     mVoxelBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
+    memset(mZeroBuffer, 0x00, bufferSize);
 
 	// Create scene.
 	mat4 rotM;
@@ -143,7 +160,8 @@ void SimpleVoxelizationApp::Initialize()
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
     // Create labels.
-    InformationPanel::GetInstance()->AddLabel("Voxelization Pass", 16, 20);
+    InformationPanel::GetInstance()->AddLabel("Reset Voxel Buffer Pass", 16, 20);
+    InformationPanel::GetInstance()->AddLabel("Voxelization Pass", 16, 40);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -186,10 +204,25 @@ void SimpleVoxelizationApp::ShowVoxelization()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::Run()
 {
-    mVoxelBuffer->Bind(0);
-
     InformationPanel^ infoPanel = InformationPanel::GetInstance();
     static double workLoad = 0.0;
+
+    mVoxelBuffer->Bind(0);
+
+    mTimer->Start();
+    mResetVoxelBufferTask->Dispatch(0, VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION);
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
+    infoPanel->SetLabelValue("Reset Voxel Buffer Pass", workLoad);
+
+    // Debug reset voxel buffer task.
+#ifdef DEBUG_VOXEL
+    GLuint* bufferData = (GLuint*)mVoxelBuffer->Map(GL_WRITE_ONLY);
+    assert(bufferData);
+    int res = memcmp(mZeroBuffer, bufferData, VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*sizeof(GLuint));
+    assert(res == 0);
+    mVoxelBuffer->Unmap();
+#endif
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
@@ -223,6 +256,7 @@ void SimpleVoxelizationApp::Terminate()
     delete mCamera;
 	delete mVoxelizationProjector;
 
+    mResetVoxelBufferTask = 0;
     mVoxelBuffer = 0;
 
 	mGround = 0;

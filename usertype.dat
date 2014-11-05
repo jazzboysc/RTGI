@@ -210,6 +210,7 @@ gl_TessLevelOuter
 gl_TessLevelInner
 gl_InvocationID
 gl_GlobalInvocationID
+gl_NumWorkGroups
 
 // GLSL statements
 discard

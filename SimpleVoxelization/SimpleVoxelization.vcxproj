@@ -11,15 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ResetVoxelBuffer.h" />
     <ClInclude Include="SimpleVoxelizationApp.h" />
     <ClInclude Include="SimpleVoxelizationTriMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ResetVoxelBuffer.cpp" />
     <ClCompile Include="SimpleVoxelizationApp.cpp" />
     <ClCompile Include="SimpleVoxelizationTriMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cResetVoxelBuffer.glsl" />
     <None Include="fShowVoxelization.glsl" />
     <None Include="fVoxelization.glsl" />
     <None Include="gVoxelization.glsl" />

@@ -4,6 +4,7 @@
 #include "GraphicsFrameworkHeader.h"
 #include "SimpleVoxelizationTriMesh.h"
 #include "GPUTimer.h"
+#include "ResetVoxelBuffer.h"
 
 namespace RTGI
 {
@@ -30,7 +31,7 @@ public:
 	void OnReshape(int x, int y);
 
 public:
-    enum { VOXEL_DIMENSION = 64 };
+    enum { VOXEL_DIMENSION = 32 };
 
 private:
 	void VoxelizeScene();
@@ -42,7 +43,9 @@ private:
     Camera* mCamera;
 	Camera* mVoxelizationProjector;
 
+    ResetVoxelBufferPtr mResetVoxelBufferTask;
     StructuredBufferPtr mVoxelBuffer;
+    GLuint mZeroBuffer[VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION];
     AABB mSceneBB;
 
 	SimpleVoxelizationTriMeshPtr mGround;
