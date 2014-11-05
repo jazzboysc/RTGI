@@ -64,7 +64,7 @@ void SimpleVoxelizationApp::Initialize()
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
-    GLuint bufferSize = voxelCount * sizeof(float) * 4;
+    GLuint bufferSize = voxelCount * sizeof(float) * 12;
     mVoxelBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
 	// Create scene.

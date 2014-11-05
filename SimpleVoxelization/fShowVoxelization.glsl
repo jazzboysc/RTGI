@@ -6,6 +6,8 @@ in vec4 vNormalWorld;
 struct Voxel
 {
     vec4 radiance;
+    vec4 radiance2;
+    vec4 radiance3;
 };
 
 layout(std430, binding = 0)  buffer gpuMemoryPool

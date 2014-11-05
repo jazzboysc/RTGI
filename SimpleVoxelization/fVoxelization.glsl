@@ -6,6 +6,8 @@ in vec4 gNormalWorld;
 struct Voxel
 {
     vec4 radiance;
+    vec4 radiance2;
+    vec4 radiance3;
 };
 
 layout(std430, binding = 0)  buffer gpuMemoryPool
@@ -35,4 +37,6 @@ void main()
 {
     int index = GetIndex(gPositionWorld.xyz);
     voxelBuffer.data[index].radiance = vec4(MaterialColor, 0.0);
+    voxelBuffer.data[index].radiance2 = vec4(MaterialColor, 1.0);
+    voxelBuffer.data[index].radiance3 = vec4(MaterialColor, 2.0);
 }
