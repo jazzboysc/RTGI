@@ -189,9 +189,16 @@ void Texture2D::CreateRenderTarget(int width, int height,
 	switch (RTFormat)
 	{
 	case RTGI::Texture2D::TF_RGB:
-		// TODO:
-		assert( false );
+        mInternalFormat = GL_RGB8;
+        mFormat = GL_RGB;
+        mType = GL_UNSIGNED_BYTE;
 		break;
+
+    case RTGI::Texture2D::TF_RGBA:
+        mInternalFormat = GL_RGBA8;
+        mFormat = GL_RGBA;
+        mType = GL_UNSIGNED_BYTE;
+        break;
 
 	case RTGI::Texture2D::TF_RGBF:
 		mInternalFormat = GL_RGB32F_ARB;

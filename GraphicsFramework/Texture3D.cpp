@@ -54,8 +54,15 @@ void Texture3D::CreateRenderTarget(int width, int height, int depth,
     switch( RTFormat )
     {
     case RTGI::Texture::TF_RGB:
-        // TODO:
-        assert(false);
+        mInternalFormat = GL_RGB8;
+        mFormat = GL_RGB;
+        mType = GL_UNSIGNED_BYTE;
+        break;
+
+    case RTGI::Texture::TF_RGBA:
+        mInternalFormat = GL_RGBA8;
+        mFormat = GL_RGBA;
+        mType = GL_UNSIGNED_BYTE;
         break;
 
     case RTGI::Texture::TF_RGBF:

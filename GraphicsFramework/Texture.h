@@ -22,6 +22,7 @@ public:
     enum TextureFormat
     {
         TF_RGB,
+        TF_RGBA,
         TF_RGBF,
         TF_RGBAF,
         TF_R32UI,

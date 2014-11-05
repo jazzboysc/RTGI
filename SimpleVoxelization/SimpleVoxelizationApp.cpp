@@ -61,20 +61,23 @@ void SimpleVoxelizationApp::Initialize()
     MaterialTemplate* mtVoxelization = new MaterialTemplate();
     mtVoxelization->AddTechnique(techVoxelization);
 
-    // Create scene voxel texture.
-    mSceneVoxels = new StructuredBuffer();
-    GLuint voxelCount = VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION;
+    // Create scene voxel buffer.
+    mVoxelBuffer = new StructuredBuffer();
+    GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     GLuint bufferSize = voxelCount * sizeof(float) * 4;
-    mSceneVoxels->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
+    mVoxelBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
 	// Create scene.
 	mat4 rotM;
     material = new Material(mtVoxelization);
 	mModel = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
-	mModel->LoadFromFile("beethoven.ply");
+	mModel->LoadFromFile("dragon_s.ply");
+    mat4 scale = Scale(vec3(60.0f));
+    mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
-	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
+	//mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
+    mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
@@ -183,29 +186,25 @@ void SimpleVoxelizationApp::ShowVoxelization()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::Run()
 {
-    mSceneVoxels->Bind(0);
-    vec4* bufferData = (vec4*)mSceneVoxels->Map(GL_WRITE_ONLY);
-    assert(bufferData);
-    memset(bufferData, 0x00, mSceneVoxels->GetSize());
-    mSceneVoxels->Unmap();
+    mVoxelBuffer->Bind(0);
 
     InformationPanel^ infoPanel = InformationPanel::GetInstance();
     static double workLoad = 0.0;
 
-    mTimer->Start();
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
+    mTimer->Start();
 	VoxelizeScene();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetLabelValue("Voxelization Pass", workLoad);
 
     //glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-    //bufferData = (vec4*)mSceneVoxels->Map(GL_WRITE_ONLY);
+    //bufferData = (vec4*)mVoxelBuffer->Map(GL_WRITE_ONLY);
     //assert(bufferData);
-    //mSceneVoxels->Unmap();
+    //mVoxelBuffer->Unmap();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -224,7 +223,7 @@ void SimpleVoxelizationApp::Terminate()
     delete mCamera;
 	delete mVoxelizationProjector;
 
-    mSceneVoxels = 0;
+    mVoxelBuffer = 0;
 
 	mGround = 0;
 	mCeiling = 0;

@@ -24,8 +24,6 @@ ivec3 GetIndex(vec3 worldPosition)
 
     vec3 offsets = (worldPosition - SceneBBCenter + SceneBBExtension) / (2.0*SceneBBExtension);
     offsets = round(offsets*imageDim);
-    //offsets = (offsets*imageDim);
-
     ivec3 res = ivec3(offsets);
     return res;
 }
@@ -34,12 +32,11 @@ void main()
 {
     ivec3 res = GetIndex(vPositionWorld.xyz);
     int index = res.z * dim * dim + res.y * dim + res.x;
-
     vec4 color = voxelBuffer.data[index].radiance;
 
-    vec3 normal = normalize(vNormalWorld).xyz;
-    normal = normal*0.5 + 0.5;
-    float a = float(index) / float(dim*dim*dim - 1);
+    //vec3 normal = normalize(vNormalWorld).xyz;
+    //normal = normal*0.5 + 0.5;
+    //float a = float(index) / float(dim*dim*dim - 1);
     //gl_FragData[0] = vec4(a, a, a, 1.0);
     //gl_FragData[0] = vec4(float(float(res.x) / float(dim - 1)), 
     //                      float(float(res.y) / float(dim - 1)), 

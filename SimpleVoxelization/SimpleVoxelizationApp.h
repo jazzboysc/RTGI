@@ -42,7 +42,7 @@ private:
     Camera* mCamera;
 	Camera* mVoxelizationProjector;
 
-    StructuredBufferPtr mSceneVoxels;
+    StructuredBufferPtr mVoxelBuffer;
     AABB mSceneBB;
 
 	SimpleVoxelizationTriMeshPtr mGround;
