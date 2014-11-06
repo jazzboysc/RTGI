@@ -12,6 +12,7 @@ SimpleVoxelizationApp::SimpleVoxelizationApp(int width, int height)
 	mHeight(height),
 	mWindowTitle("Simple voxelization demo")
 {
+    mIsRotatingModel = false;
 }
 //----------------------------------------------------------------------------
 SimpleVoxelizationApp::~SimpleVoxelizationApp()
@@ -80,7 +81,7 @@ void SimpleVoxelizationApp::Initialize()
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
-    GLuint bufferSize = voxelCount * sizeof(GLuint);
+    GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
     mVoxelBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
     memset(mZeroBuffer, 0x00, bufferSize);
 
@@ -177,11 +178,14 @@ void SimpleVoxelizationApp::VoxelizeScene()
     mRightWall->SetCamera(mVoxelizationProjector);
     mModel->SetCamera(mVoxelizationProjector);
 
+    glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
 	mGround->Render(0, 0);
 	mCeiling->Render(0, 0);
 	mBackWall->Render(0, 0);
 	mLeftWall->Render(0, 0);
 	mRightWall->Render(0, 0);
+
+    glViewport(0, 0, VOXEL_DIMENSION >> 3, VOXEL_DIMENSION >> 3);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
@@ -204,6 +208,17 @@ void SimpleVoxelizationApp::ShowVoxelization()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::Run()
 {
+    static float angle = 0.0f;
+    if( mIsRotatingModel )
+    {
+        angle += 1.0f;
+        mat4 rot;
+        rot = RotateY(angle);
+        vec3 trans = mModel->GetWorldTranslation();
+        mModel->SetWorldTransform(rot);
+        mModel->SetWorldTranslation(trans);
+    }
+
     InformationPanel^ infoPanel = InformationPanel::GetInstance();
     static double workLoad = 0.0;
 
@@ -227,7 +242,6 @@ void SimpleVoxelizationApp::Run()
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
     mTimer->Start();
 	VoxelizeScene();
     mTimer->Stop();
@@ -271,6 +285,15 @@ void SimpleVoxelizationApp::Terminate()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::OnKeyboard(unsigned char key, int x, int y)
 {
+    switch( key )
+    {
+    case 'r':
+        mIsRotatingModel = !mIsRotatingModel;
+        break;
+
+    default:
+        break;
+    }
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::OnKeyboardUp(unsigned char key, int x, int y)

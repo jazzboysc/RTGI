@@ -31,7 +31,7 @@ public:
 	void OnReshape(int x, int y);
 
 public:
-    enum { VOXEL_DIMENSION = 32 };
+    enum { VOXEL_DIMENSION = 64 };
 
 private:
 	void VoxelizeScene();
@@ -40,12 +40,14 @@ private:
 	int mWidth, mHeight;
 	std::string mWindowTitle;
 
+    bool mIsRotatingModel;
+
     Camera* mCamera;
 	Camera* mVoxelizationProjector;
 
     ResetVoxelBufferPtr mResetVoxelBufferTask;
     StructuredBufferPtr mVoxelBuffer;
-    GLuint mZeroBuffer[VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION];
+    GLuint mZeroBuffer[VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*4];
     AABB mSceneBB;
 
 	SimpleVoxelizationTriMeshPtr mGround;

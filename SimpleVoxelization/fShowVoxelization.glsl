@@ -5,9 +5,10 @@ in vec4 vNormalWorld;
 
 struct Voxel
 {
-    uint radiance;
-    //vec4 radiance2;
-    //vec4 radiance3;
+    uint value1;
+    uint value2;
+    uint value3;
+    uint value4;
 };
 
 layout(std430, binding = 0)  buffer gpuMemoryPool
@@ -42,7 +43,7 @@ void main()
 {
     ivec3 res = GetIndex(vPositionWorld.xyz);
     int index = res.z * dim * dim + res.y * dim + res.x;
-    vec4 color = UintToVec4(voxelBuffer.data[index].radiance);
+    vec4 color = UintToVec4(voxelBuffer.data[index].value1);
     color.xyz /= 255.0;
     color.w = 1.0;
 

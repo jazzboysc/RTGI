@@ -6,9 +6,10 @@ in vec4 gNormalWorld;
 
 struct Voxel
 {
-    uint radiance;
-    //vec4 radiance2;
-    //vec4 radiance3;
+    uint value1;
+    uint value2;
+    uint value3;
+    uint value4;
 };
 
 layout(std430, binding = 0)  buffer gpuMemoryPool
@@ -34,14 +35,6 @@ int GetIndex(vec3 worldPosition)
     return index;
 }
 
-vec4 UintToVec4(uint value)
-{
-    return vec4(float((value & 0x000000FF)),
-                float((value & 0x0000FF00) >> 8U),
-                float((value & 0x00FF0000) >> 16U),
-                float((value & 0xFF000000) >> 24U));
-}
-
 uint Vec4ToUint(vec4 value)
 {
     uint res = (uint(value.w) & 0x000000FF) << 24U |
@@ -56,22 +49,14 @@ void main()
 {
     int index = GetIndex(gPositionWorld.xyz);
 
-    vec4 value = vec4(MaterialColor, 1.0);
-    value.rgb *= 255.0;
+    float contrast = length(MaterialColor.rrg - MaterialColor.gbb) / 
+        (sqrt(2.0) + MaterialColor.r + MaterialColor.g + MaterialColor.b);
+    vec4 value = vec4(MaterialColor, contrast);
+    value.rgba *= 255.0;
+
     uint newValue = Vec4ToUint(value);
-    uint prevStoredValue = 0;
-    uint curStoredValue;
-
-    //while( (curStoredValue = atomicCompSwap(voxelBuffer.data[index].radiance, prevStoredValue, newValue))
-    //    != prevStoredValue )
-    //{
-    //    prevStoredValue = curStoredValue;
-    //    vec4 rval = UintToVec4(curStoredValue);
-    //    rval.xyz = rval.xyz * rval.w;
-    //    vec4 curValF = rval + value;
-    //    curValF.xyz /= curValF.w;
-    //    newValue = Vec4ToUint(curValF);
-    //}
-
-    voxelBuffer.data[index].radiance = newValue;
+    atomicMax(voxelBuffer.data[index].value1, newValue);
+    atomicMax(voxelBuffer.data[index].value2, newValue + 1);
+    atomicMax(voxelBuffer.data[index].value3, newValue + 2);
+    atomicMax(voxelBuffer.data[index].value4, newValue + 3);
 }

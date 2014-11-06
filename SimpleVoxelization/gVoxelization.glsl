@@ -15,11 +15,12 @@ const vec3 X = vec3(1.0, 0.0, 0.0);
 const vec3 Y = vec3(0.0, 1.0, 0.0);
 const vec3 Z = vec3(0.0, 0.0, 1.0);
 
-mat4 GetAxisViewTransform(int axis, vec3 bbCenter, vec3 bbExtension)
+mat4 GetAxisViewProjTransforms(int axis, vec3 bbCenter, vec3 bbExtension)
 {
-    mat4 res;
+    mat4 view, proj;
     vec3 E, R, U, D;
     float offset = 0.5;
+    float left, right, bottom, top, near, far;
 
     if( axis == 0 )
     {
@@ -27,6 +28,13 @@ mat4 GetAxisViewTransform(int axis, vec3 bbCenter, vec3 bbExtension)
         R = Z;
         U = Y;
         D = -X;
+
+        left = -bbExtension.z;
+        right = bbExtension.z;
+        bottom = -bbExtension.y;
+        top = bbExtension.y;
+        near = 0.01;
+        far = 2.0*bbExtension.x + offset;
     }
     else if( axis == 1 )
     {
@@ -34,6 +42,13 @@ mat4 GetAxisViewTransform(int axis, vec3 bbCenter, vec3 bbExtension)
         R = X;
         U = Z;
         D = -Y;
+
+        left = -bbExtension.x;
+        right = bbExtension.x;
+        bottom = -bbExtension.z;
+        top = bbExtension.z;
+        near = 0.01;
+        far = 2.0*bbExtension.y + offset;
     }
     else
     {
@@ -41,16 +56,38 @@ mat4 GetAxisViewTransform(int axis, vec3 bbCenter, vec3 bbExtension)
         R = -X;
         U = Y;
         D = -Z;
+
+        left = -bbExtension.x;
+        right = bbExtension.x;
+        bottom = -bbExtension.y;
+        top = bbExtension.y;
+        near = 0.01;
+        far = 2.0*bbExtension.z + offset;
     }
 
     mat3 matRUD = mat3(R, U, D);
     vec3 EdRUD = E*matRUD;
-    res = mat4(vec4(R.x, U.x, D.x, 0.0),
-               vec4(R.y, U.y, D.y, 0.0),
-               vec4(R.z, U.z, D.z, 0.0),
-               vec4(-EdRUD.x, -EdRUD.y, -EdRUD.z, 1.0));
+    view = mat4(vec4(R.x, U.x, D.x, 0.0),
+                vec4(R.y, U.y, D.y, 0.0),
+                vec4(R.z, U.z, D.z, 0.0),
+                vec4(-EdRUD.x, -EdRUD.y, -EdRUD.z, 1.0));
 
-    return res;
+    float invRmL = 1.0 / (right - left);
+    float invTmB = 1.0 / (top - bottom);
+    float invNmF = 1.0 / (near - far);
+    float m00 = 2.0 * invRmL;
+    float m11 = 2.0 * invTmB;
+    float m22 = 2.0 * invNmF;
+    float m03 = -(right + left) * invRmL;
+    float m13 = -(top + bottom) * invTmB;
+    float m23 = -(far + near) * -invNmF;
+
+    proj = mat4(vec4(m00, 0.0, 0.0, 0.0),
+                vec4(0.0, m11, 0.0, 0.0),
+                vec4(0.0, 0.0, m22, 0.0),
+                vec4(m03, m13, m23, 1.0));
+
+    return proj * view;
 }
 
 struct AABB
@@ -87,60 +124,6 @@ vec3 GetAABBExtension(AABB bb)
     return res;
 }
 
-mat4 GetOrthoProjTransform(int axis, vec3 bbExtension)
-{
-    float left, right, bottom, top, near, far;
-    float offset = 0.5;
-
-    if( axis == 0 )
-    {
-        left = -bbExtension.z;
-        right = bbExtension.z;
-        bottom = -bbExtension.y;
-        top = bbExtension.y;
-        near = 0.01;
-        far = 2.0*bbExtension.x + offset;
-    }
-    else if( axis == 1 )
-    {
-        left = -bbExtension.x;
-        right = bbExtension.x;
-        bottom = -bbExtension.z;
-        top = bbExtension.z;
-        near = 0.01;
-        far = 2.0*bbExtension.y + offset;
-    }
-    else
-    {
-        left = -bbExtension.x;
-        right = bbExtension.x;
-        bottom = -bbExtension.y;
-        top = bbExtension.y;
-        near = 0.01;
-        far = 2.0*bbExtension.z + offset;
-    }
-
-    mat4 res;
-
-    float invRmL = 1.0 / (right - left);
-    float invTmB = 1.0 / (top - bottom);
-    float invNmF = 1.0 / (near - far);
-    float m00 = 2.0 * invRmL;
-    float m11 = 2.0 * invTmB;
-    float m22 = 2.0 * invNmF;
-    float m03 = -(right + left) * invRmL;
-    float m13 = -(top + bottom) * invTmB;
-    float m23 = -(far + near) * -invNmF;
-
-    res = mat4(vec4(m00, 0.0, 0.0, 0.0),
-               vec4(0.0, m11, 0.0, 0.0),
-               vec4(0.0, 0.0, m22, 0.0),
-               vec4(m03, m13, m23, 1.0));
-
-    return res;
-}
-
-
 void main()
 {
     AABB bb = GetTriangleAABB(vPositionWorld[0].xyz, vPositionWorld[1].xyz, vPositionWorld[2].xyz);
@@ -174,14 +157,12 @@ void main()
         }
     }
 
-    mat4 View = GetAxisViewTransform(axis, bbCenter, bbExtension);
-    mat4 OrthoProj = GetOrthoProjTransform(axis, bbExtension);
-
+    mat4 ProjView = GetAxisViewProjTransforms(axis, bbCenter, bbExtension);
     for( int i = 0; i < gl_in.length(); ++i )
     {
         gPositionWorld = vPositionWorld[i];
         gNormalWorld = vNormalWorld[i];
-        gl_Position = OrthoProj * View * gl_in[i].gl_Position;
+        gl_Position = ProjView * gl_in[i].gl_Position;
 
         EmitVertex();
     }
