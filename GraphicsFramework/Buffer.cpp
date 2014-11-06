@@ -56,6 +56,11 @@ void Buffer::Bind()
 	glBindBuffer(mType, mBuffer);
 }
 //----------------------------------------------------------------------------
+void Buffer::BindToIndirect()
+{
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mBuffer);
+}
+//----------------------------------------------------------------------------
 void Buffer::UpdateSubData(GLuint bindingPoint, int offset, size_t size, 
 	void* data)
 {
