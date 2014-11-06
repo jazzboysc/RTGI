@@ -14,14 +14,17 @@
     <ClInclude Include="ResetVoxelBuffer.h" />
     <ClInclude Include="SimpleVoxelizationApp.h" />
     <ClInclude Include="SimpleVoxelizationTriMesh.h" />
+    <ClInclude Include="GatherVoxelBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ResetVoxelBuffer.cpp" />
     <ClCompile Include="SimpleVoxelizationApp.cpp" />
     <ClCompile Include="SimpleVoxelizationTriMesh.cpp" />
+    <ClCompile Include="GatherVoxelBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cGatherVoxelBuffer.glsl" />
     <None Include="cResetVoxelBuffer.glsl" />
     <None Include="fShowVoxelization.glsl" />
     <None Include="fVoxelization.glsl" />

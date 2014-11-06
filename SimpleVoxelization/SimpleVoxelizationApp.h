@@ -5,6 +5,7 @@
 #include "SimpleVoxelizationTriMesh.h"
 #include "GPUTimer.h"
 #include "ResetVoxelBuffer.h"
+#include "GatherVoxelBuffer.h"
 
 namespace RTGI
 {
@@ -46,7 +47,9 @@ private:
 	Camera* mVoxelizationProjector;
 
     ResetVoxelBufferPtr mResetVoxelBufferTask;
+    GatherVoxelBufferPtr mGatherVoxelBufferTask;
     StructuredBufferPtr mVoxelBuffer;
+    StructuredBufferPtr mIndirectCommandBuffer;
     GLuint mZeroBuffer[VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*4];
     AABB mSceneBB;
 

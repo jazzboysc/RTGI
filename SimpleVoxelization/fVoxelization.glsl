@@ -56,7 +56,7 @@ void main()
 
     uint newValue = Vec4ToUint(value);
     atomicMax(voxelBuffer.data[index].value1, newValue);
-    atomicMax(voxelBuffer.data[index].value2, newValue + 1);
-    atomicMax(voxelBuffer.data[index].value3, newValue + 2);
-    atomicMax(voxelBuffer.data[index].value4, newValue + 3);
+    atomicMax(voxelBuffer.data[index].value2, 1);
+    atomicMax(voxelBuffer.data[index].value3, newValue + 3);
+    atomicMax(voxelBuffer.data[index].value4, newValue + 4);
 }

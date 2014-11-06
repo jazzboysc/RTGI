@@ -9,12 +9,14 @@
     <ClInclude Include="SimpleVoxelizationApp.h" />
     <ClInclude Include="SimpleVoxelizationTriMesh.h" />
     <ClInclude Include="ResetVoxelBuffer.h" />
+    <ClInclude Include="GatherVoxelBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SimpleVoxelizationApp.cpp" />
     <ClCompile Include="SimpleVoxelizationTriMesh.cpp" />
     <ClCompile Include="ResetVoxelBuffer.cpp" />
+    <ClCompile Include="GatherVoxelBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vVoxelization.glsl">
@@ -33,6 +35,9 @@
       <Filter>GLSL</Filter>
     </None>
     <None Include="cResetVoxelBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="cGatherVoxelBuffer.glsl">
       <Filter>GLSL</Filter>
     </None>
   </ItemGroup>

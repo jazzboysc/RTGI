@@ -78,12 +78,27 @@ void SimpleVoxelizationApp::Initialize()
     mResetVoxelBufferTask->AddPass(passResetVoxelBuffer);
     mResetVoxelBufferTask->CreateDeviceResource();
 
+    // Create gather voxel buffer task.
+    ShaderProgramInfo gatherVoxelBufferProgramInfo;
+    gatherVoxelBufferProgramInfo.CShaderFileName = "cGatherVoxelBuffer.glsl";
+    gatherVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+
+    ComputePass* passGatherVoxelBuffer = new ComputePass(gatherVoxelBufferProgramInfo);
+    mGatherVoxelBufferTask = new GatherVoxelBuffer();
+    mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
+    mGatherVoxelBufferTask->CreateDeviceResource();
+
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
     mVoxelBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
     memset(mZeroBuffer, 0x00, bufferSize);
+
+    // Create indirect command buffer.
+    mIndirectCommandBuffer = new StructuredBuffer();
+    bufferSize = sizeof(GLuint) * 5;
+    mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
 	// Create scene.
 	mat4 rotM;
@@ -94,7 +109,6 @@ void SimpleVoxelizationApp::Initialize()
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
-	//mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
     mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
     mModel->SceneBB = &mSceneBB;
@@ -105,9 +119,6 @@ void SimpleVoxelizationApp::Initialize()
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource();
-    //rotM = RotateZ(-70.0f);
-    //mGround->SetWorldTransform(rotM);
-    //mGround->SetWorldTranslation(vec3(0.0f, 7.0f, 0.0f));
     mGround->MaterialColor = vec3(0.8f, 0.8f, 0.0f);
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
@@ -223,7 +234,9 @@ void SimpleVoxelizationApp::Run()
     static double workLoad = 0.0;
 
     mVoxelBuffer->Bind(0);
+    mIndirectCommandBuffer->Bind(1);
 
+    // Reset voxel buffer pass.
     mTimer->Start();
     mResetVoxelBufferTask->Dispatch(0, VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION);
     mTimer->Stop();
@@ -239,6 +252,7 @@ void SimpleVoxelizationApp::Run()
     mVoxelBuffer->Unmap();
 #endif
 
+    // Scene voxelization pass.
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -248,11 +262,11 @@ void SimpleVoxelizationApp::Run()
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetLabelValue("Voxelization Pass", workLoad);
 
-    //glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-    //bufferData = (vec4*)mVoxelBuffer->Map(GL_WRITE_ONLY);
-    //assert(bufferData);
-    //mVoxelBuffer->Unmap();
+    // Gather voxel buffer pass.
+    mGatherVoxelBufferTask->Dispatch(0, VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION);
+    //mIndirectCommandBuffer->Map(GL_)
 
+    // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glViewport(0, 0, mWidth, mHeight);
@@ -271,7 +285,9 @@ void SimpleVoxelizationApp::Terminate()
 	delete mVoxelizationProjector;
 
     mResetVoxelBufferTask = 0;
+    mGatherVoxelBufferTask = 0;
     mVoxelBuffer = 0;
+    mIndirectCommandBuffer = 0;
 
 	mGround = 0;
 	mCeiling = 0;
