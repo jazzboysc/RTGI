@@ -27,6 +27,9 @@ layout(std430, binding = 1)  buffer _indirectCommandBuffer
     uint  firstIndex;
     uint  baseVertex;
     uint  baseInstance;
+    uint  reserved1;
+    uint  reserved2;
+    uint  reserved3;
     GatheredVoxel data[];
 } indirectCommandBuffer;
 

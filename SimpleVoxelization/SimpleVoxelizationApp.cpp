@@ -97,7 +97,7 @@ void SimpleVoxelizationApp::Initialize()
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
-    bufferSize = sizeof(GLuint)*5 + voxelCount*sizeof(GLfloat)*4;
+    bufferSize = sizeof(GLuint)*8 + voxelCount*sizeof(GLfloat)*4;
     mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
     // Create gathered voxel GPU memory allocator counter.
@@ -283,6 +283,7 @@ void SimpleVoxelizationApp::Run()
     // Gather voxel buffer pass.
     mGatherVoxelBufferTask->Dispatch(0, VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION);
     GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
+    GLfloat* gatheredVoxelData = (GLfloat*)(indirectCommandbufferData + 8);
     infoPanel->SetLabelValue("Voxel Count", (double)indirectCommandbufferData[1]);
     mIndirectCommandBuffer->Unmap();
 
