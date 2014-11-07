@@ -97,8 +97,12 @@ void SimpleVoxelizationApp::Initialize()
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
-    bufferSize = sizeof(GLuint) * 5;
+    bufferSize = sizeof(GLuint)*5 + voxelCount*sizeof(GLfloat)*4;
     mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
+
+    // Create gathered voxel GPU memory allocator counter.
+    mGatheredVoxelAllocCounter = new AtomicCounterBuffer();
+    mGatheredVoxelAllocCounter->ReserveDeviceResource(sizeof(GLuint), GL_DYNAMIC_COPY);
 
 	// Create scene.
 	mat4 rotM;
@@ -174,6 +178,9 @@ void SimpleVoxelizationApp::Initialize()
     // Create labels.
     InformationPanel::GetInstance()->AddLabel("Reset Voxel Buffer Pass", 16, 20);
     InformationPanel::GetInstance()->AddLabel("Voxelization Pass", 16, 40);
+    InformationPanel::GetInstance()->AddLabel("Voxel Count", 16, 60);
+    InformationPanel::GetInstance()->AddLabel("Reset Counter Time", 16, 80);
+    InformationPanel::GetInstance()->AddLabel("Counter", 16, 100);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -236,6 +243,17 @@ void SimpleVoxelizationApp::Run()
     mVoxelBuffer->Bind(0);
     mIndirectCommandBuffer->Bind(1);
 
+    // Reset counter.
+    mGatheredVoxelAllocCounter->Bind(0);
+    mTimer->Start();
+    GLuint* counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(GL_WRITE_ONLY);
+    assert(counterData);
+    counterData[0] = 0;
+    mGatheredVoxelAllocCounter->Unmap();
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
+    infoPanel->SetLabelValue("Reset Counter Time", workLoad);
+
     // Reset voxel buffer pass.
     mTimer->Start();
     mResetVoxelBufferTask->Dispatch(0, VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION);
@@ -264,7 +282,13 @@ void SimpleVoxelizationApp::Run()
 
     // Gather voxel buffer pass.
     mGatherVoxelBufferTask->Dispatch(0, VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION);
-    //mIndirectCommandBuffer->Map(GL_)
+    GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
+    infoPanel->SetLabelValue("Voxel Count", (double)indirectCommandbufferData[1]);
+    mIndirectCommandBuffer->Unmap();
+
+    counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(GL_WRITE_ONLY);
+    infoPanel->SetLabelValue("Counter", (double)counterData[0]);
+    mGatheredVoxelAllocCounter->Unmap();
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);

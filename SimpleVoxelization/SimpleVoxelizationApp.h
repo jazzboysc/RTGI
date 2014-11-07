@@ -46,6 +46,7 @@ private:
     Camera* mCamera;
 	Camera* mVoxelizationProjector;
 
+    AtomicCounterBufferPtr mGatheredVoxelAllocCounter;
     ResetVoxelBufferPtr mResetVoxelBufferTask;
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
     StructuredBufferPtr mVoxelBuffer;

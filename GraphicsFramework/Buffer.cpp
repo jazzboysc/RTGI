@@ -45,7 +45,14 @@ void Buffer::Unmap()
 void Buffer::Bind(GLuint index)
 {
 #ifndef __APPLE__
+
 	glBindBufferBase(mType, index, mBuffer);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert( res == GL_NO_ERROR );
+#endif
+
 #else
     assert( false );
 #endif

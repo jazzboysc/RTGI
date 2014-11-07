@@ -300,6 +300,9 @@ imageAtomicCompSwap
 imageLoad
 imageStore
 imageSize
+atomicAdd
+atomicMax
+memoryBarrier
 
 // GLSL image format
 rgba32f

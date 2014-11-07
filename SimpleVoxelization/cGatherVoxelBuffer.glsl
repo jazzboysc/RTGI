@@ -10,7 +10,12 @@ struct Voxel
     uint value4;
 };
 
-layout(std430, binding = 0)  buffer gpuMemoryPool
+struct GatheredVoxel
+{
+    vec4 translation;
+};
+
+layout(std430, binding = 0)  buffer _voxelBuffer
 {
     Voxel data[];
 } voxelBuffer;
@@ -22,15 +27,37 @@ layout(std430, binding = 1)  buffer _indirectCommandBuffer
     uint  firstIndex;
     uint  baseVertex;
     uint  baseInstance;
+    GatheredVoxel data[];
 } indirectCommandBuffer;
+
+layout(binding = 0, offset = 0) uniform atomic_uint gpuMemoryAllocator;
 
 void main()
 {
     int index = int(gl_GlobalInvocationID.z * gl_NumWorkGroups.y * gl_NumWorkGroups.x + 
         gl_GlobalInvocationID.y * gl_NumWorkGroups.x + gl_GlobalInvocationID.x);
 
+    if( index == 0 )
+    {
+        indirectCommandBuffer.count = 0;
+        indirectCommandBuffer.primCount = 0;
+        indirectCommandBuffer.firstIndex = 0;
+        indirectCommandBuffer.baseVertex = 0;
+        indirectCommandBuffer.baseInstance = 0;
+    }
+
+    memoryBarrier();
+
     if( voxelBuffer.data[index].value2 > 0 )
     {
+        uint newLocation = atomicCounterIncrement(gpuMemoryAllocator);
+        GatheredVoxel data;
+        data.translation = vec4(float(gl_GlobalInvocationID.x), 
+                                float(gl_GlobalInvocationID.y), 
+                                float(gl_GlobalInvocationID.z), 
+                                1.0);
+        indirectCommandBuffer.data[newLocation] = data;
+
         atomicAdd(indirectCommandBuffer.primCount, 1);
     }
 }

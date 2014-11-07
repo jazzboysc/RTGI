@@ -44,9 +44,12 @@ void PassInfo::Create(GLuint program, GLuint vbo, GLuint ibo, bool hasNormal,
 			vertexComponentCount*sizeof(float), 0);
 
 		loc = glGetAttribLocation(program, "vNormal");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponentCount*sizeof(float), (void*)12);
+        if( loc != -1 )
+        {
+            glEnableVertexAttribArray(loc);
+            glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE,
+                vertexComponentCount*sizeof(float), (void*)12);
+        }
 	}
 	else if( hasNormal && hasTCoord )
 	{
@@ -56,14 +59,20 @@ void PassInfo::Create(GLuint program, GLuint vbo, GLuint ibo, bool hasNormal,
 			vertexComponentCount*sizeof(float), 0);
 
 		loc = glGetAttribLocation(program, "vTCoord");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 
-			vertexComponentCount*sizeof(float), (void*)12);
+        if( loc != -1 )
+        {
+            glEnableVertexAttribArray(loc);
+            glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE,
+                vertexComponentCount*sizeof(float), (void*)12);
+        }
 
-		loc = glGetAttribLocation(program, "vNormal");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponentCount*sizeof(float), (void*)20);
+        if( loc != -1 )
+        {
+            loc = glGetAttribLocation(program, "vNormal");
+            glEnableVertexAttribArray(loc);
+            glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE,
+                vertexComponentCount*sizeof(float), (void*)20);
+        }
 	}
 	else
 	{
@@ -73,12 +82,20 @@ void PassInfo::Create(GLuint program, GLuint vbo, GLuint ibo, bool hasNormal,
 			vertexComponentCount*sizeof(float), 0);
 
 		loc = glGetAttribLocation(program, "vTCoord");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 
-			vertexComponentCount*sizeof(float), (void*)12);
+        if( loc != -1 )
+        {
+            glEnableVertexAttribArray(loc);
+            glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE,
+                vertexComponentCount*sizeof(float), (void*)12);
+        }
 	}
 
 	glBindVertexArray(0);
+
+#ifdef _DEBUG
+    GLenum error = glGetError();
+    assert(error == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void PassInfo::Enable()

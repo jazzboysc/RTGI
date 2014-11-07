@@ -10,7 +10,7 @@ struct Voxel
     uint value4;
 };
 
-layout(std430, binding = 0)  buffer gpuMemoryPool
+layout(std430, binding = 0)  buffer _voxelBuffer
 {
     Voxel data[];
 } voxelBuffer;
