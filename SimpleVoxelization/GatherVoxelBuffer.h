@@ -2,6 +2,7 @@
 #define RTGI_GatherVoxelBuffer_H
 
 #include "ComputeTask.h"
+#include "AABB.h"
 
 namespace RTGI
 {
@@ -20,6 +21,12 @@ public:
     virtual void OnGetShaderConstants();
     virtual void OnPreDispatch(unsigned int pass);
     virtual void OnPostDispatch(unsigned int pass);
+
+    AABB* SceneBB;
+
+private:
+    GLint mSceneBBMinLoc;
+    GLint mSceneBBExtensionLoc;
 };
 
 typedef RefPointer<GatherVoxelBuffer> GatherVoxelBufferPtr;

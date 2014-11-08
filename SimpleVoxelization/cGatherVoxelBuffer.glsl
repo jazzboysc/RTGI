@@ -27,26 +27,35 @@ layout(std430, binding = 1)  buffer _indirectCommandBuffer
     uint  firstIndex;
     uint  baseVertex;
     uint  baseInstance;
-    uint  reserved1;
-    uint  reserved2;
-    uint  reserved3;
+
+    float reserved1;
+    float reserved2;
+    float reserved3;
+
     GatheredVoxel data[];
 } indirectCommandBuffer;
 
 layout(binding = 0, offset = 0) uniform atomic_uint gpuMemoryAllocator;
+
+uniform vec3 SceneBBMin;
+uniform vec3 SceneBBExtension;
 
 void main()
 {
     int index = int(gl_GlobalInvocationID.z * gl_NumWorkGroups.y * gl_NumWorkGroups.x + 
         gl_GlobalInvocationID.y * gl_NumWorkGroups.x + gl_GlobalInvocationID.x);
 
+    vec3 voxelSize = 2.0*SceneBBExtension / vec3(gl_NumWorkGroups);
+    vec3 voxelWorldPosition = SceneBBMin + vec3(gl_GlobalInvocationID)*voxelSize + 0.5*voxelSize;
+
     if( index == 0 )
     {
-        indirectCommandBuffer.count = 0;
         indirectCommandBuffer.primCount = 0;
-        indirectCommandBuffer.firstIndex = 0;
-        indirectCommandBuffer.baseVertex = 0;
-        indirectCommandBuffer.baseInstance = 0;
+
+        // Debug voxel world space size.
+        indirectCommandBuffer.reserved1 = voxelSize.x;
+        indirectCommandBuffer.reserved2 = voxelSize.y;
+        indirectCommandBuffer.reserved3 = voxelSize.z;
     }
 
     memoryBarrier();
@@ -55,10 +64,7 @@ void main()
     {
         uint newLocation = atomicCounterIncrement(gpuMemoryAllocator);
         GatheredVoxel data;
-        data.translation = vec4(float(gl_GlobalInvocationID.x), 
-                                float(gl_GlobalInvocationID.y), 
-                                float(gl_GlobalInvocationID.z), 
-                                1.0);
+        data.translation = vec4(voxelWorldPosition, 1.0);
         indirectCommandBuffer.data[newLocation] = data;
 
         atomicAdd(indirectCommandBuffer.primCount, 1);

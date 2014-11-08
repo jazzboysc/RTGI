@@ -3,6 +3,7 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "SimpleVoxelizationTriMesh.h"
+#include "VoxelCubeTriMesh.h"
 #include "GPUTimer.h"
 #include "ResetVoxelBuffer.h"
 #include "GatherVoxelBuffer.h"
@@ -60,6 +61,7 @@ private:
 	SimpleVoxelizationTriMeshPtr mLeftWall;
 	SimpleVoxelizationTriMeshPtr mRightWall;
 	SimpleVoxelizationTriMeshPtr mModel;
+    VoxelCubeTriMeshPtr mVoxelCubeModel;
 
     GPUTimerPtr mTimer;
 };

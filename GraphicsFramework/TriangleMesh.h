@@ -10,6 +10,7 @@
 #include "RenderObject.h"
 #include "Camera.h"
 #include "AABB.h"
+#include "StructuredBuffer.h"
 
 namespace RTGI
 {
@@ -65,6 +66,10 @@ public:
     // TODO:
     // Modify TriangleMesh to support quad mesh and change the name to Mesh.
     bool IsQuad;
+
+    unsigned int InstanceCount;
+    bool IsIndirect;
+    StructuredBufferPtr IndirectCommandBuffer;
 
 protected:
 	void CreateVertexBufferDeviceResource();

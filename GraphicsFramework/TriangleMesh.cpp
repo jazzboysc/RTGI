@@ -22,10 +22,14 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
 {
 	mWorldLoc = mViewLoc = mProjLoc = -1;
     IsQuad = false;
+    InstanceCount = 1;
+    IsIndirect = false;
 }
 //----------------------------------------------------------------------------
 TriangleMesh::~TriangleMesh()
 {
+    IndirectCommandBuffer = 0;
+
 	glDeleteBuffers(1, &mVBO);
 	glDeleteBuffers(1, &mIBO);
 	glDeleteVertexArrays(1, &mVAO);
@@ -59,8 +63,23 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
     {
         if( !IsQuad )
         {
-            glDrawElements(GL_TRIANGLES, (GLsizei)mIndexData.size(),
-                GL_UNSIGNED_SHORT, 0);
+            if( !IsIndirect )
+            {
+                if( InstanceCount == 1 )
+                {
+                    glDrawElements(GL_TRIANGLES, (GLsizei)mIndexData.size(),
+                        GL_UNSIGNED_SHORT, 0);
+                }
+                else
+                {
+                    // TODO:
+                }
+            }
+            else
+            {
+                assert(IndirectCommandBuffer != 0);
+                glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_SHORT, 0);
+            }
         }
         else
         {
@@ -282,6 +301,21 @@ void TriangleMesh::CreateDeviceResource()
 
 	// Get shader constants here.
 	OnGetShaderConstants();
+
+    if( IsIndirect && IndirectCommandBuffer != 0 )
+    {
+        IndirectCommandBuffer->Bind();
+        DrawElementsIndirectCommand* bufferData = 
+            (DrawElementsIndirectCommand*)IndirectCommandBuffer->Map(
+            GL_WRITE_ONLY);
+        assert( bufferData );
+        bufferData->Count = (unsigned int)mIndexData.size();
+        bufferData->PrimCount = 0;
+        bufferData->FirstIndex = 0;
+        bufferData->BaseVertex = 0;
+        bufferData->BaseInstance = 0;
+        IndirectCommandBuffer->Unmap();
+    }
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::OnGetShaderConstants()

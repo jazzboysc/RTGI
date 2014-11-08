@@ -68,6 +68,18 @@ void SimpleVoxelizationApp::Initialize()
     MaterialTemplate* mtVoxelization = new MaterialTemplate();
     mtVoxelization->AddTechnique(techVoxelization);
 
+    ShaderProgramInfo showVoxelGridProgramInfo;
+    showVoxelGridProgramInfo.VShaderFileName = "vShowVoxelGrid.glsl";
+    showVoxelGridProgramInfo.FShaderFileName = "fShowVoxelGrid.glsl";
+    showVoxelGridProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Fragment;
+    Pass* passShowVoxelGrid = new Pass(showVoxelGridProgramInfo);
+
+    Technique* techShowVoxelGrid = new Technique();
+    techShowVoxelGrid->AddPass(passShowVoxelGrid);
+    MaterialTemplate* mtShowVoxelGrid = new MaterialTemplate();
+    mtShowVoxelGrid->AddTechnique(techShowVoxelGrid);
+
     // Create reset voxel buffer task.
     ShaderProgramInfo resetVoxelBufferProgramInfo;
     resetVoxelBufferProgramInfo.CShaderFileName = "cResetVoxelBuffer.glsl";
@@ -87,6 +99,7 @@ void SimpleVoxelizationApp::Initialize()
     mGatherVoxelBufferTask = new GatherVoxelBuffer();
     mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
     mGatherVoxelBufferTask->CreateDeviceResource();
+    mGatherVoxelBufferTask->SceneBB = &mSceneBB;
 
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
@@ -97,7 +110,7 @@ void SimpleVoxelizationApp::Initialize()
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
-    bufferSize = sizeof(GLuint)*8 + voxelCount*sizeof(GLfloat)*4;
+    bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*3 + voxelCount*sizeof(GLfloat)*4;
     mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
     // Create gathered voxel GPU memory allocator counter.
@@ -113,7 +126,7 @@ void SimpleVoxelizationApp::Initialize()
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource();
-    mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
+    mModel->SetWorldTranslation(vec3(0.0f, 4.4f, 3.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
@@ -174,6 +187,15 @@ void SimpleVoxelizationApp::Initialize()
     mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
+
+    // Create voxel cube model.
+    material = new Material(mtShowVoxelGrid);
+    mVoxelCubeModel = new VoxelCubeTriMesh(material, mCamera);
+    mVoxelCubeModel->LoadFromFile("cube.ply");
+    mVoxelCubeModel->GenerateNormals();
+    mVoxelCubeModel->IsIndirect = true;
+    mVoxelCubeModel->IndirectCommandBuffer = mIndirectCommandBuffer;
+    mVoxelCubeModel->CreateDeviceResource();
 
     // Create labels.
     InformationPanel::GetInstance()->AddLabel("Reset Voxel Buffer Pass", 16, 20);
@@ -242,6 +264,7 @@ void SimpleVoxelizationApp::Run()
 
     mVoxelBuffer->Bind(0);
     mIndirectCommandBuffer->Bind(1);
+    mIndirectCommandBuffer->BindToIndirect();
 
     // Reset counter.
     mGatheredVoxelAllocCounter->Bind(0);
@@ -271,6 +294,7 @@ void SimpleVoxelizationApp::Run()
 #endif
 
     // Scene voxelization pass.
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -282,10 +306,12 @@ void SimpleVoxelizationApp::Run()
 
     // Gather voxel buffer pass.
     mGatherVoxelBufferTask->Dispatch(0, VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION);
+#ifdef DEBUG_VOXEL
     GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
     GLfloat* gatheredVoxelData = (GLfloat*)(indirectCommandbufferData + 8);
     infoPanel->SetLabelValue("Voxel Count", (double)indirectCommandbufferData[1]);
     mIndirectCommandBuffer->Unmap();
+#endif
 
     counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(GL_WRITE_ONLY);
     infoPanel->SetLabelValue("Counter", (double)counterData[0]);
@@ -297,7 +323,10 @@ void SimpleVoxelizationApp::Run()
     glViewport(0, 0, mWidth, mHeight);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    ShowVoxelization();
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    mVoxelCubeModel->Render(0, 0);
+    //ShowVoxelization();
 
 	glutSwapBuffers();
 }
@@ -320,6 +349,7 @@ void SimpleVoxelizationApp::Terminate()
 	mLeftWall = 0;
 	mRightWall = 0;
 	mModel = 0;
+    mVoxelCubeModel = 0;
 
     mTimer = 0;
 }

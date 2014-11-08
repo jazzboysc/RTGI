@@ -14,6 +14,15 @@
 namespace RTGI
 {
 
+typedef struct _DrawElementsIndirectCommand
+{
+    unsigned int Count;
+    unsigned int PrimCount;
+    unsigned int FirstIndex;
+    unsigned int BaseVertex;
+    unsigned int BaseInstance;
+} DrawElementsIndirectCommand;
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 07/22/2013
