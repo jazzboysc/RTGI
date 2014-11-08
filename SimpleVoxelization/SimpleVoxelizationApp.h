@@ -34,11 +34,19 @@ public:
 
 public:
     enum { VOXEL_DIMENSION = 64 };
+    enum { LOCAL_GROUP_DIM = 8 };
 
 private:
-	void VoxelizeScene();
+    void VoxelizeScene();
     void ShowVoxelization();
 
+    enum ShowMode
+    {
+        SM_VoxelGrid,
+        SM_Scene,
+    };
+
+    ShowMode mShowMode;
 	int mWidth, mHeight;
 	std::string mWindowTitle;
 

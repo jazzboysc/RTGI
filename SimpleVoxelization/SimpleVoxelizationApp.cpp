@@ -13,6 +13,7 @@ SimpleVoxelizationApp::SimpleVoxelizationApp(int width, int height)
 	mWindowTitle("Simple voxelization demo")
 {
     mIsRotatingModel = false;
+    mShowMode = SM_VoxelGrid;
 }
 //----------------------------------------------------------------------------
 SimpleVoxelizationApp::~SimpleVoxelizationApp()
@@ -25,7 +26,9 @@ void SimpleVoxelizationApp::Initialize()
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &globalX);
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &globalY);
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &globalZ);
-    assert(globalX >= VOXEL_DIMENSION && globalY >= VOXEL_DIMENSION && globalZ >= VOXEL_DIMENSION);
+    assert(globalX >= VOXEL_DIMENSION / LOCAL_GROUP_DIM &&
+           globalY >= VOXEL_DIMENSION / LOCAL_GROUP_DIM &&
+           globalZ >= VOXEL_DIMENSION / LOCAL_GROUP_DIM);
 
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
@@ -203,6 +206,7 @@ void SimpleVoxelizationApp::Initialize()
     InformationPanel::GetInstance()->AddLabel("Voxel Count", 16, 60);
     InformationPanel::GetInstance()->AddLabel("Reset Counter Time", 16, 80);
     InformationPanel::GetInstance()->AddLabel("Counter", 16, 100);
+    InformationPanel::GetInstance()->AddLabel("Visualization Pass", 16, 120);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -225,7 +229,7 @@ void SimpleVoxelizationApp::VoxelizeScene()
 	mLeftWall->Render(0, 0);
 	mRightWall->Render(0, 0);
 
-    glViewport(0, 0, VOXEL_DIMENSION >> 3, VOXEL_DIMENSION >> 3);
+    glViewport(0, 0, (VOXEL_DIMENSION >> 4) + 4, (VOXEL_DIMENSION >> 4) + 4);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
@@ -279,7 +283,10 @@ void SimpleVoxelizationApp::Run()
 
     // Reset voxel buffer pass.
     mTimer->Start();
-    mResetVoxelBufferTask->Dispatch(0, VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION);
+    mResetVoxelBufferTask->Dispatch(0, 
+        VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
+        VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
+        VOXEL_DIMENSION / LOCAL_GROUP_DIM);
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetLabelValue("Reset Voxel Buffer Pass", workLoad);
@@ -305,7 +312,10 @@ void SimpleVoxelizationApp::Run()
     infoPanel->SetLabelValue("Voxelization Pass", workLoad);
 
     // Gather voxel buffer pass.
-    mGatherVoxelBufferTask->Dispatch(0, VOXEL_DIMENSION, VOXEL_DIMENSION, VOXEL_DIMENSION);
+    mGatherVoxelBufferTask->Dispatch(0, 
+        VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
+        VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
+        VOXEL_DIMENSION / LOCAL_GROUP_DIM);
 #ifdef DEBUG_VOXEL
     GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
     GLfloat* gatheredVoxelData = (GLfloat*)(indirectCommandbufferData + 8);
@@ -323,10 +333,18 @@ void SimpleVoxelizationApp::Run()
     glViewport(0, 0, mWidth, mHeight);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    mVoxelCubeModel->Render(0, 0);
-    //ShowVoxelization();
+    mTimer->Start();
+    if( mShowMode == SM_VoxelGrid )
+    {
+        mVoxelCubeModel->Render(0, 0);
+    }
+    else
+    {
+        ShowVoxelization();
+    }
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
+    infoPanel->SetLabelValue("Visualization Pass", workLoad);
 
 	glutSwapBuffers();
 }
@@ -358,6 +376,14 @@ void SimpleVoxelizationApp::OnKeyboard(unsigned char key, int x, int y)
 {
     switch( key )
     {
+    case '1':
+        mShowMode = SM_VoxelGrid;
+        break;
+
+    case '2':
+        mShowMode = SM_Scene;
+        break;
+
     case 'r':
         mIsRotatingModel = !mIsRotatingModel;
         break;

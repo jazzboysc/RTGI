@@ -1,6 +1,7 @@
 #version 430 core
 
-layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+#define LOCAL_GROUP_DIM 8
+layout(local_size_x = LOCAL_GROUP_DIM, local_size_y = LOCAL_GROUP_DIM, local_size_z = LOCAL_GROUP_DIM) in;
 
 struct Voxel
 {
@@ -42,10 +43,10 @@ uniform vec3 SceneBBExtension;
 
 void main()
 {
-    int index = int(gl_GlobalInvocationID.z * gl_NumWorkGroups.y * gl_NumWorkGroups.x + 
-        gl_GlobalInvocationID.y * gl_NumWorkGroups.x + gl_GlobalInvocationID.x);
+    int index = int(gl_GlobalInvocationID.z * gl_NumWorkGroups.y * gl_NumWorkGroups.x * LOCAL_GROUP_DIM * LOCAL_GROUP_DIM +
+        gl_GlobalInvocationID.y * gl_NumWorkGroups.x * LOCAL_GROUP_DIM + gl_GlobalInvocationID.x);
 
-    vec3 voxelSize = 2.0*SceneBBExtension / vec3(gl_NumWorkGroups);
+    vec3 voxelSize = 2.0*SceneBBExtension / vec3(gl_NumWorkGroups * LOCAL_GROUP_DIM);
     vec3 voxelWorldPosition = SceneBBMin + vec3(gl_GlobalInvocationID)*voxelSize + 0.5*voxelSize;
 
     if( index == 0 )
