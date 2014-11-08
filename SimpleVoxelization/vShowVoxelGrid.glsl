@@ -52,7 +52,6 @@ mat4 GetWorldTransform(int instanceID)
 void main()
 {
     mat4 World = GetWorldTransform(gl_InstanceID);
-    //mat4 World;
     vPositionWorld = World * vPosition;
     vNormalWorld = vec4(vNormal, 0.0);
     gl_Position = Proj * View * vPositionWorld;
