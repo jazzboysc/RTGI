@@ -34,6 +34,8 @@ public:
 	virtual void OnMouse(int button, int state, int x, int y);
 	virtual void OnMouseMove(int x, int y);
 	virtual void OnReshape(int x, int y);
+
+    static Application* GetInstance();
     
 protected:
 #ifdef _WIN32
@@ -45,6 +47,8 @@ protected:
 	CGLShareGroupObj mShareGroup;
 #endif
 #endif
+
+    static Application* mInstance;
 };
 
 }

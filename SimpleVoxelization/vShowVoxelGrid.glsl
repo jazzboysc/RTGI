@@ -36,7 +36,7 @@ mat4 GetWorldTransform(int instanceID)
     vec3 scale = vec3(indirectCommandBuffer.reserved1,
                       indirectCommandBuffer.reserved2,
                       indirectCommandBuffer.reserved3);
-    //scale *= 0.5;
+    scale *= 0.5; // Because we are using cube of length 2.
     vec3 trans = vec3(indirectCommandBuffer.data[instanceID].translation.x,
                       indirectCommandBuffer.data[instanceID].translation.y,
                       indirectCommandBuffer.data[instanceID].translation.z);

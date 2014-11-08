@@ -37,6 +37,7 @@ void SimpleVoxelizationTriMesh::OnGetShaderConstants()
     mViewLoc2 = glGetUniformLocation(program, "View");
     mProjLoc2 = glGetUniformLocation(program, "Proj");
     mDimLoc2 = glGetUniformLocation(program, "dim");
+    mShowWorldPositionLoc = glGetUniformLocation(program, "ShowWorldPosition");
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -72,6 +73,16 @@ void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
             glUniform3fv(mSceneBBCenterLoc2, 1, (GLfloat*)&center);
             glUniform3fv(mSceneBBExtensionLoc2, 1, (GLfloat*)&extension);
             glUniform1i(mDimLoc2, SimpleVoxelizationApp::VOXEL_DIMENSION);
+
+            SimpleVoxelizationApp* app = (SimpleVoxelizationApp*)Application::GetInstance();
+            if( app->mShowMode == SimpleVoxelizationApp::SM_WorldPosition )
+            {
+                glUniform1i(mShowWorldPositionLoc, 1);
+            }
+            else
+            {
+                glUniform1i(mShowWorldPositionLoc, 0);
+            }
         }
     }
 }

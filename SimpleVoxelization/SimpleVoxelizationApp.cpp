@@ -194,7 +194,7 @@ void SimpleVoxelizationApp::Initialize()
     // Create voxel cube model.
     material = new Material(mtShowVoxelGrid);
     mVoxelCubeModel = new VoxelCubeTriMesh(material, mCamera);
-    mVoxelCubeModel->LoadFromFile("cube.ply");
+    mVoxelCubeModel->LoadFromFile("box.ply");
     mVoxelCubeModel->GenerateNormals();
     mVoxelCubeModel->IsIndirect = true;
     mVoxelCubeModel->IndirectCommandBuffer = mIndirectCommandBuffer;
@@ -382,6 +382,10 @@ void SimpleVoxelizationApp::OnKeyboard(unsigned char key, int x, int y)
 
     case '2':
         mShowMode = SM_Scene;
+        break;
+
+    case '3':
+        mShowMode = SM_WorldPosition;
         break;
 
     case 'r':

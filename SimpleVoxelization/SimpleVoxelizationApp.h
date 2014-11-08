@@ -40,10 +40,12 @@ private:
     void VoxelizeScene();
     void ShowVoxelization();
 
+    friend class SimpleVoxelizationTriMesh;
     enum ShowMode
     {
         SM_VoxelGrid,
         SM_Scene,
+        SM_WorldPosition
     };
 
     ShowMode mShowMode;

@@ -8,6 +8,8 @@
 
 using namespace RTGI;
 
+Application* Application::mInstance = 0;
+
 //----------------------------------------------------------------------------
 Application::Application()
 {
@@ -20,6 +22,9 @@ Application::Application()
 	mShareGroup = CGLGetShareGroup(mOpenGLContext);
 #endif
 #endif
+
+    assert( mInstance == 0 );
+    mInstance = this;
 }
 //----------------------------------------------------------------------------
 Application::~Application()
@@ -56,5 +61,10 @@ void Application::OnMouseMove(int, int)
 //----------------------------------------------------------------------------
 void Application::OnReshape(int, int)
 {
+}
+//----------------------------------------------------------------------------
+Application* Application::GetInstance()
+{
+    return mInstance;
 }
 //----------------------------------------------------------------------------
