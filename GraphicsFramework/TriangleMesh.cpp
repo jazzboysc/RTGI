@@ -32,7 +32,6 @@ TriangleMesh::~TriangleMesh()
 
 	glDeleteBuffers(1, &mVBO);
 	glDeleteBuffers(1, &mIBO);
-	glDeleteVertexArrays(1, &mVAO);
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::Render(int technique, int pass)

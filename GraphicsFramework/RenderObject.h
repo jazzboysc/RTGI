@@ -33,7 +33,6 @@ public:
 protected:
 	Material* mMaterial;
 
-	GLuint mVAO;
 	GLuint mVBO;
 };
 

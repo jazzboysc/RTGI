@@ -8,6 +8,7 @@
 
 #include "FrameworkCommon.h"
 #include "RenderObject.h"
+#include "Camera.h"
 
 namespace RTGI
 {
@@ -19,11 +20,16 @@ namespace RTGI
 class Polyline2Geometry : public RenderObject
 {
 public:
-	Polyline2Geometry(Material* material, GLenum polylineType = GL_LINE_STRIP);
-	~Polyline2Geometry();
+    Polyline2Geometry(Material* material, Camera* camera, 
+        GLenum polylineType = GL_LINE_STRIP);
+	virtual ~Polyline2Geometry();
 
 	// Implement base class interface.
 	virtual void Render(int technique, int pass);
+    virtual void OnRender(Pass* pass, PassInfo* passInfo);
+    virtual void OnUpdateShaderConstants(int technique, int pass);
+    virtual void OnEnableBuffers();
+    virtual void OnDisableBuffers();
 
 	// Load data from a ".dat" file and create its VBO.
 	bool LoadFromFile(const std::string& fileName);
@@ -35,6 +41,7 @@ public:
 
 	// Should be called after calling LoadFromFile or LoadFromMemory.
 	void CreateDeviceResource();
+    virtual void OnGetShaderConstants();
 
 	// Currently this is a cumbersome function, it release the current 
 	// device resource and re-create it.
@@ -53,10 +60,11 @@ public:
 	void DeletePoint(int index);
 	mat4 GetWorldWindowTransform();
 
-private:
+protected:
+    void CreateVertexBufferDeviceResource();
 	void Reset();
 
-	//GLenum mPolylineType;
+	GLenum mPolylineType;
 	int mPolylineCount;
 	int mTotalVertexCount;
 	std::vector<int> mPolylineVertexCounts;
@@ -64,7 +72,11 @@ private:
 
 	float mWorldWindow[4]; // Left, Top, Right, Bottom;
 	mat4 mWorldWindowTransform;
-	//GLint mWorldWindowTransformLoc;
+    mat4 mWorldTransform;
+
+    Camera* mCamera;
+
+    GLint mWorldLoc, mViewLoc, mProjLoc;
 };
 
 typedef RefPointer<Polyline2Geometry> Polyline2GeometryPtr;

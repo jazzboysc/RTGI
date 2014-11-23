@@ -22,7 +22,6 @@ PointSet::PointSet(Material* material)
 PointSet::~PointSet()
 {
 	glDeleteBuffers(1, &mVBO);
-	glDeleteVertexArrays(1, &mVAO);
 }
 //----------------------------------------------------------------------------
 void PointSet::Render(int technique, int pass)

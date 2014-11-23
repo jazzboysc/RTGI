@@ -8,11 +8,15 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-Polyline2Geometry::Polyline2Geometry(Material* material, GLenum polylineType)
+Polyline2Geometry::Polyline2Geometry(Material* material, Camera* camera, 
+    GLenum polylineType)
 	:
-	//mPolylineType(polylineType),
-	RenderObject(material)
+	mPolylineType(polylineType),
+	RenderObject(material),
+    mCamera(camera)
 {
+    mWorldLoc = mViewLoc = mProjLoc = -1;
+
 	mPolylineCount = 0;
 	mTotalVertexCount = 0;
 
@@ -25,44 +29,12 @@ Polyline2Geometry::Polyline2Geometry(Material* material, GLenum polylineType)
 Polyline2Geometry::~Polyline2Geometry()
 {
 	glDeleteBuffers(1, &mVBO);
-	glDeleteVertexArrays(1, &mVAO);
 }
 //----------------------------------------------------------------------------
 void Polyline2Geometry::Render(int technique, int pass)
 {
-	// TODO:
-	//// Enable shader program.
-	//mShaderProgram->Enable();
-
-	//// Update shader constants.
-	//glUniformMatrix4fv(mWorldWindowTransformLoc, 1, GL_FALSE, 
-	//	mWorldWindowTransform);
-
-	//// Enable VAO and VBO.
-	//glBindVertexArray(mVAO);
-	//glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-
-	//GLint first = 0;
-	//for( int i = 0; i < mPolylineCount; ++i )
-	//{
-	//	if( mPolylineVertexCounts[i] == 1 )
-	//	{
-	//		glDrawArrays(GL_POINTS, first, 1);
-	//	}
-	//	else
-	//	{
-	//		glDrawArrays(mPolylineType, first, mPolylineVertexCounts[i]);
-	//	}
-
-	//	first += mPolylineVertexCounts[i];
-	//}
-
-	//// Disable VAO and VBO.
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindVertexArray(0);
-
-	//// Disable shader program.
-	//mShaderProgram->Disable();
+    // Apply current rendering pass.
+    mMaterial->Apply(technique, pass);
 }
 //----------------------------------------------------------------------------
 void Polyline2Geometry::Reset()
@@ -195,46 +167,53 @@ void Polyline2Geometry::LoadFromMemory(int polylineCount,
 	mPolylineCount = polylineCount;
 	mPolylineVertexCounts = polylineVertexCounts;
 	mTotalVertexCount = totalVertexCount;
-	for( int i = 0; i < mTotalVertexCount*2; ++i )
+	for( int i = 0; i < mTotalVertexCount*3; ++i )
 	{
 		mVertexData.push_back(vertexData[i]);
 	}
 }
 //----------------------------------------------------------------------------
+void Polyline2Geometry::CreateVertexBufferDeviceResource()
+{
+    // Create a VBO for this object.
+    if( mVertexData.size() > 0 )
+    {
+    	glGenBuffers(1, &mVBO);
+    	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+    	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*mVertexData.size(), 
+    		(GLvoid*)&mVertexData[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+}
+//----------------------------------------------------------------------------
 void Polyline2Geometry::CreateDeviceResource()
 {
-	// TODO:
-	//// First create shader program used by this geometry object.
-	//mShaderProgram->CreateDeviceResource();
-	//GLuint program = mShaderProgram->GetProgram();
+    // Create VBO.
+    CreateVertexBufferDeviceResource();
 
-	//// Create a VAO for this object.
-	//glGenVertexArrays(1, &mVAO);
-	//glBindVertexArray(mVAO);
+    // Create shader programs.
+    GeometryAttributes attributes;
+    attributes.VBO = mVBO;
+    attributes.IBO = 0;
+    attributes.HasNormal = false;
+    attributes.HasTCoord = false;
+    attributes.VertexComponentCount = 3;
+    mMaterial->CreateDeviceResource(&attributes);
 
-	//// Create a VBO for this object.
-	//if( mVertexData.size() > 0 )
-	//{
-	//	glGenBuffers(1, &mVBO);
-	//	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*mVertexData.size(), 
-	//		(GLvoid*)&mVertexData[0], GL_STATIC_DRAW);
-	//}
-
-	//// Specify vertex attributes.
-	//GLuint loc = glGetAttribLocation(program, "vPosition");
- //   glEnableVertexAttribArray(loc);
- //   glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	//glBindVertexArray(0);
-
-	//// Get shader constants.
-	//mWorldWindowTransformLoc = glGetUniformLocation(program, "Ortho2DMatrix");
+    // Get shader constants here.
+    OnGetShaderConstants();
+}
+//----------------------------------------------------------------------------
+void Polyline2Geometry::OnGetShaderConstants()
+{
+    GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+    mWorldLoc = glGetUniformLocation(program, "World");
+    mViewLoc = glGetUniformLocation(program, "View");
+    mProjLoc = glGetUniformLocation(program, "Proj");
 }
 //----------------------------------------------------------------------------
 void Polyline2Geometry::UpdateDeviceResource()
 {
-	glDeleteVertexArrays(1, &mVAO);
 	glDeleteBuffers(1, &mVBO);
 	CreateDeviceResource();
 }
@@ -368,5 +347,46 @@ void Polyline2Geometry::DeletePoint(int index)
 mat4 Polyline2Geometry::GetWorldWindowTransform()
 {
 	return mWorldWindowTransform;
+}
+//----------------------------------------------------------------------------
+void Polyline2Geometry::OnRender(Pass*, PassInfo*)
+{
+    GLint first = 0;
+    for( int i = 0; i < mPolylineCount; ++i )
+    {
+    	if( mPolylineVertexCounts[i] == 1 )
+    	{
+    		glDrawArrays(GL_POINTS, first, 1);
+    	}
+    	else
+    	{
+    		glDrawArrays(mPolylineType, first, mPolylineVertexCounts[i]);
+    	}
+
+    	first += mPolylineVertexCounts[i];
+    }
+}
+//----------------------------------------------------------------------------
+void Polyline2Geometry::OnUpdateShaderConstants(int technique, int pass)
+{
+    assert(technique == 0 && pass == 0);
+
+    glUniformMatrix4fv(mWorldLoc, 1, GL_TRUE, mWorldTransform);
+    if( mCamera )
+    {
+        mat4 viewTrans = mCamera->GetViewTransform();
+        glUniformMatrix4fv(mViewLoc, 1, GL_TRUE, viewTrans);
+
+        mat4 projTrans = mCamera->GetProjectionTransform();
+        glUniformMatrix4fv(mProjLoc, 1, GL_TRUE, projTrans);
+    }
+}
+//----------------------------------------------------------------------------
+void Polyline2Geometry::OnEnableBuffers()
+{
+}
+//----------------------------------------------------------------------------
+void Polyline2Geometry::OnDisableBuffers()
+{
 }
 //----------------------------------------------------------------------------

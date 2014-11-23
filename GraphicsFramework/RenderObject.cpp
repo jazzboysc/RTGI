@@ -10,7 +10,6 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 RenderObject::RenderObject(Material* material)
 	:
-	mVAO(0),
 	mVBO(0)
 {
 	assert( material );
