@@ -88,6 +88,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FormEventListener.h" />
     <ClInclude Include="GUIFramework.h" />
     <ClInclude Include="InformationPanel.h">
       <FileType>CppForm</FileType>
@@ -97,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="FormEventListener.cpp" />
     <ClCompile Include="GUIFramework.cpp" />
     <ClCompile Include="GUIFrameworkPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

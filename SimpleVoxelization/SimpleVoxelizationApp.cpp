@@ -1,6 +1,5 @@
 #include "SimpleVoxelizationApp.h"
 #include "RNG.h"
-#include "InformationPanel.h"
 
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
@@ -200,7 +199,8 @@ void SimpleVoxelizationApp::Initialize()
     mVoxelCubeModel->IndirectCommandBuffer = mIndirectCommandBuffer;
     mVoxelCubeModel->CreateDeviceResource();
 
-    // Create labels.
+    // Create GUI elements.
+    InformationPanel::GetInstance()->AddListener(this);
     InformationPanel::GetInstance()->AddLabel("Reset Voxel Buffer Pass", 16, 20);
     InformationPanel::GetInstance()->AddLabel("Voxelization Pass", 16, 40);
     InformationPanel::GetInstance()->AddLabel("Voxel Count", 16, 60);
@@ -209,6 +209,7 @@ void SimpleVoxelizationApp::Initialize()
     InformationPanel::GetInstance()->AddLabel("Visualization Pass", 16, 120);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
+    InformationPanel::GetInstance()->AddButton("Create Ray", 40, 80, 80, 24);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -413,5 +414,20 @@ void SimpleVoxelizationApp::OnMouseMove(int x, int y)
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::OnReshape(int x, int y)
 {
+}
+//----------------------------------------------------------------------------
+void SimpleVoxelizationApp::OnButtonClick(System::Object^  sender, 
+    System::EventArgs^  e)
+{
+    String^ p1 = InformationPanel::GetInstance()->GetTextBoxValue("P1:");
+    String^ p2 = InformationPanel::GetInstance()->GetTextBoxValue("P2:");
+
+    array<String^, 1>^ p1Res = p1->Split(',');
+    array<String^, 1>^ p2Res = p2->Split(',');
+    for( int i = 0; i < 3; ++i )
+    {
+        mRayStartPoint[i] = (float)Convert::ToDouble((String^)p1Res[i]);
+        mRayEndPoint[i] = (float)Convert::ToDouble((String^)p2Res[i]);
+    }
 }
 //----------------------------------------------------------------------------

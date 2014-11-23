@@ -1,5 +1,7 @@
 #pragma once
 
+#include "FormEventListener.h"
+#include <vector>
 
 namespace RTGI {
     namespace GUIFramework {
@@ -21,10 +23,31 @@ namespace RTGI {
             {
                 InitializeComponent();
 
+                mListeners = new std::vector<FormEventListener*> ;
                 if( !mInfoPanel )
                 {
                     mInfoPanel = this;
                 }
+            }
+
+            void AddListener(FormEventListener* listener)
+            {
+                mListeners->push_back(listener);
+            }
+
+            void AddButton(String^ buttonName, int x, int y, int width, int height)
+            {
+                Button^ button = gcnew Button();
+
+                button->Location = System::Drawing::Point(x, y);
+                button->Name = buttonName;
+                button->Size = System::Drawing::Size(width, height);
+                button->TabIndex = 0;
+                button->Text = buttonName;
+                button->UseVisualStyleBackColor = true;
+                button->Click += gcnew System::EventHandler(this, &InformationPanel::button_Click);
+
+                groupBoxUserInputs->Controls->Add(button);
             }
 
             void AddLabel(String^ labelName, int x, int y)
@@ -62,6 +85,25 @@ namespace RTGI {
                 groupBoxUserInputs->Controls->Add(textBox);
             }
 
+            String^ GetTextBoxValue(String^ textBoxName)
+            {
+                array<Control^, 1>^ res = groupBoxUserInputs->Controls->Find(textBoxName, true);
+                if( res->Length == 0 )
+                {
+                    return nullptr;
+                }
+
+                TextBox^ textBox = (TextBox^)res[1];
+                if( textBox )
+                {
+                    return textBox->Text;
+                }
+                else
+                {
+                    return nullptr;
+                }
+            }
+
             void SetLabelValue(String^ labelName, double value)
             {
                 array<Control^, 1>^ res = groupBoxWorkloadTiming->Controls->Find(labelName, true);
@@ -92,12 +134,16 @@ namespace RTGI {
                 {
                     delete components;
                 }
+                delete mListeners;
             }
 
         protected:
             static InformationPanel^ mInfoPanel = nullptr;
+            std::vector<FormEventListener*>* mListeners;
+
         private: System::Windows::Forms::GroupBox^  groupBoxWorkloadTiming;
         private: System::Windows::Forms::GroupBox^  groupBoxUserInputs;
+
 
 
         protected:
@@ -153,6 +199,12 @@ namespace RTGI {
 
             }
 #pragma endregion
-        };
+        private: System::Void button_Click(System::Object^  sender, System::EventArgs^  e) {
+            for( int i = 0; i < (int)mListeners->size(); ++i )
+            {
+                (*mListeners)[i]->OnButtonClick(sender, e);
+            }
+        }
+};
     }
 }

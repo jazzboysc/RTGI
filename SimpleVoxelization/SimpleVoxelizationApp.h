@@ -7,6 +7,8 @@
 #include "GPUTimer.h"
 #include "ResetVoxelBuffer.h"
 #include "GatherVoxelBuffer.h"
+#include "InformationPanel.h"
+#include "FormEventListener.h"
 
 namespace RTGI
 {
@@ -15,7 +17,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 10/08/2014
 //----------------------------------------------------------------------------
-class SimpleVoxelizationApp : public Application
+class SimpleVoxelizationApp : public Application, GUIFramework::FormEventListener
 {
 public:
 	SimpleVoxelizationApp(int width, int height);
@@ -31,6 +33,7 @@ public:
 	void OnMouse(int button, int state, int x, int y);
 	void OnMouseMove(int x, int y);
 	void OnReshape(int x, int y);
+    void OnButtonClick(System::Object^  sender, System::EventArgs^  e);
 
 public:
     enum { VOXEL_DIMENSION = 64 };
@@ -72,6 +75,8 @@ private:
 	SimpleVoxelizationTriMeshPtr mRightWall;
 	SimpleVoxelizationTriMeshPtr mModel;
     VoxelCubeTriMeshPtr mVoxelCubeModel;
+
+    vec3 mRayStartPoint, mRayEndPoint;
 
     GPUTimerPtr mTimer;
 };
