@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraphicsFramework", "GraphicsFramework\GraphicsFramework.vcxproj", "{1654A1CC-FA42-415F-8E83-6905FA03B52A}"
 EndProject
@@ -74,6 +74,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VPL", "VPL\VPL.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleVoxelization", "SimpleVoxelization\SimpleVoxelization.vcxproj", "{73B66A3F-94FB-4A57-AEC7-C29121C6EDB7}"
 	ProjectSection(ProjectDependencies) = postProject
+		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4} = {4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}
 		{1654A1CC-FA42-415F-8E83-6905FA03B52A} = {1654A1CC-FA42-415F-8E83-6905FA03B52A}
 	EndProjectSection
 EndProject

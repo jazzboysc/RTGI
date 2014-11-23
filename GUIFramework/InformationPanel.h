@@ -41,6 +41,27 @@ namespace RTGI {
                 groupBoxWorkloadTiming->Controls->Add(label);
             }
 
+            void AddTextBox(String^ textBoxName, int x, int y, int width, int height)
+            {
+                Label^ label = gcnew Label();
+                label->AutoSize = true;
+                label->Location = System::Drawing::Point(x, y);
+                label->Name = textBoxName;
+                label->Text = textBoxName;
+                label->Size = System::Drawing::Size(32, 13);
+                label->TabIndex = 0;
+                groupBoxUserInputs->Controls->Add(label);
+
+                TextBox^ textBox = gcnew TextBox();
+                int x2 = int(x + textBoxName->Length + 24);
+                textBox->Location = System::Drawing::Point(x2, y);
+                textBox->Name = textBoxName;
+                textBox->Size = System::Drawing::Size(width, height);
+                textBox->TabIndex = 1;
+
+                groupBoxUserInputs->Controls->Add(textBox);
+            }
+
             void SetLabelValue(String^ labelName, double value)
             {
                 array<Control^, 1>^ res = groupBoxWorkloadTiming->Controls->Find(labelName, true);
@@ -76,6 +97,9 @@ namespace RTGI {
         protected:
             static InformationPanel^ mInfoPanel = nullptr;
         private: System::Windows::Forms::GroupBox^  groupBoxWorkloadTiming;
+        private: System::Windows::Forms::GroupBox^  groupBoxUserInputs;
+
+
         protected:
 
         protected:
@@ -96,6 +120,7 @@ namespace RTGI {
             void InitializeComponent(void)
             {
                 this->groupBoxWorkloadTiming = (gcnew System::Windows::Forms::GroupBox());
+                this->groupBoxUserInputs = (gcnew System::Windows::Forms::GroupBox());
                 this->SuspendLayout();
                 // 
                 // groupBoxWorkloadTiming
@@ -107,11 +132,21 @@ namespace RTGI {
                 this->groupBoxWorkloadTiming->TabStop = false;
                 this->groupBoxWorkloadTiming->Text = L"Workload Timing (ms):";
                 // 
+                // groupBoxUserInputs
+                // 
+                this->groupBoxUserInputs->Location = System::Drawing::Point(12, 290);
+                this->groupBoxUserInputs->Name = L"groupBoxUserInputs";
+                this->groupBoxUserInputs->Size = System::Drawing::Size(214, 272);
+                this->groupBoxUserInputs->TabIndex = 1;
+                this->groupBoxUserInputs->TabStop = false;
+                this->groupBoxUserInputs->Text = L"User Inputs :";
+                // 
                 // InformationPanel
                 // 
                 this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
                 this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-                this->ClientSize = System::Drawing::Size(238, 295);
+                this->ClientSize = System::Drawing::Size(238, 577);
+                this->Controls->Add(this->groupBoxUserInputs);
                 this->Controls->Add(this->groupBoxWorkloadTiming);
                 this->Name = L"InformationPanel";
                 this->ResumeLayout(false);

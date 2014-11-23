@@ -207,6 +207,8 @@ void SimpleVoxelizationApp::Initialize()
     InformationPanel::GetInstance()->AddLabel("Reset Counter Time", 16, 80);
     InformationPanel::GetInstance()->AddLabel("Counter", 16, 100);
     InformationPanel::GetInstance()->AddLabel("Visualization Pass", 16, 120);
+    InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
+    InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
