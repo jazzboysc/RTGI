@@ -19,7 +19,7 @@ void VoxelGridIntersection::OnGetShaderConstants()
 
     mSceneBBCenterLoc = glGetUniformLocation(program, "SceneBBCenter");
     mSceneBBExtensionLoc = glGetUniformLocation(program, "SceneBBExtension");
-    mDimLoc = glGetUniformLocation(program, "Dim");
+    mDimLoc = glGetUniformLocation(program, "dim");
     mRayStartPointLoc = glGetUniformLocation(program, "RayStartPoint");
     mRayEndPointLoc = glGetUniformLocation(program, "RayEndPoint");
 }
@@ -31,8 +31,10 @@ void VoxelGridIntersection::OnPreDispatch(unsigned int pass)
     glUniform3fv(mSceneBBCenterLoc, 1, (GLfloat*)&center);
     glUniform3fv(mSceneBBExtensionLoc, 1, (GLfloat*)&extension);
     glUniform1i(mDimLoc, SimpleVoxelizationApp::VOXEL_DIMENSION);
-    glUniform3fv(mRayStartPointLoc, 1, (GLfloat*)&SimpleVoxelizationApp::RaySegment[0]);
-    glUniform3fv(mRayEndPointLoc, 1, (GLfloat*)&SimpleVoxelizationApp::RaySegment[3]);
+    GLfloat* start = (GLfloat*)&SimpleVoxelizationApp::RaySegment[0];
+    glUniform3fv(mRayStartPointLoc, 1, start);
+    GLfloat* end = (GLfloat*)&SimpleVoxelizationApp::RaySegment[3];
+    glUniform3fv(mRayEndPointLoc, 1, end);
 }
 //----------------------------------------------------------------------------
 void VoxelGridIntersection::OnPostDispatch(unsigned int pass)
