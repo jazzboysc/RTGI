@@ -1,5 +1,4 @@
 #version 430 core
-#extension GL_NV_shader_atomic_float : require
 
 in vec4 gPositionWorld;
 in vec4 gNormalWorld;
@@ -14,6 +13,7 @@ struct Voxel
 
 layout(std430, binding = 0)  buffer _voxelBuffer
 {
+    int test;
     Voxel data[];
 } voxelBuffer;
 
@@ -23,7 +23,7 @@ uniform vec3 Inv2SceneBBExtension;
 uniform vec3 MaterialColor;
 uniform int dim;
 
-int GetIndex(vec3 worldPosition)
+ivec3 GetGridPosition(vec3 worldPosition)
 {
     vec3 imageDim = vec3(float(dim), float(dim), float(dim));
     imageDim = imageDim - vec3(1.0, 1.0, 1.0);
@@ -31,6 +31,13 @@ int GetIndex(vec3 worldPosition)
     vec3 offsets = (worldPosition - SceneBBCenter + SceneBBExtension) * Inv2SceneBBExtension;
     offsets = offsets*imageDim + vec3(0.5, 0.5, 0.5);
     ivec3 res = ivec3(offsets);
+
+    return res;
+}
+
+int GetIndex(vec3 worldPosition)
+{
+    ivec3 res = GetGridPosition(worldPosition);
     int index = res.z * dim * dim + res.y * dim + res.x;
     return index;
 }

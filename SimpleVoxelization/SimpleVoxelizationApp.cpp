@@ -4,6 +4,9 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
+float SimpleVoxelizationApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
+                                               0.0f, 0.0f, 0.0f };
+
 //----------------------------------------------------------------------------
 SimpleVoxelizationApp::SimpleVoxelizationApp(int width, int height)
 	:
@@ -103,10 +106,21 @@ void SimpleVoxelizationApp::Initialize()
     mGatherVoxelBufferTask->CreateDeviceResource();
     mGatherVoxelBufferTask->SceneBB = &mSceneBB;
 
+    // Create voxel grid intersection task.
+    ShaderProgramInfo voxelGridIntersectionProgramInfo;
+    voxelGridIntersectionProgramInfo.CShaderFileName = "cVoxelGridIntersection.glsl";
+    voxelGridIntersectionProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+
+    ComputePass* passVoxelGridIntersection = new ComputePass(voxelGridIntersectionProgramInfo);
+    mVoxelGridIntersectionTask = new VoxelGridIntersection();
+    mVoxelGridIntersectionTask->AddPass(passVoxelGridIntersection);
+    mVoxelGridIntersectionTask->CreateDeviceResource();
+    mVoxelGridIntersectionTask->SceneBB = &mSceneBB;
+
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
-    GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
+    GLuint bufferSize = sizeof(int) + voxelCount * sizeof(GLuint) * 4;
     mVoxelBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
     memset(mZeroBuffer, 0x00, bufferSize);
 
@@ -352,6 +366,10 @@ void SimpleVoxelizationApp::Run()
     if( mVoxelRaySegment )
     {
         mVoxelRaySegment->Render(0, 0);
+        mVoxelGridIntersectionTask->Dispatch(0, 1, 1, 1);
+
+        GLuint* testRes = (GLuint*)mVoxelBuffer->Map(GL_READ_ONLY);
+        mVoxelBuffer->Unmap();
     }
 
 	glutSwapBuffers();
@@ -366,6 +384,7 @@ void SimpleVoxelizationApp::Terminate()
 
     mResetVoxelBufferTask = 0;
     mGatherVoxelBufferTask = 0;
+    mVoxelGridIntersectionTask = 0;
     mVoxelBuffer = 0;
     mIndirectCommandBuffer = 0;
 
@@ -428,13 +447,12 @@ void SimpleVoxelizationApp::OnButtonClick(System::Object^  sender,
     String^ p1 = InformationPanel::GetInstance()->GetTextBoxValue("P1:");
     String^ p2 = InformationPanel::GetInstance()->GetTextBoxValue("P2:");
 
-    float raySegmentBuffer[6];
     array<String^, 1>^ p1Res = p1->Split(',');
     array<String^, 1>^ p2Res = p2->Split(',');
     for( int i = 0; i < 3; ++i )
     {
-        raySegmentBuffer[i] = (float)Convert::ToDouble((String^)p1Res[i]);
-        raySegmentBuffer[i + 3] = (float)Convert::ToDouble((String^)p2Res[i]);
+        RaySegment[i] = (float)Convert::ToDouble((String^)p1Res[i]);
+        RaySegment[i + 3] = (float)Convert::ToDouble((String^)p2Res[i]);
     }
 
     ShaderProgramInfo voxelRaySegmentProgramInfo;
@@ -454,7 +472,7 @@ void SimpleVoxelizationApp::OnButtonClick(System::Object^  sender,
     std::vector<int> temp;
     temp.reserve(1);
     temp.push_back(2);
-    mVoxelRaySegment->LoadFromMemory(1, temp, 2, raySegmentBuffer);
+    mVoxelRaySegment->LoadFromMemory(1, temp, 2, RaySegment);
     mVoxelRaySegment->CreateDeviceResource();
 }
 //----------------------------------------------------------------------------

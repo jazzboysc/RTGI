@@ -8,6 +8,7 @@
 #include "GPUTimer.h"
 #include "ResetVoxelBuffer.h"
 #include "GatherVoxelBuffer.h"
+#include "VoxelGridIntersection.h"
 #include "InformationPanel.h"
 #include "FormEventListener.h"
 
@@ -39,6 +40,7 @@ public:
 public:
     enum { VOXEL_DIMENSION = 32 };
     enum { LOCAL_GROUP_DIM = 8 };
+    static float RaySegment[6];
 
 private:
     void VoxelizeScene();
@@ -64,6 +66,7 @@ private:
     AtomicCounterBufferPtr mGatheredVoxelAllocCounter;
     ResetVoxelBufferPtr mResetVoxelBufferTask;
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
+    VoxelGridIntersectionPtr mVoxelGridIntersectionTask;
     StructuredBufferPtr mVoxelBuffer;
     StructuredBufferPtr mIndirectCommandBuffer;
     GLuint mZeroBuffer[VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*4];

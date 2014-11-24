@@ -12,6 +12,7 @@
     <ClInclude Include="GatherVoxelBuffer.h" />
     <ClInclude Include="VoxelCubeTriMesh.h" />
     <ClInclude Include="VoxelRaySegment.h" />
+    <ClInclude Include="VoxelGridIntersection.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -21,6 +22,7 @@
     <ClCompile Include="GatherVoxelBuffer.cpp" />
     <ClCompile Include="VoxelCubeTriMesh.cpp" />
     <ClCompile Include="VoxelRaySegment.cpp" />
+    <ClCompile Include="VoxelGridIntersection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vVoxelization.glsl">
@@ -54,6 +56,9 @@
       <Filter>GLSL</Filter>
     </None>
     <None Include="vVoxelRaySegment.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="cVoxelGridIntersection.glsl">
       <Filter>GLSL</Filter>
     </None>
   </ItemGroup>
