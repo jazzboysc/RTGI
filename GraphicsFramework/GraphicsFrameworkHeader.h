@@ -61,7 +61,7 @@
 #include "Fog.h"
 #include "Light.h"
 #include "PointSet.h"
-#include "Polyline2Geometry.h"
+#include "PolylineGeometry.h"
 #include "RefObject.h"
 #include "RefPointer.h"
 #include "RenderObject.h"

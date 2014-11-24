@@ -17,9 +17,6 @@
     <ClCompile Include="PointSet.cpp">
       <Filter>Scene Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Polyline2Geometry.cpp">
-      <Filter>Scene Objects</Filter>
-    </ClCompile>
     <ClCompile Include="RefObject.cpp">
       <Filter>Scene Objects</Filter>
     </ClCompile>
@@ -153,6 +150,9 @@
     <ClCompile Include="GPUTimer.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="PolylineGeometry.cpp">
+      <Filter>Scene Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -178,9 +178,6 @@
       <Filter>Scene Objects</Filter>
     </ClInclude>
     <ClInclude Include="PointSet.h">
-      <Filter>Scene Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Polyline2Geometry.h">
       <Filter>Scene Objects</Filter>
     </ClInclude>
     <ClInclude Include="RefObject.h">
@@ -319,6 +316,9 @@
     </ClInclude>
     <ClInclude Include="GPUTimer.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="PolylineGeometry.h">
+      <Filter>Scene Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

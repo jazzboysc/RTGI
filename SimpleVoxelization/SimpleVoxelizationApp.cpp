@@ -209,7 +209,7 @@ void SimpleVoxelizationApp::Initialize()
     InformationPanel::GetInstance()->AddLabel("Visualization Pass", 16, 120);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
-    InformationPanel::GetInstance()->AddButton("Create Ray", 40, 80, 80, 24);
+    InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -349,6 +349,11 @@ void SimpleVoxelizationApp::Run()
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetLabelValue("Visualization Pass", workLoad);
 
+    if( mVoxelRaySegment )
+    {
+        mVoxelRaySegment->Render(0, 0);
+    }
+
 	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
@@ -371,6 +376,7 @@ void SimpleVoxelizationApp::Terminate()
 	mRightWall = 0;
 	mModel = 0;
     mVoxelCubeModel = 0;
+    mVoxelRaySegment = 0;
 
     mTimer = 0;
 }
@@ -422,12 +428,33 @@ void SimpleVoxelizationApp::OnButtonClick(System::Object^  sender,
     String^ p1 = InformationPanel::GetInstance()->GetTextBoxValue("P1:");
     String^ p2 = InformationPanel::GetInstance()->GetTextBoxValue("P2:");
 
+    float raySegmentBuffer[6];
     array<String^, 1>^ p1Res = p1->Split(',');
     array<String^, 1>^ p2Res = p2->Split(',');
     for( int i = 0; i < 3; ++i )
     {
-        mRayStartPoint[i] = (float)Convert::ToDouble((String^)p1Res[i]);
-        mRayEndPoint[i] = (float)Convert::ToDouble((String^)p2Res[i]);
+        raySegmentBuffer[i] = (float)Convert::ToDouble((String^)p1Res[i]);
+        raySegmentBuffer[i + 3] = (float)Convert::ToDouble((String^)p2Res[i]);
     }
+
+    ShaderProgramInfo voxelRaySegmentProgramInfo;
+    voxelRaySegmentProgramInfo.VShaderFileName = "vVoxelRaySegment.glsl";
+    voxelRaySegmentProgramInfo.FShaderFileName = "fVoxelRaySegment.glsl";
+    voxelRaySegmentProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+        ShaderType::ST_Fragment;
+    Pass* passVoxelRaySegment = new Pass(voxelRaySegmentProgramInfo);
+
+    Technique* techVoxelRaySegment = new Technique();
+    techVoxelRaySegment->AddPass(passVoxelRaySegment);
+    MaterialTemplate* mtVoxelRaySegment = new MaterialTemplate();
+    mtVoxelRaySegment->AddTechnique(techVoxelRaySegment);
+    Material* material = new Material(mtVoxelRaySegment);
+    mVoxelRaySegment = new VoxelRaySegment(material, mCamera);
+    mVoxelRaySegment->LineWidth = 3.0f;
+    std::vector<int> temp;
+    temp.reserve(1);
+    temp.push_back(2);
+    mVoxelRaySegment->LoadFromMemory(1, temp, 2, raySegmentBuffer);
+    mVoxelRaySegment->CreateDeviceResource();
 }
 //----------------------------------------------------------------------------

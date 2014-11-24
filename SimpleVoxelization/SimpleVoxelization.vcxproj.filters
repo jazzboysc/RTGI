@@ -11,6 +11,7 @@
     <ClInclude Include="ResetVoxelBuffer.h" />
     <ClInclude Include="GatherVoxelBuffer.h" />
     <ClInclude Include="VoxelCubeTriMesh.h" />
+    <ClInclude Include="VoxelRaySegment.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -19,6 +20,7 @@
     <ClCompile Include="ResetVoxelBuffer.cpp" />
     <ClCompile Include="GatherVoxelBuffer.cpp" />
     <ClCompile Include="VoxelCubeTriMesh.cpp" />
+    <ClCompile Include="VoxelRaySegment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vVoxelization.glsl">
@@ -46,6 +48,12 @@
       <Filter>GLSL</Filter>
     </None>
     <None Include="vShowVoxelGrid.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fVoxelRaySegment.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vVoxelRaySegment.glsl">
       <Filter>GLSL</Filter>
     </None>
   </ItemGroup>

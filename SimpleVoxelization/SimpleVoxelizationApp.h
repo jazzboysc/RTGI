@@ -4,6 +4,7 @@
 #include "GraphicsFrameworkHeader.h"
 #include "SimpleVoxelizationTriMesh.h"
 #include "VoxelCubeTriMesh.h"
+#include "VoxelRaySegment.h"
 #include "GPUTimer.h"
 #include "ResetVoxelBuffer.h"
 #include "GatherVoxelBuffer.h"
@@ -36,7 +37,7 @@ public:
     void OnButtonClick(System::Object^  sender, System::EventArgs^  e);
 
 public:
-    enum { VOXEL_DIMENSION = 64 };
+    enum { VOXEL_DIMENSION = 32 };
     enum { LOCAL_GROUP_DIM = 8 };
 
 private:
@@ -75,8 +76,7 @@ private:
 	SimpleVoxelizationTriMeshPtr mRightWall;
 	SimpleVoxelizationTriMeshPtr mModel;
     VoxelCubeTriMeshPtr mVoxelCubeModel;
-
-    vec3 mRayStartPoint, mRayEndPoint;
+    VoxelRaySegmentPtr mVoxelRaySegment;
 
     GPUTimerPtr mTimer;
 };

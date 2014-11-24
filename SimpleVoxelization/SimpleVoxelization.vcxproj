@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="VoxelRaySegment.h" />
     <ClInclude Include="ResetVoxelBuffer.h" />
     <ClInclude Include="SimpleVoxelizationApp.h" />
     <ClInclude Include="SimpleVoxelizationTriMesh.h" />
@@ -19,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="VoxelRaySegment.cpp" />
     <ClCompile Include="ResetVoxelBuffer.cpp" />
     <ClCompile Include="SimpleVoxelizationApp.cpp" />
     <ClCompile Include="SimpleVoxelizationTriMesh.cpp" />
@@ -31,10 +33,12 @@
     <None Include="fShowVoxelGrid.glsl" />
     <None Include="fShowVoxelization.glsl" />
     <None Include="fVoxelization.glsl" />
+    <None Include="fVoxelRaySegment.glsl" />
     <None Include="gVoxelization.glsl" />
     <None Include="vShowVoxelGrid.glsl" />
     <None Include="vShowVoxelization.glsl" />
     <None Include="vVoxelization.glsl" />
+    <None Include="vVoxelRaySegment.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System">
