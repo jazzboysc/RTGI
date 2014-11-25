@@ -50,7 +50,7 @@ namespace RTGI {
                 groupBoxUserInputs->Controls->Add(button);
             }
 
-            void AddLabel(String^ labelName, int x, int y)
+            void AddTimingLabel(String^ labelName, int x, int y)
             {
                 Label^ label = gcnew Label();
 
@@ -62,6 +62,20 @@ namespace RTGI {
                 label->TabIndex = 0;
 
                 groupBoxWorkloadTiming->Controls->Add(label);
+            }
+
+            void AddDebugLabel(String^ labelName, int x, int y)
+            {
+                Label^ label = gcnew Label();
+
+                label->AutoSize = true;
+                label->Location = System::Drawing::Point(x, y);
+                label->Name = labelName;
+                label->Text = labelName;
+                label->Size = System::Drawing::Size(32, 13);
+                label->TabIndex = 0;
+
+                groupBoxDebugOutputs->Controls->Add(label);
             }
 
             void AddTextBox(String^ textBoxName, int x, int y, int width, int height)
@@ -104,7 +118,7 @@ namespace RTGI {
                 }
             }
 
-            void SetLabelValue(String^ labelName, double value)
+            void SetTimingLabelValue(String^ labelName, double value)
             {
                 array<Control^, 1>^ res = groupBoxWorkloadTiming->Controls->Find(labelName, true);
                 if( res->Length == 0 )
@@ -143,6 +157,7 @@ namespace RTGI {
 
         private: System::Windows::Forms::GroupBox^  groupBoxWorkloadTiming;
         private: System::Windows::Forms::GroupBox^  groupBoxUserInputs;
+private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
 
 
 
@@ -167,6 +182,7 @@ namespace RTGI {
             {
                 this->groupBoxWorkloadTiming = (gcnew System::Windows::Forms::GroupBox());
                 this->groupBoxUserInputs = (gcnew System::Windows::Forms::GroupBox());
+                this->groupBoxDebugOutputs = (gcnew System::Windows::Forms::GroupBox());
                 this->SuspendLayout();
                 // 
                 // groupBoxWorkloadTiming
@@ -187,11 +203,21 @@ namespace RTGI {
                 this->groupBoxUserInputs->TabStop = false;
                 this->groupBoxUserInputs->Text = L"User Inputs :";
                 // 
+                // groupBoxDebugOutputs
+                // 
+                this->groupBoxDebugOutputs->Location = System::Drawing::Point(232, 12);
+                this->groupBoxDebugOutputs->Name = L"groupBoxDebugOutputs";
+                this->groupBoxDebugOutputs->Size = System::Drawing::Size(214, 549);
+                this->groupBoxDebugOutputs->TabIndex = 2;
+                this->groupBoxDebugOutputs->TabStop = false;
+                this->groupBoxDebugOutputs->Text = L"Debug Outputs :";
+                // 
                 // InformationPanel
                 // 
                 this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
                 this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-                this->ClientSize = System::Drawing::Size(238, 577);
+                this->ClientSize = System::Drawing::Size(459, 584);
+                this->Controls->Add(this->groupBoxDebugOutputs);
                 this->Controls->Add(this->groupBoxUserInputs);
                 this->Controls->Add(this->groupBoxWorkloadTiming);
                 this->Name = L"InformationPanel";

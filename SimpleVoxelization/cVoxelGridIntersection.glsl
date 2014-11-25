@@ -10,11 +10,53 @@ struct Voxel
     uint value4;
 };
 
+struct GatheredVoxel
+{
+    vec4 translation;
+};
+
+
 layout(std430, binding = 0)  buffer _voxelBuffer
 {
-    int test;
     Voxel data[];
 } voxelBuffer;
+
+layout(std430, binding = 1)  buffer _indirectCommandBuffer
+{
+    uint  count;
+    uint  primCount;
+    uint  firstIndex;
+    uint  baseVertex;
+    uint  baseInstance;
+
+    float reserved1;
+    float reserved2;
+    float reserved3;
+    float reserved4;
+    float reserved5;
+    float reserved6;
+    float reserved7;
+    float reserved8;
+    float reserved9;
+    float reserved10;
+    float reserved11;
+    float reserved12;
+    float reserved13;
+    float reserved14;
+    float reserved15;
+    float reserved16;
+    float reserved17;
+    float reserved18;
+    float reserved19;
+    float reserved20;
+    float reserved21;
+    float reserved22;
+    float reserved23;
+    float reserved24;
+    float reserved25;
+
+    GatheredVoxel data[];
+} indirectCommandBuffer;
 
 uniform vec3 SceneBBCenter;
 uniform vec3 SceneBBExtension;
@@ -52,43 +94,87 @@ int GetIndex(ivec3 gridPosition)
 void main()
 {
     vec3 RayDirection = RayEndPoint - RayStartPoint;
-    RayDirection = normalize(RayDirection);
+    float maxT = length(RayDirection);
+    RayDirection = RayDirection / maxT;
     vec3 gridIntersect = RayStartPoint;
     vec3 voxelExtension = 2.0*SceneBBExtension / dim;
 
+    // Debug RayDirection, voxelExtension, maxT.
+    indirectCommandBuffer.reserved5 = float(RayDirection[0]);
+    indirectCommandBuffer.reserved6 = float(RayDirection[1]);
+    indirectCommandBuffer.reserved7 = float(RayDirection[2]);
+    indirectCommandBuffer.reserved8 = float(voxelExtension[0]);
+    indirectCommandBuffer.reserved9 = float(voxelExtension[1]);
+    indirectCommandBuffer.reserved10 = float(voxelExtension[2]);
+    indirectCommandBuffer.reserved11 = maxT;
+
     // Set up 3D DDA for ray.
     vec3 NextCrossingT, DeltaT;
-    ivec3 Step, EndPos, CurPos;
+    ivec3 Step, StartPos, EndPos, CurPos;
     const int cmpToAxis[8] = { 2, 1, 2, 1, 2, 2, 0, 0 };
-    CurPos = GetGridPosition(gridIntersect);
+    StartPos = GetGridPosition(gridIntersect);
     EndPos = GetGridPosition(RayEndPoint);
+    CurPos = StartPos;
+
+    // Debug StartPos, EndPos.
+    indirectCommandBuffer.reserved12 = float(StartPos[0]);
+    indirectCommandBuffer.reserved13 = float(StartPos[1]);
+    indirectCommandBuffer.reserved14 = float(StartPos[2]);
+    indirectCommandBuffer.reserved15 = float(EndPos[0]);
+    indirectCommandBuffer.reserved16 = float(EndPos[1]);
+    indirectCommandBuffer.reserved17 = float(EndPos[2]);
+
+    vec3 tempWorldPosition;
     for( int axis = 0; axis < 3; ++axis )
     {
         if( RayDirection[axis] >= 0 )
         {
-            NextCrossingT[axis] = 
-                (GetWorldPosition(CurPos[axis] + 1, axis) - gridIntersect[axis]) / RayDirection[axis];
+            tempWorldPosition[axis] = GetWorldPosition(CurPos[axis] + 1, axis);
+            NextCrossingT[axis] = (tempWorldPosition - gridIntersect[axis]) / RayDirection[axis];
             DeltaT[axis] = voxelExtension[axis] / RayDirection[axis];
             Step[axis] = 1;
         }
         else
         {
-            NextCrossingT[axis] =
-                (GetWorldPosition(CurPos[axis], axis) - gridIntersect[axis]) / RayDirection[axis];
+            tempWorldPosition[axis] = GetWorldPosition(CurPos[axis], axis);
+            NextCrossingT[axis] = (tempWorldPosition - gridIntersect[axis]) / RayDirection[axis];
             DeltaT[axis] = -voxelExtension[axis] / RayDirection[axis];
             Step[axis] = -1;
         }
+
+        if( isinf(NextCrossingT[axis]) )
+        {
+            NextCrossingT[axis] = 2.0*maxT;
+        }
     }
 
+    // Debug.
+    //indirectCommandBuffer.reserved5 = NextCrossingT[0];
+    //indirectCommandBuffer.reserved6 = NextCrossingT[1];
+    //indirectCommandBuffer.reserved7 = NextCrossingT[2];
+    ////indirectCommandBuffer.reserved8 = DeltaT[0];
+    ////indirectCommandBuffer.reserved9 = DeltaT[1];
+    ////indirectCommandBuffer.reserved10 = DeltaT[2];
+    //indirectCommandBuffer.reserved8 = float(Step[0]);
+    //indirectCommandBuffer.reserved9 = float(Step[1]);
+    //indirectCommandBuffer.reserved10 = float(Step[2]);
+
     // Walk ray through voxel grid.
-    bool hitSomething = false;
+    indirectCommandBuffer.reserved4 = 0.0;
+    int i = 0;
     while( true )
     {
         int index = GetIndex(CurPos);
         Voxel voxel = voxelBuffer.data[index];
         if( voxel.value2 == 1 )
         {
-            hitSomething = true;
+            // Debug.
+            indirectCommandBuffer.reserved18 = float(CurPos[0]);
+            indirectCommandBuffer.reserved19 = float(CurPos[1]);
+            indirectCommandBuffer.reserved20 = float(CurPos[2]);
+            indirectCommandBuffer.reserved21 = float(i);
+
+            indirectCommandBuffer.reserved4 = 123.0;
             break;
         }
 
@@ -96,8 +182,37 @@ void main()
         int c1 = int(NextCrossingT[0] < NextCrossingT[1]);
         int c2 = int(NextCrossingT[0] < NextCrossingT[2]);
         int c3 = int(NextCrossingT[1] < NextCrossingT[2]);
+        //int c1 = 0;
+        //int c2 = 0;
+        //int c3 = 0;
+        //if( NextCrossingT[0] < NextCrossingT[1] )
+        //{
+        //    c1 = 1;
+        //}
+        //if( NextCrossingT[0] < NextCrossingT[2] )
+        //{
+        //    c2 = 1;
+        //}
+        //if( NextCrossingT[1] < NextCrossingT[2] )
+        //{
+        //    c3 = 1;
+        //}
+
         int bits = (c1 << 2) + (c2 << 1) + c3;
         int stepAxis = cmpToAxis[bits];
+
+        // Debug.
+        //if( i == 0 )
+        //{
+        //    indirectCommandBuffer.reserved5 = float(c1);
+        //    indirectCommandBuffer.reserved6 = float(c2);
+        //    indirectCommandBuffer.reserved7 = float(c3);
+        //    //indirectCommandBuffer.reserved8 = float(bits);
+        //    //indirectCommandBuffer.reserved9 = float(stepAxis);
+        //    indirectCommandBuffer.reserved8 = NextCrossingT[0];
+        //    indirectCommandBuffer.reserved9 = NextCrossingT[1];
+        //    indirectCommandBuffer.reserved10 = NextCrossingT[2];
+        //}
 
         CurPos[stepAxis] += Step[stepAxis];
         if( CurPos[stepAxis] == EndPos[stepAxis] )
@@ -105,14 +220,7 @@ void main()
             break;
         }
         NextCrossingT[stepAxis] += DeltaT[stepAxis];
-    }
 
-    if( hitSomething )
-    {
-        voxelBuffer.test = 1;
-    }
-    else
-    {
-        voxelBuffer.test = 0;
+        i++;
     }
 }

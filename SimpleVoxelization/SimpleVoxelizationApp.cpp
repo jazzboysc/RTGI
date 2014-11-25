@@ -24,6 +24,9 @@ SimpleVoxelizationApp::~SimpleVoxelizationApp()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::Initialize()
 {
+    float a = 0.0f;
+    float b = 1.0f / a;
+
     GLint globalX, globalY, globalZ;
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &globalX);
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &globalY);
@@ -120,13 +123,13 @@ void SimpleVoxelizationApp::Initialize()
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
-    GLuint bufferSize = sizeof(int) + voxelCount * sizeof(GLuint) * 4;
+    GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
     mVoxelBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
     memset(mZeroBuffer, 0x00, bufferSize);
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
-    bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*3 + voxelCount*sizeof(GLfloat)*4;
+    bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*25 + voxelCount*sizeof(GLfloat)*4;
     mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
     // Create gathered voxel GPU memory allocator counter.
@@ -215,12 +218,12 @@ void SimpleVoxelizationApp::Initialize()
 
     // Create GUI elements.
     InformationPanel::GetInstance()->AddListener(this);
-    InformationPanel::GetInstance()->AddLabel("Reset Voxel Buffer Pass", 16, 20);
-    InformationPanel::GetInstance()->AddLabel("Voxelization Pass", 16, 40);
-    InformationPanel::GetInstance()->AddLabel("Voxel Count", 16, 60);
-    InformationPanel::GetInstance()->AddLabel("Reset Counter Time", 16, 80);
-    InformationPanel::GetInstance()->AddLabel("Counter", 16, 100);
-    InformationPanel::GetInstance()->AddLabel("Visualization Pass", 16, 120);
+    InformationPanel::GetInstance()->AddTimingLabel("Reset Voxel Buffer Pass", 16, 20);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxelization Pass", 16, 40);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Count", 16, 60);
+    InformationPanel::GetInstance()->AddTimingLabel("Reset Counter Time", 16, 80);
+    InformationPanel::GetInstance()->AddTimingLabel("Counter", 16, 100);
+    InformationPanel::GetInstance()->AddTimingLabel("Visualization Pass", 16, 120);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
@@ -296,7 +299,7 @@ void SimpleVoxelizationApp::Run()
     mGatheredVoxelAllocCounter->Unmap();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("Reset Counter Time", workLoad);
+    infoPanel->SetTimingLabelValue("Reset Counter Time", workLoad);
 
     // Reset voxel buffer pass.
     mTimer->Start();
@@ -306,7 +309,7 @@ void SimpleVoxelizationApp::Run()
         VOXEL_DIMENSION / LOCAL_GROUP_DIM);
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("Reset Voxel Buffer Pass", workLoad);
+    infoPanel->SetTimingLabelValue("Reset Voxel Buffer Pass", workLoad);
 
     // Debug reset voxel buffer task.
 #ifdef DEBUG_VOXEL
@@ -326,7 +329,7 @@ void SimpleVoxelizationApp::Run()
 	VoxelizeScene();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("Voxelization Pass", workLoad);
+    infoPanel->SetTimingLabelValue("Voxelization Pass", workLoad);
 
     // Gather voxel buffer pass.
     mGatherVoxelBufferTask->Dispatch(0, 
@@ -335,13 +338,13 @@ void SimpleVoxelizationApp::Run()
         VOXEL_DIMENSION / LOCAL_GROUP_DIM);
 #ifdef DEBUG_VOXEL
     GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
-    GLfloat* gatheredVoxelData = (GLfloat*)(indirectCommandbufferData + 8);
+    GLfloat* gatheredVoxelData = (GLfloat*)(indirectCommandbufferData + 10);
     infoPanel->SetLabelValue("Voxel Count", (double)indirectCommandbufferData[1]);
     mIndirectCommandBuffer->Unmap();
 #endif
 
     counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(GL_WRITE_ONLY);
-    infoPanel->SetLabelValue("Counter", (double)counterData[0]);
+    infoPanel->SetTimingLabelValue("Counter", (double)counterData[0]);
     mGatheredVoxelAllocCounter->Unmap();
 
     // Visualize scene voxelization pass.
@@ -361,15 +364,24 @@ void SimpleVoxelizationApp::Run()
     }
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("Visualization Pass", workLoad);
+    infoPanel->SetTimingLabelValue("Visualization Pass", workLoad);
 
     if( mVoxelRaySegment )
     {
         mVoxelRaySegment->Render(0, 0);
+
+        mVoxelBuffer->Bind(0);
+        mIndirectCommandBuffer->Bind(1);
+
+        GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
+        GLfloat* intersectionData = (GLfloat*)(indirectCommandbufferData + 8);
+        mIndirectCommandBuffer->Unmap();
+
         mVoxelGridIntersectionTask->Dispatch(0, 1, 1, 1);
 
-        GLuint* testRes = (GLuint*)mVoxelBuffer->Map(GL_READ_ONLY);
-        mVoxelBuffer->Unmap();
+        indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
+        intersectionData = (GLfloat*)(indirectCommandbufferData + 8);
+        mIndirectCommandBuffer->Unmap();
     }
 
 	glutSwapBuffers();

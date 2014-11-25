@@ -18,7 +18,6 @@ struct GatheredVoxel
 
 layout(std430, binding = 0)  buffer _voxelBuffer
 {
-    int test;
     Voxel data[];
 } voxelBuffer;
 
@@ -33,6 +32,28 @@ layout(std430, binding = 1)  buffer _indirectCommandBuffer
     float reserved1;
     float reserved2;
     float reserved3;
+    float reserved4;
+    float reserved5;
+    float reserved6;
+    float reserved7;
+    float reserved8;
+    float reserved9;
+    float reserved10;
+    float reserved11;
+    float reserved12;
+    float reserved13;
+    float reserved14;
+    float reserved15;
+    float reserved16;
+    float reserved17;
+    float reserved18;
+    float reserved19;
+    float reserved20;
+    float reserved21;
+    float reserved22;
+    float reserved23;
+    float reserved24;
+    float reserved25;
 
     GatheredVoxel data[];
 } indirectCommandBuffer;
@@ -58,6 +79,28 @@ void main()
         indirectCommandBuffer.reserved1 = voxelSize.x;
         indirectCommandBuffer.reserved2 = voxelSize.y;
         indirectCommandBuffer.reserved3 = voxelSize.z;
+        indirectCommandBuffer.reserved4 = -1.0;
+        indirectCommandBuffer.reserved5 = -1.0;
+        indirectCommandBuffer.reserved6 = -1.0;
+        indirectCommandBuffer.reserved7 = -1.0;
+        indirectCommandBuffer.reserved8 = -1.0;
+        indirectCommandBuffer.reserved9 = -1.0;
+        indirectCommandBuffer.reserved10 = -1.0;
+        indirectCommandBuffer.reserved11 = -1.0;
+        indirectCommandBuffer.reserved12 = -1.0;
+        indirectCommandBuffer.reserved13 = -1.0;
+        indirectCommandBuffer.reserved14 = -1.0;
+        indirectCommandBuffer.reserved15 = -1.0;
+        indirectCommandBuffer.reserved16 = -1.0;
+        indirectCommandBuffer.reserved17 = -1.0;
+        indirectCommandBuffer.reserved18 = -1.0;
+        indirectCommandBuffer.reserved19 = -1.0;
+        indirectCommandBuffer.reserved20 = -1.0;
+        indirectCommandBuffer.reserved21 = -1.0;
+        indirectCommandBuffer.reserved22 = -1.0;
+        indirectCommandBuffer.reserved23 = -1.0;
+        indirectCommandBuffer.reserved24 = -1.0;
+        indirectCommandBuffer.reserved25 = -1.0;
     }
 
     memoryBarrier();
