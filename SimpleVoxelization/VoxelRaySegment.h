@@ -22,6 +22,8 @@ public:
 
     vec3 MaterialColor;
 
+private:
+    GLint mMaterialColorLoc;
 };
 
 typedef RefPointer<VoxelRaySegment> VoxelRaySegmentPtr;

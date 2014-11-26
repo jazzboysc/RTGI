@@ -133,6 +133,21 @@ namespace RTGI {
                 }
             }
 
+            void SetDebugLabelValue(String^ labelName, double value)
+            {
+                array<Control^, 1>^ res = groupBoxDebugOutputs->Controls->Find(labelName, true);
+                if( res->Length == 0 )
+                {
+                    return;
+                }
+
+                Label^ label = (Label^)res[0];
+                if( label )
+                {
+                    label->Text = label->Name + ": " + value.ToString();
+                }
+            }
+
             static InformationPanel^ GetInstance()
             {
                 return mInfoPanel;

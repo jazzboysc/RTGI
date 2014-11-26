@@ -17,10 +17,15 @@ VoxelRaySegment::~VoxelRaySegment()
 void VoxelRaySegment::OnGetShaderConstants()
 {
     PolylineGeometry::OnGetShaderConstants();
+
+    GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+    mMaterialColorLoc = glGetUniformLocation(program, "MaterialColor");
 }
 //----------------------------------------------------------------------------
 void VoxelRaySegment::OnUpdateShaderConstants(int technique, int pass)
 {
     PolylineGeometry::OnUpdateShaderConstants(technique, pass);
+
+    glUniform3fv(mMaterialColorLoc, 1, (GLfloat*)&MaterialColor);
 }
 //----------------------------------------------------------------------------

@@ -224,9 +224,28 @@ void SimpleVoxelizationApp::Initialize()
     InformationPanel::GetInstance()->AddTimingLabel("Reset Counter Time", 16, 80);
     InformationPanel::GetInstance()->AddTimingLabel("Counter", 16, 100);
     InformationPanel::GetInstance()->AddTimingLabel("Visualization Pass", 16, 120);
+    InformationPanel::GetInstance()->AddTimingLabel("Intersection Pass", 16, 140);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
+
+    InformationPanel::GetInstance()->AddDebugLabel("Ray Direction X", 16, 20);
+    InformationPanel::GetInstance()->AddDebugLabel("Ray Direction Y", 16, 40);
+    InformationPanel::GetInstance()->AddDebugLabel("Ray Direction Z", 16, 60);
+    InformationPanel::GetInstance()->AddDebugLabel("Voxel Extension X", 16, 80);
+    InformationPanel::GetInstance()->AddDebugLabel("Voxel Extension Y", 16, 100);
+    InformationPanel::GetInstance()->AddDebugLabel("Voxel Extension Z", 16, 120);
+    InformationPanel::GetInstance()->AddDebugLabel("Ray maxT", 16, 140);
+    InformationPanel::GetInstance()->AddDebugLabel("Start GridPos X", 16, 160);
+    InformationPanel::GetInstance()->AddDebugLabel("Start GridPos Y", 16, 180);
+    InformationPanel::GetInstance()->AddDebugLabel("Start GridPos Z", 16, 200);
+    InformationPanel::GetInstance()->AddDebugLabel("End GridPos X", 16, 220);
+    InformationPanel::GetInstance()->AddDebugLabel("End GridPos Y", 16, 240);
+    InformationPanel::GetInstance()->AddDebugLabel("End GridPos Z", 16, 260);
+    InformationPanel::GetInstance()->AddDebugLabel("First Hit GridPos X", 16, 280);
+    InformationPanel::GetInstance()->AddDebugLabel("First Hit GridPos Y", 16, 300);
+    InformationPanel::GetInstance()->AddDebugLabel("First Hit GridPos Z", 16, 320);
+    InformationPanel::GetInstance()->AddDebugLabel("Iteration Count", 16, 340);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -368,20 +387,48 @@ void SimpleVoxelizationApp::Run()
 
     if( mVoxelRaySegment )
     {
-        mVoxelRaySegment->Render(0, 0);
-
         mVoxelBuffer->Bind(0);
         mIndirectCommandBuffer->Bind(1);
 
+        mTimer->Start();
+        mVoxelGridIntersectionTask->Dispatch(0, 1, 1, 1);
+        mTimer->Stop();
+        workLoad = mTimer->GetTimeElapsed();
+        infoPanel->SetTimingLabelValue("Intersection Pass", workLoad);
+
         GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
         GLfloat* intersectionData = (GLfloat*)(indirectCommandbufferData + 8);
+
+        InformationPanel::GetInstance()->SetDebugLabelValue("Ray Direction X", (double)intersectionData[1]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Ray Direction Y", (double)intersectionData[2]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Ray Direction Z", (double)intersectionData[3]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Voxel Extension X", (double)intersectionData[4]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Voxel Extension Y", (double)intersectionData[5]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Voxel Extension Z", (double)intersectionData[6]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Ray maxT", (double)intersectionData[7]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Start GridPos X", (double)intersectionData[8]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Start GridPos Y", (double)intersectionData[9]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Start GridPos Z", (double)intersectionData[10]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("End GridPos X", (double)intersectionData[11]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("End GridPos Y", (double)intersectionData[12]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("End GridPos Z", (double)intersectionData[13]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("First Hit GridPos X", (double)intersectionData[14]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("First Hit GridPos Y", (double)intersectionData[15]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("First Hit GridPos Z", (double)intersectionData[16]);
+        InformationPanel::GetInstance()->SetDebugLabelValue("Iteration Count", (double)intersectionData[17]);
+
+        if( intersectionData[0] > 0.0f )
+        {
+            mVoxelRaySegment->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
+        }
+        else
+        {
+            mVoxelRaySegment->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
+        }
+
         mIndirectCommandBuffer->Unmap();
 
-        mVoxelGridIntersectionTask->Dispatch(0, 1, 1, 1);
-
-        indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
-        intersectionData = (GLfloat*)(indirectCommandbufferData + 8);
-        mIndirectCommandBuffer->Unmap();
+        mVoxelRaySegment->Render(0, 0);
     }
 
 	glutSwapBuffers();
