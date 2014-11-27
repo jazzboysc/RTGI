@@ -54,6 +54,16 @@ layout(std430, binding = 1)  buffer _indirectCommandBuffer
     float reserved23;
     float reserved24;
     float reserved25;
+    float reserved26;
+    float reserved27;
+    float reserved28;
+    float reserved29;
+    float reserved30;
+    float reserved31;
+    float reserved32;
+    float reserved33;
+    float reserved34;
+    float reserved35;
 
     GatheredVoxel data[];
 } indirectCommandBuffer;
@@ -101,6 +111,16 @@ void main()
         indirectCommandBuffer.reserved23 = -1.0;
         indirectCommandBuffer.reserved24 = -1.0;
         indirectCommandBuffer.reserved25 = -1.0;
+        indirectCommandBuffer.reserved26 = -1.0;
+        indirectCommandBuffer.reserved27 = -1.0;
+        indirectCommandBuffer.reserved28 = -1.0;
+        indirectCommandBuffer.reserved29 = -1.0;
+        indirectCommandBuffer.reserved30 = -1.0;
+        indirectCommandBuffer.reserved31 = -1.0;
+        indirectCommandBuffer.reserved32 = -1.0;
+        indirectCommandBuffer.reserved33 = -1.0;
+        indirectCommandBuffer.reserved34 = -1.0;
+        indirectCommandBuffer.reserved35 = -1.0;
     }
 
     memoryBarrier();

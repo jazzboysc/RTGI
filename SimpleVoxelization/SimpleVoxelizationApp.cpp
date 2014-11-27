@@ -25,7 +25,7 @@ SimpleVoxelizationApp::~SimpleVoxelizationApp()
 void SimpleVoxelizationApp::Initialize()
 {
     float a = 0.0f;
-    float b = 1.0f / a;
+    float b = -1.0f / a;
 
     GLint globalX, globalY, globalZ;
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &globalX);
@@ -129,7 +129,7 @@ void SimpleVoxelizationApp::Initialize()
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
-    bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*25 + voxelCount*sizeof(GLfloat)*4;
+    bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*35 + voxelCount*sizeof(GLfloat)*4;
     mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
 
     // Create gathered voxel GPU memory allocator counter.
@@ -423,7 +423,7 @@ void SimpleVoxelizationApp::Run()
         }
         else
         {
-            mVoxelRaySegment->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
+            mVoxelRaySegment->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
         }
 
         mIndirectCommandBuffer->Unmap();

@@ -44,6 +44,16 @@ layout(std430, binding = 1)  buffer _indirectCommandBuffer
     float reserved23;
     float reserved24;
     float reserved25;
+    float reserved26;
+    float reserved27;
+    float reserved28;
+    float reserved29;
+    float reserved30;
+    float reserved31;
+    float reserved32;
+    float reserved33;
+    float reserved34;
+    float reserved35;
 
     GatheredVoxel data[];
 } indirectCommandBuffer;
