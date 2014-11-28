@@ -7,6 +7,8 @@ using namespace RTGI::GUIFramework;
 float SimpleVoxelizationApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                                0.0f, 0.0f, 0.0f };
 
+//#define DEBUG_VOXEL_RAY_INTERSECTION
+
 //----------------------------------------------------------------------------
 SimpleVoxelizationApp::SimpleVoxelizationApp(int width, int height)
 	:
@@ -229,6 +231,7 @@ void SimpleVoxelizationApp::Initialize()
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
 
+#ifdef DEBUG_VOXEL_RAY_INTERSECTION
     InformationPanel::GetInstance()->AddDebugLabel("Ray Direction X", 16, 20);
     InformationPanel::GetInstance()->AddDebugLabel("Ray Direction Y", 16, 40);
     InformationPanel::GetInstance()->AddDebugLabel("Ray Direction Z", 16, 60);
@@ -246,6 +249,7 @@ void SimpleVoxelizationApp::Initialize()
     InformationPanel::GetInstance()->AddDebugLabel("First Hit GridPos Y", 16, 300);
     InformationPanel::GetInstance()->AddDebugLabel("First Hit GridPos Z", 16, 320);
     InformationPanel::GetInstance()->AddDebugLabel("Iteration Count", 16, 340);
+#endif
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -396,6 +400,7 @@ void SimpleVoxelizationApp::Run()
         workLoad = mTimer->GetTimeElapsed();
         infoPanel->SetTimingLabelValue("Intersection Pass", workLoad);
 
+#ifdef DEBUG_VOXEL_RAY_INTERSECTION
         GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
         GLfloat* intersectionData = (GLfloat*)(indirectCommandbufferData + 8);
 
@@ -417,16 +422,8 @@ void SimpleVoxelizationApp::Run()
         InformationPanel::GetInstance()->SetDebugLabelValue("First Hit GridPos Z", (double)intersectionData[16]);
         InformationPanel::GetInstance()->SetDebugLabelValue("Iteration Count", (double)intersectionData[17]);
 
-        if( intersectionData[0] > 0.0f )
-        {
-            mVoxelRaySegment->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
-        }
-        else
-        {
-            mVoxelRaySegment->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
-        }
-
         mIndirectCommandBuffer->Unmap();
+#endif
 
         mVoxelRaySegment->Render(0, 0);
     }

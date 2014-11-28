@@ -370,12 +370,12 @@ void VPLApp::Initialize()
     mTimer->CreateDeviceResource();
 
     // Create labels.
-    InformationPanel::GetInstance()->AddLabel("Scene Shadow Pass", 16, 20);
-    InformationPanel::GetInstance()->AddLabel("Scene G-buffer Pass", 16, 40);
-    InformationPanel::GetInstance()->AddLabel("RSM Pass", 16, 60);
-    InformationPanel::GetInstance()->AddLabel("VPL Creation Pass", 16, 80);
-    InformationPanel::GetInstance()->AddLabel("Direct Lighting Pass", 16, 100);
-    InformationPanel::GetInstance()->AddLabel("Indirect Lighting Pass", 16, 120);
+    InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, 20);
+    InformationPanel::GetInstance()->AddTimingLabel("Scene G-buffer Pass", 16, 40);
+    InformationPanel::GetInstance()->AddTimingLabel("RSM Pass", 16, 60);
+    InformationPanel::GetInstance()->AddTimingLabel("VPL Creation Pass", 16, 80);
+    InformationPanel::GetInstance()->AddTimingLabel("Direct Lighting Pass", 16, 100);
+    InformationPanel::GetInstance()->AddTimingLabel("Indirect Lighting Pass", 16, 120);
 }
 //----------------------------------------------------------------------------
 void VPLApp::ShadowPass()
@@ -465,7 +465,7 @@ void VPLApp::Run()
     mShadowMapFB->Disable();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("Scene Shadow Pass", workLoad);
+    infoPanel->SetTimingLabelValue("Scene Shadow Pass", workLoad);
 
     // Scene G-buffer pass.
     mTimer->Start();
@@ -475,7 +475,7 @@ void VPLApp::Run()
     mGBufferFB->Disable();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("Scene G-buffer Pass", workLoad);
+    infoPanel->SetTimingLabelValue("Scene G-buffer Pass", workLoad);
 
     // Scene light RSM pass.
     mTimer->Start();
@@ -485,14 +485,14 @@ void VPLApp::Run()
     mRSMFB->Disable();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("RSM Pass", workLoad);
+    infoPanel->SetTimingLabelValue("RSM Pass", workLoad);
 
     // Sample RSM pass (VPL generation).
     mTimer->Start();
     mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("VPL Creation Pass", workLoad);
+    infoPanel->SetTimingLabelValue("VPL Creation Pass", workLoad);
 
     // VPL shadow pass.
     //mVPLShadowMapFB->Enable();
@@ -509,7 +509,7 @@ void VPLApp::Run()
     mDirectLightingFB->Disable();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("Direct Lighting Pass", workLoad);
+    infoPanel->SetTimingLabelValue("Direct Lighting Pass", workLoad);
 
     // Deferred indirect illumination pass.
     mTimer->Start();
@@ -520,7 +520,7 @@ void VPLApp::Run()
     mIndirectLightingFB->Disable();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetLabelValue("Indirect Lighting Pass", workLoad);
+    infoPanel->SetTimingLabelValue("Indirect Lighting Pass", workLoad);
 
     // Show rendering result.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
