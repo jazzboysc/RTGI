@@ -33,6 +33,24 @@
     <ClInclude Include="SampleRSM.h" />
     <ClInclude Include="TempScreenQuad.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cSampleRSM.glsl" />
+    <None Include="fDirectLighting.glsl" />
+    <None Include="fGBuffer.glsl" />
+    <None Include="fIndirectLighting.glsl" />
+    <None Include="fRSM.glsl" />
+    <None Include="fShadow.glsl" />
+    <None Include="fVPLTemp.glsl" />
+    <None Include="gRSM.glsl" />
+    <None Include="tcShadow.glsl" />
+    <None Include="teShadow.glsl" />
+    <None Include="vDirectLighting.glsl" />
+    <None Include="vGBuffer.glsl" />
+    <None Include="vIndirectLighting.glsl" />
+    <None Include="vRSM.glsl" />
+    <None Include="vShadow.glsl" />
+    <None Include="vVPLTemp.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1618BD90-DDA4-433E-B820-7ECF2236215C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

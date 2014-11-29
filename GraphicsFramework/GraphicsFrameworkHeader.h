@@ -68,6 +68,11 @@
 #include "TriangleMesh.h"
 #include "ScreenQuad.h"
 #include "GeometryAttributes.h"
+#include "SceneManager.h"
+
+// Renderers
+#include "SubRenderer.h"
+#include "RenderTargetTexture.h"
 
 // L-System
 #include "Expression.h"

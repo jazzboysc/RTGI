@@ -22,4 +22,54 @@
     <ClInclude Include="TempScreenQuad.h" />
     <ClInclude Include="SceneMesh.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cSampleRSM.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fDirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fGBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fIndirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fRSM.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="fVPLTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="gRSM.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="tcShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="teShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vDirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vGBuffer.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vIndirectLighting.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vRSM.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vShadow.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+    <None Include="vVPLTemp.glsl">
+      <Filter>GLSL</Filter>
+    </None>
+  </ItemGroup>
 </Project>
