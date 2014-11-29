@@ -80,6 +80,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleVoxelization", "Simpl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GUIFramework", "GUIFramework\GUIFramework.vcxproj", "{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BidirectionalVoxelGI", "BidirectionalVoxelGI\BidirectionalVoxelGI.vcxproj", "{1618BD90-DDA4-433E-B820-7ECF2236215C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -146,6 +148,10 @@ Global
 		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}.Debug|Win32.Build.0 = Debug|Win32
 		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}.Release|Win32.ActiveCfg = Release|Win32
 		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}.Release|Win32.Build.0 = Release|Win32
+		{1618BD90-DDA4-433E-B820-7ECF2236215C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1618BD90-DDA4-433E-B820-7ECF2236215C}.Debug|Win32.Build.0 = Debug|Win32
+		{1618BD90-DDA4-433E-B820-7ECF2236215C}.Release|Win32.ActiveCfg = Release|Win32
+		{1618BD90-DDA4-433E-B820-7ECF2236215C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -163,5 +169,6 @@ Global
 		{EBD031F2-E697-4BFB-AE23-B52AF871D7D2} = {AD9B67B7-E991-49AE-9904-E8BCD0FA2D64}
 		{1A1FA5D7-ECFC-42EA-A9FD-E3A27B75D7F8} = {AD9B67B7-E991-49AE-9904-E8BCD0FA2D64}
 		{73B66A3F-94FB-4A57-AEC7-C29121C6EDB7} = {AD9B67B7-E991-49AE-9904-E8BCD0FA2D64}
+		{1618BD90-DDA4-433E-B820-7ECF2236215C} = {AD9B67B7-E991-49AE-9904-E8BCD0FA2D64}
 	EndGlobalSection
 EndGlobal
