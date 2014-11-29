@@ -12,7 +12,7 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	mHeight(height),
 	mWindowTitle("Bidirectional Voxel GI")
 {
-    mShowMode = SM_Shadow;
+    mShowMode = SM_Final;
     mIsRotatingModel = false;
     mIsWireframe = false;
 }
@@ -41,8 +41,6 @@ void BidirectionalVoxelGIApp::Initialize()
     // Create light projector.
     mLightProjector = new Camera();
     mLightProjector->SetPerspectiveFrustum(85.0f, 1.0f, 0.01f, 50.0f);
-    //mLightProjector->SetLookAt(vec3(-10.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f),
-    //    vec3(0.0f, 1.0f, 0.0f));
     mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
 
@@ -76,24 +74,10 @@ void BidirectionalVoxelGIApp::Initialize()
                                      ShaderType::ST_Fragment;
     Pass* passRSM = new Pass(rsmProgramInfo);
 
-    ShaderProgramInfo vplShadowProgramInfo;
-    vplShadowProgramInfo.VShaderFileName = "vVPLShadow.glsl";
-    vplShadowProgramInfo.FShaderFileName = "fVPLShadow.glsl";
-    vplShadowProgramInfo.TCShaderFileName = "tcVPLShadow.glsl";
-    vplShadowProgramInfo.TEShaderFileName = "teVPLShadow.glsl";
-    vplShadowProgramInfo.GShaderFileName = "gVPLShadow.glsl";
-    vplShadowProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                           ShaderType::ST_Fragment |
-                                           ShaderType::ST_TessellationControl |
-                                           ShaderType::ST_TessellationEvaluation |
-                                           ShaderType::ST_Geometry;
-    Pass* passVPLShadow = new Pass(vplShadowProgramInfo);
-
 	Technique* techVPL = new Technique();
     techVPL->AddPass(passShadow);
     techVPL->AddPass(passGBuffer);
     techVPL->AddPass(passRSM);
-    techVPL->AddPass(passVPLShadow);
 	MaterialTemplate* mtVPL = new MaterialTemplate();
 	mtVPL->AddTechnique(techVPL);
 
@@ -334,7 +318,9 @@ void BidirectionalVoxelGIApp::Initialize()
     mTempScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mTempScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mTempScreenQuad->CreateDeviceResource();
-    mTempScreenQuad->TempTexture = mShadowMapTexture;
+    mTempScreenQuad->ShowMode = 2;
+    mTempScreenQuad->TempTexture = mIndirectLightingTexture;
+    mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
     mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
 
     material = new Material(mtDirectLighting);
@@ -422,16 +408,6 @@ void BidirectionalVoxelGIApp::RSMPass()
     mModel->Render(0, 2);
 }
 //----------------------------------------------------------------------------
-void BidirectionalVoxelGIApp::VPLShadowPass()
-{
-    mGround->Render(0, 3);
-    mCeiling->Render(0, 3);
-    mBackWall->Render(0, 3);
-    mLeftWall->Render(0, 3);
-    mRightWall->Render(0, 3);
-    mModel->Render(0, 3);
-}
-//----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::Run()
 {
     static float angle = 0.0f;
@@ -493,12 +469,6 @@ void BidirectionalVoxelGIApp::Run()
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("VPL Creation Pass", workLoad);
-
-    // VPL shadow pass.
-    //mVPLShadowMapFB->Enable();
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //VPLShadowPass();
-    //mVPLShadowMapFB->Disable();
 
     // Deferred direct illumination pass.
     mTimer->Start();

@@ -58,7 +58,6 @@ private:
 	void ShadowPass();
     void GBufferPass();
     void RSMPass();
-    void VPLShadowPass();
 
 	int mWidth, mHeight;
 	std::string mWindowTitle;

@@ -41,10 +41,6 @@ private:
     GLint mLightPositionWorldLoc;
     GLint mLightColorLoc;
     GLint mMaterialColorLoc3;
-
-    // pass 4, VPL shadow pass.
-    GLint mWorldLoc4;
-    GLint mLightProjectorNearFarLoc4;
 };
 
 typedef RefPointer<SceneMesh> SceneMeshPtr;

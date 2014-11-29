@@ -47,26 +47,18 @@ void OnReshape(int x, int y)
 //----------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
-	// init glut
+	// Init glut.
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	int width = 768;
 	int height = 768;
     glutInitWindowSize(width, height);
 
-    // If you are using freeglut, the next two lines will check if 
-    // the code is truly 3.2. Otherwise, comment them out
-    
-    //glutInitContextVersion(3, 3);
-    //glutInitContextProfile(GLUT_CORE_PROFILE);
-
-	// create GLUT window for drawing
+	// Create GLUT window for drawing.
     glutCreateWindow(0);
 
-	// init glew
-#ifndef __APPLE__
+	// Init glew.
     glewInit();
-#endif
 
     // Create information panel.
     int screenX = glutGet(GLUT_WINDOW_X);
@@ -79,7 +71,7 @@ int main(int argc, char **argv)
     app = new BidirectionalVoxelGIApp(width, height);
     app->Initialize();
 
-	// assign handlers
+	// Assign handlers.
     glutDisplayFunc(OnIdle);
     glutKeyboardFunc(OnKeyboard);
 	glutKeyboardUpFunc(OnKeyboardUp);
@@ -87,8 +79,7 @@ int main(int argc, char **argv)
 	glutMouseFunc(OnMouse);
 	glutMotionFunc(OnMouseMove);
 
-	// enter the drawing loop
-	// frame rate can be controlled with 
+	// Enter the drawing loop.
     glutMainLoop();
 
 	// Terminate application.
