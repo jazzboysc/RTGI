@@ -217,18 +217,18 @@ void RayBundleApp::Initialize()
 	// Create ray GPU memory allocator counter.
 	mRayAllocCounter = new AtomicCounterBuffer();
 	mRayAllocCounter->ReserveDeviceResource(sizeof(GLuint),
-		GL_DYNAMIC_COPY);
+        BU_Dynamic_Copy);
 
 	// Create ray GPU memory pool for concurrent linked lists.
 	gpuMemPoolSize = 8 * pixelCount * (4*sizeof(vec4) + sizeof(GLuint) + 
 		sizeof(GLfloat) + sizeof(GLboolean));
 	mRayBundleNodeBuffer = new StructuredBuffer();
-	mRayBundleNodeBuffer->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
+    mRayBundleNodeBuffer->ReserveDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
 
 	// Create accumulation buffer.
 	size_t bufferSize = mVoxelCount * sizeof(vec4);
 	mAccumulationBuffer = new StructuredBuffer();
-	mAccumulationBuffer->ReserveDeviceResource(bufferSize, GL_DYNAMIC_COPY);
+    mAccumulationBuffer->ReserveDeviceResource(bufferSize, BU_Dynamic_Copy);
 
 	// Create ray-bundle render target.
 	mRayBundleRT = new Texture2D();

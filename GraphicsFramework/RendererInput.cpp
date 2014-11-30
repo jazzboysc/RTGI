@@ -3,27 +3,21 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 #include "GraphicsFrameworkPCH.h"
-#include "GBufferRenderer.h"
+#include "RendererInput.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-GBufferRenderer::GBufferRenderer(SceneManager* sceneManager)
-    :
-    SubRenderer(sceneManager)
+RendererInput::RendererInput(const std::string& name,
+    BufferBase* inputBuffer, RendererDataView* view)
 {
+    Name = name;
+    InputBuffer = inputBuffer;
+    View = *view;
 }
 //----------------------------------------------------------------------------
-GBufferRenderer::~GBufferRenderer()
+RendererInput::~RendererInput()
 {
-}
-//----------------------------------------------------------------------------
-void GBufferRenderer::CreateGBuffer(int width, int height, 
-    Texture::TextureFormat format)
-{
-    AddFrameBufferTarget("Position", width, height, format);
-    AddFrameBufferTarget("Normal", width, height, format);
-    AddFrameBufferTarget("Albedo", width, height, format);
-    CreateFrameBuffer(width, height);
+    InputBuffer = 0;
 }
 //----------------------------------------------------------------------------

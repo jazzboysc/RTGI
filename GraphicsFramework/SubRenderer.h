@@ -9,12 +9,20 @@
 #include "FrameworkCommon.h"
 #include "RefObject.h"
 #include "Texture.h"
+#include "RendererInput.h"
 #include "RendererOutput.h"
 #include "SceneManager.h"
 #include <vector>
 
 namespace RTGI
 {
+
+enum SubRendererOutput
+{
+    SRO_Unknown       = 0,
+    SRO_FrameBuffer   = 1,
+    SRO_GenericBuffer = 2
+};
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -26,28 +34,41 @@ public:
     SubRenderer(SceneManager* sceneManager);
     virtual ~SubRenderer();
 
-    void AddRenderTarget(const std::string& name, int width, int height,
+    enum { MAX_INPUT_DEPENDENCY_COUNT = 16 };
+    void AddInputDependency(SubRenderer* producer, const std::string& srcName,
+        RendererDataView* view);
+
+    // FrameBuffer stuff.
+    void AddFrameBufferTarget(const std::string& name, int width, int height,
         Texture::TextureFormat format);
-    int GetRenderTargetCount() const;
-    RendererOutput* GetRenderTarget(int i) const;
-    RendererOutput* GetRenderTargetByName(const std::string& name) const;
+    int GetFrameBufferTargetCount() const;
+    RendererOutput* GetFrameBufferTarget(int i) const;
+    RendererOutput* GetFrameBufferTargetByName(const std::string& name) const;
     RendererOutput* GetDepthTarget() const;
-
-    void SetInputDependency(SubRenderer* producer, const std::string& name, 
-        int slot);
-
     void CreateFrameBuffer(int depthWidth, int depthHeight);
 
-    void Render(int technique, int pass);
+    // GenericBuffer stuff.
+    void AddGenericBufferTarget(const std::string& name, 
+        RendererDataType bufferType, int size, BufferUsage usage);
+    int GetGenericBufferTargetCount() const;
+    RendererOutput* GetGenericBufferTarget(int i) const;
+    RendererOutput* GetGenericBufferTargetByName(const std::string& name) const;
 
-    enum { MAX_INPUT_DEPENDENCY_COUNT = 16 };
+    // Rendering stuff.
+    virtual void Render(int technique, int pass, SubRendererOutput outputFlag);
+
 
 protected:
-    RendererOutputPtr mInputs[MAX_INPUT_DEPENDENCY_COUNT];
-    std::vector<RendererOutputPtr> mRenderTargets;
+    // Inputs.
+    std::vector<RendererInputPtr> mInputs;
+
+    // Outputs.
+    std::vector<RendererOutputPtr> mFrameBufferTargets;
     RendererOutputPtr mDepthTarget;
     FrameBufferPtr mFrameBuffer;
+    std::vector<RendererOutputPtr> mGenericBufferTargets;
 
+    // Scene Inputs.
     SceneManagerPtr mSceneManager;
 };
 

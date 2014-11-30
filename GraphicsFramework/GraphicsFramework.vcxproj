@@ -147,6 +147,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="PolyCylinder.cpp" />
     <ClCompile Include="PolylineGeometry.cpp" />
     <ClCompile Include="RefObject.cpp" />
+    <ClCompile Include="RendererInput.cpp" />
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="RendererOutput.cpp" />
     <ClCompile Include="RNG.cpp" />
@@ -212,6 +213,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="PolylineGeometry.h" />
     <ClInclude Include="RefObject.h" />
     <ClInclude Include="RefPointer.h" />
+    <ClInclude Include="RendererInput.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="RendererOutput.h" />
     <ClInclude Include="RNG.h" />

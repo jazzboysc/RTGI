@@ -31,9 +31,9 @@ public:
 
 	// Load buffer data from system memory. User is responsible for deleting
 	// the system memory data.
-	bool LoadFromSystemMemory(GLuint size, void* data, GLenum usage);
+    bool LoadFromSystemMemory(size_t size, void* data, BufferUsage usage);
 
-	void ReserveDeviceResource(GLuint size, GLenum usage);
+    void ReserveDeviceResource(size_t size, BufferUsage usage);
 
 	GLuint GetBuffer() const;
 	GLuint GetSize() const;
@@ -42,6 +42,8 @@ protected:
 	GLuint mBuffer;
 	GLuint mSize;
 	GLenum mType;
+
+    static GLenum msBufferUsage[BU_MAX];
 };
 
 typedef RefPointer<Buffer> BufferPtr;

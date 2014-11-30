@@ -16,49 +16,49 @@ SubRenderer::SubRenderer(SceneManager* sceneManager)
 //----------------------------------------------------------------------------
 SubRenderer::~SubRenderer()
 {
-    for( int i = 0; i < MAX_INPUT_DEPENDENCY_COUNT; ++i )
+    for( int i = 0; i < (int)mInputs.size(); ++i )
     {
         mInputs[i] = 0;
     }
 
-    for( int i = 0; i < (int)mRenderTargets.size(); ++i )
+    for( int i = 0; i < (int)mFrameBufferTargets.size(); ++i )
     {
-        mRenderTargets[i] = 0;
+        mFrameBufferTargets[i] = 0;
     }
     mDepthTarget = 0;
     mFrameBuffer = 0;
     mSceneManager = 0;
 }
 //----------------------------------------------------------------------------
-void SubRenderer::AddRenderTarget(const std::string& name, int width, 
+void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     int height, Texture::TextureFormat format)
 {
-    assert(GetRenderTargetByName(name) == 0);
+    assert(GetFrameBufferTargetByName(name) == 0);
     Texture2D* texture = new Texture2D();
     texture->CreateRenderTarget(width, height, format);
     RendererOutput* rt = new RendererOutput(name, (BufferBase*)texture);
-    mRenderTargets.push_back(rt);
+    mFrameBufferTargets.push_back(rt);
 }
 //----------------------------------------------------------------------------
-int SubRenderer::GetRenderTargetCount() const
+int SubRenderer::GetFrameBufferTargetCount() const
 {
-    return (int)mRenderTargets.size();
+    return (int)mFrameBufferTargets.size();
 }
 //----------------------------------------------------------------------------
-RendererOutput* SubRenderer::GetRenderTarget(int i) const
+RendererOutput* SubRenderer::GetFrameBufferTarget(int i) const
 {
-    assert(i >= 0 && i < (int)mRenderTargets.size());
-    return mRenderTargets[i];
+    assert(i >= 0 && i < (int)mFrameBufferTargets.size());
+    return mFrameBufferTargets[i];
 }
 //----------------------------------------------------------------------------
-RendererOutput* SubRenderer::GetRenderTargetByName(
+RendererOutput* SubRenderer::GetFrameBufferTargetByName(
     const std::string& name) const
 {
-    for( int i = 0; i < (int)mRenderTargets.size(); ++i )
+    for( int i = 0; i < (int)mFrameBufferTargets.size(); ++i )
     {
-        if( mRenderTargets[i]->Name == name )
+        if( mFrameBufferTargets[i]->Name == name )
         {
-            return mRenderTargets[i];
+            return mFrameBufferTargets[i];
         }
     }
 
@@ -70,24 +70,28 @@ RendererOutput* SubRenderer::GetDepthTarget() const
     return mDepthTarget;
 }
 //----------------------------------------------------------------------------
-void SubRenderer::SetInputDependency(SubRenderer* producer, 
-    const std::string& name, int slot)
+void SubRenderer::AddInputDependency(SubRenderer* producer, 
+    const std::string& srcName, RendererDataView* view)
 {
-    assert(slot >= 0 && slot < MAX_INPUT_DEPENDENCY_COUNT);
-    RendererOutput* producerOutput = producer->GetRenderTargetByName(name);
+    assert(mInputs.size() < MAX_INPUT_DEPENDENCY_COUNT);
+    RendererOutput* producerOutput = 
+        producer->GetFrameBufferTargetByName(srcName);
     assert(producerOutput);
-    mInputs[slot] = producerOutput;
+
+    RendererInput* consumerInput = new RendererInput(producerOutput->Name,
+        producerOutput->OutputBuffer, view);
+    mInputs.push_back(consumerInput);
 }
 //----------------------------------------------------------------------------
 void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight)
 {
-    int rtCount = (int)mRenderTargets.size();
+    int rtCount = (int)mFrameBufferTargets.size();
     assert(rtCount > 0);
     Texture** renderTargets = new Texture*[rtCount];
     for( int i = 0; i < rtCount; ++i )
     {
         renderTargets[i] = 
-            (Texture*)(BufferBase*)mRenderTargets[i]->OutputBuffer;
+            (Texture*)(BufferBase*)mFrameBufferTargets[i]->OutputBuffer;
     }
 
     Texture2D* depthTexture = new Texture2D();
@@ -99,13 +103,56 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight)
         (Texture*)(BufferBase*)mDepthTarget->OutputBuffer);
 }
 //----------------------------------------------------------------------------
-void SubRenderer::Render(int technique, int pass)
+void SubRenderer::AddGenericBufferTarget(const std::string& name, 
+    RendererDataType bufferType, int size, BufferUsage usage)
 {
+
+}
+//----------------------------------------------------------------------------
+int SubRenderer::GetGenericBufferTargetCount() const
+{
+    return (int)mGenericBufferTargets.size();
+}
+//----------------------------------------------------------------------------
+RendererOutput* SubRenderer::GetGenericBufferTarget(int i) const
+{
+    assert(i >= 0 && i < (int)mGenericBufferTargets.size());
+    return mFrameBufferTargets[i];
+}
+//----------------------------------------------------------------------------
+RendererOutput* SubRenderer::GetGenericBufferTargetByName(
+    const std::string& name) const
+{
+    for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
+    {
+        if( mGenericBufferTargets[i]->Name == name )
+        {
+            return mGenericBufferTargets[i];
+        }
+    }
+
+    return 0;
+}
+//----------------------------------------------------------------------------
+void SubRenderer::Render(int technique, int pass, 
+    SubRendererOutput outputFlag)
+{
+    if( outputFlag & SRO_FrameBuffer )
+    {
+        assert(mFrameBuffer);
+        mFrameBuffer->Enable();
+    }
+
     int renderObjectCount = mSceneManager->GetRenderObjectCount();
     for( int i = 0; i < renderObjectCount; ++i )
     {
         RenderObject* renderObject = mSceneManager->GetRenderObject(i);
         renderObject->Render(technique, pass);
+    }
+
+    if( outputFlag & SRO_FrameBuffer )
+    {
+        mFrameBuffer->Disable();
     }
 }
 //----------------------------------------------------------------------------

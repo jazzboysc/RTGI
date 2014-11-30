@@ -81,6 +81,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GUIFramework", "GUIFramework\GUIFramework.vcxproj", "{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BidirectionalVoxelGI", "BidirectionalVoxelGI\BidirectionalVoxelGI.vcxproj", "{1618BD90-DDA4-433E-B820-7ECF2236215C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4} = {4DBAFF2F-FAE5-4DDE-BC22-5973CEF436E4}
+		{1654A1CC-FA42-415F-8E83-6905FA03B52A} = {1654A1CC-FA42-415F-8E83-6905FA03B52A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

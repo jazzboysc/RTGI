@@ -7,6 +7,14 @@
 
 using namespace RTGI;
 
+GLenum Buffer::msBufferUsage[BU_MAX] =
+{
+    GL_STATIC_READ,
+    GL_STATIC_COPY,
+    GL_DYNAMIC_READ,
+    GL_DYNAMIC_COPY
+};
+
 //----------------------------------------------------------------------------
 Buffer::Buffer(GLenum type)
 	:
@@ -75,22 +83,22 @@ void Buffer::UpdateSubData(GLuint bindingPoint, int offset, size_t size,
 	glBufferSubData(mType, offset, size, data);
 }
 //----------------------------------------------------------------------------
-bool Buffer::LoadFromSystemMemory(GLuint size, void* data, GLenum usage)
+bool Buffer::LoadFromSystemMemory(size_t size, void* data, BufferUsage usage)
 {
 	mSize = size;
 	glGenBuffers(1, &mBuffer);
 	glBindBuffer(mType, mBuffer);
-	glBufferData(mType, size, data, usage);
+    glBufferData(mType, size, data, msBufferUsage[(int)usage]);
 
 	return true;
 }
 //----------------------------------------------------------------------------
-void Buffer::ReserveDeviceResource(GLuint size, GLenum usage)
+void Buffer::ReserveDeviceResource(size_t size, BufferUsage usage)
 {
 	mSize = size;
 	glGenBuffers(1, &mBuffer);
 	glBindBuffer(mType, mBuffer);
-	glBufferData(mType, size, 0, usage);
+    glBufferData(mType, size, 0, msBufferUsage[(int)usage]);
 	glBindBuffer(mType, 0);
 }
 //----------------------------------------------------------------------------

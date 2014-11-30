@@ -72,6 +72,7 @@
 
 // Renderers
 #include "BufferBase.h"
+#include "RendererInput.h"
 #include "RendererOutput.h"
 #include "SubRenderer.h"
 #include "GBufferRenderer.h"

@@ -92,17 +92,17 @@ void OITApp::Initialize()
 	// Create GPU memory allocator counter.
 	mGPUMemAllocCounter = new AtomicCounterBuffer();
 	mGPUMemAllocCounter->ReserveDeviceResource(sizeof(GLuint),
-		GL_DYNAMIC_COPY);
+        BU_Dynamic_Copy);
 
 	// Create GPU memory pool for concurrent linked lists.
 	size_t gpuMemPoolSize = 2 * pixelCount * sizeof(vec4);
 	mGPUMemPool = new TextureBuffer();
-	mGPUMemPool->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
+    mGPUMemPool->ReserveDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
 
 	gpuMemPoolSize = 2 * pixelCount * (sizeof(vec4) + sizeof(GLuint) + 
 		sizeof(GLfloat));
 	mGPUMemPool2 = new StructuredBuffer();
-	mGPUMemPool2->ReserveDeviceResource(gpuMemPoolSize, GL_DYNAMIC_COPY);
+    mGPUMemPool2->ReserveDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
 
 	// Create GPU memory pool texture.
 	mGPUMemPoolTexture = new Texture2D();

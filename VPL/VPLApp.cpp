@@ -230,7 +230,7 @@ void VPLApp::Initialize()
     // Create VPL buffer.
     GLuint vplBufferSize = (sizeof(vec4)* 3 + sizeof(mat4)) * VPL_SAMPLE_COUNT;
     mVPLBuffer = new StructuredBuffer();
-    mVPLBuffer->ReserveDeviceResource(vplBufferSize, GL_DYNAMIC_COPY);
+    mVPLBuffer->ReserveDeviceResource(vplBufferSize, BU_Dynamic_Copy);
 
     // Create VPL sample compute tasks.
     ShaderProgramInfo sampleRSMProgramInfo;

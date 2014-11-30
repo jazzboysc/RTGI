@@ -168,6 +168,9 @@
     <ClCompile Include="BufferBase.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="RendererInput.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -348,6 +351,9 @@
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="BufferBase.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererInput.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
