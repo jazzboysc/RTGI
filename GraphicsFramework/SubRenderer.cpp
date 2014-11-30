@@ -8,19 +8,26 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-SubRenderer::SubRenderer()
+SubRenderer::SubRenderer(SceneManager* sceneManager)
 {
     mFrameBuffer = new FrameBuffer();
+    mSceneManager = sceneManager;
 }
 //----------------------------------------------------------------------------
 SubRenderer::~SubRenderer()
 {
+    for( int i = 0; i < MAX_INPUT_DEPENDENCY_COUNT; ++i )
+    {
+        mInputs[i] = 0;
+    }
+
     for( int i = 0; i < (int)mRenderTargets.size(); ++i )
     {
         mRenderTargets[i] = 0;
     }
     mDepthTarget = 0;
     mFrameBuffer = 0;
+    mSceneManager = 0;
 }
 //----------------------------------------------------------------------------
 void SubRenderer::AddRenderTarget(const std::string& name, int width, 
@@ -29,7 +36,7 @@ void SubRenderer::AddRenderTarget(const std::string& name, int width,
     assert(GetRenderTargetByName(name) == 0);
     Texture2D* texture = new Texture2D();
     texture->CreateRenderTarget(width, height, format);
-    RenderTargetTexture* rt = new RenderTargetTexture(name, texture);
+    RendererOutput* rt = new RendererOutput(name, (BufferBase*)texture);
     mRenderTargets.push_back(rt);
 }
 //----------------------------------------------------------------------------
@@ -38,13 +45,13 @@ int SubRenderer::GetRenderTargetCount() const
     return (int)mRenderTargets.size();
 }
 //----------------------------------------------------------------------------
-RenderTargetTexture* SubRenderer::GetRenderTarget(int i) const
+RendererOutput* SubRenderer::GetRenderTarget(int i) const
 {
     assert(i >= 0 && i < (int)mRenderTargets.size());
     return mRenderTargets[i];
 }
 //----------------------------------------------------------------------------
-RenderTargetTexture* SubRenderer::GetRenderTargetByName(
+RendererOutput* SubRenderer::GetRenderTargetByName(
     const std::string& name) const
 {
     for( int i = 0; i < (int)mRenderTargets.size(); ++i )
@@ -58,9 +65,18 @@ RenderTargetTexture* SubRenderer::GetRenderTargetByName(
     return 0;
 }
 //----------------------------------------------------------------------------
-RenderTargetTexture* SubRenderer::GetDepthTarget() const
+RendererOutput* SubRenderer::GetDepthTarget() const
 {
     return mDepthTarget;
+}
+//----------------------------------------------------------------------------
+void SubRenderer::SetInputDependency(SubRenderer* producer, 
+    const std::string& name, int slot)
+{
+    assert(slot >= 0 && slot < MAX_INPUT_DEPENDENCY_COUNT);
+    RendererOutput* producerOutput = producer->GetRenderTargetByName(name);
+    assert(producerOutput);
+    mInputs[slot] = producerOutput;
 }
 //----------------------------------------------------------------------------
 void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight)
@@ -70,15 +86,26 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight)
     Texture** renderTargets = new Texture*[rtCount];
     for( int i = 0; i < rtCount; ++i )
     {
-        renderTargets[i] = (Texture*)mRenderTargets[i]->Texture;
+        renderTargets[i] = 
+            (Texture*)(BufferBase*)mRenderTargets[i]->OutputBuffer;
     }
 
     Texture2D* depthTexture = new Texture2D();
     depthTexture->CreateRenderTarget(depthWidth, depthHeight, 
         Texture::TF_Depth);
-    mDepthTarget = new RenderTargetTexture("Depth", depthTexture);
+    mDepthTarget = new RendererOutput("Depth", (BufferBase*)depthTexture);
 
     mFrameBuffer->SetRenderTargets(rtCount, renderTargets, 
-        (Texture*)mDepthTarget->Texture);
+        (Texture*)(BufferBase*)mDepthTarget->OutputBuffer);
+}
+//----------------------------------------------------------------------------
+void SubRenderer::Render(int technique, int pass)
+{
+    int renderObjectCount = mSceneManager->GetRenderObjectCount();
+    for( int i = 0; i < renderObjectCount; ++i )
+    {
+        RenderObject* renderObject = mSceneManager->GetRenderObject(i);
+        renderObject->Render(technique, pass);
+    }
 }
 //----------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 #define RTGI_Buffer_H
 
 #include "FrameworkCommon.h"
-#include "RefObject.h"
+#include "BufferBase.h"
 
 namespace RTGI
 {
@@ -16,7 +16,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 07/21/2013
 //----------------------------------------------------------------------------
-class Buffer : public RefObject
+class Buffer : public BufferBase
 {
 public:
 	Buffer(GLenum type);

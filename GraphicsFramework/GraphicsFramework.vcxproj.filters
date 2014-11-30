@@ -159,7 +159,13 @@
     <ClCompile Include="SubRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="RenderTargetTexture.cpp">
+    <ClCompile Include="GBufferRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererOutput.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferBase.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -335,7 +341,13 @@
     <ClInclude Include="SubRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTargetTexture.h">
+    <ClInclude Include="GBufferRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererOutput.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferBase.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>

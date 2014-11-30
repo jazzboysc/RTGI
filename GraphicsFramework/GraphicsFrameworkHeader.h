@@ -71,8 +71,10 @@
 #include "SceneManager.h"
 
 // Renderers
+#include "BufferBase.h"
+#include "RendererOutput.h"
 #include "SubRenderer.h"
-#include "RenderTargetTexture.h"
+#include "GBufferRenderer.h"
 
 // L-System
 #include "Expression.h"

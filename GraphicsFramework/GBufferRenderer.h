@@ -3,13 +3,11 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#ifndef RTGI_RenderTargetTexture_H
-#define RTGI_RenderTargetTexture_H
+#ifndef RTGI_GBufferRenderer_H
+#define RTGI_GBufferRenderer_H
 
 #include "FrameworkCommon.h"
-#include "RefObject.h"
-#include "Texture2D.h"
-#include <string>
+#include "SubRenderer.h"
 
 namespace RTGI
 {
@@ -18,17 +16,16 @@ namespace RTGI
 // Author: Che Sun
 // Date: 11/29/2013
 //----------------------------------------------------------------------------
-class RenderTargetTexture : public RefObject
+class GBufferRenderer : public SubRenderer
 {
 public:
-    RenderTargetTexture(const std::string& name, Texture2D* texture);
-    virtual ~RenderTargetTexture();
+    GBufferRenderer(SceneManager* sceneManager);
+    virtual ~GBufferRenderer();
 
-    std::string Name;
-    Texture2DPtr Texture;
+    void CreateGBuffer(int width, int height, Texture::TextureFormat format);
 };
 
-typedef RefPointer<RenderTargetTexture> RenderTargetTexturePtr;
+typedef RefPointer<GBufferRenderer> GBufferRendererPtr;
 
 }
 

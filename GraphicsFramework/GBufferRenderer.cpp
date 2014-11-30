@@ -3,20 +3,27 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 #include "GraphicsFrameworkPCH.h"
-#include "RenderTargetTexture.h"
+#include "GBufferRenderer.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-RenderTargetTexture::RenderTargetTexture(const std::string& name, 
-    Texture2D* texture)
+GBufferRenderer::GBufferRenderer(SceneManager* sceneManager)
+    :
+    SubRenderer(sceneManager)
 {
-    Name = name;
-    Texture = texture;
 }
 //----------------------------------------------------------------------------
-RenderTargetTexture::~RenderTargetTexture()
+GBufferRenderer::~GBufferRenderer()
 {
-    Texture = 0;
+}
+//----------------------------------------------------------------------------
+void GBufferRenderer::CreateGBuffer(int width, int height, 
+    Texture::TextureFormat format)
+{
+    AddRenderTarget("Position", width, height, format);
+    AddRenderTarget("Normal", width, height, format);
+    AddRenderTarget("Albedo", width, height, format);
+    CreateFrameBuffer(width, height);
 }
 //----------------------------------------------------------------------------

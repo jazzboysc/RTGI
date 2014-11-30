@@ -116,6 +116,7 @@ copy /y *.inl ..\SDK\Include</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="BufferBase.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ComputePass.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
@@ -125,6 +126,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="FragmentShader.cpp" />
     <ClCompile Include="Expression.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="GBufferRenderer.cpp" />
     <ClCompile Include="GeometryAttributes.cpp" />
     <ClCompile Include="GeometryShader.cpp" />
     <ClCompile Include="GPUTimer.cpp" />
@@ -146,7 +148,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="PolylineGeometry.cpp" />
     <ClCompile Include="RefObject.cpp" />
     <ClCompile Include="RenderObject.cpp" />
-    <ClCompile Include="RenderTargetTexture.cpp" />
+    <ClCompile Include="RendererOutput.cpp" />
     <ClCompile Include="RNG.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ScreenQuad.cpp" />
@@ -177,6 +179,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="AtomicCounterBuffer.h" />
     <ClInclude Include="bmpread.h" />
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="BufferBase.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CheckError.h" />
     <ClInclude Include="ComputePass.h" />
@@ -188,6 +191,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="Expression.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="FrameworkCommon.h" />
+    <ClInclude Include="GBufferRenderer.h" />
     <ClInclude Include="GeometryAttributes.h" />
     <ClInclude Include="GeometryShader.h" />
     <ClInclude Include="GPUTimer.h" />
@@ -209,7 +213,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="RefObject.h" />
     <ClInclude Include="RefPointer.h" />
     <ClInclude Include="RenderObject.h" />
-    <ClInclude Include="RenderTargetTexture.h" />
+    <ClInclude Include="RendererOutput.h" />
     <ClInclude Include="RNG.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ScreenQuad.h" />

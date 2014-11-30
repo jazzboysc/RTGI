@@ -7,7 +7,7 @@
 #define RTGI_Texture_H
 
 #include "FrameworkCommon.h"
-#include "RefObject.h"
+#include "BufferBase.h"
 
 namespace RTGI
 {
@@ -16,7 +16,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 11/07/2013
 //----------------------------------------------------------------------------
-class Texture : public RefObject
+class Texture : public BufferBase
 {
 public:
     enum TextureFormat
