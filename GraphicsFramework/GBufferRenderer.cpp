@@ -27,3 +27,8 @@ void GBufferRenderer::CreateGBuffer(int width, int height,
     CreateFrameBuffer(width, height);
 }
 //----------------------------------------------------------------------------
+void GBufferRenderer::Render(int technique, int pass)
+{
+    SubRenderer::Render(technique, pass, SRO_FrameBuffer);
+}
+//----------------------------------------------------------------------------

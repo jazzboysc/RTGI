@@ -14,13 +14,15 @@ namespace RTGI
 
 enum RendererDataType
 {
-    RIT_Unknown             = 0,
-    RIT_Texture             = 1,
-    RIT_Image               = 2,
-    RIT_StructuredBuffer    = 4,
-    RIT_AtomicCounterBuffer = 8,
-    RIT_ConstantBuffer      = 16,
-    RIT_CommandBuffer       = 32
+    RDT_Unknown                 = 0,
+    RDT_Texture                 = 1,
+    RDT_Image                   = 2,
+    RDT_StructuredBuffer        = 4,
+    RDT_AtomicCounterBuffer     = 8,
+    RDT_UniformBuffer           = 16,
+    RDT_DispatchIndirectBuffer  = 32,
+    RDT_PixelBuffer             = 64,
+    RDT_TextureBuffer           = 128
 };
 
 enum BufferUsage

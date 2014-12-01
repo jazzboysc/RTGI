@@ -24,6 +24,9 @@ enum SubRendererOutput
     SRO_GenericBuffer = 2
 };
 
+typedef BufferBase* (*SubRendererCreateRendererData)(int size, 
+    BufferUsage usage);
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/29/2013
@@ -31,8 +34,12 @@ enum SubRendererOutput
 class SubRenderer : public RefObject
 {
 public:
-    SubRenderer(SceneManager* sceneManager);
+    SubRenderer(SceneManager* sceneManager = 0);
     virtual ~SubRenderer();
+
+    // Scene rendered by this renderer.
+    void SetSceneManager(SceneManager* sceneManager);
+    SceneManager* GetSceneManager() const;
 
     enum { MAX_INPUT_DEPENDENCY_COUNT = 16 };
     void AddInputDependency(SubRenderer* producer, const std::string& srcName,
@@ -49,14 +56,14 @@ public:
 
     // GenericBuffer stuff.
     void AddGenericBufferTarget(const std::string& name, 
-        RendererDataType bufferType, int size, BufferUsage usage);
+        RendererDataType bufferType, int size, BufferUsage usage, 
+        BindingFlag flag, unsigned int binding);
     int GetGenericBufferTargetCount() const;
     RendererOutput* GetGenericBufferTarget(int i) const;
     RendererOutput* GetGenericBufferTargetByName(const std::string& name) const;
 
     // Rendering stuff.
     virtual void Render(int technique, int pass, SubRendererOutput outputFlag);
-
 
 protected:
     // Inputs.
@@ -70,6 +77,9 @@ protected:
 
     // Scene Inputs.
     SceneManagerPtr mSceneManager;
+
+private:
+    static SubRendererCreateRendererData msFactoryFunctions[6];
 };
 
 typedef RefPointer<SubRenderer> SubRendererPtr;

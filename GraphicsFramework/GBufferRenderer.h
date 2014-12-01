@@ -23,6 +23,7 @@ public:
     virtual ~GBufferRenderer();
 
     void CreateGBuffer(int width, int height, Texture::TextureFormat format);
+    void Render(int technique, int pass);
 };
 
 typedef RefPointer<GBufferRenderer> GBufferRendererPtr;

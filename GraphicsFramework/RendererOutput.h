@@ -8,7 +8,7 @@
 
 #include "FrameworkCommon.h"
 #include "RefObject.h"
-#include "BufferBase.h"
+#include "Buffer.h"
 #include <string>
 
 namespace RTGI
@@ -21,11 +21,19 @@ namespace RTGI
 class RendererOutput : public RefObject
 {
 public:
-    RendererOutput(const std::string& name, BufferBase* outputBuffer);
+    RendererOutput(const std::string& name, BufferBase* outputBuffer, 
+        bool isTexture = true, BindingFlag flag = BF_Bindless, 
+        unsigned int binding = 0);
     virtual ~RendererOutput();
+
+    void Enable();
+    void Disable();
 
     std::string Name;
     BufferBasePtr OutputBuffer;
+    bool IsTexture;
+    BindingFlag Flag;
+    unsigned int Binding;
 };
 
 typedef RefPointer<RendererOutput> RendererOutputPtr;

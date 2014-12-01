@@ -8,6 +8,60 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
+BufferBase* CreateStructuredBuffer(int size, BufferUsage usage)
+{
+    StructuredBuffer* buffer = new StructuredBuffer();
+    buffer->ReserveDeviceResource(size, usage);
+    return (BufferBase*)buffer;
+}
+//----------------------------------------------------------------------------
+BufferBase* CreateAtomicCounterBuffer(int size, BufferUsage usage)
+{
+    AtomicCounterBuffer* buffer = new AtomicCounterBuffer();
+    buffer->ReserveDeviceResource(size, usage);
+    return (BufferBase*)buffer;
+}
+//----------------------------------------------------------------------------
+BufferBase* CreateUniformBuffer(int size, BufferUsage usage)
+{
+    UniformBuffer* buffer = new UniformBuffer();
+    buffer->ReserveDeviceResource(size, usage);
+    return (BufferBase*)buffer;
+}
+//----------------------------------------------------------------------------
+BufferBase* CreateDispatchIndirectBuffer(int size, BufferUsage usage)
+{
+    DispatchIndirectBuffer* buffer = new DispatchIndirectBuffer();
+    buffer->ReserveDeviceResource(size, usage);
+    return (BufferBase*)buffer;
+}
+//----------------------------------------------------------------------------
+BufferBase* CreatePixelBuffer(int size, BufferUsage usage)
+{
+    PixelBuffer* buffer = new PixelBuffer();
+    buffer->ReserveDeviceResource(size, usage);
+    return (BufferBase*)buffer;
+}
+//----------------------------------------------------------------------------
+BufferBase* CreateTextureBuffer(int size, BufferUsage usage)
+{
+    TextureBuffer* buffer = new TextureBuffer();
+    buffer->ReserveDeviceResource(size, usage);
+    return (BufferBase*)buffer;
+}
+//----------------------------------------------------------------------------
+
+SubRendererCreateRendererData SubRenderer::msFactoryFunctions[6] =
+{
+    CreateStructuredBuffer,
+    CreateAtomicCounterBuffer,
+    CreateUniformBuffer,
+    CreateDispatchIndirectBuffer,
+    CreatePixelBuffer,
+    CreateTextureBuffer
+};
+
+//----------------------------------------------------------------------------
 SubRenderer::SubRenderer(SceneManager* sceneManager)
 {
     mFrameBuffer = new FrameBuffer();
@@ -30,14 +84,24 @@ SubRenderer::~SubRenderer()
     mSceneManager = 0;
 }
 //----------------------------------------------------------------------------
+void SubRenderer::SetSceneManager(SceneManager* sceneManager)
+{
+    mSceneManager = sceneManager;
+}
+//----------------------------------------------------------------------------
+SceneManager* SubRenderer::GetSceneManager() const
+{
+    return mSceneManager;
+}
+//----------------------------------------------------------------------------
 void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     int height, Texture::TextureFormat format)
 {
     assert(GetFrameBufferTargetByName(name) == 0);
     Texture2D* texture = new Texture2D();
     texture->CreateRenderTarget(width, height, format);
-    RendererOutput* rt = new RendererOutput(name, (BufferBase*)texture);
-    mFrameBufferTargets.push_back(rt);
+    RendererOutput* ro = new RendererOutput(name, (BufferBase*)texture);
+    mFrameBufferTargets.push_back(ro);
 }
 //----------------------------------------------------------------------------
 int SubRenderer::GetFrameBufferTargetCount() const
@@ -104,9 +168,17 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight)
 }
 //----------------------------------------------------------------------------
 void SubRenderer::AddGenericBufferTarget(const std::string& name, 
-    RendererDataType bufferType, int size, BufferUsage usage)
+    RendererDataType bufferType, int size, BufferUsage usage, 
+    BindingFlag flag, unsigned int binding)
 {
+    assert(GetGenericBufferTargetByName(name) == 0);
+    int functionIndex = IntLog2((int)bufferType) - 2;
+    BufferBase* genericBufferTarget = msFactoryFunctions[functionIndex](size, 
+        usage);
 
+    RendererOutput* ro = new RendererOutput(name, genericBufferTarget, false, 
+        flag, binding);
+    mGenericBufferTargets.push_back(ro);
 }
 //----------------------------------------------------------------------------
 int SubRenderer::GetGenericBufferTargetCount() const
@@ -143,6 +215,15 @@ void SubRenderer::Render(int technique, int pass,
         mFrameBuffer->Enable();
     }
 
+    if( outputFlag & SRO_GenericBuffer )
+    {
+        for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
+        {
+            mGenericBufferTargets[i]->Enable();
+        }
+    }
+
+    assert(mSceneManager);
     int renderObjectCount = mSceneManager->GetRenderObjectCount();
     for( int i = 0; i < renderObjectCount; ++i )
     {
@@ -153,6 +234,14 @@ void SubRenderer::Render(int technique, int pass,
     if( outputFlag & SRO_FrameBuffer )
     {
         mFrameBuffer->Disable();
+    }
+
+    if( outputFlag & SRO_GenericBuffer )
+    {
+        for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
+        {
+            mGenericBufferTargets[i]->Disable();
+        }
     }
 }
 //----------------------------------------------------------------------------

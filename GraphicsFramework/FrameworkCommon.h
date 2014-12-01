@@ -219,5 +219,19 @@ inline vec3 UniformSampleSphere(float u1, float u2)
     return vec3(x, y, z);
 }
 //----------------------------------------------------------------------------
+inline int IntLog2(unsigned int x)
+{
+    assert(x > 0);
+
+    int y = -1;
+    while( x > 0 )
+    {
+        x = x >> 1;
+        y++;
+    }
+
+    return y;
+}
+//----------------------------------------------------------------------------
 
 #endif
