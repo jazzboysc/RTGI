@@ -25,6 +25,14 @@ enum RendererDataType
     RDT_TextureBuffer           = 128
 };
 
+enum BindingFlag
+{
+    BF_Bindless = 0,
+    BF_Bind = 1,
+    BF_BindIndex = 2,
+    BF_BindToIndirect = 3
+};
+
 enum BufferUsage
 {
     BU_Static_Read     = 0,
@@ -42,7 +50,9 @@ struct SamplerDesc
 struct RendererDataView
 {
     RendererDataType Type;
+    BindingFlag Binding;
     int BindingSlot;
+    SamplerDesc SamplerFlag;
 };
 
 //----------------------------------------------------------------------------
@@ -54,7 +64,6 @@ class BufferBase : public RefObject
 public:
     BufferBase();
     virtual ~BufferBase();
-
 
 };
 

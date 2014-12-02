@@ -21,20 +21,8 @@ SSDOScreenQuad::~SSDOScreenQuad()
 //----------------------------------------------------------------------------
 void SSDOScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 {
-	TriangleMesh::OnUpdateShaderConstants(technique, pass);
-
-	glUniform1f(mSampleRadiusLoc, SampleRadius);
-	glUniform1f(mStrengthLoc, Strength);
-	glUniform1f(mSingularityLoc, Singularity);
-	glUniform1f(mDepthBiasLoc, DepthBias);
-	glUniform1f(mBounceStrengthLoc, BounceStrength);
-	glUniform1f(mBounceSingularityLoc, BounceSingularity);
-	glUniform1i(mSampleCountLoc, SampleCount);
-	glUniform1i(mPatternSizeLoc, PatternSize);
-
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, PositionTexture->GetTexture());
-	glUniform1i(mPositionSamplerLoc, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -42,7 +30,6 @@ void SSDOScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, NormalTexture->GetTexture());
-	glUniform1i(mNormalSamplerLoc, 1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -50,7 +37,6 @@ void SSDOScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, ColorTexture->GetTexture());
-	glUniform1i(mColorSamplerLoc, 2);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -58,7 +44,6 @@ void SSDOScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, DirectLightingTexture->GetTexture());
-	glUniform1i(mDirectLightingSamplerLoc, 3);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -66,7 +51,6 @@ void SSDOScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, RandomTexture->GetTexture());
-	glUniform1i(mRandomSamplerLoc, 4);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -74,11 +58,27 @@ void SSDOScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, EnvMapTexture->GetTexture());
-	glUniform1i(mEnvMapSamplerLoc, 5);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    TriangleMesh::OnUpdateShaderConstants(technique, pass);
+
+    glUniform1f(mSampleRadiusLoc, SampleRadius);
+    glUniform1f(mStrengthLoc, Strength);
+    glUniform1f(mSingularityLoc, Singularity);
+    glUniform1f(mDepthBiasLoc, DepthBias);
+    glUniform1f(mBounceStrengthLoc, BounceStrength);
+    glUniform1f(mBounceSingularityLoc, BounceSingularity);
+    glUniform1i(mSampleCountLoc, SampleCount);
+    glUniform1i(mPatternSizeLoc, PatternSize);
+    glUniform1i(mPositionSamplerLoc, 0);
+    glUniform1i(mNormalSamplerLoc, 1);
+    glUniform1i(mColorSamplerLoc, 2);
+    glUniform1i(mDirectLightingSamplerLoc, 3);
+    glUniform1i(mRandomSamplerLoc, 4);
+    glUniform1i(mEnvMapSamplerLoc, 5);
 }
 //----------------------------------------------------------------------------
 void SSDOScreenQuad::OnGetShaderConstants()

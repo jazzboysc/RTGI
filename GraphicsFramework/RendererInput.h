@@ -25,6 +25,9 @@ public:
         RendererDataView* view);
     virtual ~RendererInput();
 
+    void Enable();
+    void Disable();
+
     std::string Name;
     BufferBasePtr InputBuffer;
     RendererDataView View;

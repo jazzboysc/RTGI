@@ -12,14 +12,6 @@
 namespace RTGI
 {
 
-enum BindingFlag
-{
-    BF_Bindless       = 0,
-    BF_Bind           = 1,
-    BF_BindIndex      = 2,
-    BF_BindToIndirect = 3
-};
-
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 07/21/2013

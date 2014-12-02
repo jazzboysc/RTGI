@@ -209,12 +209,20 @@ RendererOutput* SubRenderer::GetGenericBufferTargetByName(
 void SubRenderer::Render(int technique, int pass, 
     SubRendererOutput outputFlag)
 {
+    // Enable renderer inputs.
+    for( int i = 0; i < (int)mInputs.size(); ++i )
+    {
+        mInputs[i]->Enable();
+    }
+
+    // Enable renderer framebuffer outputs.
     if( outputFlag & SRO_FrameBuffer )
     {
         assert(mFrameBuffer);
         mFrameBuffer->Enable();
     }
 
+    // Enable renderer generic buffer outputs.
     if( outputFlag & SRO_GenericBuffer )
     {
         for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
@@ -223,6 +231,7 @@ void SubRenderer::Render(int technique, int pass,
         }
     }
 
+    // Render scene inputs.
     assert(mSceneManager);
     int renderObjectCount = mSceneManager->GetRenderObjectCount();
     for( int i = 0; i < renderObjectCount; ++i )
@@ -231,11 +240,19 @@ void SubRenderer::Render(int technique, int pass,
         renderObject->Render(technique, pass);
     }
 
+    // Disable renderer inputs.
+    for( int i = 0; i < (int)mInputs.size(); ++i )
+    {
+        mInputs[i]->Disable();
+    }
+
+    // Disable renderer framebuffer outputs.
     if( outputFlag & SRO_FrameBuffer )
     {
         mFrameBuffer->Disable();
     }
 
+    // Disable renderer generic buffer outputs.
     if( outputFlag & SRO_GenericBuffer )
     {
         for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
