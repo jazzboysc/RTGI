@@ -66,11 +66,10 @@ private:
     Camera* mLightProjector;
 
     // G-buffer.
-    FrameBufferPtr mGBufferFB;
+    GBufferRendererPtr mGBufferRenderer;
     Texture2DPtr mGBufferPositionTexture;
     Texture2DPtr mGBufferNormalTexture;
     Texture2DPtr mGBufferAlbedoTexture;
-    Texture2DPtr mGBufferDepthTexture;
 
     // Scene shadow map.
     FrameBufferPtr mShadowMapFB;
@@ -120,6 +119,7 @@ private:
     SceneMeshPtr mLeftWall;
     SceneMeshPtr mRightWall;
     SceneMeshPtr mModel;
+    RenderSetPtr mSceneObjects;
 
     GPUTimerPtr mTimer;
 };

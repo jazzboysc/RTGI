@@ -26,3 +26,13 @@ RenderObject::~RenderObject()
 	mMaterial = 0;
 }
 //----------------------------------------------------------------------------
+void RenderObject::SetCamera(Camera* camera)
+{
+    mCamera = camera;
+}
+//----------------------------------------------------------------------------
+Camera* RenderObject::GetCamera() const
+{
+    return mCamera;
+}
+//----------------------------------------------------------------------------

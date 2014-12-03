@@ -11,7 +11,8 @@
 #include "Texture.h"
 #include "RendererInput.h"
 #include "RendererOutput.h"
-#include "SceneManager.h"
+#include "RenderSet.h"
+#include "Camera.h"
 #include <vector>
 
 namespace RTGI
@@ -34,12 +35,12 @@ typedef BufferBase* (*SubRendererCreateRendererData)(int size,
 class SubRenderer : public RefObject
 {
 public:
-    SubRenderer(SceneManager* sceneManager = 0);
+    SubRenderer(RenderSet* renderSet = 0);
     virtual ~SubRenderer();
 
     // Scene rendered by this renderer.
-    void SetSceneManager(SceneManager* sceneManager);
-    SceneManager* GetSceneManager() const;
+    void SetRenderSet(RenderSet* renderSet);
+    RenderSet* GetRenderSet() const;
 
     enum { MAX_INPUT_DEPENDENCY_COUNT = 16 };
     void AddInputDependency(SubRenderer* producer, const std::string& srcName,
@@ -63,7 +64,8 @@ public:
     RendererOutput* GetGenericBufferTargetByName(const std::string& name) const;
 
     // Rendering stuff.
-    virtual void Render(int technique, int pass, SubRendererOutput outputFlag);
+    virtual void Render(int technique, int pass, SubRendererOutput outputFlag, 
+        Camera* camera = 0);
 
 protected:
     // Inputs.
@@ -76,7 +78,7 @@ protected:
     std::vector<RendererOutputPtr> mGenericBufferTargets;
 
     // Scene Inputs.
-    SceneManagerPtr mSceneManager;
+    RenderSetPtr mRenderSet;
 
 private:
     static SubRendererCreateRendererData msFactoryFunctions[6];

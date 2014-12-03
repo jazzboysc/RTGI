@@ -9,6 +9,7 @@
 #include "FrameworkCommon.h"
 #include "RefObject.h"
 #include "Material.h"
+#include "Camera.h"
 #include "Pass.h"
 
 namespace RTGI
@@ -24,6 +25,9 @@ public:
 	RenderObject(Material* material);
 	virtual ~RenderObject();
 
+    void SetCamera(Camera* camera);
+    Camera* GetCamera() const;
+
 	virtual void Render(int technique, int pass) = 0;
 	virtual void OnUpdateShaderConstants(int technique, int pass) = 0;
     virtual void OnRender(Pass* pass, PassInfo* passInfo){};
@@ -32,6 +36,7 @@ public:
 
 protected:
 	Material* mMaterial;
+    Camera* mCamera;
 
 	GLuint mVBO;
 };

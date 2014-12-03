@@ -17,13 +17,13 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
 	mVertexComponentCount(0),
 	mHasTCoord(false),
 	mHasNormal(false),
-	mWorldScale(1.0f, 1.0f, 1.0f),
-	mCamera(camera)
+	mWorldScale(1.0f, 1.0f, 1.0f)
 {
 	mWorldLoc = mViewLoc = mProjLoc = -1;
     IsQuad = false;
     InstanceCount = 1;
     IsIndirect = false;
+    SetCamera(camera);
 }
 //----------------------------------------------------------------------------
 TriangleMesh::~TriangleMesh()
@@ -323,16 +323,6 @@ void TriangleMesh::OnGetShaderConstants()
 	mWorldLoc = glGetUniformLocation(program, "World");
 	mViewLoc = glGetUniformLocation(program, "View");
 	mProjLoc = glGetUniformLocation(program, "Proj");
-}
-//----------------------------------------------------------------------------
-void TriangleMesh::SetCamera(Camera* camera)
-{
-	mCamera = camera;
-}
-//----------------------------------------------------------------------------
-Camera* TriangleMesh::GetCamera() const
-{
-    return mCamera;
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::SetWorldTransform(const mat4& worldTrans)

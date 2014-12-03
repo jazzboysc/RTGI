@@ -40,8 +40,6 @@ public:
 	void CreateDeviceResource();
 	virtual void OnGetShaderConstants();
 
-	void SetCamera(Camera* camera);
-    Camera* GetCamera() const;
 	void SetWorldTransform(const mat4& worldTrans);
 	mat4 GetWorldTransform() const;
 	void SetWorldTranslation(const vec3& translation);
@@ -91,8 +89,6 @@ protected:
 
 	mat4 mWorldTransform;
 	vec3 mWorldScale;
-
-	Camera* mCamera;
 
 	GLuint mIBO;
 	GLint mWorldLoc, mViewLoc, mProjLoc; 

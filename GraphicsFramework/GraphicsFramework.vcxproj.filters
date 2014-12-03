@@ -153,9 +153,6 @@
     <ClCompile Include="PolylineGeometry.cpp">
       <Filter>Scene Objects</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Scene Objects</Filter>
-    </ClCompile>
     <ClCompile Include="SubRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
@@ -170,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="RendererInput.cpp">
       <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderSet.cpp">
+      <Filter>Scene Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,9 +338,6 @@
     <ClInclude Include="PolylineGeometry.h">
       <Filter>Scene Objects</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Scene Objects</Filter>
-    </ClInclude>
     <ClInclude Include="SubRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
@@ -355,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="RendererInput.h">
       <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSet.h">
+      <Filter>Scene Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

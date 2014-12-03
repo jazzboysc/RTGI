@@ -151,7 +151,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="RendererOutput.cpp" />
     <ClCompile Include="RNG.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="RenderSet.cpp" />
     <ClCompile Include="ScreenQuad.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
@@ -217,7 +217,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="RendererOutput.h" />
     <ClInclude Include="RNG.h" />
-    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="RenderSet.h" />
     <ClInclude Include="ScreenQuad.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />

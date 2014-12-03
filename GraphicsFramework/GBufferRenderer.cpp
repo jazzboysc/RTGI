@@ -8,9 +8,9 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-GBufferRenderer::GBufferRenderer(SceneManager* sceneManager)
+GBufferRenderer::GBufferRenderer(RenderSet* renderSet)
     :
-    SubRenderer(sceneManager)
+    SubRenderer(renderSet)
 {
 }
 //----------------------------------------------------------------------------
@@ -27,8 +27,8 @@ void GBufferRenderer::CreateGBuffer(int width, int height,
     CreateFrameBuffer(width, height);
 }
 //----------------------------------------------------------------------------
-void GBufferRenderer::Render(int technique, int pass)
+void GBufferRenderer::Render(int technique, int pass, Camera* camera)
 {
-    SubRenderer::Render(technique, pass, SRO_FrameBuffer);
+    SubRenderer::Render(technique, pass, SRO_FrameBuffer, camera);
 }
 //----------------------------------------------------------------------------

@@ -118,19 +118,11 @@ void BidirectionalVoxelGIApp::Initialize()
     mtIndirectLighting->AddTechnique(techIndirectLighting);
 
     // Create G-buffer textures.
-    mGBufferPositionTexture = new Texture2D();
-    mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
-    mGBufferNormalTexture = new Texture2D();
-    mGBufferNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
-    mGBufferAlbedoTexture = new Texture2D();
-    mGBufferAlbedoTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
-    mGBufferDepthTexture = new Texture2D();
-    mGBufferDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_Depth);
-
-    // Create G-buffer.
-    Texture* gbufferTextures[3] = { mGBufferPositionTexture, mGBufferNormalTexture, mGBufferAlbedoTexture };
-    mGBufferFB = new FrameBuffer();
-    mGBufferFB->SetRenderTargets(3, gbufferTextures, mGBufferDepthTexture);
+    mGBufferRenderer = new GBufferRenderer();
+    mGBufferRenderer->CreateGBuffer(mWidth, mHeight, Texture::TF_RGBAF);
+    mGBufferPositionTexture = (Texture2D*)(BufferBase*)mGBufferRenderer->GetFrameBufferTarget(0)->OutputBuffer;
+    mGBufferNormalTexture = (Texture2D*)(BufferBase*)mGBufferRenderer->GetFrameBufferTarget(1)->OutputBuffer;
+    mGBufferAlbedoTexture = (Texture2D*)(BufferBase*)mGBufferRenderer->GetFrameBufferTarget(2)->OutputBuffer;
 
     // Create shadow map render target.
     int shadowMapWidth, shadowMapHeight;
@@ -233,6 +225,9 @@ void BidirectionalVoxelGIApp::Initialize()
     mSampleRSMTask->VPLBuffer = mVPLBuffer;
 
 	// Create scene.
+    mSceneObjects = new RenderSet();
+    mGBufferRenderer->SetRenderSet(mSceneObjects);
+
 	mat4 rotM;
 	material = new Material(mtVPL);
 	mModel = new SceneMesh(material, mCamera);
@@ -246,6 +241,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mModel->LightProjector = mLightProjector;
     mModel->ShadowMap = mShadowMapTexture;
     mModel->VPLBuffer = mVPLBuffer;
+    mSceneObjects->AddRenderObject(mModel);
 
     material = new Material(mtVPL);
 	mGround = new SceneMesh(material, mCamera);
@@ -256,6 +252,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mGround->LightProjector = mLightProjector;
     mGround->ShadowMap = mShadowMapTexture;
     mGround->VPLBuffer = mVPLBuffer;
+    mSceneObjects->AddRenderObject(mGround);
 
     material = new Material(mtVPL);
 	mCeiling = new SceneMesh(material, mCamera);
@@ -269,6 +266,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mCeiling->LightProjector = mLightProjector;
     mCeiling->ShadowMap = mShadowMapTexture;
     mCeiling->VPLBuffer = mVPLBuffer;
+    mSceneObjects->AddRenderObject(mCeiling);
 
     material = new Material(mtVPL);
 	mBackWall = new SceneMesh(material, mCamera);
@@ -282,6 +280,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mBackWall->LightProjector = mLightProjector;
     mBackWall->ShadowMap = mShadowMapTexture;
     mBackWall->VPLBuffer = mVPLBuffer;
+    mSceneObjects->AddRenderObject(mBackWall);
 
     material = new Material(mtVPL);
 	mLeftWall = new SceneMesh(material, mCamera);
@@ -295,6 +294,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mLeftWall->LightProjector = mLightProjector;
     mLeftWall->ShadowMap = mShadowMapTexture;
     mLeftWall->VPLBuffer = mVPLBuffer;
+    mSceneObjects->AddRenderObject(mLeftWall);
 
     material = new Material(mtVPL);
 	mRightWall = new SceneMesh(material, mCamera);
@@ -308,6 +308,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mRightWall->LightProjector = mLightProjector;
     mRightWall->ShadowMap = mShadowMapTexture;
     mRightWall->VPLBuffer = mVPLBuffer;
+    mSceneObjects->AddRenderObject(mRightWall);
 
     // Create screen quads.
     material = new Material(mtScreenQuad);
@@ -445,10 +446,7 @@ void BidirectionalVoxelGIApp::Run()
 
     // Scene G-buffer pass.
     mTimer->Start();
-    mGBufferFB->Enable();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    GBufferPass();
-    mGBufferFB->Disable();
+    mGBufferRenderer->Render(0, 1, mCamera);
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Scene G-buffer Pass", workLoad);
@@ -507,11 +505,9 @@ void BidirectionalVoxelGIApp::Terminate()
 	delete mCamera;
     delete mLightProjector;
 
-    mGBufferFB = 0;
     mGBufferPositionTexture = 0;
     mGBufferNormalTexture = 0;
     mGBufferAlbedoTexture = 0;
-    mGBufferDepthTexture = 0;
 
     mShadowMapFB = 0;
     mShadowMapTexture = 0;
@@ -550,6 +546,7 @@ void BidirectionalVoxelGIApp::Terminate()
 	mLeftWall = 0;
 	mRightWall = 0;
 	mModel = 0;
+    mSceneObjects = 0;
 
     mTimer = 0;
 }

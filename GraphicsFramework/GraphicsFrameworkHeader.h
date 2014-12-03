@@ -68,7 +68,7 @@
 #include "TriangleMesh.h"
 #include "ScreenQuad.h"
 #include "GeometryAttributes.h"
-#include "SceneManager.h"
+#include "RenderSet.h"
 
 // Renderers
 #include "BufferBase.h"

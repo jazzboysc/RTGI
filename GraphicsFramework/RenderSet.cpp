@@ -3,30 +3,30 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 #include "GraphicsFrameworkPCH.h"
-#include "SceneManager.h"
+#include "RenderSet.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-SceneManager::SceneManager()
+RenderSet::RenderSet()
 {
 }
 //----------------------------------------------------------------------------
-SceneManager::~SceneManager()
+RenderSet::~RenderSet()
 {
 }
 //----------------------------------------------------------------------------
-void SceneManager::AddRenderObject(RenderObject* renderObject)
+void RenderSet::AddRenderObject(RenderObject* renderObject)
 {
     mRenderObjects.push_back(renderObject);
 }
 //----------------------------------------------------------------------------
-int SceneManager::GetRenderObjectCount() const
+int RenderSet::GetRenderObjectCount() const
 {
     return (int)mRenderObjects.size();
 }
 //----------------------------------------------------------------------------
-RenderObject* SceneManager::GetRenderObject(int i) const
+RenderObject* RenderSet::GetRenderObject(int i) const
 {
     assert( i >= 0 && i < (int)mRenderObjects.size() );
     return mRenderObjects[i];

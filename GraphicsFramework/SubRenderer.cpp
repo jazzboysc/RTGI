@@ -62,10 +62,10 @@ SubRendererCreateRendererData SubRenderer::msFactoryFunctions[6] =
 };
 
 //----------------------------------------------------------------------------
-SubRenderer::SubRenderer(SceneManager* sceneManager)
+SubRenderer::SubRenderer(RenderSet* renderSet)
 {
     mFrameBuffer = new FrameBuffer();
-    mSceneManager = sceneManager;
+    mRenderSet = renderSet;
 }
 //----------------------------------------------------------------------------
 SubRenderer::~SubRenderer()
@@ -81,17 +81,17 @@ SubRenderer::~SubRenderer()
     }
     mDepthTarget = 0;
     mFrameBuffer = 0;
-    mSceneManager = 0;
+    mRenderSet = 0;
 }
 //----------------------------------------------------------------------------
-void SubRenderer::SetSceneManager(SceneManager* sceneManager)
+void SubRenderer::SetRenderSet(RenderSet* renderSet)
 {
-    mSceneManager = sceneManager;
+    mRenderSet = renderSet;
 }
 //----------------------------------------------------------------------------
-SceneManager* SubRenderer::GetSceneManager() const
+RenderSet* SubRenderer::GetRenderSet() const
 {
-    return mSceneManager;
+    return mRenderSet;
 }
 //----------------------------------------------------------------------------
 void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
@@ -207,7 +207,7 @@ RendererOutput* SubRenderer::GetGenericBufferTargetByName(
 }
 //----------------------------------------------------------------------------
 void SubRenderer::Render(int technique, int pass, 
-    SubRendererOutput outputFlag)
+    SubRendererOutput outputFlag, Camera* camera)
 {
     // Enable renderer inputs.
     for( int i = 0; i < (int)mInputs.size(); ++i )
@@ -231,12 +231,22 @@ void SubRenderer::Render(int technique, int pass,
         }
     }
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     // Render scene inputs.
-    assert(mSceneManager);
-    int renderObjectCount = mSceneManager->GetRenderObjectCount();
+    assert(mRenderSet);
+    int renderObjectCount = mRenderSet->GetRenderObjectCount();
+    if( camera )
+    {
+        for( int i = 0; i < renderObjectCount; ++i )
+        {
+            RenderObject* renderObject = mRenderSet->GetRenderObject(i);
+            renderObject->SetCamera(camera);
+        }
+    }
     for( int i = 0; i < renderObjectCount; ++i )
     {
-        RenderObject* renderObject = mSceneManager->GetRenderObject(i);
+        RenderObject* renderObject = mRenderSet->GetRenderObject(i);
         renderObject->Render(technique, pass);
     }
 
