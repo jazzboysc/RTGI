@@ -4,6 +4,9 @@
     <Filter Include="GLSL">
       <UniqueIdentifier>{a51d34e2-5399-4f7b-9e09-2652d3eb66fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Renderers">
+      <UniqueIdentifier>{35dc4f9d-a19c-4509-b2b3-646a7f4a39ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BidirectionalVoxelGIApp.cpp" />
@@ -13,6 +16,9 @@
     <ClCompile Include="SampleRSM.cpp" />
     <ClCompile Include="TempScreenQuad.cpp" />
     <ClCompile Include="SceneMesh.cpp" />
+    <ClCompile Include="VPLRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BidirectionalVoxelGIApp.h" />
@@ -21,6 +27,9 @@
     <ClInclude Include="SampleRSM.h" />
     <ClInclude Include="TempScreenQuad.h" />
     <ClInclude Include="SceneMesh.h" />
+    <ClInclude Include="VPLRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cSampleRSM.glsl">

@@ -24,6 +24,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SampleRSM.cpp" />
     <ClCompile Include="TempScreenQuad.cpp" />
+    <ClCompile Include="VPLRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BidirectionalVoxelGIApp.h" />
@@ -32,6 +33,7 @@
     <ClInclude Include="IndirectLightingScreenQuad.h" />
     <ClInclude Include="SampleRSM.h" />
     <ClInclude Include="TempScreenQuad.h" />
+    <ClInclude Include="VPLRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cSampleRSM.glsl" />

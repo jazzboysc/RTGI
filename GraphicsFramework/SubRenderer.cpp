@@ -147,6 +147,21 @@ void SubRenderer::AddInputDependency(SubRenderer* producer,
     mInputs.push_back(consumerInput);
 }
 //----------------------------------------------------------------------------
+RendererInput* SubRenderer::GetInputDependency(int i) const
+{
+    assert(i >= 0 && i < (int)mInputs.size());
+    return mInputs[i];
+}
+//----------------------------------------------------------------------------
+void SubRenderer::ClearInputDependency()
+{
+    for( int i = 0; i < (int)mInputs.size(); ++i )
+    {
+        mInputs[i] = 0;
+    }
+    mInputs.clear();
+}
+//----------------------------------------------------------------------------
 void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight)
 {
     int rtCount = (int)mFrameBufferTargets.size();
@@ -165,6 +180,7 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight)
 
     mFrameBuffer->SetRenderTargets(rtCount, renderTargets, 
         (Texture*)(BufferBase*)mDepthTarget->OutputBuffer);
+    delete[] renderTargets;
 }
 //----------------------------------------------------------------------------
 void SubRenderer::AddGenericBufferTarget(const std::string& name, 
