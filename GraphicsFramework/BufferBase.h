@@ -39,12 +39,29 @@ enum BufferUsage
     BU_Static_Copy     = 1,
     BU_Dynamic_Read    = 2,
     BU_Dynamic_Copy    = 3,
-    BU_MAX             = 4
+    BU_Max             = 4
+};
+
+enum FilterType
+{
+    FT_Nearest = 0,
+    FT_Linear,
+    FT_Max
+};
+
+enum WrapType
+{
+    WT_Clamp =  0,
+    WT_Repeat,
+    WT_Max
 };
 
 struct SamplerDesc
 {
-
+    FilterType MinFilter;
+    FilterType MagFilter;
+    WrapType WrapS;
+    WrapType WrapT;
 };
 
 struct RendererDataView
@@ -52,7 +69,7 @@ struct RendererDataView
     RendererDataType Type;
     BindingFlag Binding;
     int BindingSlot;
-    SamplerDesc SamplerFlag;
+    SamplerDesc Sampler;
 };
 
 //----------------------------------------------------------------------------

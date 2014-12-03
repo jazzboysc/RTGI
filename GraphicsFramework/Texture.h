@@ -32,11 +32,12 @@ public:
 
     enum TextureType
     {
-        TT_Texture1D,
+        TT_Texture1D = 0,
         TT_Texture2D,
         TT_Texture3D,
         TT_TextureCube,
-        TT_Texture2DArray
+        TT_Texture2DArray,
+        TT_Max
     };
 
 	Texture();

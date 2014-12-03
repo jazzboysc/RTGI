@@ -7,7 +7,7 @@
 
 using namespace RTGI;
 
-GLenum Buffer::msBufferUsage[BU_MAX] =
+GLenum Buffer::msBufferUsage[BU_Max] =
 {
     GL_STATIC_READ,
     GL_STATIC_COPY,

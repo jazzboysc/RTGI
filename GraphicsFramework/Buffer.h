@@ -43,7 +43,7 @@ protected:
 	GLuint mSize;
 	GLenum mType;
 
-    static GLenum msBufferUsage[BU_MAX];
+    static GLenum msBufferUsage[BU_Max];
 };
 
 typedef RefPointer<Buffer> BufferPtr;
