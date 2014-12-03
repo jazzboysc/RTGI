@@ -135,7 +135,7 @@ RendererOutput* SubRenderer::GetDepthTarget() const
 }
 //----------------------------------------------------------------------------
 void SubRenderer::AddInputDependency(SubRenderer* producer, 
-    const std::string& srcName, RendererDataView* view)
+    const std::string& srcName, RendererInputDataView* view)
 {
     assert(mInputs.size() < MAX_INPUT_DEPENDENCY_COUNT);
     RendererOutput* producerOutput = 

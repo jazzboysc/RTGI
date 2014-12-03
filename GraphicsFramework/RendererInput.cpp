@@ -73,7 +73,7 @@ void EnableBuffer(RendererInput* input)
 
 //----------------------------------------------------------------------------
 RendererInput::RendererInput(const std::string& name,
-    BufferBase* inputBuffer, RendererDataView* view)
+    BufferBase* inputBuffer, RendererInputDataView* view)
 {
     Name = name;
     InputBuffer = inputBuffer;

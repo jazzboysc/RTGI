@@ -43,7 +43,7 @@ public:
 
     enum { MAX_INPUT_DEPENDENCY_COUNT = 16 };
     void AddInputDependency(SubRenderer* producer, const std::string& srcName,
-        RendererDataView* view);
+        RendererInputDataView* view);
 
     // FrameBuffer stuff.
     void AddFrameBufferTarget(const std::string& name, int width, int height,

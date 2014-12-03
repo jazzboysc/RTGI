@@ -22,7 +22,7 @@ class RendererInput : public RefObject
 {
 public:
     RendererInput(const std::string& name, BufferBase* inputBuffer, 
-        RendererDataView* view);
+        RendererInputDataView* view);
     virtual ~RendererInput();
 
     void Enable();
@@ -30,7 +30,7 @@ public:
 
     std::string Name;
     BufferBasePtr InputBuffer;
-    RendererDataView View;
+    RendererInputDataView View;
 };
 
 typedef RefPointer<RendererInput> RendererInputPtr;

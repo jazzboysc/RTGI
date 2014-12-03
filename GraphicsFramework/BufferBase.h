@@ -64,7 +64,7 @@ struct SamplerDesc
     WrapType WrapT;
 };
 
-struct RendererDataView
+struct RendererInputDataView
 {
     RendererDataType Type;
     BindingFlag Binding;
