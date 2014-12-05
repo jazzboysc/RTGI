@@ -1,5 +1,5 @@
-#ifndef RTGI_VPLRenderer_H
-#define RTGI_VPLRenderer_H
+#ifndef RTGI_IndirectLightingRenderer_H
+#define RTGI_IndirectLightingRenderer_H
 
 #include "GraphicsFrameworkHeader.h"
 
@@ -10,11 +10,11 @@ namespace RTGI
 // Author: Che Sun
 // Date: 12/03/2014
 //----------------------------------------------------------------------------
-class VPLRenderer : public SubRenderer
+class IndirectLightingRenderer : public SubRenderer
 {
 public:
-    VPLRenderer(RenderSet* renderSet = 0);
-    virtual ~VPLRenderer();
+    IndirectLightingRenderer(RenderSet* renderSet = 0);
+    virtual ~IndirectLightingRenderer();
 
     void SetGBufferRenderer(GBufferRenderer* gbuffer);
     GBufferRenderer* GetGBufferRenderer() const;

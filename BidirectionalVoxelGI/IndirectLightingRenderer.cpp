@@ -1,20 +1,20 @@
-#include "VPLRenderer.h"
+#include "IndirectLightingRenderer.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-VPLRenderer::VPLRenderer(RenderSet* renderSet)
+IndirectLightingRenderer::IndirectLightingRenderer(RenderSet* renderSet)
     :
     SubRenderer(renderSet)
 {
 }
 //----------------------------------------------------------------------------
-VPLRenderer::~VPLRenderer()
+IndirectLightingRenderer::~IndirectLightingRenderer()
 {
     mGBuffer = 0;
 }
 //----------------------------------------------------------------------------
-void VPLRenderer::SetGBufferRenderer(GBufferRenderer* gbuffer)
+void IndirectLightingRenderer::SetGBufferRenderer(GBufferRenderer* gbuffer)
 {
     mGBuffer = gbuffer;
 
@@ -37,19 +37,19 @@ void VPLRenderer::SetGBufferRenderer(GBufferRenderer* gbuffer)
     AddInputDependency(gbuffer, "Albedo", &view);
 }
 //----------------------------------------------------------------------------
-GBufferRenderer* VPLRenderer::GetGBufferRenderer() const
+GBufferRenderer* IndirectLightingRenderer::GetGBufferRenderer() const
 {
     return mGBuffer;
 }
 //----------------------------------------------------------------------------
-void VPLRenderer::CreateIndirectLightingBuffer(int width, int height,
-    Texture::TextureFormat format)
+void IndirectLightingRenderer::CreateIndirectLightingBuffer(int width, 
+    int height, Texture::TextureFormat format)
 {
     AddFrameBufferTarget("IndirectLighting", width, height, format);
     CreateFrameBuffer(width, height);
 }
 //----------------------------------------------------------------------------
-void VPLRenderer::Render(int technique, int pass, Camera* camera)
+void IndirectLightingRenderer::Render(int technique, int pass, Camera* camera)
 {
     SubRenderer::Render(technique, pass, SRO_FrameBuffer, 0, camera);
 }

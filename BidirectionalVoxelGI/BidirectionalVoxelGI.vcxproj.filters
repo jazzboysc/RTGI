@@ -16,7 +16,22 @@
     <ClCompile Include="SampleRSM.cpp" />
     <ClCompile Include="TempScreenQuad.cpp" />
     <ClCompile Include="SceneMesh.cpp" />
-    <ClCompile Include="VPLRenderer.cpp">
+    <ClCompile Include="ShadowMapRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectLightingRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="IndirectLightingRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="VPLGenerator.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="Voxelizer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="Merger.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -27,7 +42,22 @@
     <ClInclude Include="SampleRSM.h" />
     <ClInclude Include="TempScreenQuad.h" />
     <ClInclude Include="SceneMesh.h" />
-    <ClInclude Include="VPLRenderer.h">
+    <ClInclude Include="ShadowMapRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectLightingRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="IndirectLightingRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="VPLGenerator.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxelizer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="Merger.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
