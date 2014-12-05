@@ -223,7 +223,7 @@ RendererOutput* SubRenderer::GetGenericBufferTargetByName(
 }
 //----------------------------------------------------------------------------
 void SubRenderer::Render(int technique, int pass, 
-    SubRendererOutput outputFlag, Camera* camera)
+    SubRendererOutput outputFlag, PipelineStateBlock* psb, Camera* camera)
 {
     // Enable renderer inputs.
     for( int i = 0; i < (int)mInputs.size(); ++i )
@@ -247,7 +247,8 @@ void SubRenderer::Render(int technique, int pass,
         }
     }
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Apply PSB.
+    ApplyPipelineStateBlock(psb);
 
     // Render scene inputs.
     assert(mRenderSet);
@@ -263,7 +264,7 @@ void SubRenderer::Render(int technique, int pass,
     for( int i = 0; i < renderObjectCount; ++i )
     {
         RenderObject* renderObject = mRenderSet->GetRenderObject(i);
-        renderObject->Render(technique, pass);
+        renderObject->Render(technique, pass, this);
     }
 
     // Disable renderer inputs.
@@ -284,6 +285,26 @@ void SubRenderer::Render(int technique, int pass,
         for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
         {
             mGenericBufferTargets[i]->Disable();
+        }
+    }
+}
+//----------------------------------------------------------------------------
+void SubRenderer::ApplyPipelineStateBlock(PipelineStateBlock* psb)
+{
+    if( psb->Flag & PB_Rasterizer )
+    {
+        if( psb->Rasterizer.Flag & RB_Viewport )
+        {
+            glViewport(psb->Rasterizer.Viewport.X,
+                psb->Rasterizer.Viewport.Y, psb->Rasterizer.Viewport.Width,
+                psb->Rasterizer.Viewport.Height);
+        }
+    }
+    if( psb->Flag & PB_OutputMerger )
+    {
+        if( psb->OutputMerger.Flag & OMB_Clear )
+        {
+            glClear(psb->OutputMerger.ClearMask);
         }
     }
 }

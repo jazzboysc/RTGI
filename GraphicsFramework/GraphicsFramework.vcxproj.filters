@@ -171,6 +171,9 @@
     <ClCompile Include="RenderSet.cpp">
       <Filter>Scene Objects</Filter>
     </ClCompile>
+    <ClCompile Include="PipelineStateBlock.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -355,6 +358,9 @@
     </ClInclude>
     <ClInclude Include="RenderSet.h">
       <Filter>Scene Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineStateBlock.h">
+      <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

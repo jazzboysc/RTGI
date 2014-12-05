@@ -33,7 +33,8 @@ PolylineGeometry::~PolylineGeometry()
 	glDeleteBuffers(1, &mVBO);
 }
 //----------------------------------------------------------------------------
-void PolylineGeometry::Render(int technique, int pass)
+void PolylineGeometry::Render(int technique, int pass, 
+    SubRenderer* subRenderer)
 {
     // Apply current rendering pass.
     mMaterial->Apply(technique, pass);

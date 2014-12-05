@@ -51,6 +51,6 @@ void VPLRenderer::CreateIndirectLightingBuffer(int width, int height,
 //----------------------------------------------------------------------------
 void VPLRenderer::Render(int technique, int pass, Camera* camera)
 {
-    SubRenderer::Render(technique, pass, SRO_FrameBuffer, camera);
+    SubRenderer::Render(technique, pass, SRO_FrameBuffer, 0, camera);
 }
 //----------------------------------------------------------------------------

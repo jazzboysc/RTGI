@@ -142,6 +142,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="PassBase.cpp" />
     <ClCompile Include="PassInfo.cpp" />
     <ClCompile Include="PassManager.cpp" />
+    <ClCompile Include="PipelineStateBlock.cpp" />
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="PointSet.cpp" />
     <ClCompile Include="PolyCylinder.cpp" />
@@ -207,6 +208,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="PassBase.h" />
     <ClInclude Include="PassInfo.h" />
     <ClInclude Include="PassManager.h" />
+    <ClInclude Include="PipelineStateBlock.h" />
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="PointSet.h" />
     <ClInclude Include="PolyCylinder.h" />

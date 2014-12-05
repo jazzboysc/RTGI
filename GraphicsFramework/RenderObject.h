@@ -15,6 +15,8 @@
 namespace RTGI
 {
 
+class SubRenderer;
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 09/14/2013
@@ -28,7 +30,8 @@ public:
     void SetCamera(Camera* camera);
     Camera* GetCamera() const;
 
-	virtual void Render(int technique, int pass) = 0;
+	virtual void Render(int technique, int pass, 
+        SubRenderer* subRenderer = 0) = 0;
 	virtual void OnUpdateShaderConstants(int technique, int pass) = 0;
     virtual void OnRender(Pass* pass, PassInfo* passInfo){};
 	virtual void OnEnableBuffers(){};

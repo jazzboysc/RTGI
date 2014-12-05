@@ -14,7 +14,7 @@ namespace RTGI
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: 11/29/2013
+// Date: 11/29/2014
 //----------------------------------------------------------------------------
 class GBufferRenderer : public SubRenderer
 {
@@ -24,6 +24,9 @@ public:
 
     void CreateGBuffer(int width, int height, Texture::TextureFormat format);
     void Render(int technique, int pass, Camera* camera);
+
+protected:
+    PipelineStateBlockPtr mPSB;
 };
 
 typedef RefPointer<GBufferRenderer> GBufferRendererPtr;

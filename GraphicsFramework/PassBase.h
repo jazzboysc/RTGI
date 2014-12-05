@@ -9,6 +9,7 @@
 #include "FrameworkCommon.h"
 #include "RefObject.h"
 #include "ShaderProgram.h"
+#include "PipelineStateBlock.h"
 
 namespace RTGI
 {
@@ -27,8 +28,12 @@ public:
     ShaderProgram* GetShaderProgram();
     void CreateDeviceResource();
 
+    void SetPipelineStateBlock(PipelineStateBlock* psb);
+    PipelineStateBlock* GetPipelineStateBlock() const;
+
 protected:
     ShaderProgramPtr mShaderProgram;
+    PipelineStateBlockPtr mPSB;
 };
 
 typedef RefPointer<PassBase> PassBasePtr;

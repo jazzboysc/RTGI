@@ -34,7 +34,7 @@ TriangleMesh::~TriangleMesh()
 	glDeleteBuffers(1, &mIBO);
 }
 //----------------------------------------------------------------------------
-void TriangleMesh::Render(int technique, int pass)
+void TriangleMesh::Render(int technique, int pass, SubRenderer* subRenderer)
 {
 	// Apply current rendering pass.
 	mMaterial->Apply(technique, pass);

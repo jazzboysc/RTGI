@@ -12,10 +12,15 @@ GBufferRenderer::GBufferRenderer(RenderSet* renderSet)
     :
     SubRenderer(renderSet)
 {
+    mPSB = new PipelineStateBlock();
+    mPSB->Flag |= PB_OutputMerger;
+    mPSB->OutputMerger.Flag |= OMB_Clear;
+    mPSB->OutputMerger.ClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 }
 //----------------------------------------------------------------------------
 GBufferRenderer::~GBufferRenderer()
 {
+    mPSB = 0;
 }
 //----------------------------------------------------------------------------
 void GBufferRenderer::CreateGBuffer(int width, int height, 
@@ -29,6 +34,6 @@ void GBufferRenderer::CreateGBuffer(int width, int height,
 //----------------------------------------------------------------------------
 void GBufferRenderer::Render(int technique, int pass, Camera* camera)
 {
-    SubRenderer::Render(technique, pass, SRO_FrameBuffer, camera);
+    SubRenderer::Render(technique, pass, SRO_FrameBuffer, mPSB, camera);
 }
 //----------------------------------------------------------------------------

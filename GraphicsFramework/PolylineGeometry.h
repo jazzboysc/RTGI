@@ -25,7 +25,7 @@ public:
 	virtual ~PolylineGeometry();
 
 	// Implement base class interface.
-	virtual void Render(int technique, int pass);
+    virtual void Render(int technique, int pass, SubRenderer* subRenderer = 0);
     virtual void OnRender(Pass* pass, PassInfo* passInfo);
     virtual void OnUpdateShaderConstants(int technique, int pass);
     virtual void OnEnableBuffers();

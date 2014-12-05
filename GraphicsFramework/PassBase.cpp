@@ -21,6 +21,7 @@ PassBase::PassBase(ShaderProgram* shaderProgram)
 PassBase::~PassBase()
 {
     mShaderProgram = 0;
+    mPSB = 0;
 }
 //----------------------------------------------------------------------------
 ShaderProgram* PassBase::GetShaderProgram()
@@ -31,5 +32,15 @@ ShaderProgram* PassBase::GetShaderProgram()
 void PassBase::CreateDeviceResource()
 {
     mShaderProgram->CreateDeviceResource();
+}
+//----------------------------------------------------------------------------
+void PassBase::SetPipelineStateBlock(PipelineStateBlock* psb)
+{
+    mPSB = psb;
+}
+//----------------------------------------------------------------------------
+PipelineStateBlock* PassBase::GetPipelineStateBlock() const
+{
+    return mPSB;
 }
 //----------------------------------------------------------------------------

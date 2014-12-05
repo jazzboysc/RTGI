@@ -13,6 +13,7 @@
 #include "RendererOutput.h"
 #include "RenderSet.h"
 #include "Camera.h"
+#include "PipelineStateBlock.h"
 #include <vector>
 
 namespace RTGI
@@ -30,7 +31,7 @@ typedef BufferBase* (*SubRendererCreateRendererData)(int size,
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: 11/29/2013
+// Date: 11/29/2014
 //----------------------------------------------------------------------------
 class SubRenderer : public RefObject
 {
@@ -68,9 +69,11 @@ public:
 
     // Rendering stuff.
     virtual void Render(int technique, int pass, SubRendererOutput outputFlag, 
-        Camera* camera = 0);
+        PipelineStateBlock* psb, Camera* camera = 0);
 
 protected:
+    void ApplyPipelineStateBlock(PipelineStateBlock* psb);
+
     // Inputs.
     std::vector<RendererInputPtr> mInputs;
 
