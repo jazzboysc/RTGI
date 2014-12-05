@@ -17,6 +17,8 @@ public:
     virtual ~VPLGenerator();
 };
 
+typedef RefPointer<VPLGenerator> VPLGeneratorPtr;
+
 }
 
 #endif

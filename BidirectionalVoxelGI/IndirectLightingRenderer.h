@@ -27,6 +27,8 @@ private:
     GBufferRendererPtr mGBuffer;
 };
 
+typedef RefPointer<IndirectLightingRenderer> IndirectLightingRendererPtr;
+
 }
 
 #endif

@@ -117,29 +117,17 @@ void BidirectionalVoxelGIApp::Initialize()
     MaterialTemplate* mtIndirectLighting = new MaterialTemplate();
     mtIndirectLighting->AddTechnique(techIndirectLighting);
 
-    // Create G-buffer textures.
+    // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer();
     mGBufferRenderer->CreateGBuffer(mWidth, mHeight, Texture::TF_RGBAF);
     mGBufferPositionTexture = (Texture2D*)(BufferBase*)mGBufferRenderer->GetFrameBufferTarget(0)->OutputBuffer;
     mGBufferNormalTexture = (Texture2D*)(BufferBase*)mGBufferRenderer->GetFrameBufferTarget(1)->OutputBuffer;
     mGBufferAlbedoTexture = (Texture2D*)(BufferBase*)mGBufferRenderer->GetFrameBufferTarget(2)->OutputBuffer;
 
-    // Create shadow map render target.
-    int shadowMapWidth, shadowMapHeight;
-    shadowMapWidth = 512;
-    shadowMapHeight = 512;
-    mShadowMapTexture = new Texture2D();
-    mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture::TF_RGBAF);
-
-    mShadowMapDepthTexture = new Texture2D();
-    mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture::TF_Depth);
-
-    // Create shadow map frame buffer.
-    Texture* renderTargets[] = { mShadowMapTexture };
-    mShadowMapFB = new FrameBuffer();
-    mShadowMapFB->SetRenderTargets(1, renderTargets, mShadowMapDepthTexture);
+    // Create shadow map renderer.
+    mShadowMapRenderer = new ShadowMapRenderer();
+    mShadowMapRenderer->CreateShadowMap(1024, 1024, Texture::TF_RGBAF);
+    mShadowMapTexture = (Texture2D*)(BufferBase*)mShadowMapRenderer->GetFrameBufferTarget(0)->OutputBuffer;
 
     // Create direct lighting render target.
     mDirectLightingTexture = new Texture2D();
@@ -226,6 +214,7 @@ void BidirectionalVoxelGIApp::Initialize()
 
 	// Create scene.
     mSceneObjects = new RenderSet();
+    mShadowMapRenderer->SetRenderSet(mSceneObjects);
     mGBufferRenderer->SetRenderSet(mSceneObjects);
 
 	mat4 rotM;
@@ -436,10 +425,7 @@ void BidirectionalVoxelGIApp::Run()
 
     // Scene shadow pass.
     mTimer->Start();
-    mShadowMapFB->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    ShadowPass();
-    mShadowMapFB->Disable();
+    mShadowMapRenderer->Render(0, 0, mLightProjector);
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Scene Shadow Pass", workLoad);
@@ -508,9 +494,7 @@ void BidirectionalVoxelGIApp::Terminate()
     mGBufferNormalTexture = 0;
     mGBufferAlbedoTexture = 0;
 
-    mShadowMapFB = 0;
     mShadowMapTexture = 0;
-    mShadowMapDepthTexture = 0;
 
     mDirectLightingFB = 0;
     mDirectLightingTexture = 0;

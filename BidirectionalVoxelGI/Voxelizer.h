@@ -17,6 +17,8 @@ public:
     virtual ~Voxelizer();
 };
 
+typedef RefPointer<Voxelizer> VoxelizerPtr;
+
 }
 
 #endif

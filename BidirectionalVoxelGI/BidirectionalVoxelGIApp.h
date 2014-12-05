@@ -8,6 +8,7 @@
 #include "IndirectLightingScreenQuad.h"
 #include "SampleRSM.h"
 #include "GPUTimer.h"
+#include "ShadowMapRenderer.h"
 
 namespace RTGI
 {
@@ -72,9 +73,8 @@ private:
     Texture2DPtr mGBufferAlbedoTexture;
 
     // Scene shadow map.
-    FrameBufferPtr mShadowMapFB;
+    ShadowMapRendererPtr mShadowMapRenderer;
     Texture2DPtr mShadowMapTexture;
-    Texture2DPtr mShadowMapDepthTexture;
 
     // Direct illumination buffer.
     FrameBufferPtr mDirectLightingFB;

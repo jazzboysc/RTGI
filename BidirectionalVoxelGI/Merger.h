@@ -17,6 +17,8 @@ public:
     virtual ~Merger();
 };
 
+typedef RefPointer<Merger> MergerPtr;
+
 }
 
 #endif

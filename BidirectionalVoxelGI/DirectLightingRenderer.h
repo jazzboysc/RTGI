@@ -17,6 +17,8 @@ public:
     virtual ~DirectLightingRenderer();
 };
 
+typedef RefPointer<DirectLightingRenderer> DirectLightingRendererPtr;
+
 }
 
 #endif
