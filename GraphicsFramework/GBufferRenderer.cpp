@@ -26,10 +26,13 @@ GBufferRenderer::~GBufferRenderer()
 void GBufferRenderer::CreateGBuffer(int width, int height, 
     Texture::TextureFormat format)
 {
-    AddFrameBufferTarget("Position", width, height, format);
-    AddFrameBufferTarget("Normal", width, height, format);
-    AddFrameBufferTarget("Albedo", width, height, format);
-    CreateFrameBuffer(width, height);
+    AddFrameBufferTarget("Position", width, height, 0, Texture::TT_Texture2D, 
+        format);
+    AddFrameBufferTarget("Normal", width, height, 0, Texture::TT_Texture2D, 
+        format);
+    AddFrameBufferTarget("Albedo", width, height, 0, Texture::TT_Texture2D, 
+        format);
+    CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
 }
 //----------------------------------------------------------------------------
 void GBufferRenderer::Render(int technique, int pass, Camera* camera)

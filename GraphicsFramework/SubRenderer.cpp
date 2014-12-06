@@ -82,6 +82,7 @@ SubRenderer::~SubRenderer()
     mDepthTarget = 0;
     mFrameBuffer = 0;
     mRenderSet = 0;
+    mTimer = 0;
 }
 //----------------------------------------------------------------------------
 void SubRenderer::SetRenderSet(RenderSet* renderSet)
@@ -95,12 +96,29 @@ RenderSet* SubRenderer::GetRenderSet() const
 }
 //----------------------------------------------------------------------------
 void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
-    int height, Texture::TextureFormat format)
+    int height, int depth, Texture::TextureType type, 
+    Texture::TextureFormat format)
 {
     assert(GetFrameBufferTargetByName(name) == 0);
-    Texture2D* texture = new Texture2D();
-    texture->CreateRenderTarget(width, height, format);
-    RendererOutput* ro = new RendererOutput(name, (BufferBase*)texture);
+
+    BufferBase* texture = 0;
+    switch( type )
+    {
+    case Texture::TT_Texture2D:
+        texture = new Texture2D();
+        ((Texture2D*)texture)->CreateRenderTarget(width, height, format);
+        break;
+    case Texture::TT_Texture2DArray:
+        texture = new Texture2DArray();
+        ((Texture2DArray*)texture)->CreateRenderTarget(width, height, depth, 
+            format);
+        break;
+    default:
+        assert(false);
+        break;
+    }
+
+    RendererOutput* ro = new RendererOutput(name, texture);
     mFrameBufferTargets.push_back(ro);
 }
 //----------------------------------------------------------------------------
@@ -162,7 +180,8 @@ void SubRenderer::ClearInputDependency()
     mInputs.clear();
 }
 //----------------------------------------------------------------------------
-void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight)
+void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight, 
+    int depthCount, Texture::TextureType depthType)
 {
     int rtCount = (int)mFrameBufferTargets.size();
     assert(rtCount > 0);
@@ -173,10 +192,26 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight)
             (Texture*)(BufferBase*)mFrameBufferTargets[i]->OutputBuffer;
     }
 
-    Texture2D* depthTexture = new Texture2D();
-    depthTexture->CreateRenderTarget(depthWidth, depthHeight, 
-        Texture::TF_Depth);
-    mDepthTarget = new RendererOutput("Depth", (BufferBase*)depthTexture);
+    BufferBase* depthTexture = 0;
+    switch( depthType )
+    {
+    case Texture::TT_Texture2D:
+        depthTexture = new Texture2D();
+        ((Texture2D*)depthTexture)->CreateRenderTarget(depthWidth, depthHeight,
+            Texture::TF_Depth);
+        break;
+
+    case Texture::TT_Texture2DArray:
+        depthTexture = new Texture2DArray();
+        ((Texture2DArray*)depthTexture)->CreateRenderTarget(depthWidth, 
+            depthHeight, depthCount, Texture::TF_Depth);
+        break;
+
+    default:
+        assert(false);
+        break;
+    }
+    mDepthTarget = new RendererOutput("Depth", depthTexture);
 
     mFrameBuffer->SetRenderTargets(rtCount, renderTargets, 
         (Texture*)(BufferBase*)mDepthTarget->OutputBuffer);
@@ -225,6 +260,9 @@ RendererOutput* SubRenderer::GetGenericBufferTargetByName(
 void SubRenderer::Render(int technique, int pass, 
     SubRendererOutput outputFlag, PipelineStateBlock* psb, Camera* camera)
 {
+    assert(mTimer);
+    mTimer->Start();
+
     // Enable renderer inputs.
     for( int i = 0; i < (int)mInputs.size(); ++i )
     {
@@ -287,6 +325,28 @@ void SubRenderer::Render(int technique, int pass,
             mGenericBufferTargets[i]->Disable();
         }
     }
+
+    mTimer->Stop();
+}
+//----------------------------------------------------------------------------
+void SubRenderer::SetTimer(GPUTimer* timer)
+{
+    mTimer = timer;
+}
+//----------------------------------------------------------------------------
+GPUTimer* SubRenderer::GetTimer() const
+{
+    return mTimer;
+}
+//----------------------------------------------------------------------------
+double SubRenderer::GetTimeElapsed() const
+{
+    if( mTimer )
+    {
+        return mTimer->GetTimeElapsed();
+    }
+
+    return 0.0;
 }
 //----------------------------------------------------------------------------
 void SubRenderer::ApplyPipelineStateBlock(PipelineStateBlock* psb)

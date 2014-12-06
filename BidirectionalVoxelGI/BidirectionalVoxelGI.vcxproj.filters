@@ -34,6 +34,9 @@
     <ClCompile Include="Merger.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="RSMRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BidirectionalVoxelGIApp.h" />
@@ -58,6 +61,9 @@
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="Merger.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="RSMRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -20,6 +20,7 @@
     <ClCompile Include="BidirectionalVoxelGIApp.cpp" />
     <ClCompile Include="DirectLightingRenderer.cpp" />
     <ClCompile Include="Merger.cpp" />
+    <ClCompile Include="RSMRenderer.cpp" />
     <ClCompile Include="SceneMesh.cpp" />
     <ClCompile Include="DirectLightingScreenQuad.cpp" />
     <ClCompile Include="IndirectLightingScreenQuad.cpp" />
@@ -35,6 +36,7 @@
     <ClInclude Include="BidirectionalVoxelGIApp.h" />
     <ClInclude Include="DirectLightingRenderer.h" />
     <ClInclude Include="Merger.h" />
+    <ClInclude Include="RSMRenderer.h" />
     <ClInclude Include="SceneMesh.h" />
     <ClInclude Include="DirectLightingScreenQuad.h" />
     <ClInclude Include="IndirectLightingScreenQuad.h" />

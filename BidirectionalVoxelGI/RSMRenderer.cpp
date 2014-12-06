@@ -1,9 +1,9 @@
-#include "ShadowMapRenderer.h"
+#include "RSMRenderer.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-ShadowMapRenderer::ShadowMapRenderer(RenderSet* renderSet)
+RSMRenderer::RSMRenderer(RenderSet* renderSet)
     :
     SubRenderer(renderSet)
 {
@@ -13,20 +13,24 @@ ShadowMapRenderer::ShadowMapRenderer(RenderSet* renderSet)
     mPSB->OutputMerger.ClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 }
 //----------------------------------------------------------------------------
-ShadowMapRenderer::~ShadowMapRenderer()
+RSMRenderer::~RSMRenderer()
 {
     mPSB = 0;
 }
 //----------------------------------------------------------------------------
-void ShadowMapRenderer::CreateShadowMap(int width, int height,
+void RSMRenderer::CreateRSM(int width, int height, int depth,
     Texture::TextureFormat format)
 {
-    AddFrameBufferTarget("ShadowMap", width, height, 0, Texture::TT_Texture2D, 
-        format);
-    CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
+    AddFrameBufferTarget("RSMPosition", width, height, depth, 
+        Texture::TT_Texture2DArray, format);
+    AddFrameBufferTarget("RSMNormal", width, height, depth,
+        Texture::TT_Texture2DArray, format);
+    AddFrameBufferTarget("RSMFlux", width, height, depth,
+        Texture::TT_Texture2DArray, format);
+    CreateFrameBuffer(width, height, depth, Texture::TT_Texture2DArray);
 }
 //----------------------------------------------------------------------------
-void ShadowMapRenderer::Render(int technique, int pass, Camera* camera)
+void RSMRenderer::Render(int technique, int pass, Camera* camera)
 {
     SubRenderer::Render(technique, pass, SRO_FrameBuffer, mPSB, camera);
 }

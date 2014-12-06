@@ -14,6 +14,7 @@
 #include "RenderSet.h"
 #include "Camera.h"
 #include "PipelineStateBlock.h"
+#include "GPUTimer.h"
 #include <vector>
 
 namespace RTGI
@@ -51,13 +52,14 @@ public:
     void ClearInputDependency();
 
     // FrameBuffer stuff.
-    void AddFrameBufferTarget(const std::string& name, int width, int height,
-        Texture::TextureFormat format);
+    void AddFrameBufferTarget(const std::string& name, int width, int height, 
+        int depth, Texture::TextureType type, Texture::TextureFormat format);
     int GetFrameBufferTargetCount() const;
     RendererOutput* GetFrameBufferTarget(int i) const;
     RendererOutput* GetFrameBufferTargetByName(const std::string& name) const;
     RendererOutput* GetDepthTarget() const;
-    void CreateFrameBuffer(int depthWidth, int depthHeight);
+    void CreateFrameBuffer(int depthWidth, int depthHeight, int depthCount,
+        Texture::TextureType depthType);
 
     // GenericBuffer stuff.
     void AddGenericBufferTarget(const std::string& name, 
@@ -70,6 +72,10 @@ public:
     // Rendering stuff.
     virtual void Render(int technique, int pass, SubRendererOutput outputFlag, 
         PipelineStateBlock* psb, Camera* camera = 0);
+
+    void SetTimer(GPUTimer* timer);
+    GPUTimer* GetTimer() const;
+    double GetTimeElapsed() const;
 
 protected:
     void ApplyPipelineStateBlock(PipelineStateBlock* psb);
@@ -85,6 +91,8 @@ protected:
 
     // Scene Inputs.
     RenderSetPtr mRenderSet;
+
+    GPUTimerPtr mTimer;
 
 private:
     static SubRendererCreateRendererData msFactoryFunctions[6];

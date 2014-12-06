@@ -9,6 +9,7 @@
 #include "SampleRSM.h"
 #include "GPUTimer.h"
 #include "ShadowMapRenderer.h"
+#include "RSMRenderer.h"
 
 namespace RTGI
 {
@@ -56,8 +57,6 @@ private:
     bool mIsWireframe;
     ShowMode mShowMode;
 
-	void ShadowPass();
-    void GBufferPass();
     void RSMPass();
 
 	int mWidth, mHeight;
@@ -88,19 +87,13 @@ private:
 
     // Scene light RSM.
     enum { RSM_FACE_COUNT = 5 };
-    FrameBufferPtr mRSMFB;
+    RSMRendererPtr mRSMRenderer;
     Texture2DArrayPtr mRSMPositionTextureArray;
     Texture2DArrayPtr mRSMNormalTextureArray;
     Texture2DArrayPtr mRSMFluxTextureArray;
-    Texture2DArrayPtr mRSMDepthTextureArray;
 
     // Sample RSM.
     SampleRSMPtr mSampleRSMTask;
-
-    // VPL shadow maps.
-    FrameBufferPtr mVPLShadowMapFB;
-    Texture2DArrayPtr mVPLShadowMapTextureArray;
-    Texture2DArrayPtr mVPLShadowMapDepthTextureArray;
 
     // VPL stuff.
     enum { VPL_SAMPLE_COUNT = 128 };

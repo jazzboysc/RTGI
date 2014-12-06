@@ -45,8 +45,9 @@ GBufferRenderer* IndirectLightingRenderer::GetGBufferRenderer() const
 void IndirectLightingRenderer::CreateIndirectLightingBuffer(int width, 
     int height, Texture::TextureFormat format)
 {
-    AddFrameBufferTarget("IndirectLighting", width, height, format);
-    CreateFrameBuffer(width, height);
+    AddFrameBufferTarget("IndirectLighting", width, height, 0, 
+        Texture::TT_Texture2D, format);
+    CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Render(int technique, int pass, Camera* camera)

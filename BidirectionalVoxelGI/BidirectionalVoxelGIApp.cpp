@@ -154,36 +154,11 @@ void BidirectionalVoxelGIApp::Initialize()
     mIndirectLightingFB->SetRenderTargets(1, indlRenderTargets, mIndirectLightingDepthTexture);
 
     // Create RSM render targets.
-    int rsmWidth, rsmHeight;
-    rsmWidth = 256;
-    rsmHeight = 256;
-    mRSMPositionTextureArray = new Texture2DArray();
-    mRSMPositionTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
-    mRSMNormalTextureArray = new Texture2DArray();
-    mRSMNormalTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
-    mRSMFluxTextureArray = new Texture2DArray();
-    mRSMFluxTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
-    mRSMDepthTextureArray = new Texture2DArray();
-    mRSMDepthTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_Depth);
-
-    // Create RSM frame buffer.
-    Texture* rsmRenderTargets[] = { mRSMPositionTextureArray, mRSMNormalTextureArray, mRSMFluxTextureArray };
-    mRSMFB = new FrameBuffer();
-    mRSMFB->SetRenderTargets(3, rsmRenderTargets, mRSMDepthTextureArray);
-
-    // Create VPL shadow maps render target.
-    int vplSMWidth, vplSMHeight;
-    vplSMWidth = 256;
-    vplSMHeight = 256;
-    mVPLShadowMapTextureArray = new Texture2DArray();
-    mVPLShadowMapTextureArray->CreateRenderTarget(vplSMWidth, vplSMHeight, VPL_SAMPLE_COUNT, Texture::TF_RGBAF);
-    mVPLShadowMapDepthTextureArray = new Texture2DArray();
-    mVPLShadowMapDepthTextureArray->CreateRenderTarget(vplSMWidth, vplSMHeight, VPL_SAMPLE_COUNT, Texture::TF_Depth);
-
-    // Create VPL shaodw maps frame buffer.
-    Texture* vplSMRenderTargets[] = { mVPLShadowMapTextureArray };
-    mVPLShadowMapFB = new FrameBuffer();
-    mVPLShadowMapFB->SetRenderTargets(1, vplSMRenderTargets, mVPLShadowMapDepthTextureArray);
+    mRSMRenderer = new RSMRenderer();
+    mRSMRenderer->CreateRSM(256, 256, RSM_FACE_COUNT, Texture::TF_RGBAF);
+    mRSMPositionTextureArray = (Texture2DArray*)(BufferBase*)mRSMRenderer->GetFrameBufferTarget(0)->OutputBuffer;
+    mRSMNormalTextureArray = (Texture2DArray*)(BufferBase*)mRSMRenderer->GetFrameBufferTarget(1)->OutputBuffer;
+    mRSMFluxTextureArray = (Texture2DArray*)(BufferBase*)mRSMRenderer->GetFrameBufferTarget(2)->OutputBuffer;
 
     // Create VPL sample pattern.
     mVPLSamplePattern = new Texture1D();
@@ -212,10 +187,18 @@ void BidirectionalVoxelGIApp::Initialize()
     mSampleRSMTask->RSMFlux = mRSMFluxTextureArray;
     mSampleRSMTask->VPLBuffer = mVPLBuffer;
 
+    // Create GPU timer.
+    mTimer = new GPUTimer();
+    mTimer->CreateDeviceResource();
+    mShadowMapRenderer->SetTimer(mTimer);
+    mGBufferRenderer->SetTimer(mTimer);
+    mRSMRenderer->SetTimer(mTimer);
+
 	// Create scene.
     mSceneObjects = new RenderSet();
     mShadowMapRenderer->SetRenderSet(mSceneObjects);
     mGBufferRenderer->SetRenderSet(mSceneObjects);
+    mRSMRenderer->SetRenderSet(mSceneObjects);
 
 	mat4 rotM;
 	material = new Material(mtVPL);
@@ -341,10 +324,6 @@ void BidirectionalVoxelGIApp::Initialize()
     mIndirectLightingScreenQuad->GBufferAlbedoTexture = mGBufferAlbedoTexture;
     mIndirectLightingScreenQuad->VPLBuffer = mVPLBuffer;
 
-    // Create GPU timer.
-    mTimer = new GPUTimer();
-    mTimer->CreateDeviceResource();
-
     // Create labels.
     InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, 20);
     InformationPanel::GetInstance()->AddTimingLabel("Scene G-buffer Pass", 16, 40);
@@ -352,40 +331,6 @@ void BidirectionalVoxelGIApp::Initialize()
     InformationPanel::GetInstance()->AddTimingLabel("VPL Creation Pass", 16, 80);
     InformationPanel::GetInstance()->AddTimingLabel("Direct Lighting Pass", 16, 100);
     InformationPanel::GetInstance()->AddTimingLabel("Indirect Lighting Pass", 16, 120);
-}
-//----------------------------------------------------------------------------
-void BidirectionalVoxelGIApp::ShadowPass()
-{
-    mGround->SetCamera(mLightProjector);
-    mCeiling->SetCamera(mLightProjector);
-    mBackWall->SetCamera(mLightProjector);
-    mLeftWall->SetCamera(mLightProjector);
-    mRightWall->SetCamera(mLightProjector);
-    mModel->SetCamera(mLightProjector);
-
-	mGround->Render(0, 0);
-	mCeiling->Render(0, 0);
-	mBackWall->Render(0, 0);
-	mLeftWall->Render(0, 0);
-	mRightWall->Render(0, 0);
-	mModel->Render(0, 0);
-}
-//----------------------------------------------------------------------------
-void BidirectionalVoxelGIApp::GBufferPass()
-{
-    mGround->SetCamera(mCamera);
-    mCeiling->SetCamera(mCamera);
-    mBackWall->SetCamera(mCamera);
-    mLeftWall->SetCamera(mCamera);
-    mRightWall->SetCamera(mCamera);
-    mModel->SetCamera(mCamera);
-
-    mGround->Render(0, 1);
-    mCeiling->Render(0, 1);
-    mBackWall->Render(0, 1);
-    mLeftWall->Render(0, 1);
-    mRightWall->Render(0, 1);
-    mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::RSMPass()
@@ -424,27 +369,18 @@ void BidirectionalVoxelGIApp::Run()
     static double workLoad = 0.0;
 
     // Scene shadow pass.
-    mTimer->Start();
     mShadowMapRenderer->Render(0, 0, mLightProjector);
-    mTimer->Stop();
-    workLoad = mTimer->GetTimeElapsed();
+    workLoad = mShadowMapRenderer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Scene Shadow Pass", workLoad);
 
     // Scene G-buffer pass.
-    mTimer->Start();
     mGBufferRenderer->Render(0, 1, mCamera);
-    mTimer->Stop();
-    workLoad = mTimer->GetTimeElapsed();
+    workLoad = mGBufferRenderer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Scene G-buffer Pass", workLoad);
 
     // Scene light RSM pass.
-    mTimer->Start();
-    mRSMFB->Enable();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    RSMPass();
-    mRSMFB->Disable();
-    mTimer->Stop();
-    workLoad = mTimer->GetTimeElapsed();
+    mRSMRenderer->Render(0, 2, 0);
+    workLoad = mRSMRenderer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("RSM Pass", workLoad);
 
     // Sample RSM pass (VPL generation).
@@ -504,15 +440,9 @@ void BidirectionalVoxelGIApp::Terminate()
     mIndirectLightingTexture = 0;
     mIndirectLightingDepthTexture = 0;
 
-    mRSMFB = 0;
     mRSMPositionTextureArray = 0;
     mRSMNormalTextureArray = 0;
     mRSMFluxTextureArray = 0;
-    mRSMDepthTextureArray = 0;
-
-    mVPLShadowMapFB = 0;
-    mVPLShadowMapTextureArray = 0;
-    mVPLShadowMapDepthTextureArray = 0;
 
     mSampleRSMTask = 0;
     mVPLSamplePattern = 0;
@@ -628,12 +558,6 @@ void BidirectionalVoxelGIApp::OnKeyboard(unsigned char key, int x, int y)
 
     case 'r':
         mIsRotatingModel = !mIsRotatingModel;
-        break;
-
-    case 'v':
-        mShowMode = SM_VPLShadow;
-        mTempScreenQuad->ShowMode = 3;
-        mTempScreenQuad->TempTextureArray = mVPLShadowMapTextureArray;
         break;
 
     case '=':

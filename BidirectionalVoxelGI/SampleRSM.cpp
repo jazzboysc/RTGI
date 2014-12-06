@@ -61,19 +61,5 @@ void SampleRSM::OnPreDispatch(unsigned int pass)
 void SampleRSM::OnPostDispatch(unsigned int pass)
 {
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-
-    // Test.
-    //float* srcData = new float[16 * 4];
-    //float* dstData = new float[16 * 4];
-
-    //VPLSamplePattern->GetDataFromGPUMemory(srcData);
-    //VPLSampleTest->GetDataFromGPUMemory(dstData);
-
-    //int res = memcmp(srcData, dstData, 256);
-    //vec4* vplBufferData = (vec4*)VPLBuffer->Map(GL_READ_ONLY);
-    //VPLBuffer->Unmap();
-
-    //delete[] srcData;
-    //delete[] dstData;
 }
 //----------------------------------------------------------------------------
