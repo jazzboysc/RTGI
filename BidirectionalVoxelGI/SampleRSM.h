@@ -26,9 +26,6 @@ public:
 
     Texture1DPtr VPLSamplePattern;
     Texture1DPtr VPLSampleTest;
-    Texture2DArrayPtr RSMPosition;
-    Texture2DArrayPtr RSMNormal;
-    Texture2DArrayPtr RSMFlux;
     StructuredBufferPtr VPLBuffer;
 
 private:

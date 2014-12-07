@@ -160,32 +160,11 @@ void BidirectionalVoxelGIApp::Initialize()
     mRSMNormalTextureArray = (Texture2DArray*)(BufferBase*)mRSMRenderer->GetFrameBufferTarget(1)->OutputBuffer;
     mRSMFluxTextureArray = (Texture2DArray*)(BufferBase*)mRSMRenderer->GetFrameBufferTarget(2)->OutputBuffer;
 
-    // Create VPL sample pattern.
-    mVPLSamplePattern = new Texture1D();
-    mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
-    mVPLSampleTest = new Texture1D();
-    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
-
-    // Create VPL buffer.
-    GLuint vplBufferSize = (sizeof(vec4)* 3 + sizeof(mat4)) * VPL_SAMPLE_COUNT;
-    mVPLBuffer = new StructuredBuffer();
-    mVPLBuffer->ReserveDeviceResource(vplBufferSize, BU_Dynamic_Copy);
-
-    // Create VPL sample compute tasks.
-    ShaderProgramInfo sampleRSMProgramInfo;
-    sampleRSMProgramInfo.CShaderFileName = "cSampleRSM.glsl";
-    sampleRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-
-    ComputePass* passSampleRSM = new ComputePass(sampleRSMProgramInfo);
-    mSampleRSMTask = new SampleRSM();
-    mSampleRSMTask->AddPass(passSampleRSM);
-    mSampleRSMTask->CreateDeviceResource();
-    mSampleRSMTask->VPLSamplePattern = mVPLSamplePattern;
-    mSampleRSMTask->VPLSampleTest = mVPLSampleTest;
-    mSampleRSMTask->RSMPosition = mRSMPositionTextureArray;
-    mSampleRSMTask->RSMNormal = mRSMNormalTextureArray;
-    mSampleRSMTask->RSMFlux = mRSMFluxTextureArray;
-    mSampleRSMTask->VPLBuffer = mVPLBuffer;
+    // Create VPL generator.
+    mVPLGenerator = new VPLGenerator();
+    mVPLGenerator->SetRSMRenderer(mRSMRenderer);
+    mVPLGenerator->Initialize();
+    mVPLBuffer = mVPLGenerator->mVPLBuffer;
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -193,6 +172,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mShadowMapRenderer->SetTimer(mTimer);
     mGBufferRenderer->SetTimer(mTimer);
     mRSMRenderer->SetTimer(mTimer);
+    mVPLGenerator->SetTimer(mTimer);
 
 	// Create scene.
     mSceneObjects = new RenderSet();
@@ -333,16 +313,6 @@ void BidirectionalVoxelGIApp::Initialize()
     InformationPanel::GetInstance()->AddTimingLabel("Indirect Lighting Pass", 16, 120);
 }
 //----------------------------------------------------------------------------
-void BidirectionalVoxelGIApp::RSMPass()
-{
-    mGround->Render(0, 2);
-    mCeiling->Render(0, 2);
-    mBackWall->Render(0, 2);
-    mLeftWall->Render(0, 2);
-    mRightWall->Render(0, 2);
-    mModel->Render(0, 2);
-}
-//----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::Run()
 {
     static float angle = 0.0f;
@@ -384,9 +354,7 @@ void BidirectionalVoxelGIApp::Run()
     infoPanel->SetTimingLabelValue("RSM Pass", workLoad);
 
     // Sample RSM pass (VPL generation).
-    mTimer->Start();
-    mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
-    mTimer->Stop();
+    mVPLGenerator->Run();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("VPL Creation Pass", workLoad);
 
@@ -444,9 +412,7 @@ void BidirectionalVoxelGIApp::Terminate()
     mRSMNormalTextureArray = 0;
     mRSMFluxTextureArray = 0;
 
-    mSampleRSMTask = 0;
-    mVPLSamplePattern = 0;
-    mVPLSampleTest = 0;
+    mVPLGenerator = 0;
     mVPLBuffer = 0;
 
     mTempScreenQuad = 0;

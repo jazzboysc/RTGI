@@ -72,6 +72,7 @@ public:
     // Rendering stuff.
     virtual void Render(int technique, int pass, SubRendererOutput outputFlag, 
         PipelineStateBlock* psb, Camera* camera = 0);
+    virtual void OnRender(int technique, int pass, Camera* camera);
 
     void SetTimer(GPUTimer* timer);
     GPUTimer* GetTimer() const;
@@ -80,10 +81,10 @@ public:
 protected:
     void ApplyPipelineStateBlock(PipelineStateBlock* psb);
 
-    // Inputs.
+    // Buffer inputs.
     std::vector<RendererInputPtr> mInputs;
 
-    // Outputs.
+    // Buffer outputs.
     std::vector<RendererOutputPtr> mFrameBufferTargets;
     RendererOutputPtr mDepthTarget;
     FrameBufferPtr mFrameBuffer;

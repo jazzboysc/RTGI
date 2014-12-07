@@ -41,3 +41,40 @@ RSMRenderer* VPLGenerator::GetRSMRenderer() const
     return mRSM;
 }
 //----------------------------------------------------------------------------
+void VPLGenerator::Run()
+{
+    SubRenderer::Render(0, 0, SRO_GenericBuffer, 0);
+}
+//----------------------------------------------------------------------------
+void VPLGenerator::OnRender(int, int, Camera*)
+{
+    mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
+}
+//----------------------------------------------------------------------------
+void VPLGenerator::Initialize()
+{
+    // Create VPL sample pattern.
+    mVPLSamplePattern = new Texture1D();
+    mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
+    mVPLSampleTest = new Texture1D();
+    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
+
+    // Create VPL buffer.
+    GLuint vplBufferSize = (sizeof(vec4) * 3 + sizeof(mat4)) * VPL_SAMPLE_COUNT;
+    mVPLBuffer = new StructuredBuffer();
+    mVPLBuffer->ReserveDeviceResource(vplBufferSize, BU_Dynamic_Copy);
+
+    // Create VPL sample compute tasks.
+    ShaderProgramInfo sampleRSMProgramInfo;
+    sampleRSMProgramInfo.CShaderFileName = "cSampleRSM.glsl";
+    sampleRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+
+    ComputePass* passSampleRSM = new ComputePass(sampleRSMProgramInfo);
+    mSampleRSMTask = new SampleRSM();
+    mSampleRSMTask->AddPass(passSampleRSM);
+    mSampleRSMTask->CreateDeviceResource();
+    mSampleRSMTask->VPLSamplePattern = mVPLSamplePattern;
+    mSampleRSMTask->VPLSampleTest = mVPLSampleTest;
+    mSampleRSMTask->VPLBuffer = mVPLBuffer;
+}
+//----------------------------------------------------------------------------

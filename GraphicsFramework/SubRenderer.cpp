@@ -286,24 +286,13 @@ void SubRenderer::Render(int technique, int pass,
     }
 
     // Apply PSB.
-    ApplyPipelineStateBlock(psb);
+    if( psb )
+    {
+        ApplyPipelineStateBlock(psb);
+    }
 
     // Render scene inputs.
-    assert(mRenderSet);
-    int renderObjectCount = mRenderSet->GetRenderObjectCount();
-    if( camera )
-    {
-        for( int i = 0; i < renderObjectCount; ++i )
-        {
-            RenderObject* renderObject = mRenderSet->GetRenderObject(i);
-            renderObject->SetCamera(camera);
-        }
-    }
-    for( int i = 0; i < renderObjectCount; ++i )
-    {
-        RenderObject* renderObject = mRenderSet->GetRenderObject(i);
-        renderObject->Render(technique, pass, this);
-    }
+    OnRender(technique, pass, camera);
 
     // Disable renderer inputs.
     for( int i = 0; i < (int)mInputs.size(); ++i )
@@ -327,6 +316,25 @@ void SubRenderer::Render(int technique, int pass,
     }
 
     mTimer->Stop();
+}
+//----------------------------------------------------------------------------
+void SubRenderer::OnRender(int technique, int pass, Camera* camera)
+{
+    assert(mRenderSet);
+    int renderObjectCount = mRenderSet->GetRenderObjectCount();
+    if( camera )
+    {
+        for( int i = 0; i < renderObjectCount; ++i )
+        {
+            RenderObject* renderObject = mRenderSet->GetRenderObject(i);
+            renderObject->SetCamera(camera);
+        }
+    }
+    for( int i = 0; i < renderObjectCount; ++i )
+    {
+        RenderObject* renderObject = mRenderSet->GetRenderObject(i);
+        renderObject->Render(technique, pass, this);
+    }
 }
 //----------------------------------------------------------------------------
 void SubRenderer::SetTimer(GPUTimer* timer)

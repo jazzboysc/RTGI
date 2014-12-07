@@ -3,6 +3,7 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "RSMRenderer.h"
+#include "SampleRSM.h"
 
 namespace RTGI
 {
@@ -20,10 +21,23 @@ public:
     void SetRSMRenderer(RSMRenderer* rsm);
     RSMRenderer* GetRSMRenderer() const;
 
-    void CreateVPLBuffer();
+    void Run();
+    virtual void OnRender(int technique, int pass, Camera* camera);
+
+    void Initialize();
+    StructuredBufferPtr mVPLBuffer;
 
 private:
     RSMRendererPtr mRSM;
+
+    // Sample RSM.
+    SampleRSMPtr mSampleRSMTask;
+
+    // VPL stuff.
+    enum { VPL_SAMPLE_COUNT = 128 };
+    Texture1DPtr mVPLSamplePattern;
+    Texture1DPtr mVPLSampleTest;
+
 };
 
 typedef RefPointer<VPLGenerator> VPLGeneratorPtr;

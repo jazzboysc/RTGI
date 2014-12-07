@@ -42,9 +42,9 @@ void EnableTexture(RendererInput* input)
     glTexParameteri(target, GL_TEXTURE_MAG_FILTER,
         gsFilterType[(int)input->View.Sampler.MagFilter]);
     glTexParameteri(target, GL_TEXTURE_WRAP_S,
-        gsFilterType[(int)input->View.Sampler.WrapS]);
+        gsWrapType[(int)input->View.Sampler.WrapS]);
     glTexParameteri(target, GL_TEXTURE_WRAP_T,
-        gsFilterType[(int)input->View.Sampler.WrapT]);
+        gsWrapType[(int)input->View.Sampler.WrapT]);
 }
 //----------------------------------------------------------------------------
 void EnableBuffer(RendererInput* input)

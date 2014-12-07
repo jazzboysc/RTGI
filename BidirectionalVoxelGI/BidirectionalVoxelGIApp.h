@@ -10,6 +10,7 @@
 #include "GPUTimer.h"
 #include "ShadowMapRenderer.h"
 #include "RSMRenderer.h"
+#include "VPLGenerator.h"
 
 namespace RTGI
 {
@@ -57,8 +58,6 @@ private:
     bool mIsWireframe;
     ShowMode mShowMode;
 
-    void RSMPass();
-
 	int mWidth, mHeight;
 	std::string mWindowTitle;
 
@@ -93,12 +92,10 @@ private:
     Texture2DArrayPtr mRSMFluxTextureArray;
 
     // Sample RSM.
-    SampleRSMPtr mSampleRSMTask;
+    VPLGeneratorPtr mVPLGenerator;
 
     // VPL stuff.
     enum { VPL_SAMPLE_COUNT = 128 };
-    Texture1DPtr mVPLSamplePattern;
-    Texture1DPtr mVPLSampleTest;
     StructuredBufferPtr mVPLBuffer;
 
     TempScreenQuadPtr mTempScreenQuad;
