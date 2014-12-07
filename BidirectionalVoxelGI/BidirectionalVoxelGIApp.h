@@ -4,13 +4,12 @@
 #include "GraphicsFrameworkHeader.h"
 #include "SceneMesh.h"
 #include "TempScreenQuad.h"
-#include "DirectLightingScreenQuad.h"
 #include "IndirectLightingScreenQuad.h"
-#include "SampleRSM.h"
 #include "GPUTimer.h"
 #include "ShadowMapRenderer.h"
 #include "RSMRenderer.h"
 #include "VPLGenerator.h"
+#include "DirectLightingRenderer.h"
 
 namespace RTGI
 {
@@ -74,10 +73,9 @@ private:
     ShadowMapRendererPtr mShadowMapRenderer;
     Texture2DPtr mShadowMapTexture;
 
-    // Direct illumination buffer.
-    FrameBufferPtr mDirectLightingFB;
+    // Direct lighting.
+    DirectLightingRendererPtr mDirectLightingRenderer;
     Texture2DPtr mDirectLightingTexture;
-    Texture2DPtr mDirectLightingDepthTexture;
 
     // Indirect illumination buffer.
     FrameBufferPtr mIndirectLightingFB;

@@ -15,8 +15,6 @@ SceneMesh::SceneMesh(Material* material, Camera* camera)
 //----------------------------------------------------------------------------
 SceneMesh::~SceneMesh()
 {
-    ShadowMap = 0;
-    VPLBuffer = 0;
 }
 //----------------------------------------------------------------------------
 void SceneMesh::OnGetShaderConstants()

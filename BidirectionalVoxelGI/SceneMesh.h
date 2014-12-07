@@ -25,8 +25,6 @@ public:
 	vec3 MaterialColor;
     vec3 LightColor;
     Camera* LightProjector;
-    Texture2DPtr ShadowMap;
-    StructuredBufferPtr VPLBuffer;
 
 private:
     // pass 1, scene shadow pass.

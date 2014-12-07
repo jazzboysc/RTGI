@@ -72,6 +72,9 @@ public:
     // Rendering stuff.
     virtual void Render(int technique, int pass, SubRendererOutput outputFlag, 
         PipelineStateBlock* psb, Camera* camera = 0);
+    virtual void RenderSingle(RenderObject* object, int technique, int pass, 
+        SubRendererOutput outputFlag, PipelineStateBlock* psb, 
+        Camera* camera = 0);
     virtual void OnRender(int technique, int pass, Camera* camera);
 
     void SetTimer(GPUTimer* timer);
@@ -79,6 +82,8 @@ public:
     double GetTimeElapsed() const;
 
 protected:
+    void PreRender(SubRendererOutput outputFlag, PipelineStateBlock* psb);
+    void PostRender(SubRendererOutput outputFlag, PipelineStateBlock* psb);
     void ApplyPipelineStateBlock(PipelineStateBlock* psb);
 
     // Buffer inputs.

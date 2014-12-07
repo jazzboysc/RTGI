@@ -22,10 +22,8 @@
     <ClCompile Include="Merger.cpp" />
     <ClCompile Include="RSMRenderer.cpp" />
     <ClCompile Include="SceneMesh.cpp" />
-    <ClCompile Include="DirectLightingScreenQuad.cpp" />
     <ClCompile Include="IndirectLightingScreenQuad.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="SampleRSM.cpp" />
     <ClCompile Include="ShadowMapRenderer.cpp" />
     <ClCompile Include="TempScreenQuad.cpp" />
     <ClCompile Include="IndirectLightingRenderer.cpp" />
@@ -38,9 +36,7 @@
     <ClInclude Include="Merger.h" />
     <ClInclude Include="RSMRenderer.h" />
     <ClInclude Include="SceneMesh.h" />
-    <ClInclude Include="DirectLightingScreenQuad.h" />
     <ClInclude Include="IndirectLightingScreenQuad.h" />
-    <ClInclude Include="SampleRSM.h" />
     <ClInclude Include="ShadowMapRenderer.h" />
     <ClInclude Include="TempScreenQuad.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />

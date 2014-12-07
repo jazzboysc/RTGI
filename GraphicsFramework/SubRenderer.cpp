@@ -260,62 +260,26 @@ RendererOutput* SubRenderer::GetGenericBufferTargetByName(
 void SubRenderer::Render(int technique, int pass, 
     SubRendererOutput outputFlag, PipelineStateBlock* psb, Camera* camera)
 {
-    assert(mTimer);
-    mTimer->Start();
-
-    // Enable renderer inputs.
-    for( int i = 0; i < (int)mInputs.size(); ++i )
-    {
-        mInputs[i]->Enable();
-    }
-
-    // Enable renderer framebuffer outputs.
-    if( outputFlag & SRO_FrameBuffer )
-    {
-        assert(mFrameBuffer);
-        mFrameBuffer->Enable();
-    }
-
-    // Enable renderer generic buffer outputs.
-    if( outputFlag & SRO_GenericBuffer )
-    {
-        for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
-        {
-            mGenericBufferTargets[i]->Enable();
-        }
-    }
-
-    // Apply PSB.
-    if( psb )
-    {
-        ApplyPipelineStateBlock(psb);
-    }
+    PreRender(outputFlag, psb);
 
     // Render scene inputs.
     OnRender(technique, pass, camera);
 
-    // Disable renderer inputs.
-    for( int i = 0; i < (int)mInputs.size(); ++i )
-    {
-        mInputs[i]->Disable();
-    }
+    PostRender(outputFlag, psb);
+}
+//----------------------------------------------------------------------------
+void SubRenderer::RenderSingle(RenderObject* object, int technique, int pass,
+    SubRendererOutput outputFlag, PipelineStateBlock* psb,
+    Camera* camera)
+{
+    assert(object);
+    PreRender(outputFlag, psb);
 
-    // Disable renderer framebuffer outputs.
-    if( outputFlag & SRO_FrameBuffer )
-    {
-        mFrameBuffer->Disable();
-    }
+    // Render single object.
+    object->SetCamera(camera);
+    object->Render(technique, pass, this);
 
-    // Disable renderer generic buffer outputs.
-    if( outputFlag & SRO_GenericBuffer )
-    {
-        for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
-        {
-            mGenericBufferTargets[i]->Disable();
-        }
-    }
-
-    mTimer->Stop();
+    PostRender(outputFlag, psb);
 }
 //----------------------------------------------------------------------------
 void SubRenderer::OnRender(int technique, int pass, Camera* camera)
@@ -355,6 +319,74 @@ double SubRenderer::GetTimeElapsed() const
     }
 
     return 0.0;
+}
+//----------------------------------------------------------------------------
+void SubRenderer::PreRender(SubRendererOutput outputFlag, 
+    PipelineStateBlock* psb)
+{
+    assert(mTimer);
+    if( mTimer )
+    {
+        mTimer->Start();
+    }
+
+    // Enable renderer inputs.
+    for( int i = 0; i < (int)mInputs.size(); ++i )
+    {
+        mInputs[i]->Enable();
+    }
+
+    // Enable renderer framebuffer outputs.
+    if( outputFlag & SRO_FrameBuffer )
+    {
+        assert(mFrameBuffer);
+        mFrameBuffer->Enable();
+    }
+
+    // Enable renderer generic buffer outputs.
+    if( outputFlag & SRO_GenericBuffer )
+    {
+        for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
+        {
+            mGenericBufferTargets[i]->Enable();
+        }
+    }
+
+    // Apply PSB.
+    if( psb )
+    {
+        ApplyPipelineStateBlock(psb);
+    }
+}
+//----------------------------------------------------------------------------
+void SubRenderer::PostRender(SubRendererOutput outputFlag, 
+    PipelineStateBlock* psb)
+{
+    // Disable renderer inputs.
+    for( int i = 0; i < (int)mInputs.size(); ++i )
+    {
+        mInputs[i]->Disable();
+    }
+
+    // Disable renderer framebuffer outputs.
+    if( outputFlag & SRO_FrameBuffer )
+    {
+        mFrameBuffer->Disable();
+    }
+
+    // Disable renderer generic buffer outputs.
+    if( outputFlag & SRO_GenericBuffer )
+    {
+        for( int i = 0; i < (int)mGenericBufferTargets.size(); ++i )
+        {
+            mGenericBufferTargets[i]->Disable();
+        }
+    }
+
+    if( mTimer )
+    {
+        mTimer->Stop();
+    }
 }
 //----------------------------------------------------------------------------
 void SubRenderer::ApplyPipelineStateBlock(PipelineStateBlock* psb)

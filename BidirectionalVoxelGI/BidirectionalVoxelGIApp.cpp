@@ -93,18 +93,6 @@ void BidirectionalVoxelGIApp::Initialize()
     MaterialTemplate* mtScreenQuad = new MaterialTemplate();
     mtScreenQuad->AddTechnique(techScreenQuad);
 
-    ShaderProgramInfo directLightingProgramInfo;
-    directLightingProgramInfo.VShaderFileName = "vDirectLighting.glsl";
-    directLightingProgramInfo.FShaderFileName = "fDirectLighting.glsl";
-    directLightingProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                                ShaderType::ST_Fragment;
-    Pass* passDirectLighting = new Pass(directLightingProgramInfo);
-
-    Technique* techDirectLighting = new Technique();
-    techDirectLighting->AddPass(passDirectLighting);
-    MaterialTemplate* mtDirectLighting = new MaterialTemplate();
-    mtDirectLighting->AddTechnique(techDirectLighting);
-
     ShaderProgramInfo indirectLightingProgramInfo;
     indirectLightingProgramInfo.VShaderFileName = "vIndirectLighting.glsl";
     indirectLightingProgramInfo.FShaderFileName = "fIndirectLighting.glsl";
@@ -129,17 +117,11 @@ void BidirectionalVoxelGIApp::Initialize()
     mShadowMapRenderer->CreateShadowMap(1024, 1024, Texture::TF_RGBAF);
     mShadowMapTexture = (Texture2D*)(BufferBase*)mShadowMapRenderer->GetFrameBufferTarget(0)->OutputBuffer;
 
-    // Create direct lighting render target.
-    mDirectLightingTexture = new Texture2D();
-    mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
-
-    mDirectLightingDepthTexture = new Texture2D();
-    mDirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_Depth);
-
-    // Create direct lighting frame buffer.
-    Texture* dlRenderTargets[] = { mDirectLightingTexture };
-    mDirectLightingFB = new FrameBuffer();
-    mDirectLightingFB->SetRenderTargets(1, dlRenderTargets, mDirectLightingDepthTexture);
+    // Create direct lighting renderer.
+    mDirectLightingRenderer = new DirectLightingRenderer();
+    mDirectLightingRenderer->SetInputs(mGBufferRenderer, mShadowMapRenderer);
+    mDirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF, mLightProjector);
+    mDirectLightingTexture = (Texture2D*)(BufferBase*)mDirectLightingRenderer->GetFrameBufferTarget(0)->OutputBuffer;
 
     // Create indirect lighting render target.
     mIndirectLightingTexture = new Texture2D();
@@ -173,6 +155,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mGBufferRenderer->SetTimer(mTimer);
     mRSMRenderer->SetTimer(mTimer);
     mVPLGenerator->SetTimer(mTimer);
+    mDirectLightingRenderer->SetTimer(mTimer);
 
 	// Create scene.
     mSceneObjects = new RenderSet();
@@ -191,8 +174,7 @@ void BidirectionalVoxelGIApp::Initialize()
 	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
 	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
-    mModel->ShadowMap = mShadowMapTexture;
-    mModel->VPLBuffer = mVPLBuffer;
+
     mSceneObjects->AddRenderObject(mModel);
 
     material = new Material(mtVPL);
@@ -202,8 +184,6 @@ void BidirectionalVoxelGIApp::Initialize()
 	mGround->CreateDeviceResource();
     mGround->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mGround->LightProjector = mLightProjector;
-    mGround->ShadowMap = mShadowMapTexture;
-    mGround->VPLBuffer = mVPLBuffer;
     mSceneObjects->AddRenderObject(mGround);
 
     material = new Material(mtVPL);
@@ -216,8 +196,6 @@ void BidirectionalVoxelGIApp::Initialize()
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mCeiling->LightProjector = mLightProjector;
-    mCeiling->ShadowMap = mShadowMapTexture;
-    mCeiling->VPLBuffer = mVPLBuffer;
     mSceneObjects->AddRenderObject(mCeiling);
 
     material = new Material(mtVPL);
@@ -230,8 +208,6 @@ void BidirectionalVoxelGIApp::Initialize()
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mBackWall->LightProjector = mLightProjector;
-    mBackWall->ShadowMap = mShadowMapTexture;
-    mBackWall->VPLBuffer = mVPLBuffer;
     mSceneObjects->AddRenderObject(mBackWall);
 
     material = new Material(mtVPL);
@@ -244,8 +220,6 @@ void BidirectionalVoxelGIApp::Initialize()
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(1.0f, 0.2f, 0.2f);
     mLeftWall->LightProjector = mLightProjector;
-    mLeftWall->ShadowMap = mShadowMapTexture;
-    mLeftWall->VPLBuffer = mVPLBuffer;
     mSceneObjects->AddRenderObject(mLeftWall);
 
     material = new Material(mtVPL);
@@ -258,8 +232,6 @@ void BidirectionalVoxelGIApp::Initialize()
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.2f, 1.0f, 0.2f);
     mRightWall->LightProjector = mLightProjector;
-    mRightWall->ShadowMap = mShadowMapTexture;
-    mRightWall->VPLBuffer = mVPLBuffer;
     mSceneObjects->AddRenderObject(mRightWall);
 
     // Create screen quads.
@@ -275,20 +247,6 @@ void BidirectionalVoxelGIApp::Initialize()
     mTempScreenQuad->TempTexture = mIndirectLightingTexture;
     mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
     mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
-
-    material = new Material(mtDirectLighting);
-    mDirectLightingScreenQuad = new DirectLightingScreenQuad(material);
-    mDirectLightingScreenQuad->LoadFromFile("screenquad.ply");
-    mDirectLightingScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
-    mDirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
-    mDirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
-    mDirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mDirectLightingScreenQuad->CreateDeviceResource();
-    mDirectLightingScreenQuad->GBufferPositionTexture = mGBufferPositionTexture;
-    mDirectLightingScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;
-    mDirectLightingScreenQuad->GBufferAlbedoTexture = mGBufferAlbedoTexture;
-    mDirectLightingScreenQuad->ShadowMapTexture = mShadowMapTexture;
-    mDirectLightingScreenQuad->LightProjector = mLightProjector;
 
     material = new Material(mtIndirectLighting);
     mIndirectLightingScreenQuad = new IndirectLightingScreenQuad(material);
@@ -359,13 +317,7 @@ void BidirectionalVoxelGIApp::Run()
     infoPanel->SetTimingLabelValue("VPL Creation Pass", workLoad);
 
     // Deferred direct illumination pass.
-    mTimer->Start();
-    mDirectLightingFB->Enable();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    mDirectLightingScreenQuad->Render(0, 0);
-    mDirectLightingFB->Disable();
-    mTimer->Stop();
+    mDirectLightingRenderer->Render();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Direct Lighting Pass", workLoad);
 
@@ -400,9 +352,7 @@ void BidirectionalVoxelGIApp::Terminate()
 
     mShadowMapTexture = 0;
 
-    mDirectLightingFB = 0;
     mDirectLightingTexture = 0;
-    mDirectLightingDepthTexture = 0;
 
     mIndirectLightingFB = 0;
     mIndirectLightingTexture = 0;
