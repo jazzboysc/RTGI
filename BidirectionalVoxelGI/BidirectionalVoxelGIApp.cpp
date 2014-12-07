@@ -93,18 +93,6 @@ void BidirectionalVoxelGIApp::Initialize()
     MaterialTemplate* mtScreenQuad = new MaterialTemplate();
     mtScreenQuad->AddTechnique(techScreenQuad);
 
-    ShaderProgramInfo indirectLightingProgramInfo;
-    indirectLightingProgramInfo.VShaderFileName = "vIndirectLighting.glsl";
-    indirectLightingProgramInfo.FShaderFileName = "fIndirectLighting.glsl";
-    indirectLightingProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                                  ShaderType::ST_Fragment;
-    Pass* passIndirectLighting = new Pass(indirectLightingProgramInfo);
-
-    Technique* techIndirectLighting = new Technique();
-    techIndirectLighting->AddPass(passIndirectLighting);
-    MaterialTemplate* mtIndirectLighting = new MaterialTemplate();
-    mtIndirectLighting->AddTechnique(techIndirectLighting);
-
     // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer();
     mGBufferRenderer->CreateGBuffer(mWidth, mHeight, Texture::TF_RGBAF);
@@ -117,25 +105,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mShadowMapRenderer->CreateShadowMap(1024, 1024, Texture::TF_RGBAF);
     mShadowMapTexture = (Texture2D*)(BufferBase*)mShadowMapRenderer->GetFrameBufferTarget(0)->OutputBuffer;
 
-    // Create direct lighting renderer.
-    mDirectLightingRenderer = new DirectLightingRenderer();
-    mDirectLightingRenderer->SetInputs(mGBufferRenderer, mShadowMapRenderer);
-    mDirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF, mLightProjector);
-    mDirectLightingTexture = (Texture2D*)(BufferBase*)mDirectLightingRenderer->GetFrameBufferTarget(0)->OutputBuffer;
-
-    // Create indirect lighting render target.
-    mIndirectLightingTexture = new Texture2D();
-    mIndirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
-
-    mIndirectLightingDepthTexture = new Texture2D();
-    mIndirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_Depth);
-
-    // Create indirect lighting frame buffer.
-    Texture* indlRenderTargets[] = { mIndirectLightingTexture };
-    mIndirectLightingFB = new FrameBuffer();
-    mIndirectLightingFB->SetRenderTargets(1, indlRenderTargets, mIndirectLightingDepthTexture);
-
-    // Create RSM render targets.
+    // Create RSM renderer.
     mRSMRenderer = new RSMRenderer();
     mRSMRenderer->CreateRSM(256, 256, RSM_FACE_COUNT, Texture::TF_RGBAF);
     mRSMPositionTextureArray = (Texture2DArray*)(BufferBase*)mRSMRenderer->GetFrameBufferTarget(0)->OutputBuffer;
@@ -147,6 +117,19 @@ void BidirectionalVoxelGIApp::Initialize()
     mVPLGenerator->SetRSMRenderer(mRSMRenderer);
     mVPLGenerator->Initialize();
     mVPLBuffer = mVPLGenerator->mVPLBuffer;
+
+    // Create direct lighting renderer.
+    mDirectLightingRenderer = new DirectLightingRenderer();
+    mDirectLightingRenderer->SetInputs(mGBufferRenderer, mShadowMapRenderer);
+    mDirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF, mLightProjector);
+    mDirectLightingTexture = (Texture2D*)(BufferBase*)mDirectLightingRenderer->GetFrameBufferTarget(0)->OutputBuffer;
+
+    // Create indirect lighting renderer.
+    mIndirectLightingRenderer = new IndirectLightingRenderer();
+    mIndirectLightingRenderer->VPLBuffer = mVPLBuffer;
+    mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator);
+    mIndirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF);
+    mIndirectLightingTexture = (Texture2D*)(BufferBase*)mIndirectLightingRenderer->GetFrameBufferTarget(0)->OutputBuffer;
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -248,20 +231,6 @@ void BidirectionalVoxelGIApp::Initialize()
     mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
     mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
 
-    material = new Material(mtIndirectLighting);
-    mIndirectLightingScreenQuad = new IndirectLightingScreenQuad(material);
-    mIndirectLightingScreenQuad->LoadFromFile("screenquad.ply");
-    mIndirectLightingScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
-    mIndirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
-    mIndirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
-    mIndirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mIndirectLightingScreenQuad->CreateDeviceResource();
-    mIndirectLightingScreenQuad->VPLCount = VPL_SAMPLE_COUNT;
-    mIndirectLightingScreenQuad->GBufferPositionTexture = mGBufferPositionTexture;
-    mIndirectLightingScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;
-    mIndirectLightingScreenQuad->GBufferAlbedoTexture = mGBufferAlbedoTexture;
-    mIndirectLightingScreenQuad->VPLBuffer = mVPLBuffer;
-
     // Create labels.
     InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, 20);
     InformationPanel::GetInstance()->AddTimingLabel("Scene G-buffer Pass", 16, 40);
@@ -322,12 +291,7 @@ void BidirectionalVoxelGIApp::Run()
     infoPanel->SetTimingLabelValue("Direct Lighting Pass", workLoad);
 
     // Deferred indirect illumination pass.
-    mTimer->Start();
-    mIndirectLightingFB->Enable();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    mIndirectLightingScreenQuad->Render(0, 0);
-    mIndirectLightingFB->Disable();
-    mTimer->Stop();
+    mIndirectLightingRenderer->Render();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Indirect Lighting Pass", workLoad);
 
@@ -346,18 +310,21 @@ void BidirectionalVoxelGIApp::Terminate()
 	delete mCamera;
     delete mLightProjector;
 
+    mGBufferRenderer = 0;
     mGBufferPositionTexture = 0;
     mGBufferNormalTexture = 0;
     mGBufferAlbedoTexture = 0;
 
+    mShadowMapRenderer = 0;
     mShadowMapTexture = 0;
 
+    mDirectLightingRenderer = 0;
     mDirectLightingTexture = 0;
 
-    mIndirectLightingFB = 0;
+    mIndirectLightingRenderer = 0;
     mIndirectLightingTexture = 0;
-    mIndirectLightingDepthTexture = 0;
 
+    mRSMRenderer = 0;
     mRSMPositionTextureArray = 0;
     mRSMNormalTextureArray = 0;
     mRSMFluxTextureArray = 0;
@@ -366,8 +333,6 @@ void BidirectionalVoxelGIApp::Terminate()
     mVPLBuffer = 0;
 
     mTempScreenQuad = 0;
-    mDirectLightingScreenQuad = 0;
-    mIndirectLightingScreenQuad = 0;
 
 	mGround = 0;
 	mCeiling = 0;

@@ -4,12 +4,12 @@
 #include "GraphicsFrameworkHeader.h"
 #include "SceneMesh.h"
 #include "TempScreenQuad.h"
-#include "IndirectLightingScreenQuad.h"
 #include "GPUTimer.h"
 #include "ShadowMapRenderer.h"
 #include "RSMRenderer.h"
 #include "VPLGenerator.h"
 #include "DirectLightingRenderer.h"
+#include "IndirectLightingRenderer.h"
 
 namespace RTGI
 {
@@ -77,10 +77,9 @@ private:
     DirectLightingRendererPtr mDirectLightingRenderer;
     Texture2DPtr mDirectLightingTexture;
 
-    // Indirect illumination buffer.
-    FrameBufferPtr mIndirectLightingFB;
+    // Indirect lighting.
+    IndirectLightingRendererPtr mIndirectLightingRenderer;
     Texture2DPtr mIndirectLightingTexture;
-    Texture2DPtr mIndirectLightingDepthTexture;
 
     // Scene light RSM.
     enum { RSM_FACE_COUNT = 5 };
@@ -97,8 +96,6 @@ private:
     StructuredBufferPtr mVPLBuffer;
 
     TempScreenQuadPtr mTempScreenQuad;
-    DirectLightingScreenQuadPtr mDirectLightingScreenQuad;
-    IndirectLightingScreenQuadPtr mIndirectLightingScreenQuad;
 
     // Scene models.
 	SceneMeshPtr mGround;

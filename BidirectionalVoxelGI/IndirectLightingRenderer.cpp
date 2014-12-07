@@ -3,21 +3,64 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
+IndirectLightingScreenQuad::IndirectLightingScreenQuad(Material* material)
+    :
+    ScreenQuad(material, 0)
+{
+    BounceSingularity = 60.0f;
+}
+//----------------------------------------------------------------------------
+IndirectLightingScreenQuad::~IndirectLightingScreenQuad()
+{
+    GBufferPositionTexture = 0;
+    GBufferNormalTexture = 0;
+    GBufferAlbedoTexture = 0;
+    VPLBuffer = 0;
+}
+//----------------------------------------------------------------------------
+void IndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
+{
+    glUniform1i(mVPLCountLoc, VPLCount);
+    glUniform1f(mBounceSingularityLoc, BounceSingularity);
+
+    glUniform1i(mGBufferPositionSamplerLoc, 0);
+    glUniform1i(mGBufferNormalSamplerLoc, 1);
+    glUniform1i(mGBufferAlbedoSamplerLoc, 2);
+
+    VPLBuffer->Bind(0);
+}
+//----------------------------------------------------------------------------
+void IndirectLightingScreenQuad::OnGetShaderConstants()
+{
+    GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+
+    mVPLCountLoc = glGetUniformLocation(program, "VPLCount");
+    mBounceSingularityLoc = glGetUniformLocation(program, "BounceSingularity");
+    mGBufferPositionSamplerLoc = glGetUniformLocation(program, "GBufferPositionSampler");
+    mGBufferNormalSamplerLoc = glGetUniformLocation(program, "GBufferNormalSampler");
+    mGBufferAlbedoSamplerLoc = glGetUniformLocation(program, "GBufferAlbedoSampler");
+}
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
 IndirectLightingRenderer::IndirectLightingRenderer(RenderSet* renderSet)
     :
     SubRenderer(renderSet)
 {
+    mPSB = new PipelineStateBlock();
+    mPSB->Flag |= PB_OutputMerger;
+    mPSB->OutputMerger.Flag |= OMB_Clear;
+    mPSB->OutputMerger.ClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 }
 //----------------------------------------------------------------------------
 IndirectLightingRenderer::~IndirectLightingRenderer()
 {
-    mGBuffer = 0;
+    mPSB = 0;
 }
 //----------------------------------------------------------------------------
-void IndirectLightingRenderer::SetGBufferRenderer(GBufferRenderer* gbuffer)
+void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer, 
+    VPLGenerator* vplBuffer)
 {
-    mGBuffer = gbuffer;
-
     RendererInputDataView view;
     view.Type = RDT_Texture;
     view.Sampler.MinFilter = FT_Nearest;
@@ -35,23 +78,47 @@ void IndirectLightingRenderer::SetGBufferRenderer(GBufferRenderer* gbuffer)
 
     view.BindingSlot = 2;
     AddInputDependency(gbuffer, "Albedo", &view);
+
+    //view.Type = RDT_StructuredBuffer;
+    //view.BindingSlot = 0;
+    //AddInputDependency(vplBuffer, "")
 }
 //----------------------------------------------------------------------------
-GBufferRenderer* IndirectLightingRenderer::GetGBufferRenderer() const
+void IndirectLightingRenderer::Initialize(int width, int height, 
+    Texture::TextureFormat format)
 {
-    return mGBuffer;
-}
-//----------------------------------------------------------------------------
-void IndirectLightingRenderer::CreateIndirectLightingBuffer(int width, 
-    int height, Texture::TextureFormat format)
-{
+    ShaderProgramInfo indirectLightingProgramInfo;
+    indirectLightingProgramInfo.VShaderFileName = "vIndirectLighting.glsl";
+    indirectLightingProgramInfo.FShaderFileName = "fIndirectLighting.glsl";
+    indirectLightingProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+        ShaderType::ST_Fragment;
+    Pass* passIndirectLighting = new Pass(indirectLightingProgramInfo);
+
+    Technique* techIndirectLighting = new Technique();
+    techIndirectLighting->AddPass(passIndirectLighting);
+    MaterialTemplate* mtIndirectLighting = new MaterialTemplate();
+    mtIndirectLighting->AddTechnique(techIndirectLighting);
+
+    Material* material = new Material(mtIndirectLighting);
+    mIndirectLightingScreenQuad = new IndirectLightingScreenQuad(material);
+    mIndirectLightingScreenQuad->LoadFromFile("screenquad.ply");
+    mIndirectLightingScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+    mIndirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+    mIndirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+    mIndirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+    mIndirectLightingScreenQuad->CreateDeviceResource();
+    mIndirectLightingScreenQuad->VPLCount = 128;
+    mIndirectLightingScreenQuad->VPLBuffer = VPLBuffer;
+
+    // Create output.
     AddFrameBufferTarget("IndirectLighting", width, height, 0, 
         Texture::TT_Texture2D, format);
     CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
 }
 //----------------------------------------------------------------------------
-void IndirectLightingRenderer::Render(int technique, int pass, Camera* camera)
+void IndirectLightingRenderer::Render()
 {
-    SubRenderer::Render(technique, pass, SRO_FrameBuffer, 0, camera);
+    SubRenderer::RenderSingle(mIndirectLightingScreenQuad, 0, 0,
+        SRO_FrameBuffer, mPSB, 0);
 }
 //----------------------------------------------------------------------------

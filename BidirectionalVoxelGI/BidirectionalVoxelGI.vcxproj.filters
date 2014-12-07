@@ -10,7 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BidirectionalVoxelGIApp.cpp" />
-    <ClCompile Include="IndirectLightingScreenQuad.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TempScreenQuad.cpp" />
     <ClCompile Include="SceneMesh.cpp" />
@@ -38,7 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BidirectionalVoxelGIApp.h" />
-    <ClInclude Include="IndirectLightingScreenQuad.h" />
     <ClInclude Include="TempScreenQuad.h" />
     <ClInclude Include="SceneMesh.h" />
     <ClInclude Include="ShadowMapRenderer.h">

@@ -2,9 +2,44 @@
 #define RTGI_IndirectLightingRenderer_H
 
 #include "GraphicsFrameworkHeader.h"
+#include "ScreenQuad.h"
+#include "Texture2D.h"
+#include "StructuredBuffer.h"
+#include "VPLGenerator.h"
 
 namespace RTGI
 {
+
+//----------------------------------------------------------------------------
+// Author: Che Sun
+// Date: 11/29/2014
+//----------------------------------------------------------------------------
+class IndirectLightingScreenQuad : public ScreenQuad
+{
+public:
+    IndirectLightingScreenQuad(Material* material);
+    virtual ~IndirectLightingScreenQuad();
+
+    // Implement base class interface.
+    virtual void OnUpdateShaderConstants(int technique, int pass);
+    virtual void OnGetShaderConstants();
+
+    int VPLCount;
+    float BounceSingularity;
+    Texture2DPtr GBufferPositionTexture;
+    Texture2DPtr GBufferNormalTexture;
+    Texture2DPtr GBufferAlbedoTexture;
+    StructuredBufferPtr VPLBuffer;
+
+private:
+    GLint mVPLCountLoc;
+    GLint mBounceSingularityLoc;
+    GLint mGBufferPositionSamplerLoc;
+    GLint mGBufferNormalSamplerLoc;
+    GLint mGBufferAlbedoSamplerLoc;
+};
+
+typedef RefPointer<IndirectLightingScreenQuad> IndirectLightingScreenQuadPtr;
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -16,15 +51,15 @@ public:
     IndirectLightingRenderer(RenderSet* renderSet = 0);
     virtual ~IndirectLightingRenderer();
 
-    void SetGBufferRenderer(GBufferRenderer* gbuffer);
-    GBufferRenderer* GetGBufferRenderer() const;
+    void Initialize(int width, int height, Texture::TextureFormat format);
+    void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer);
+    void Render();
 
-    void CreateIndirectLightingBuffer(int width, int height, 
-        Texture::TextureFormat format);
-    void Render(int technique, int pass, Camera* camera);
+    StructuredBufferPtr VPLBuffer;
 
 private:
-    GBufferRendererPtr mGBuffer;
+    PipelineStateBlockPtr mPSB;
+    IndirectLightingScreenQuadPtr mIndirectLightingScreenQuad;
 };
 
 typedef RefPointer<IndirectLightingRenderer> IndirectLightingRendererPtr;
