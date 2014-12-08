@@ -100,6 +100,7 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     Texture::TextureFormat format)
 {
     assert(GetFrameBufferTargetByName(name) == 0);
+    assert(GetGenericBufferTargetByName(name) == 0);
 
     BufferBase* texture = 0;
     switch( type )
@@ -155,9 +156,14 @@ RendererOutput* SubRenderer::GetDepthTarget() const
 void SubRenderer::AddInputDependency(SubRenderer* producer, 
     const std::string& srcName, RendererInputDataView* view)
 {
+    assert(view->BindingType >= BF_Bindless && view->BindingType < BF_Max);
     assert(mInputs.size() < MAX_INPUT_DEPENDENCY_COUNT);
     RendererOutput* producerOutput = 
         producer->GetFrameBufferTargetByName(srcName);
+    if( !producerOutput )
+    {
+        producerOutput = producer->GetGenericBufferTargetByName(srcName);
+    }
     assert(producerOutput);
 
     RendererInput* consumerInput = new RendererInput(producerOutput->Name,
@@ -222,6 +228,7 @@ void SubRenderer::AddGenericBufferTarget(const std::string& name,
     RendererDataType bufferType, int size, BufferUsage usage, 
     BindingFlag flag, unsigned int binding)
 {
+    assert(GetFrameBufferTargetByName(name) == 0);
     assert(GetGenericBufferTargetByName(name) == 0);
     int functionIndex = IntLog2((int)bufferType) - 2;
     BufferBase* genericBufferTarget = msFactoryFunctions[functionIndex](size, 
@@ -240,7 +247,7 @@ int SubRenderer::GetGenericBufferTargetCount() const
 RendererOutput* SubRenderer::GetGenericBufferTarget(int i) const
 {
     assert(i >= 0 && i < (int)mGenericBufferTargets.size());
-    return mFrameBufferTargets[i];
+    return mGenericBufferTargets[i];
 }
 //----------------------------------------------------------------------------
 RendererOutput* SubRenderer::GetGenericBufferTargetByName(

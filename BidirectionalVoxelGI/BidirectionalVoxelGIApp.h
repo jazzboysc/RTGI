@@ -93,7 +93,6 @@ private:
 
     // VPL stuff.
     enum { VPL_SAMPLE_COUNT = 128 };
-    StructuredBufferPtr mVPLBuffer;
 
     TempScreenQuadPtr mTempScreenQuad;
 

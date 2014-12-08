@@ -50,7 +50,7 @@ void EnableTexture(RendererInput* input)
 void EnableBuffer(RendererInput* input)
 {
     Buffer* buffer = (Buffer*)(BufferBase*)input->InputBuffer;
-    switch( input->View.Binding )
+    switch( input->View.BindingType )
     {
     case BF_Bind:
         buffer->Bind();

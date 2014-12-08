@@ -11,7 +11,6 @@ SampleRSM::~SampleRSM()
 {
     VPLSamplePattern = 0;
     VPLSampleTest = 0;
-    VPLBuffer = 0;
 }
 //----------------------------------------------------------------------------
 void SampleRSM::OnGetShaderConstants()
@@ -57,6 +56,7 @@ void VPLGenerator::SetRSMRenderer(RSMRenderer* rsm)
 
     RendererInputDataView view;
     view.Type = RDT_Texture;
+    view.BindingType = BF_BindIndex;
     view.Sampler.MinFilter = FT_Nearest;
     view.Sampler.MagFilter = FT_Nearest;
     view.Sampler.WrapS = WT_Clamp;
@@ -95,12 +95,13 @@ void VPLGenerator::Initialize()
     mVPLSamplePattern = new Texture1D();
     mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
     mVPLSampleTest = new Texture1D();
-    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
+    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, 
+        GL_FLOAT, 0);
 
     // Create VPL buffer.
     GLuint vplBufferSize = (sizeof(vec4) * 3 + sizeof(mat4)) * VPL_SAMPLE_COUNT;
-    mVPLBuffer = new StructuredBuffer();
-    mVPLBuffer->ReserveDeviceResource(vplBufferSize, BU_Dynamic_Copy);
+    AddGenericBufferTarget("VPLBuffer", RDT_StructuredBuffer, vplBufferSize, 
+        BU_Dynamic_Copy, BF_BindIndex, 0);
 
     // Create VPL sample compute tasks.
     ShaderProgramInfo sampleRSMProgramInfo;
@@ -113,6 +114,5 @@ void VPLGenerator::Initialize()
     mSampleRSMTask->CreateDeviceResource();
     mSampleRSMTask->VPLSamplePattern = mVPLSamplePattern;
     mSampleRSMTask->VPLSampleTest = mVPLSampleTest;
-    mSampleRSMTask->VPLBuffer = mVPLBuffer;
 }
 //----------------------------------------------------------------------------

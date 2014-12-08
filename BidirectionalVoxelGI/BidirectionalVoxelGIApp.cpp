@@ -116,7 +116,6 @@ void BidirectionalVoxelGIApp::Initialize()
     mVPLGenerator = new VPLGenerator();
     mVPLGenerator->SetRSMRenderer(mRSMRenderer);
     mVPLGenerator->Initialize();
-    mVPLBuffer = mVPLGenerator->mVPLBuffer;
 
     // Create direct lighting renderer.
     mDirectLightingRenderer = new DirectLightingRenderer();
@@ -126,9 +125,8 @@ void BidirectionalVoxelGIApp::Initialize()
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer();
-    mIndirectLightingRenderer->VPLBuffer = mVPLBuffer;
     mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator);
-    mIndirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF);
+    mIndirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF, VPL_SAMPLE_COUNT);
     mIndirectLightingTexture = (Texture2D*)(BufferBase*)mIndirectLightingRenderer->GetFrameBufferTarget(0)->OutputBuffer;
 
     // Create GPU timer.
@@ -139,6 +137,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mRSMRenderer->SetTimer(mTimer);
     mVPLGenerator->SetTimer(mTimer);
     mDirectLightingRenderer->SetTimer(mTimer);
+    mIndirectLightingRenderer->SetTimer(mTimer);
 
 	// Create scene.
     mSceneObjects = new RenderSet();
@@ -330,7 +329,6 @@ void BidirectionalVoxelGIApp::Terminate()
     mRSMFluxTextureArray = 0;
 
     mVPLGenerator = 0;
-    mVPLBuffer = 0;
 
     mTempScreenQuad = 0;
 

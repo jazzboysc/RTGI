@@ -27,10 +27,11 @@ enum RendererDataType
 
 enum BindingFlag
 {
-    BF_Bindless = 0,
-    BF_Bind = 1,
-    BF_BindIndex = 2,
-    BF_BindToIndirect = 3
+    BF_Bindless       = 0,
+    BF_Bind           = 1,
+    BF_BindIndex      = 2,
+    BF_BindToIndirect = 3,
+    BF_Max            = 4
 };
 
 enum BufferUsage
@@ -67,7 +68,7 @@ struct SamplerDesc
 struct RendererInputDataView
 {
     RendererDataType Type;
-    BindingFlag Binding;
+    BindingFlag BindingType;
     int BindingSlot;
     SamplerDesc Sampler;
 };

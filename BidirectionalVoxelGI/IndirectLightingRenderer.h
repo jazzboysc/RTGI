@@ -26,10 +26,6 @@ public:
 
     int VPLCount;
     float BounceSingularity;
-    Texture2DPtr GBufferPositionTexture;
-    Texture2DPtr GBufferNormalTexture;
-    Texture2DPtr GBufferAlbedoTexture;
-    StructuredBufferPtr VPLBuffer;
 
 private:
     GLint mVPLCountLoc;
@@ -51,11 +47,10 @@ public:
     IndirectLightingRenderer(RenderSet* renderSet = 0);
     virtual ~IndirectLightingRenderer();
 
-    void Initialize(int width, int height, Texture::TextureFormat format);
+    void Initialize(int width, int height, Texture::TextureFormat format, 
+        int vplCount);
     void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer);
     void Render();
-
-    StructuredBufferPtr VPLBuffer;
 
 private:
     PipelineStateBlockPtr mPSB;

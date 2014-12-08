@@ -28,7 +28,6 @@ public:
 
     Texture1DPtr VPLSamplePattern;
     Texture1DPtr VPLSampleTest;
-    StructuredBufferPtr VPLBuffer;
 
 private:
     GLint mRSMPositionLoc;
@@ -55,7 +54,6 @@ public:
     virtual void OnRender(int technique, int pass, Camera* camera);
 
     void Initialize();
-    StructuredBufferPtr mVPLBuffer;
 
 private:
     RSMRendererPtr mRSM;

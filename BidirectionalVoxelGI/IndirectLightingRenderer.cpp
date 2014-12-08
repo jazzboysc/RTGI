@@ -12,10 +12,6 @@ IndirectLightingScreenQuad::IndirectLightingScreenQuad(Material* material)
 //----------------------------------------------------------------------------
 IndirectLightingScreenQuad::~IndirectLightingScreenQuad()
 {
-    GBufferPositionTexture = 0;
-    GBufferNormalTexture = 0;
-    GBufferAlbedoTexture = 0;
-    VPLBuffer = 0;
 }
 //----------------------------------------------------------------------------
 void IndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
@@ -26,8 +22,6 @@ void IndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
     glUniform1i(mGBufferPositionSamplerLoc, 0);
     glUniform1i(mGBufferNormalSamplerLoc, 1);
     glUniform1i(mGBufferAlbedoSamplerLoc, 2);
-
-    VPLBuffer->Bind(0);
 }
 //----------------------------------------------------------------------------
 void IndirectLightingScreenQuad::OnGetShaderConstants()
@@ -63,6 +57,7 @@ void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
 {
     RendererInputDataView view;
     view.Type = RDT_Texture;
+    view.BindingType = BF_BindIndex;
     view.Sampler.MinFilter = FT_Nearest;
     view.Sampler.MagFilter = FT_Nearest;
     view.Sampler.WrapS = WT_Clamp;
@@ -79,13 +74,14 @@ void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
     view.BindingSlot = 2;
     AddInputDependency(gbuffer, "Albedo", &view);
 
-    //view.Type = RDT_StructuredBuffer;
-    //view.BindingSlot = 0;
-    //AddInputDependency(vplBuffer, "")
+    view.Type = RDT_StructuredBuffer;
+    view.BindingType = BF_BindIndex;
+    view.BindingSlot = 0;
+    AddInputDependency(vplBuffer, "VPLBuffer", &view);
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Initialize(int width, int height, 
-    Texture::TextureFormat format)
+    Texture::TextureFormat format, int vplCount)
 {
     ShaderProgramInfo indirectLightingProgramInfo;
     indirectLightingProgramInfo.VShaderFileName = "vIndirectLighting.glsl";
@@ -107,8 +103,7 @@ void IndirectLightingRenderer::Initialize(int width, int height,
     mIndirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mIndirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mIndirectLightingScreenQuad->CreateDeviceResource();
-    mIndirectLightingScreenQuad->VPLCount = 128;
-    mIndirectLightingScreenQuad->VPLBuffer = VPLBuffer;
+    mIndirectLightingScreenQuad->VPLCount = vplCount;
 
     // Create output.
     AddFrameBufferTarget("IndirectLighting", width, height, 0, 

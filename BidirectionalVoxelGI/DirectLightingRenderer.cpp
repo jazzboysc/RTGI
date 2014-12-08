@@ -104,6 +104,7 @@ void DirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
 {
     RendererInputDataView view;
     view.Type = RDT_Texture;
+    view.BindingType = BF_BindIndex;
     view.Sampler.MinFilter = FT_Nearest;
     view.Sampler.MagFilter = FT_Nearest;
     view.Sampler.WrapS = WT_Clamp;
