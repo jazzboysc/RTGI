@@ -86,20 +86,22 @@ void VPLGenerator::Run()
 //----------------------------------------------------------------------------
 void VPLGenerator::OnRender(int, int, Camera*)
 {
-    mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
+    mSampleRSMTask->Dispatch(0, mVPLCount, 1, 1);
 }
 //----------------------------------------------------------------------------
-void VPLGenerator::Initialize()
+void VPLGenerator::Initialize(int vplCount)
 {
+    mVPLCount = vplCount;
+
     // Create VPL sample pattern.
     mVPLSamplePattern = new Texture1D();
-    mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
+    mVPLSamplePattern->CreateUniformRandomTexture(mVPLCount, 4);
     mVPLSampleTest = new Texture1D();
-    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, 
+    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, mVPLCount, GL_RGBA,
         GL_FLOAT, 0);
 
     // Create VPL buffer.
-    GLuint vplBufferSize = (sizeof(vec4) * 3 + sizeof(mat4)) * VPL_SAMPLE_COUNT;
+    GLuint vplBufferSize = (sizeof(vec4) * 3 + sizeof(mat4)) * mVPLCount;
     AddGenericBufferTarget("VPLBuffer", RDT_StructuredBuffer, vplBufferSize, 
         BU_Dynamic_Copy, BF_BindIndex, 0);
 

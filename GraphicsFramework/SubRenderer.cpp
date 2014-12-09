@@ -153,6 +153,22 @@ RendererOutput* SubRenderer::GetDepthTarget() const
     return mDepthTarget;
 }
 //----------------------------------------------------------------------------
+Texture* SubRenderer::GetFrameBufferTexture(int i) const
+{
+    return (Texture*)(BufferBase*)GetFrameBufferTarget(i)->OutputBuffer;
+}
+//----------------------------------------------------------------------------
+Texture* SubRenderer::GetFrameBufferTextureByName(const std::string& name) const
+{
+    return (Texture*)(BufferBase*)GetFrameBufferTargetByName(
+        name)->OutputBuffer;
+}
+//----------------------------------------------------------------------------
+Texture* SubRenderer::GetDepthTexture() const
+{
+    return (Texture*)(BufferBase*)GetDepthTarget()->OutputBuffer;
+}
+//----------------------------------------------------------------------------
 void SubRenderer::AddInputDependency(SubRenderer* producer, 
     const std::string& srcName, RendererInputDataView* view)
 {

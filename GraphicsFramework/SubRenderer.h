@@ -58,6 +58,10 @@ public:
     RendererOutput* GetFrameBufferTarget(int i) const;
     RendererOutput* GetFrameBufferTargetByName(const std::string& name) const;
     RendererOutput* GetDepthTarget() const;
+    Texture* GetFrameBufferTexture(int i) const;
+    Texture* GetFrameBufferTextureByName(const std::string& name) const;
+    Texture* GetDepthTexture() const;
+
     void CreateFrameBuffer(int depthWidth, int depthHeight, int depthCount,
         Texture::TextureType depthType);
 

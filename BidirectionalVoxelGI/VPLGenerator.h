@@ -53,7 +53,7 @@ public:
     void Run();
     virtual void OnRender(int technique, int pass, Camera* camera);
 
-    void Initialize();
+    void Initialize(int vplCount);
 
 private:
     RSMRendererPtr mRSM;
@@ -62,7 +62,7 @@ private:
     SampleRSMPtr mSampleRSMTask;
 
     // VPL stuff.
-    enum { VPL_SAMPLE_COUNT = 128 };
+    int mVPLCount;
     Texture1DPtr mVPLSamplePattern;
     Texture1DPtr mVPLSampleTest;
 

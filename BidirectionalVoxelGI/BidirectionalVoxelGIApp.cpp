@@ -96,38 +96,38 @@ void BidirectionalVoxelGIApp::Initialize()
     // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer();
     mGBufferRenderer->CreateGBuffer(mWidth, mHeight, Texture::TF_RGBAF);
-    mGBufferPositionTexture = (Texture2D*)(BufferBase*)mGBufferRenderer->GetFrameBufferTarget(0)->OutputBuffer;
-    mGBufferNormalTexture = (Texture2D*)(BufferBase*)mGBufferRenderer->GetFrameBufferTarget(1)->OutputBuffer;
-    mGBufferAlbedoTexture = (Texture2D*)(BufferBase*)mGBufferRenderer->GetFrameBufferTarget(2)->OutputBuffer;
+    mGBufferPositionTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTexture(0);
+    mGBufferNormalTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTexture(1);
+    mGBufferAlbedoTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTexture(2);
 
     // Create shadow map renderer.
     mShadowMapRenderer = new ShadowMapRenderer();
     mShadowMapRenderer->CreateShadowMap(1024, 1024, Texture::TF_RGBAF);
-    mShadowMapTexture = (Texture2D*)(BufferBase*)mShadowMapRenderer->GetFrameBufferTarget(0)->OutputBuffer;
+    mShadowMapTexture = (Texture2D*)mShadowMapRenderer->GetFrameBufferTexture(0);
 
     // Create RSM renderer.
     mRSMRenderer = new RSMRenderer();
     mRSMRenderer->CreateRSM(256, 256, RSM_FACE_COUNT, Texture::TF_RGBAF);
-    mRSMPositionTextureArray = (Texture2DArray*)(BufferBase*)mRSMRenderer->GetFrameBufferTarget(0)->OutputBuffer;
-    mRSMNormalTextureArray = (Texture2DArray*)(BufferBase*)mRSMRenderer->GetFrameBufferTarget(1)->OutputBuffer;
-    mRSMFluxTextureArray = (Texture2DArray*)(BufferBase*)mRSMRenderer->GetFrameBufferTarget(2)->OutputBuffer;
+    mRSMPositionTextureArray = (Texture2DArray*)mRSMRenderer->GetFrameBufferTexture(0);
+    mRSMNormalTextureArray = (Texture2DArray*)mRSMRenderer->GetFrameBufferTexture(1);
+    mRSMFluxTextureArray = (Texture2DArray*)mRSMRenderer->GetFrameBufferTexture(2);
 
     // Create VPL generator.
     mVPLGenerator = new VPLGenerator();
     mVPLGenerator->SetRSMRenderer(mRSMRenderer);
-    mVPLGenerator->Initialize();
+    mVPLGenerator->Initialize(VPL_SAMPLE_COUNT);
 
     // Create direct lighting renderer.
     mDirectLightingRenderer = new DirectLightingRenderer();
     mDirectLightingRenderer->SetInputs(mGBufferRenderer, mShadowMapRenderer);
     mDirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF, mLightProjector);
-    mDirectLightingTexture = (Texture2D*)(BufferBase*)mDirectLightingRenderer->GetFrameBufferTarget(0)->OutputBuffer;
+    mDirectLightingTexture = (Texture2D*)mDirectLightingRenderer->GetFrameBufferTexture(0);
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer();
     mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator);
     mIndirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF, VPL_SAMPLE_COUNT);
-    mIndirectLightingTexture = (Texture2D*)(BufferBase*)mIndirectLightingRenderer->GetFrameBufferTarget(0)->OutputBuffer;
+    mIndirectLightingTexture = (Texture2D*)mIndirectLightingRenderer->GetFrameBufferTexture(0);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
