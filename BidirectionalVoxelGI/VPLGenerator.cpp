@@ -16,11 +16,11 @@ SampleRSM::~SampleRSM()
 void SampleRSM::OnGetShaderConstants()
 {
     ComputePass* p = (ComputePass*)GetPass(0);
-    GLuint program = p->GetShaderProgram()->GetProgram();
+    ShaderProgram* program = p->GetShaderProgram();
 
-    mRSMPositionLoc = glGetUniformLocation(program, "RSMPosition");
-    mRSMNormalLoc = glGetUniformLocation(program, "RSMNormal");
-    mRSMFluxLoc = glGetUniformLocation(program, "RSMFlux");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mRSMPositionLoc, "RSMPosition");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mRSMNormalLoc, "RSMNormal");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mRSMFluxLoc, "RSMFlux");
 }
 //----------------------------------------------------------------------------
 void SampleRSM::OnPreDispatch(unsigned int pass)
@@ -28,9 +28,9 @@ void SampleRSM::OnPreDispatch(unsigned int pass)
     VPLSamplePattern->BindToImageUnit(0, GL_READ_ONLY);
     VPLSampleTest->BindToImageUnit(1, GL_WRITE_ONLY);
 
-    glUniform1i(mRSMPositionLoc, 0);
-    glUniform1i(mRSMNormalLoc, 1);
-    glUniform1i(mRSMFluxLoc, 2);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mRSMPositionLoc, 0);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mRSMNormalLoc, 1);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mRSMFluxLoc, 2);
 }
 //----------------------------------------------------------------------------
 void SampleRSM::OnPostDispatch(unsigned int pass)
@@ -89,7 +89,7 @@ void VPLGenerator::OnRender(int, int, Camera*)
     mSampleRSMTask->Dispatch(0, mVPLCount, 1, 1);
 }
 //----------------------------------------------------------------------------
-void VPLGenerator::Initialize(int vplCount)
+void VPLGenerator::Initialize(GPUDevice* device, int vplCount)
 {
     mVPLCount = vplCount;
 
@@ -113,7 +113,7 @@ void VPLGenerator::Initialize(int vplCount)
     ComputePass* passSampleRSM = new ComputePass(sampleRSMProgramInfo);
     mSampleRSMTask = new SampleRSM();
     mSampleRSMTask->AddPass(passSampleRSM);
-    mSampleRSMTask->CreateDeviceResource();
+    mSampleRSMTask->CreateDeviceResource(device);
     mSampleRSMTask->VPLSamplePattern = mVPLSamplePattern;
     mSampleRSMTask->VPLSampleTest = mVPLSampleTest;
 }

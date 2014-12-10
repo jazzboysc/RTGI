@@ -53,15 +53,15 @@ public:
 	ShaderProgram(VertexShader* vShader, FragmentShader* fShader);
 	virtual ~ShaderProgram();
 
-	void CreateDeviceResource();
+	void CreateDeviceResource(GPUDevice* device);
 
-	GLuint GetProgram() const;
-	GLuint GetVertexShader() const;
-	GLuint GetFragmentShader() const;
-    GLuint GetGeometryShader() const;
-    GLuint GetComputeShader() const;
-    GLuint GetTessellationControlShader() const;
-    GLuint GetTessellationEvaluationShader() const;
+	ShaderProgramHandle* GetProgramHandle() const;
+	VertexShader* GetVertexShader() const;
+    FragmentShader* GetFragmentShader() const;
+    GeometryShader* GetGeometryShader() const;
+    ComputeShader* GetComputeShader() const;
+    TessellationControlShader* GetTessellationControlShader() const;
+    TessellationEvaluationShader* GetTessellationEvaluationShader() const;
 
     bool IsTessellationEnabled() const;
     bool IsComputeEnabled() const;
@@ -79,7 +79,7 @@ protected:
     TessellationControlShaderPtr mTessellationControlShader;
     TessellationEvaluationShaderPtr mTessellationEvaluationShader;
 
-	GLuint mProgram;
+	ShaderProgramHandle* mProgramHandle;
 };
 
 typedef RefPointer<ShaderProgram> ShaderProgramPtr;

@@ -7,6 +7,7 @@
 #define RTGI_Application_H
 
 #include "FrameworkCommon.h"
+#include "GPUDevice.h"
 
 #ifdef _WIN32
 #include <wingdi.h>
@@ -25,7 +26,7 @@ public:
 	Application();
 	virtual ~Application();
 
-	virtual void Initialize();
+	virtual void Initialize(GPUDevice* device);
 	virtual void Run();
 	virtual void Terminate();
 
@@ -38,6 +39,8 @@ public:
     static Application* GetInstance();
     
 protected:
+    GPUDevicePtr mDevice;
+
 #ifdef _WIN32
 	HGLRC mOpenGLContext;
 	HDC mWindowsDeviceContext;

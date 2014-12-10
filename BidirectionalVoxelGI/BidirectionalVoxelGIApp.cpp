@@ -21,8 +21,10 @@ BidirectionalVoxelGIApp::~BidirectionalVoxelGIApp()
 {
 }
 //----------------------------------------------------------------------------
-void BidirectionalVoxelGIApp::Initialize()
+void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 {
+    Application::Initialize(device);
+
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -115,18 +117,18 @@ void BidirectionalVoxelGIApp::Initialize()
     // Create VPL generator.
     mVPLGenerator = new VPLGenerator();
     mVPLGenerator->SetRSMRenderer(mRSMRenderer);
-    mVPLGenerator->Initialize(VPL_SAMPLE_COUNT);
+    mVPLGenerator->Initialize(mDevice, VPL_SAMPLE_COUNT);
 
     // Create direct lighting renderer.
     mDirectLightingRenderer = new DirectLightingRenderer();
     mDirectLightingRenderer->SetInputs(mGBufferRenderer, mShadowMapRenderer);
-    mDirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF, mLightProjector);
+    mDirectLightingRenderer->Initialize(mDevice, mWidth, mHeight, Texture::TF_RGBAF, mLightProjector);
     mDirectLightingTexture = (Texture2D*)mDirectLightingRenderer->GetFrameBufferTexture(0);
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer();
     mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator);
-    mIndirectLightingRenderer->Initialize(mWidth, mHeight, Texture::TF_RGBAF, VPL_SAMPLE_COUNT);
+    mIndirectLightingRenderer->Initialize(mDevice, mWidth, mHeight, Texture::TF_RGBAF, VPL_SAMPLE_COUNT);
     mIndirectLightingTexture = (Texture2D*)mIndirectLightingRenderer->GetFrameBufferTexture(0);
 
     // Create GPU timer.
@@ -152,7 +154,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mat4 scale = Scale(vec3(60.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
-	mModel->CreateDeviceResource();
+	mModel->CreateDeviceResource(mDevice);
 	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
 	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
@@ -163,7 +165,7 @@ void BidirectionalVoxelGIApp::Initialize()
 	mGround = new SceneMesh(material, mCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
-	mGround->CreateDeviceResource();
+	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mGround->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mGround);
@@ -172,7 +174,7 @@ void BidirectionalVoxelGIApp::Initialize()
 	mCeiling = new SceneMesh(material, mCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
-	mCeiling->CreateDeviceResource();
+	mCeiling->CreateDeviceResource(mDevice);
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
@@ -184,7 +186,7 @@ void BidirectionalVoxelGIApp::Initialize()
 	mBackWall = new SceneMesh(material, mCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
-	mBackWall->CreateDeviceResource();
+	mBackWall->CreateDeviceResource(mDevice);
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
@@ -196,7 +198,7 @@ void BidirectionalVoxelGIApp::Initialize()
 	mLeftWall = new SceneMesh(material, mCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
-	mLeftWall->CreateDeviceResource();
+	mLeftWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
@@ -208,7 +210,7 @@ void BidirectionalVoxelGIApp::Initialize()
 	mRightWall = new SceneMesh(material, mCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
-	mRightWall->CreateDeviceResource();
+	mRightWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(90.0f);
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
@@ -224,7 +226,7 @@ void BidirectionalVoxelGIApp::Initialize()
     mTempScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mTempScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mTempScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mTempScreenQuad->CreateDeviceResource();
+    mTempScreenQuad->CreateDeviceResource(mDevice);
     mTempScreenQuad->ShowMode = 2;
     mTempScreenQuad->TempTexture = mIndirectLightingTexture;
     mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
@@ -273,6 +275,11 @@ void BidirectionalVoxelGIApp::Run()
     mGBufferRenderer->Render(0, 1, mCamera);
     workLoad = mGBufferRenderer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Scene G-buffer Pass", workLoad);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 
     // Scene light RSM pass.
     mRSMRenderer->Render(0, 2, 0);

@@ -26,7 +26,7 @@ public:
     virtual ~PassBase();
 
     ShaderProgram* GetShaderProgram();
-    void CreateDeviceResource();
+    void CreateDeviceResource(GPUDevice* device);
 
     void SetPipelineStateBlock(PipelineStateBlock* psb);
     PipelineStateBlock* GetPipelineStateBlock() const;

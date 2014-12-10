@@ -29,9 +29,9 @@ ShaderProgram* PassBase::GetShaderProgram()
     return mShaderProgram;
 }
 //----------------------------------------------------------------------------
-void PassBase::CreateDeviceResource()
+void PassBase::CreateDeviceResource(GPUDevice* device)
 {
-    mShaderProgram->CreateDeviceResource();
+    mShaderProgram->CreateDeviceResource(device);
 }
 //----------------------------------------------------------------------------
 void PassBase::SetPipelineStateBlock(PipelineStateBlock* psb)

@@ -11,7 +11,7 @@ using namespace RTGI;
 Shader::Shader(GLenum type, const std::string& shaderFileName)
 	:
 	mType(type),
-	mShader(0)
+	mShaderHandle(0)
 {
     mShaderFileName = shaderFileName;
 	bool res = LoadFromFile(shaderFileName);
@@ -23,54 +23,38 @@ Shader::Shader(GLenum type, const std::string& shaderFileName)
 //----------------------------------------------------------------------------
 Shader::~Shader()
 {
-	glDeleteShader(mShader);
-	mShader = 0;
+    GPU_DEVICE_FUNC(mShaderHandle->Device, DeleteShader)(this);
+    delete mShaderHandle;
 }
 //----------------------------------------------------------------------------
-void Shader::CreateDeviceResource()
+void Shader::CreateDeviceResource(GPUDevice* device)
 {
-	if( mShader )
+	if( mShaderHandle )
 	{
 		return;
 	}
 
-	const char* programText = mShaderSource.c_str();
-
-	mShader = glCreateShader(mType);
-	glShaderSource(mShader, 1, &programText, 0);
-	glCompileShader(mShader);
-
-	GLint compiled;
-	glGetShaderiv(mShader, GL_COMPILE_STATUS, &compiled);
-	if( !compiled )
-	{
-        GLint iInfoLen = 0;
-        glGetShaderiv(mShader, GL_INFO_LOG_LENGTH, &iInfoLen);
-        if( iInfoLen > 1 )
-        {
-            char* acInfoLog = new char[iInfoLen];
-            glGetShaderInfoLog(mShader, iInfoLen, 0, acInfoLog);
-            printf("Failed compiling %s\n%s\n", mShaderFileName.c_str(), acInfoLog);
-
-            delete[] acInfoLog;
-        }
-
-		assert( false );
-	}
-   
-#ifdef RTGI_OUTPUT_RESOURCE_LOADING
-    printf("Loading shader %s finished\n", mShaderFileName.c_str());
-#endif
+    mShaderHandle = GPU_DEVICE_FUNC(device, CreateShader)(this);
 }
 //----------------------------------------------------------------------------
-GLuint Shader::GetShader() const
+ShaderHandle* Shader::GetShaderHandle() const
 {
-	return mShader;
+	return mShaderHandle;
 }
 //----------------------------------------------------------------------------
 std::string Shader::GetShaderFileName() const
 {
     return mShaderFileName;
+}
+//----------------------------------------------------------------------------
+GLenum Shader::GetType() const
+{
+    return mType;
+}
+//----------------------------------------------------------------------------
+const std::string& Shader::GetSource() const
+{
+    return mShaderSource;
 }
 //----------------------------------------------------------------------------
 bool Shader::LoadFromFile(const std::string& shaderFileName)

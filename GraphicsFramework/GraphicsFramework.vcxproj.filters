@@ -174,6 +174,21 @@
     <ClCompile Include="PipelineStateBlock.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="GPUDevice.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUResource.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLDevice.cpp">
+      <Filter>OpenGL Device</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLResource.cpp">
+      <Filter>OpenGL Device</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderUniform.cpp">
+      <Filter>Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
@@ -362,6 +377,21 @@
     <ClInclude Include="PipelineStateBlock.h">
       <Filter>Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="GPUDevice.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUResource.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLDevice.h">
+      <Filter>OpenGL Device</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLResource.h">
+      <Filter>OpenGL Device</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderUniform.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="RefObject.inl">
@@ -398,6 +428,9 @@
     </Filter>
     <Filter Include="Renderers">
       <UniqueIdentifier>{4e019bc2-a15f-45fd-8836-a3fb0d0bc702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGL Device">
+      <UniqueIdentifier>{97ba0035-f17c-4e06-8bcf-9173803aab81}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

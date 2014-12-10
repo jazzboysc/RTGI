@@ -129,6 +129,8 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="GBufferRenderer.cpp" />
     <ClCompile Include="GeometryAttributes.cpp" />
     <ClCompile Include="GeometryShader.cpp" />
+    <ClCompile Include="GPUDevice.cpp" />
+    <ClCompile Include="GPUResource.cpp" />
     <ClCompile Include="GPUTimer.cpp" />
     <ClCompile Include="GraphicsFrameworkPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -138,6 +140,8 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="LSystem.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialTemplate.cpp" />
+    <ClCompile Include="OpenGLDevice.cpp" />
+    <ClCompile Include="OpenGLResource.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="PassBase.cpp" />
     <ClCompile Include="PassInfo.cpp" />
@@ -156,6 +160,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClCompile Include="ScreenQuad.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="ShaderUniform.cpp" />
     <ClCompile Include="StructuredBuffer.cpp" />
     <ClCompile Include="SubRenderer.cpp" />
     <ClCompile Include="Technique.cpp" />
@@ -196,6 +201,8 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="GBufferRenderer.h" />
     <ClInclude Include="GeometryAttributes.h" />
     <ClInclude Include="GeometryShader.h" />
+    <ClInclude Include="GPUDevice.h" />
+    <ClInclude Include="GPUResource.h" />
     <ClInclude Include="GPUTimer.h" />
     <ClInclude Include="GraphicsFrameworkHeader.h" />
     <ClInclude Include="GraphicsFrameworkPCH.h" />
@@ -204,6 +211,8 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="mat.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialTemplate.h" />
+    <ClInclude Include="OpenGLDevice.h" />
+    <ClInclude Include="OpenGLResource.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="PassBase.h" />
     <ClInclude Include="PassInfo.h" />
@@ -223,6 +232,7 @@ copy /y *.inl ..\SDK\Include</Command>
     <ClInclude Include="ScreenQuad.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="ShaderUniform.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="SubRenderer.h" />
     <ClInclude Include="Technique.h" />

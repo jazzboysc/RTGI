@@ -23,7 +23,7 @@ public:
     ComputeTask();
     virtual ~ComputeTask();
 
-    void CreateDeviceResource();
+    void CreateDeviceResource(GPUDevice* device);
 
     void Dispatch(unsigned int pass, unsigned int globalX, 
         unsigned int globalY, unsigned int globalZ);

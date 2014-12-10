@@ -25,14 +25,14 @@ public:
     vec3 LightColor;
 
 private:
-    GLint mGBufferPositionSamplerLoc;
-    GLint mGBufferNormalSamplerLoc;
-    GLint mGBufferAlbedoSamplerLoc;
-    GLint mShadowMapSamplerLoc;
-    GLint mLightProjectorViewLoc;
-    GLint mLightPositionWorldLoc;
-    GLint mLightColorLoc;
-    GLint mLightProjectorNearFarLoc;
+    ShaderUniform mGBufferPositionSamplerLoc;
+    ShaderUniform mGBufferNormalSamplerLoc;
+    ShaderUniform mGBufferAlbedoSamplerLoc;
+    ShaderUniform mShadowMapSamplerLoc;
+    ShaderUniform mLightProjectorViewLoc;
+    ShaderUniform mLightPositionWorldLoc;
+    ShaderUniform mLightColorLoc;
+    ShaderUniform mLightProjectorNearFarLoc;
 };
 
 typedef RefPointer<DirectLightingScreenQuad> DirectLightingScreenQuadPtr;
@@ -47,7 +47,7 @@ public:
     DirectLightingRenderer(RenderSet* renderSet = 0);
     virtual ~DirectLightingRenderer();
 
-    void Initialize(int width, int height, Texture::TextureFormat format, 
+    void Initialize(GPUDevice* device, int width, int height, Texture::TextureFormat format, 
         Camera* LightProjector);
     void SetInputs(GBufferRenderer* gbuffer, ShadowMapRenderer* shadowMap);
     void Render();

@@ -16,39 +16,40 @@ DirectLightingScreenQuad::~DirectLightingScreenQuad()
 //----------------------------------------------------------------------------
 void DirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 {
-    glUniform1i(mGBufferPositionSamplerLoc, 0);
-    glUniform1i(mGBufferNormalSamplerLoc, 1);
-    glUniform1i(mGBufferAlbedoSamplerLoc, 2);
-    glUniform1i(mShadowMapSamplerLoc, 3);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferPositionSamplerLoc, 0);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferNormalSamplerLoc, 1);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferAlbedoSamplerLoc, 2);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mShadowMapSamplerLoc, 3);
 
     assert(LightProjector);
     if( LightProjector )
     {
         mat4 viewTrans = LightProjector->GetViewTransform();
-        glUniformMatrix4fv(mLightProjectorViewLoc, 1, GL_TRUE, viewTrans);
+        GPU_DEVICE_FUNC_SetUniformValueMat4(mLightProjectorViewLoc, viewTrans);
 
         vec3 lightPosition = LightProjector->GetLocation();
-        glUniform3fv(mLightPositionWorldLoc, 1, (GLfloat*)&lightPosition);
+        GPU_DEVICE_FUNC_SetUniformValueVec3(mLightPositionWorldLoc, lightPosition);
 
         float nearFarPlane[2];
         LightProjector->GetNearFarPlane(nearFarPlane);
-        glUniform2fv(mLightProjectorNearFarLoc, 1, nearFarPlane);
+        GPU_DEVICE_FUNC_SetUniformValueFloat2(mLightProjectorNearFarLoc,
+            nearFarPlane);
     }
-    glUniform3fv(mLightColorLoc, 1, (GLfloat*)&LightColor);
+    GPU_DEVICE_FUNC_SetUniformValueVec3(mLightColorLoc, LightColor);
 }
 //----------------------------------------------------------------------------
 void DirectLightingScreenQuad::OnGetShaderConstants()
 {
-    GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+    ShaderProgram* program = mMaterial->GetProgram(0, 0);
 
-    mGBufferPositionSamplerLoc = glGetUniformLocation(program, "GBufferPositionSampler");
-    mGBufferNormalSamplerLoc = glGetUniformLocation(program, "GBufferNormalSampler");
-    mGBufferAlbedoSamplerLoc = glGetUniformLocation(program, "GBufferAlbedoSampler");
-    mShadowMapSamplerLoc = glGetUniformLocation(program, "ShadowMapSampler");
-    mLightProjectorViewLoc = glGetUniformLocation(program, "LightProjectorView");
-    mLightPositionWorldLoc = glGetUniformLocation(program, "LightPositionWorld");
-    mLightColorLoc = glGetUniformLocation(program, "LightColor");
-    mLightProjectorNearFarLoc = glGetUniformLocation(program, "LightProjectorNearFar");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferPositionSamplerLoc, "GBufferPositionSampler");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferNormalSamplerLoc, "GBufferNormalSampler");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mShadowMapSamplerLoc, "ShadowMapSampler");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightProjectorViewLoc, "LightProjectorView");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightPositionWorldLoc, "LightPositionWorld");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightColorLoc, "LightColor");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightProjectorNearFarLoc, "LightProjectorNearFar");
 }
 //----------------------------------------------------------------------------
 
@@ -68,7 +69,7 @@ DirectLightingRenderer::~DirectLightingRenderer()
     mPSB = 0;
 }
 //----------------------------------------------------------------------------
-void DirectLightingRenderer::Initialize(int width, int height, 
+void DirectLightingRenderer::Initialize(GPUDevice* device, int width, int height,
     Texture::TextureFormat format, Camera* lightProjector)
 {
     ShaderProgramInfo directLightingProgramInfo;
@@ -90,7 +91,7 @@ void DirectLightingRenderer::Initialize(int width, int height,
     mDirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mDirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mDirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mDirectLightingScreenQuad->CreateDeviceResource();
+    mDirectLightingScreenQuad->CreateDeviceResource(device);
     mDirectLightingScreenQuad->LightProjector = lightProjector;
 
     // Create output.

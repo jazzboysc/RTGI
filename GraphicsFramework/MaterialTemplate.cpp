@@ -38,11 +38,11 @@ Technique* MaterialTemplate::GetTechnique(int i) const
 	return mTechniques[i];
 }
 //----------------------------------------------------------------------------
-void MaterialTemplate::CreateDeviceResource()
+void MaterialTemplate::CreateDeviceResource(GPUDevice* device)
 {
 	for( int i = 0; i < (int)mTechniques.size(); ++i )
 	{
-		mTechniques[i]->CreateDeviceResource();
+		mTechniques[i]->CreateDeviceResource(device);
 	}
 }
 //----------------------------------------------------------------------------

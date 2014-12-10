@@ -1,5 +1,6 @@
 #include "SceneMesh.h"
 #include "BidirectionalVoxelGIApp.h"
+#include "GPUDevice.h"
 
 using namespace RTGI;
 
@@ -22,24 +23,27 @@ void SceneMesh::OnGetShaderConstants()
 	TriangleMesh::OnGetShaderConstants();
 
 	// Get pass 1 uniform locations.
-    GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
-    mLightProjectorNearFarLoc = glGetUniformLocation(program, "LightProjectorNearFar");
+    ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightProjectorNearFarLoc, 
+        "LightProjectorNearFar");
 
     // Get pass 2 uniform locations.
-    program = mMaterial->GetProgram(0, 1)->GetProgram();
-    mWorldLoc2 = glGetUniformLocation(program, "World");
-    mViewLoc2 = glGetUniformLocation(program, "View");
-    mProjLoc2 = glGetUniformLocation(program, "Proj");
-    mMaterialColorLoc2 = glGetUniformLocation(program, "MaterialColor");
+    program = mMaterial->GetProgram(0, 1);
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mWorldLoc2, "World");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mViewLoc2, "View");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mProjLoc2, "Proj");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mMaterialColorLoc2, "MaterialColor");
 
     // Get pass 3 uniform locations.
-    program = mMaterial->GetProgram(0, 2)->GetProgram();
-    mWorldLoc3 = glGetUniformLocation(program, "World");
-    mProjLoc3 = glGetUniformLocation(program, "Proj");
-    mLightPositionWorldLoc = glGetUniformLocation(program, "LightPositionWorld");
-    mLightColorLoc = glGetUniformLocation(program, "LightColor");
-    mMaterialColorLoc3 = glGetUniformLocation(program, "MaterialColor");
-    glProgramParameteri(program, GL_GEOMETRY_VERTICES_OUT_EXT, BidirectionalVoxelGIApp::RSM_FACE_COUNT * 3);
+    program = mMaterial->GetProgram(0, 2);
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mWorldLoc3, "World");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mProjLoc3, "Proj");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightPositionWorldLoc, "LightPositionWorld");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightColorLoc, "LightColor");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mMaterialColorLoc3, "MaterialColor");
+    GPU_DEVICE_FUNC_SetProgramParameterInt(program, 
+        GL_GEOMETRY_VERTICES_OUT_EXT, 
+        BidirectionalVoxelGIApp::RSM_FACE_COUNT * 3);
 }
 //----------------------------------------------------------------------------
 void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -53,41 +57,42 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
         {
             float nearFarPlane[2];
             mCamera->GetNearFarPlane(nearFarPlane);
-            glUniform2fv(mLightProjectorNearFarLoc, 1, nearFarPlane);
+            GPU_DEVICE_FUNC_SetUniformValueFloat2(mLightProjectorNearFarLoc, 
+                nearFarPlane);
         }
 	}
 
     // Update pass 2 uniform data.
     if( pass == 1 )
     {
-        glUniformMatrix4fv(mWorldLoc2, 1, GL_TRUE, mWorldTransform);
-        glUniform3fv(mMaterialColorLoc2, 1, (GLfloat*)&MaterialColor);
+        GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc2, mWorldTransform);
+        GPU_DEVICE_FUNC_SetUniformValueVec3(mMaterialColorLoc2, MaterialColor);
 
         if( mCamera )
         {
             mat4 viewTrans = mCamera->GetViewTransform();
-            glUniformMatrix4fv(mViewLoc2, 1, GL_TRUE, viewTrans);
+            GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc2, viewTrans);
 
             mat4 projTrans = mCamera->GetProjectionTransform();
-            glUniformMatrix4fv(mProjLoc2, 1, GL_TRUE, projTrans);
+            GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc2, projTrans);
         }
     }
 
     // Update pass 3 uniform data.
     if( pass == 2 )
     {
-        glUniformMatrix4fv(mWorldLoc3, 1, GL_TRUE, mWorldTransform);
-        glUniform3fv(mLightColorLoc, 1, (GLfloat*)&LightColor);
-        glUniform3fv(mMaterialColorLoc3, 1, (GLfloat*)&MaterialColor);
+        GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc3, mWorldTransform);
+        GPU_DEVICE_FUNC_SetUniformValueVec3(mLightColorLoc, LightColor);
+        GPU_DEVICE_FUNC_SetUniformValueVec3(mMaterialColorLoc3, MaterialColor);
 
         assert( LightProjector );
         if( LightProjector )
         {
             vec3 lightPosition = LightProjector->GetLocation();
-            glUniform3fv(mLightPositionWorldLoc, 1, (GLfloat*)&lightPosition);
+            GPU_DEVICE_FUNC_SetUniformValueVec3(mLightPositionWorldLoc, lightPosition);
 
             mat4 projTrans = LightProjector->GetProjectionTransform();
-            glUniformMatrix4fv(mProjLoc3, 1, GL_TRUE, projTrans);
+            GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc3, projTrans);
         }
     }
 }

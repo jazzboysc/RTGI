@@ -30,9 +30,9 @@ public:
     Texture1DPtr VPLSampleTest;
 
 private:
-    GLint mRSMPositionLoc;
-    GLint mRSMNormalLoc;
-    GLint mRSMFluxLoc;
+    ShaderUniform mRSMPositionLoc;
+    ShaderUniform mRSMNormalLoc;
+    ShaderUniform mRSMFluxLoc;
 };
 
 typedef RefPointer<SampleRSM> SampleRSMPtr;
@@ -53,7 +53,7 @@ public:
     void Run();
     virtual void OnRender(int technique, int pass, Camera* camera);
 
-    void Initialize(int vplCount);
+    void Initialize(GPUDevice* device, int vplCount);
 
 private:
     RSMRendererPtr mRSM;

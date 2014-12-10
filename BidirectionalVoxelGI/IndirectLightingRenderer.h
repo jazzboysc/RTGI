@@ -28,11 +28,11 @@ public:
     float BounceSingularity;
 
 private:
-    GLint mVPLCountLoc;
-    GLint mBounceSingularityLoc;
-    GLint mGBufferPositionSamplerLoc;
-    GLint mGBufferNormalSamplerLoc;
-    GLint mGBufferAlbedoSamplerLoc;
+    ShaderUniform mVPLCountLoc;
+    ShaderUniform mBounceSingularityLoc;
+    ShaderUniform mGBufferPositionSamplerLoc;
+    ShaderUniform mGBufferNormalSamplerLoc;
+    ShaderUniform mGBufferAlbedoSamplerLoc;
 };
 
 typedef RefPointer<IndirectLightingScreenQuad> IndirectLightingScreenQuadPtr;
@@ -47,7 +47,7 @@ public:
     IndirectLightingRenderer(RenderSet* renderSet = 0);
     virtual ~IndirectLightingRenderer();
 
-    void Initialize(int width, int height, Texture::TextureFormat format, 
+    void Initialize(GPUDevice* device, int width, int height, Texture::TextureFormat format,
         int vplCount);
     void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer);
     void Render();

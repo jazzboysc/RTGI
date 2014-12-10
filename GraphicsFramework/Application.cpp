@@ -29,10 +29,12 @@ Application::Application()
 //----------------------------------------------------------------------------
 Application::~Application()
 {
+    mDevice = 0;
 }
 //----------------------------------------------------------------------------
-void Application::Initialize()
+void Application::Initialize(GPUDevice* device)
 {
+    mDevice = device;
 }
 //----------------------------------------------------------------------------
 void Application::Run()

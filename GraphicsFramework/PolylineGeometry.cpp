@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------
 #include "GraphicsFrameworkPCH.h"
 #include "PolylineGeometry.h"
+#include "GPUDevice.h"
 
 using namespace RTGI;
 
@@ -15,8 +16,6 @@ PolylineGeometry::PolylineGeometry(Material* material, Camera* camera,
 	RenderObject(material),
     mCamera(camera)
 {
-    mWorldLoc = mViewLoc = mProjLoc = -1;
-
 	mPolylineCount = 0;
 	mTotalVertexCount = 0;
 
@@ -190,7 +189,7 @@ void PolylineGeometry::CreateVertexBufferDeviceResource()
     }
 }
 //----------------------------------------------------------------------------
-void PolylineGeometry::CreateDeviceResource()
+void PolylineGeometry::CreateDeviceResource(GPUDevice* device)
 {
     // Create VBO.
     CreateVertexBufferDeviceResource();
@@ -202,7 +201,7 @@ void PolylineGeometry::CreateDeviceResource()
     attributes.HasNormal = false;
     attributes.HasTCoord = false;
     attributes.VertexComponentCount = 3;
-    mMaterial->CreateDeviceResource(&attributes);
+    mMaterial->CreateDeviceResource(device, &attributes);
 
     // Get shader constants here.
     OnGetShaderConstants();
@@ -210,16 +209,16 @@ void PolylineGeometry::CreateDeviceResource()
 //----------------------------------------------------------------------------
 void PolylineGeometry::OnGetShaderConstants()
 {
-    GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
-    mWorldLoc = glGetUniformLocation(program, "World");
-    mViewLoc = glGetUniformLocation(program, "View");
-    mProjLoc = glGetUniformLocation(program, "Proj");
+    ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mWorldLoc, "World");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mViewLoc, "View");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mProjLoc, "Proj");
 }
 //----------------------------------------------------------------------------
-void PolylineGeometry::UpdateDeviceResource()
+void PolylineGeometry::UpdateDeviceResource(GPUDevice* device)
 {
 	glDeleteBuffers(1, &mVBO);
-	CreateDeviceResource();
+	CreateDeviceResource(device);
 }
 //----------------------------------------------------------------------------
 GLuint PolylineGeometry::GetVertexBuffer() const
@@ -237,11 +236,11 @@ int PolylineGeometry::GetTotalVertexCount() const
 	return mTotalVertexCount;
 }
 //----------------------------------------------------------------------------
-void PolylineGeometry::AttachPoint(GLfloat x, GLfloat y)
+void PolylineGeometry::AttachPoint(GPUDevice* device, GLfloat x, GLfloat y)
 {
 	if( mPolylineCount == 0 )
 	{
-		AttachPolyLineStartPoint(x, y);
+		AttachPolyLineStartPoint(device, x, y);
 		return;
 	}
 
@@ -250,10 +249,11 @@ void PolylineGeometry::AttachPoint(GLfloat x, GLfloat y)
 	mVertexData.push_back(x);
 	mVertexData.push_back(y);
 
-	UpdateDeviceResource();
+	UpdateDeviceResource(device);
 }
 //----------------------------------------------------------------------------
-void PolylineGeometry::AttachPolyLineStartPoint(GLfloat x, GLfloat y)
+void PolylineGeometry::AttachPolyLineStartPoint(GPUDevice* device, GLfloat x, 
+    GLfloat y)
 {
 	mPolylineCount++;
 	mTotalVertexCount++;
@@ -261,7 +261,7 @@ void PolylineGeometry::AttachPolyLineStartPoint(GLfloat x, GLfloat y)
 	mVertexData.push_back(x);
 	mVertexData.push_back(y);
 
-	UpdateDeviceResource();
+	UpdateDeviceResource(device);
 }
 //----------------------------------------------------------------------------
 void PolylineGeometry::SetWorldWindow(GLfloat left, GLfloat top, 
@@ -307,16 +307,17 @@ int PolylineGeometry::SearchClosedPoint(GLfloat x, GLfloat y, GLfloat* dist)
 	return closed;
 }
 //----------------------------------------------------------------------------
-void PolylineGeometry::UpdatePoint(int index, GLfloat x, GLfloat y)
+void PolylineGeometry::UpdatePoint(GPUDevice* device, int index, GLfloat x, 
+    GLfloat y)
 {
 	assert( index >= 0 && index < mTotalVertexCount );
 	mVertexData[2*index    ] = x;
 	mVertexData[2*index + 1] = y;
 
-	UpdateDeviceResource();
+	UpdateDeviceResource(device);
 }
 //----------------------------------------------------------------------------
-void PolylineGeometry::DeletePoint(int index)
+void PolylineGeometry::DeletePoint(GPUDevice* device, int index)
 {
 	assert( index >= 0 && index < mTotalVertexCount );
 
@@ -345,7 +346,7 @@ void PolylineGeometry::DeletePoint(int index)
 		mPolylineVertexCounts.erase(mPolylineVertexCounts.begin() + i);
 	}
 
-	UpdateDeviceResource();
+	UpdateDeviceResource(device);
 }
 //----------------------------------------------------------------------------
 mat4 PolylineGeometry::GetWorldWindowTransform()
@@ -376,14 +377,14 @@ void PolylineGeometry::OnUpdateShaderConstants(int technique, int pass)
 {
     assert(technique == 0 && pass == 0);
 
-    glUniformMatrix4fv(mWorldLoc, 1, GL_TRUE, mWorldTransform);
+    GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc, mWorldTransform);
     if( mCamera )
     {
         mat4 viewTrans = mCamera->GetViewTransform();
-        glUniformMatrix4fv(mViewLoc, 1, GL_TRUE, viewTrans);
+        GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc, viewTrans);
 
         mat4 projTrans = mCamera->GetProjectionTransform();
-        glUniformMatrix4fv(mProjLoc, 1, GL_TRUE, projTrans);
+        GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc, projTrans);
     }
 }
 //----------------------------------------------------------------------------

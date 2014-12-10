@@ -27,7 +27,8 @@ public:
 	~Material();
 
 	void Apply(int techniqueNum, int passNum);
-	void CreateDeviceResource(GeometryAttributes* geometryAttr);
+    void CreateDeviceResource(GPUDevice* device, 
+        GeometryAttributes* geometryAttr);
 	ShaderProgram* GetProgram(int technique, int pass);
 
 protected:

@@ -27,7 +27,7 @@ public:
 	unsigned int GetTechniqueCount() const;
 	Technique* GetTechnique(int i) const;
 
-	void CreateDeviceResource();
+    void CreateDeviceResource(GPUDevice* device);
 
 protected:
 	std::vector<Technique*> mTechniques;

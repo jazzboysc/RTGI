@@ -45,6 +45,7 @@
 #include "Technique.h"
 #include "TechniqueInfo.h"
 #include "MaterialTemplate.h"
+#include "ShaderUniform.h"
 
 // GPGPU
 #include "ComputePass.h"
@@ -76,6 +77,13 @@
 #include "RendererOutput.h"
 #include "SubRenderer.h"
 #include "GBufferRenderer.h"
+#include "PipelineStateBlock.h"
+#include "GPUDevice.h"
+#include "GPUResource.h"
+
+// OpenGL Device
+#include "OpenGLDevice.h"
+#include "OpenGLResource.h"
 
 // L-System
 #include "Expression.h"

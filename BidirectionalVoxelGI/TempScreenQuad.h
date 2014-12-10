@@ -29,11 +29,11 @@ public:
     int TextureArrayIndex;
 
 private:
-    GLint mShowModeLoc;
-	GLint mTempSamplerLoc;
-    GLint mTempSampler2Loc;
-    GLint mTempSamplerArrayLoc;
-    GLint mTextureArrayIndexLoc;
+    ShaderUniform mShowModeLoc;
+    ShaderUniform mTempSamplerLoc;
+    ShaderUniform mTempSampler2Loc;
+    ShaderUniform mTempSamplerArrayLoc;
+    ShaderUniform mTextureArrayIndexLoc;
 };
 
 typedef RefPointer<TempScreenQuad> TempScreenQuadPtr;

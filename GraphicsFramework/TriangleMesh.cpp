@@ -5,6 +5,7 @@
 #include "GraphicsFrameworkPCH.h"
 #include "TriangleMesh.h"
 #include "GeometryAttributes.h"
+#include "GPUDevice.h"
 
 using namespace RTGI;
 
@@ -19,7 +20,6 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
 	mHasNormal(false),
 	mWorldScale(1.0f, 1.0f, 1.0f)
 {
-	mWorldLoc = mViewLoc = mProjLoc = -1;
     IsQuad = false;
     InstanceCount = 1;
     IsIndirect = false;
@@ -93,14 +93,14 @@ void TriangleMesh::OnUpdateShaderConstants(int technique, int pass)
 {
     assert( technique == 0 && pass == 0 );
     
-	glUniformMatrix4fv(mWorldLoc, 1, GL_TRUE, mWorldTransform);
+    GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc, mWorldTransform);
 	if( mCamera )
 	{
 		mat4 viewTrans = mCamera->GetViewTransform();
-		glUniformMatrix4fv(mViewLoc, 1, GL_TRUE, viewTrans);
+        GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc, viewTrans);
 
 		mat4 projTrans = mCamera->GetProjectionTransform();
-		glUniformMatrix4fv(mProjLoc, 1, GL_TRUE, projTrans);
+        GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc, projTrans);
 	}
 }
 //----------------------------------------------------------------------------
@@ -283,7 +283,7 @@ void TriangleMesh::OnLoadFromFile()
 {
 }
 //----------------------------------------------------------------------------
-void TriangleMesh::CreateDeviceResource()
+void TriangleMesh::CreateDeviceResource(GPUDevice* device)
 {
 	// Create VBO and IBO.
 	CreateIndexBufferDeviceResource();
@@ -296,7 +296,7 @@ void TriangleMesh::CreateDeviceResource()
 	attributes.HasNormal = mHasNormal;
 	attributes.HasTCoord = mHasTCoord;
 	attributes.VertexComponentCount = mVertexComponentCount;
-	mMaterial->CreateDeviceResource(&attributes);
+	mMaterial->CreateDeviceResource(device, &attributes);
 
 	// Get shader constants here.
 	OnGetShaderConstants();
@@ -319,10 +319,10 @@ void TriangleMesh::CreateDeviceResource()
 //----------------------------------------------------------------------------
 void TriangleMesh::OnGetShaderConstants()
 {
-	GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
-	mWorldLoc = glGetUniformLocation(program, "World");
-	mViewLoc = glGetUniformLocation(program, "View");
-	mProjLoc = glGetUniformLocation(program, "Proj");
+	ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mWorldLoc, "World");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mViewLoc, "View");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mProjLoc, "Proj");
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::SetWorldTransform(const mat4& worldTrans)

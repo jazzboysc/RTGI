@@ -3,37 +3,47 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#ifndef RTGI_PassManager_H
-#define RTGI_PassManager_H
+#ifndef RTGI_GPUResource_H
+#define RTGI_GPUResource_H
 
 #include "FrameworkCommon.h"
 #include "RefObject.h"
-#include "PassBase.h"
 
 namespace RTGI
 {
 
+class GPUDevice;
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: 09/23/2014
+// Date: 11/29/2014
 //----------------------------------------------------------------------------
-class PassManager : public RefObject
+class GPUResource : public RefObject
 {
 public:
-    PassManager();
-    ~PassManager();
+    GPUResource();
+    virtual ~GPUResource();
 
-    void AddPass(PassBase* pass);
-    unsigned int GetPassCount() const;
-    PassBase* GetPass(unsigned int i) const;
-
-    void CreateDeviceResource(GPUDevice* device);
-
-protected:
-    std::vector<PassBase*> mPasses;
+    GPUDevice* Device;
 };
 
-typedef RefPointer<PassManager> PassManagerPtr;
+typedef RefPointer<GPUResource> GPUResourcePtr;
+
+struct ShaderHandle : public GPUResource
+{
+};
+
+struct ShaderProgramHandle : public GPUResource
+{
+};
+
+struct PassInfoHandle : public GPUResource
+{
+};
+
+struct ShaderUniformHandle : public GPUResource
+{
+};
 
 }
 

@@ -9,6 +9,7 @@
 #include "FrameworkCommon.h"
 #include "RenderObject.h"
 #include "Camera.h"
+#include "GPUResource.h"
 
 namespace RTGI
 {
@@ -40,24 +41,24 @@ public:
 		GLfloat* vertexData);
 
 	// Should be called after calling LoadFromFile or LoadFromMemory.
-	void CreateDeviceResource();
+    void CreateDeviceResource(GPUDevice* device);
     virtual void OnGetShaderConstants();
 
 	// Currently this is a cumbersome function, it release the current 
 	// device resource and re-create it.
-	void UpdateDeviceResource();
+    void UpdateDeviceResource(GPUDevice* device);
 
 	// Data accessors.
 	GLuint GetVertexBuffer() const;
 	int GetPolylineCount() const;
 	int GetTotalVertexCount() const;
-	void AttachPoint(GLfloat x, GLfloat y);
-	void AttachPolyLineStartPoint(GLfloat x, GLfloat y);
+    void AttachPoint(GPUDevice* device, GLfloat x, GLfloat y);
+    void AttachPolyLineStartPoint(GPUDevice* device, GLfloat x, GLfloat y);
 	void SetWorldWindow(GLfloat left, GLfloat top, GLfloat right, 
 		GLfloat bottom);
 	int SearchClosedPoint(GLfloat x, GLfloat y, GLfloat* dist = 0);
-	void UpdatePoint(int index, GLfloat x, GLfloat y);
-	void DeletePoint(int index);
+    void UpdatePoint(GPUDevice* device, int index, GLfloat x, GLfloat y);
+    void DeletePoint(GPUDevice* device, int index);
 	mat4 GetWorldWindowTransform();
 
     GLfloat LineWidth;
@@ -78,7 +79,9 @@ protected:
 
     Camera* mCamera;
 
-    GLint mWorldLoc, mViewLoc, mProjLoc;
+    ShaderUniform mWorldLoc;
+    ShaderUniform mViewLoc;
+    ShaderUniform mProjLoc;
 };
 
 typedef RefPointer<PolylineGeometry> Polyline2GeometryPtr;

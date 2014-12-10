@@ -8,6 +8,7 @@
 
 #include "FrameworkCommon.h"
 #include "RefObject.h"
+#include "GPUDevice.h"
 
 namespace RTGI
 {
@@ -22,9 +23,11 @@ public:
 	Shader(GLenum type, const std::string& shaderFileName);
 	virtual ~Shader();
 
-	void CreateDeviceResource();
-	GLuint GetShader() const;
+	void CreateDeviceResource(GPUDevice* device);
+    ShaderHandle* GetShaderHandle() const;
     std::string GetShaderFileName() const;
+    GLenum  GetType() const;
+    const std::string&  GetSource() const;
 
 protected:
 	bool LoadFromFile(const std::string& shaderFileName);
@@ -32,7 +35,7 @@ protected:
     std::string mShaderFileName;
 	std::string mShaderSource;
 	GLenum mType;
-	GLuint mShader;
+    ShaderHandle*  mShaderHandle;
 };
 
 typedef RefPointer<Shader> ShaderPtr;

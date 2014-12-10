@@ -10,7 +10,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 ShaderProgram::ShaderProgram(const ShaderProgramInfo& programInfo)
 	:
-	mProgram(0)
+	mProgramHandle(0)
 {
     if( programInfo.ShaderStageFlag & ShaderType::ST_Vertex )
     {
@@ -48,7 +48,7 @@ ShaderProgram::ShaderProgram(const ShaderProgramInfo& programInfo)
 //----------------------------------------------------------------------------
 ShaderProgram::ShaderProgram(VertexShader* vShader, FragmentShader* fShader)
 	:
-	mProgram(0)
+	mProgramHandle(0)
 {
 	assert( vShader && fShader );
 	mVertexShader = vShader;
@@ -63,138 +63,65 @@ ShaderProgram::~ShaderProgram()
     mComputeShader = 0;
     mTessellationControlShader = 0;
     mTessellationEvaluationShader = 0;
-	glDeleteProgram(mProgram);
-	mProgram = 0;
+
+    GPU_DEVICE_FUNC(mProgramHandle->Device, DeleteProgram)(this);
+    delete mProgramHandle;
 }
 //----------------------------------------------------------------------------
-void ShaderProgram::CreateDeviceResource()
+void ShaderProgram::CreateDeviceResource(GPUDevice* device)
 {
-	if( mProgram )
+	if( mProgramHandle )
 	{
 		return;
 	}
 
-    mProgram = glCreateProgram();
-    std::string linkingString("Linking program");
-
-    if( mVertexShader )
-    {
-        mVertexShader->CreateDeviceResource();
-        glAttachShader(mProgram, mVertexShader->GetShader());
-        linkingString += " ";
-        linkingString +=  mVertexShader->GetShaderFileName();
-    }
-    if( mFragmentShader )
-    {
-        mFragmentShader->CreateDeviceResource();
-        glAttachShader(mProgram, mFragmentShader->GetShader());
-        linkingString += " ";
-        linkingString += mFragmentShader->GetShaderFileName();
-    }
-    if( mGeometryShader )
-    {
-        mGeometryShader->CreateDeviceResource();
-        glAttachShader(mProgram, mGeometryShader->GetShader());
-        linkingString += " ";
-        linkingString += mGeometryShader->GetShaderFileName();
-    }
-    if( mComputeShader )
-    {
-        mComputeShader->CreateDeviceResource();
-        glAttachShader(mProgram, mComputeShader->GetShader());
-        linkingString += " ";
-        linkingString += mComputeShader->GetShaderFileName();
-    }
-    if( mTessellationControlShader )
-    {
-        mTessellationControlShader->CreateDeviceResource();
-        glAttachShader(mProgram, mTessellationControlShader->GetShader());
-        linkingString += " ";
-        linkingString += mTessellationControlShader->GetShaderFileName();
-    }
-    if( mTessellationEvaluationShader )
-    {
-        mTessellationEvaluationShader->CreateDeviceResource();
-        glAttachShader(mProgram, mTessellationEvaluationShader->GetShader());
-        linkingString += " ";
-        linkingString += mTessellationEvaluationShader->GetShaderFileName();
-    }
-
-    glLinkProgram(mProgram);
-    GLint linked;
-    glGetProgramiv(mProgram, GL_LINK_STATUS, &linked);
-    if( !linked )
-	{
-        GLint iInfoLen = 0;
-        glGetProgramiv(mProgram, GL_INFO_LOG_LENGTH, &iInfoLen);
-        if( iInfoLen > 1 )
-        {
-            char* acInfoLog = new char[iInfoLen];
-            glGetProgramInfoLog(mProgram, iInfoLen, 0, acInfoLog);
-            linkingString += " failed";
-
-            printf("%s\n%s\n", linkingString.c_str(), acInfoLog);
-            delete[] acInfoLog;
-        }
-        
-		assert( false );
-	}
-
-#ifdef RTGI_OUTPUT_RESOURCE_LOADING
-    linkingString += " finished";
-    printf("%s\n", linkingString.c_str());
-#endif
+    mProgramHandle = GPU_DEVICE_FUNC(device, CreateProgram)(this);
 }
 //----------------------------------------------------------------------------
-GLuint ShaderProgram::GetProgram() const
+ShaderProgramHandle* ShaderProgram::GetProgramHandle() const
 {
-	return mProgram;
+	return mProgramHandle;
 }
 //----------------------------------------------------------------------------
-GLuint ShaderProgram::GetVertexShader() const
+VertexShader* ShaderProgram::GetVertexShader() const
 {
-    assert( mVertexShader );
-	return mVertexShader->GetShader();
+	return mVertexShader;
 }
 //----------------------------------------------------------------------------
-GLuint ShaderProgram::GetFragmentShader() const
+FragmentShader* ShaderProgram::GetFragmentShader() const
 {
-    assert( mFragmentShader );
-	return mFragmentShader->GetShader();
+	return mFragmentShader;
 }
 //----------------------------------------------------------------------------
-GLuint ShaderProgram::GetGeometryShader() const
+GeometryShader* ShaderProgram::GetGeometryShader() const
 {
-    assert(mGeometryShader);
-    return mGeometryShader->GetShader();
+    return mGeometryShader;
 }
 //----------------------------------------------------------------------------
-GLuint ShaderProgram::GetComputeShader() const
+ComputeShader* ShaderProgram::GetComputeShader() const
 {
-    assert(mComputeShader);
-    return mComputeShader->GetShader();
+    return mComputeShader;
 }
 //----------------------------------------------------------------------------
-GLuint ShaderProgram::GetTessellationControlShader() const
+TessellationControlShader* ShaderProgram::GetTessellationControlShader() const
 {
-    assert(mTessellationControlShader);
-    return mTessellationControlShader->GetShader();
+    return mTessellationControlShader;
 }
 //----------------------------------------------------------------------------
-GLuint ShaderProgram::GetTessellationEvaluationShader() const
+TessellationEvaluationShader* ShaderProgram::GetTessellationEvaluationShader(
+    ) const
 {
-    assert(mTessellationEvaluationShader);
-    return mTessellationEvaluationShader->GetShader();
+    return mTessellationEvaluationShader;
 }
 //----------------------------------------------------------------------------
 void ShaderProgram::Enable()
 {
-	glUseProgram(mProgram);
+    GPU_DEVICE_FUNC(mProgramHandle->Device, EnableProgram)(this);
 }
 //----------------------------------------------------------------------------
 void ShaderProgram::Disable()
 {
-	// Nothing to do.
+    GPU_DEVICE_FUNC(mProgramHandle->Device, DisableProgram)(this);
 }
 //----------------------------------------------------------------------------
 bool ShaderProgram::IsTessellationEnabled() const

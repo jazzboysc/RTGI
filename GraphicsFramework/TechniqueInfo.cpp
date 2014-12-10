@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------
 #include "GraphicsFrameworkPCH.h"
 #include "TechniqueInfo.h"
+#include "OpenGLResource.h"
 
 using namespace RTGI;
 
@@ -25,10 +26,12 @@ void TechniqueInfo::CreatePassInfo(Technique* technique,
 	{
 		Pass* pass = (Pass*)technique->GetPass(i);
 		ShaderProgram* program = pass->GetShaderProgram();
+        OpenGLShaderProgramHandle* programHandle = 
+            (OpenGLShaderProgramHandle*)program->GetProgramHandle();
 
 		PassInfo* passInfo = new PassInfo();
 		passInfo->Create(
-			program->GetProgram(),
+            programHandle->mProgram,
 			geometryAttr->VBO,
 			geometryAttr->IBO,
 			geometryAttr->HasNormal,

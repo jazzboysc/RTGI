@@ -24,7 +24,7 @@ public:
 	BidirectionalVoxelGIApp(int width, int height);
 	~BidirectionalVoxelGIApp();
 
-	void Initialize();
+    void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

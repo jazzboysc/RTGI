@@ -36,11 +36,11 @@ PassBase* PassManager::GetPass(unsigned int i) const
     return mPasses[i];
 }
 //----------------------------------------------------------------------------
-void PassManager::CreateDeviceResource()
+void PassManager::CreateDeviceResource(GPUDevice* device)
 {
     for( int i = 0; i < (int)mPasses.size(); ++i )
     {
-        mPasses[i]->CreateDeviceResource();
+        mPasses[i]->CreateDeviceResource(device);
     }
 }
 //----------------------------------------------------------------------------

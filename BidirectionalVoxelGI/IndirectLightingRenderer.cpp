@@ -16,23 +16,22 @@ IndirectLightingScreenQuad::~IndirectLightingScreenQuad()
 //----------------------------------------------------------------------------
 void IndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 {
-    glUniform1i(mVPLCountLoc, VPLCount);
-    glUniform1f(mBounceSingularityLoc, BounceSingularity);
-
-    glUniform1i(mGBufferPositionSamplerLoc, 0);
-    glUniform1i(mGBufferNormalSamplerLoc, 1);
-    glUniform1i(mGBufferAlbedoSamplerLoc, 2);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mVPLCountLoc, VPLCount);
+    GPU_DEVICE_FUNC_SetUniformValueFloat(mBounceSingularityLoc, BounceSingularity);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferPositionSamplerLoc, 0);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferNormalSamplerLoc, 1);
+    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferAlbedoSamplerLoc, 2);
 }
 //----------------------------------------------------------------------------
 void IndirectLightingScreenQuad::OnGetShaderConstants()
 {
-    GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+    ShaderProgram* program = mMaterial->GetProgram(0, 0);
 
-    mVPLCountLoc = glGetUniformLocation(program, "VPLCount");
-    mBounceSingularityLoc = glGetUniformLocation(program, "BounceSingularity");
-    mGBufferPositionSamplerLoc = glGetUniformLocation(program, "GBufferPositionSampler");
-    mGBufferNormalSamplerLoc = glGetUniformLocation(program, "GBufferNormalSampler");
-    mGBufferAlbedoSamplerLoc = glGetUniformLocation(program, "GBufferAlbedoSampler");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mVPLCountLoc, "VPLCount");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mBounceSingularityLoc, "BounceSingularity");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferPositionSamplerLoc, "GBufferPositionSampler");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferNormalSamplerLoc, "GBufferNormalSampler");
+    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
 }
 //----------------------------------------------------------------------------
 
@@ -80,7 +79,7 @@ void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
     AddInputDependency(vplBuffer, "VPLBuffer", &view);
 }
 //----------------------------------------------------------------------------
-void IndirectLightingRenderer::Initialize(int width, int height, 
+void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, int height,
     Texture::TextureFormat format, int vplCount)
 {
     ShaderProgramInfo indirectLightingProgramInfo;
@@ -102,7 +101,7 @@ void IndirectLightingRenderer::Initialize(int width, int height,
     mIndirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mIndirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mIndirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mIndirectLightingScreenQuad->CreateDeviceResource();
+    mIndirectLightingScreenQuad->CreateDeviceResource(device);
     mIndirectLightingScreenQuad->VPLCount = vplCount;
 
     // Create output.

@@ -42,9 +42,10 @@ void Material::Apply(int techniqueNum, int passNum)
 	passInfo->Disable();
 }
 //----------------------------------------------------------------------------
-void Material::CreateDeviceResource(GeometryAttributes* geometryAttr)
+void Material::CreateDeviceResource(GPUDevice* device, 
+    GeometryAttributes* geometryAttr)
 {
-	mMaterialTemplate->CreateDeviceResource();
+	mMaterialTemplate->CreateDeviceResource(device);
 
 	unsigned int tcount = mMaterialTemplate->GetTechniqueCount();
 	mTechniqueInfo.reserve(tcount);

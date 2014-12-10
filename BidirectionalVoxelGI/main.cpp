@@ -1,5 +1,6 @@
 #include "BidirectionalVoxelGIApp.h"
 #include "GUIFramework.h"
+#include "OpenGLDevice.h"
 
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
@@ -67,9 +68,12 @@ int main(int argc, char **argv)
     infoPanel->Show();
     infoPanel->SetDesktopLocation(screenX + width + 12, screenY - 30);
 
+    // Create GPU device.
+    OpenGLDevice* gpuDevice = new OpenGLDevice();
+
     // Initialize application.
     app = new BidirectionalVoxelGIApp(width, height);
-    app->Initialize();
+    app->Initialize(gpuDevice);
 
 	// Assign handlers.
     glutDisplayFunc(OnIdle);

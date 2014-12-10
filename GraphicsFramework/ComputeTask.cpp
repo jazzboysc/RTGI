@@ -17,9 +17,9 @@ ComputeTask::~ComputeTask()
 {
 }
 //----------------------------------------------------------------------------
-void ComputeTask::CreateDeviceResource()
+void ComputeTask::CreateDeviceResource(GPUDevice* device)
 {
-    PassManager::CreateDeviceResource();
+    PassManager::CreateDeviceResource(device);
     OnGetShaderConstants();
 }
 //----------------------------------------------------------------------------

@@ -11,6 +11,8 @@
 #include "Camera.h"
 #include "AABB.h"
 #include "StructuredBuffer.h"
+#include "GPUResource.h"
+#include "ShaderUniform.h"
 
 namespace RTGI
 {
@@ -37,7 +39,7 @@ public:
 	virtual void OnLoadFromFile();
 
 	// Should be called after calling LoadFromFile or LoadFromMemory.
-	void CreateDeviceResource();
+    void CreateDeviceResource(GPUDevice* device);
 	virtual void OnGetShaderConstants();
 
 	void SetWorldTransform(const mat4& worldTrans);
@@ -91,7 +93,9 @@ protected:
 	vec3 mWorldScale;
 
 	GLuint mIBO;
-	GLint mWorldLoc, mViewLoc, mProjLoc; 
+    ShaderUniform mWorldLoc;
+    ShaderUniform mViewLoc;
+    ShaderUniform mProjLoc;
 };
 
 typedef RefPointer<TriangleMesh> TriangleMeshPtr; 
