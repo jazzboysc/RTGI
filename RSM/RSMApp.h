@@ -19,7 +19,7 @@ public:
 	RSMApp(int width, int height);
 	~RSMApp();
 
-	void Initialize();
+	void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

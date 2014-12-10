@@ -25,9 +25,9 @@ public:
     int ShowMode;
 
 private:
-	GLint mTempSamplerLoc;
-    GLint mNearFarPlaneLoc;
-    GLint mShowModeLoc;
+	ShaderUniform mTempSamplerLoc;
+    ShaderUniform mNearFarPlaneLoc;
+    ShaderUniform mShowModeLoc;
 };
 
 typedef RefPointer<RSMTempScreenQuad> RSMTempScreenQuadPtr;

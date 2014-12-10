@@ -17,8 +17,10 @@ RSMApp::~RSMApp()
 {
 }
 //----------------------------------------------------------------------------
-void RSMApp::Initialize()
+void RSMApp::Initialize(GPUDevice* device)
 {
+    Application::Initialize(device);
+
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -130,7 +132,7 @@ void RSMApp::Initialize()
 	mRSMTempResultQuad->SetTCoord(1, vec2(1.0f, 0.0f));
 	mRSMTempResultQuad->SetTCoord(2, vec2(1.0f, 1.0f));
 	mRSMTempResultQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-	mRSMTempResultQuad->CreateDeviceResource();
+	mRSMTempResultQuad->CreateDeviceResource(mDevice);
 	mRSMTempResultQuad->TempTexture = mRSMNormalTexture;
     
 	// Create RSM deferred lighting screen quad.
@@ -141,7 +143,7 @@ void RSMApp::Initialize()
 	mRSMDeferredLightingQuad->SetTCoord(1, vec2(1.0f, 0.0f));
 	mRSMDeferredLightingQuad->SetTCoord(2, vec2(1.0f, 1.0f));
 	mRSMDeferredLightingQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-	mRSMDeferredLightingQuad->CreateDeviceResource();
+	mRSMDeferredLightingQuad->CreateDeviceResource(mDevice);
     mRSMDeferredLightingQuad->PositionTexture = mPositionTexture;
     mRSMDeferredLightingQuad->NormalTexture = mNormalTexture;
     mRSMDeferredLightingQuad->ReflectanceTexture = mColorTexture;
@@ -154,7 +156,7 @@ void RSMApp::Initialize()
 	mModel = new RSMTriMesh(material, mCamera);
 	mModel->LoadFromFile("beethoven.ply");
 	mModel->GenerateNormals();
-	mModel->CreateDeviceResource();
+	mModel->CreateDeviceResource(mDevice);
 	rotM = RotateY(90.0f);
 	mModel->SetWorldTransform(rotM);
 	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
@@ -171,7 +173,7 @@ void RSMApp::Initialize()
 	mGround = new RSMTriMesh(material, mCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
-	mGround->CreateDeviceResource();
+	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.25f, 0.25f, 0.75f);
     mGround->SampleRadius = RSMSamplingRadius;
     mGround->SampleCount = RSM_SAMPLE_COUNT;
@@ -185,7 +187,7 @@ void RSMApp::Initialize()
 	mBackWall = new RSMTriMesh(material, mCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
-	mBackWall->CreateDeviceResource();
+	mBackWall->CreateDeviceResource(mDevice);
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
@@ -202,7 +204,7 @@ void RSMApp::Initialize()
 	mLeftWall = new RSMTriMesh(material, mCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
-	mLeftWall->CreateDeviceResource();
+	mLeftWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
@@ -219,7 +221,7 @@ void RSMApp::Initialize()
 	mSphere = new RSMTriMesh(material, mCamera);
 	mSphere->LoadFromFile("sphere.ply");
 	mSphere->GenerateNormals();
-	mSphere->CreateDeviceResource();
+	mSphere->CreateDeviceResource(mDevice);
 	mSphere->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
 }
 //----------------------------------------------------------------------------

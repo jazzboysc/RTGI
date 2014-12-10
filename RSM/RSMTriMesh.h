@@ -35,15 +35,15 @@ public:
 
 private:
     // pass 1 uniform locations.
-	GLint mMaterialColorLoc;
+	ShaderUniform mMaterialColorLoc;
     
     // pass 2 uniform locations.
-    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
-    GLint mMaterialColorLoc2;
-    GLint mLightProjectorViewLoc, mLightProjectorProjLoc;
-    GLint mSampleRadiusLoc, mSampleCountLoc;
-    GLint mPositionSamplerLoc, mNormalSamplerLoc, mFluxSamplerLoc;
-    GLint mSamplingPatternSamplerLoc;
+    ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
+    ShaderUniform mMaterialColorLoc2;
+    ShaderUniform mLightProjectorViewLoc, mLightProjectorProjLoc;
+    ShaderUniform mSampleRadiusLoc, mSampleCountLoc;
+    ShaderUniform mPositionSamplerLoc, mNormalSamplerLoc, mFluxSamplerLoc;
+    ShaderUniform mSamplingPatternSamplerLoc;
     
 };
 

@@ -30,12 +30,12 @@ public:
 private:
 	Light* mLight;
 
-	GLint mLightPositionLoc;
-	GLint mLightColorLoc;
-	GLint mPositionSamplerLoc;
-	GLint mNormalSamplerLoc;
-	GLint mReflectanceSamplerLoc;
-    GLint mIndirectLightingSamplerLoc;
+	ShaderUniform mLightPositionLoc;
+    ShaderUniform mLightColorLoc;
+    ShaderUniform mPositionSamplerLoc;
+    ShaderUniform mNormalSamplerLoc;
+    ShaderUniform mReflectanceSamplerLoc;
+    ShaderUniform mIndirectLightingSamplerLoc;
 };
 
 typedef RefPointer<RSMDeferredLightingQuad> RSMDeferredLightingQuadPtr;

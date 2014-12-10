@@ -6,8 +6,7 @@ using namespace RTGI;
 RSMTriMesh::RSMTriMesh(Material* material, Camera* camera)
 	:
 	TriangleMesh(material, camera),
-	MaterialColor(0.75f, 0.75f, 0.75f),
-	mMaterialColorLoc(0)
+	MaterialColor(0.75f, 0.75f, 0.75f)
 {
 }
 //----------------------------------------------------------------------------
@@ -24,23 +23,23 @@ void RSMTriMesh::OnGetShaderConstants()
 	TriangleMesh::OnGetShaderConstants();
 
     // Get pass 1 uniform locations.
-	GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
-	mMaterialColorLoc = glGetUniformLocation(program, "materialColor");
+	ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    program->GetUniformLocation(&mMaterialColorLoc, "materialColor");
     
     // Get pass 2 uniform locations.
-    program = mMaterial->GetProgram(0, 1)->GetProgram();
-	mWorldLoc2 = glGetUniformLocation(program, "World");
-	mViewLoc2 = glGetUniformLocation(program, "View");
-	mProjLoc2 = glGetUniformLocation(program, "Proj");
-    mMaterialColorLoc2 = glGetUniformLocation(program, "materialColor");
-    mLightProjectorViewLoc = glGetUniformLocation(program, "lightProjectorView");
-    mLightProjectorProjLoc = glGetUniformLocation(program, "lightProjectorProj");
-    mSampleRadiusLoc = glGetUniformLocation(program, "sampleRadius");
-    mSampleCountLoc = glGetUniformLocation(program, "sampleCount");
-    mPositionSamplerLoc = glGetUniformLocation(program, "positionSampler");
-    mNormalSamplerLoc = glGetUniformLocation(program, "normalSampler");
-    mFluxSamplerLoc = glGetUniformLocation(program, "fluxSampler");
-    mSamplingPatternSamplerLoc = glGetUniformLocation(program, "samplingPatternSampler");
+    program = mMaterial->GetProgram(0, 1);
+    program->GetUniformLocation(&mWorldLoc2, "World");
+    program->GetUniformLocation(&mViewLoc2, "View");
+    program->GetUniformLocation(&mProjLoc2, "Proj");
+    program->GetUniformLocation(&mMaterialColorLoc2, "materialColor");
+    program->GetUniformLocation(&mLightProjectorViewLoc, "lightProjectorView");
+    program->GetUniformLocation(&mLightProjectorProjLoc, "lightProjectorProj");
+    program->GetUniformLocation(&mSampleRadiusLoc, "sampleRadius");
+    program->GetUniformLocation(&mSampleCountLoc, "sampleCount");
+    program->GetUniformLocation(&mPositionSamplerLoc, "positionSampler");
+    program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
+    program->GetUniformLocation(&mFluxSamplerLoc, "fluxSampler");
+    program->GetUniformLocation(&mSamplingPatternSamplerLoc, "samplingPatternSampler");
 }
 //----------------------------------------------------------------------------
 void RSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -49,39 +48,42 @@ void RSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == 0 )
     {
         TriangleMesh::OnUpdateShaderConstants(technique, pass);
-        glUniform3fv(mMaterialColorLoc, 1, (GLfloat*)&MaterialColor);
+        mMaterialColorLoc.SetValue(MaterialColor);
     }
     
     // Update pass 2 uniform data.
     if( pass == 1 )
     {
-        glUniformMatrix4fv(mWorldLoc2, 1, GL_TRUE, mWorldTransform);
+        mWorldLoc2.SetValue(mWorldTransform);
         if( mCamera )
         {
             mat4 viewTrans = mCamera->GetViewTransform();
-            glUniformMatrix4fv(mViewLoc2, 1, GL_TRUE, viewTrans);
+            mViewLoc2.SetValue(viewTrans);
             
             mat4 projTrans = mCamera->GetProjectionTransform();
-            glUniformMatrix4fv(mProjLoc2, 1, GL_TRUE, projTrans);
+            mProjLoc2.SetValue(projTrans);
         }
         
-        glUniform3fv(mMaterialColorLoc2, 1, (GLfloat*)&MaterialColor);
+        mMaterialColorLoc2.SetValue(MaterialColor);
         
         if( LightProjector )
         {
             mat4 viewTrans = LightProjector->GetViewTransform();
-            glUniformMatrix4fv(mLightProjectorViewLoc, 1, GL_TRUE, viewTrans);
+            mLightProjectorViewLoc.SetValue(viewTrans);
             
             mat4 projTrans = LightProjector->GetProjectionTransform();
-            glUniformMatrix4fv(mLightProjectorProjLoc, 1, GL_TRUE, projTrans);
+            mLightProjectorProjLoc.SetValue(projTrans);
         }
         
-        glUniform1f(mSampleRadiusLoc, SampleRadius);
-        glUniform1i(mSampleCountLoc, SampleCount);
+        mSampleRadiusLoc.SetValue(SampleRadius);
+        mSampleCountLoc.SetValue(SampleCount);
+        mPositionSamplerLoc.SetValue(0);
+        mNormalSamplerLoc.SetValue(1);
+        mFluxSamplerLoc.SetValue(2);
+        mSamplingPatternSamplerLoc.SetValue(3);
         
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, RSMPositionTexture->GetTexture());
-        glUniform1i(mPositionSamplerLoc, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -89,7 +91,6 @@ void RSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
         
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, RSMNormalTexture->GetTexture());
-        glUniform1i(mNormalSamplerLoc, 1);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -97,7 +98,6 @@ void RSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
         
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, RSMFluxTexture->GetTexture());
-        glUniform1i(mFluxSamplerLoc, 2);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -105,7 +105,6 @@ void RSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
         
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, RSMSamplingPatternTexture->GetTexture());
-        glUniform1i(mSamplingPatternSamplerLoc, 3);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
