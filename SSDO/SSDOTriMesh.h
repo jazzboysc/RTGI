@@ -23,7 +23,7 @@ public:
 	vec3 MaterialColor;
 
 private:
-	GLint mMaterialColorLoc;
+	ShaderUniform mMaterialColorLoc;
 };
 
 typedef RefPointer<SSDOTriMesh> SSDOTriMeshPtr;

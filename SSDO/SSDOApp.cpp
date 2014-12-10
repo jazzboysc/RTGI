@@ -16,8 +16,10 @@ SSDOApp::~SSDOApp()
 {
 }
 //----------------------------------------------------------------------------
-void SSDOApp::Initialize()
+void SSDOApp::Initialize(GPUDevice* device)
 {
+    Application::Initialize(device);
+
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -147,7 +149,7 @@ void SSDOApp::Initialize()
 	mDirectLightingQuad->SetTCoord(1, tcoord10);
 	mDirectLightingQuad->SetTCoord(2, tcoord11);
 	mDirectLightingQuad->SetTCoord(3, tcoord01);
-	mDirectLightingQuad->CreateDeviceResource();
+	mDirectLightingQuad->CreateDeviceResource(mDevice);
 	mDirectLightingQuad->PositionTexture = mPositionTexture;
 	mDirectLightingQuad->NormalTexture = mNormalTexture;
 	mDirectLightingQuad->ReflectanceTexture = mColorTexture;
@@ -160,7 +162,7 @@ void SSDOApp::Initialize()
 	mSSDOQuad->SetTCoord(1, tcoord10);
 	mSSDOQuad->SetTCoord(2, tcoord11);
 	mSSDOQuad->SetTCoord(3, tcoord01);
-	mSSDOQuad->CreateDeviceResource();
+	mSSDOQuad->CreateDeviceResource(mDevice);
 	mSSDOQuad->PositionTexture = mPositionTexture;
 	mSSDOQuad->NormalTexture = mNormalTexture;
 	mSSDOQuad->ColorTexture = mColorTexture;
@@ -184,7 +186,7 @@ void SSDOApp::Initialize()
 	mSSDOFilterQuad->SetTCoord(1, tcoord10);
 	mSSDOFilterQuad->SetTCoord(2, tcoord11);
 	mSSDOFilterQuad->SetTCoord(3, tcoord01);
-	mSSDOFilterQuad->CreateDeviceResource();
+	mSSDOFilterQuad->CreateDeviceResource(mDevice);
 	mSSDOFilterQuad->SSDOTexture = mSSDOTexture;
 	mSSDOFilterQuad->PositionTexture = mPositionTexture;
 	mSSDOFilterQuad->NormalTexture = mNormalTexture;
@@ -203,7 +205,7 @@ void SSDOApp::Initialize()
 	mSSDOTempResultQuad->SetTCoord(1, tcoord10);
 	mSSDOTempResultQuad->SetTCoord(2, tcoord11);
 	mSSDOTempResultQuad->SetTCoord(3, tcoord01);
-	mSSDOTempResultQuad->CreateDeviceResource();
+	mSSDOTempResultQuad->CreateDeviceResource(mDevice);
 	mSSDOTempResultQuad->TempTexture = mSSDOTexture;
 
 	// Create scene.
@@ -211,7 +213,7 @@ void SSDOApp::Initialize()
 	mModel1 = new SSDOTriMesh(material, mCamera);
 	mModel1->LoadFromFile("dragon_s.ply");
 	mModel1->GenerateNormals();
-	mModel1->CreateDeviceResource();
+	mModel1->CreateDeviceResource(mDevice);
 	mat4 rot = RotateY(30.0f);
 	mModel1->SetWorldTransform(rot);
 	mModel1->SetWorldTranslation(vec3(-5.0f, 1.2f, -10.0f));
@@ -222,7 +224,7 @@ void SSDOApp::Initialize()
 	mModel2 = new SSDOTriMesh(material, mCamera);
 	mModel2->LoadFromFile("happy_s.ply");
 	mModel2->GenerateNormals();
-	mModel2->CreateDeviceResource();
+	mModel2->CreateDeviceResource(mDevice);
 	rot = RotateY(0.0f);
 	mModel2->SetWorldTransform(rot);
 	mModel2->SetWorldTranslation(vec3(5.0f, 0.0f, 5.0f));
@@ -233,7 +235,7 @@ void SSDOApp::Initialize()
 	mGround = new SSDOTriMesh(material, mCamera);
 	mGround->LoadFromFile("ground.ply");
 	mGround->GenerateNormals();
-	mGround->CreateDeviceResource();
+	mGround->CreateDeviceResource(mDevice);
 	mGround->SetWorldTranslation(vec3(0.0f, -6.0f, 0.0f));
 	mGround->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
 
@@ -245,7 +247,7 @@ void SSDOApp::Initialize()
 		mCubes[i] = new SSDOTriMesh(material, mCamera);
 		mCubes[i]->LoadFromFile("cube.ply");
 		mCubes[i]->GenerateNormals();
-		mCubes[i]->CreateDeviceResource();
+		mCubes[i]->CreateDeviceResource(mDevice);
 
 Do:
 		vec3 position;

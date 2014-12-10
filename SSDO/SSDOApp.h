@@ -21,7 +21,7 @@ public:
 	SSDOApp(int width, int height);
 	~SSDOApp();
 
-	void Initialize();
+	void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

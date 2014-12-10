@@ -6,9 +6,7 @@ using namespace RTGI;
 DirectLightingQuad::DirectLightingQuad(Material* material, Light* light)
 	:
 	ScreenQuad(material),
-	mLight(light),
-	mLightPositionLoc(0),
-	mLightColorLoc(0)
+	mLight(light)
 {
 }
 //----------------------------------------------------------------------------
@@ -22,35 +20,35 @@ DirectLightingQuad::~DirectLightingQuad()
 void DirectLightingQuad::OnUpdateShaderConstants(int, int)
 {
     vec3 lightLoc = mLight->GetLocation();
-	glUniform3fv(mLightPositionLoc, 1, (GLfloat*)&lightLoc);
-	glUniform3fv(mLightColorLoc, 1, (GLfloat*)&mLight->Color);
+    mLightPositionLoc.SetValue(lightLoc);
+    mLightColorLoc.SetValue(mLight->Color);
+    mPositionSamplerLoc.SetValue(0);
+    mPositionSamplerLoc.SetValue(1);
+    mPositionSamplerLoc.SetValue(2);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, PositionTexture->GetTexture());
-	glUniform1i(mPositionSamplerLoc, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, NormalTexture->GetTexture());
-	glUniform1i(mNormalSamplerLoc, 1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, ReflectanceTexture->GetTexture());
-	glUniform1i(mReflectanceSamplerLoc, 2);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 //----------------------------------------------------------------------------
 void DirectLightingQuad::OnGetShaderConstants()
 {
-	GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
-	mLightPositionLoc = glGetUniformLocation(program, "lightPosition");
-	mLightColorLoc = glGetUniformLocation(program, "lightColor");
-	mPositionSamplerLoc = glGetUniformLocation(program, "positionSampler");
-	mNormalSamplerLoc = glGetUniformLocation(program, "normalSampler");
-	mReflectanceSamplerLoc = glGetUniformLocation(program, "reflectanceSampler");
+	ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    program->GetUniformLocation(&mLightPositionLoc, "lightPosition");
+    program->GetUniformLocation(&mLightColorLoc, "lightColor");
+    program->GetUniformLocation(&mPositionSamplerLoc, "positionSampler");
+    program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
+    program->GetUniformLocation(&mReflectanceSamplerLoc, "reflectanceSampler");
 }
 //----------------------------------------------------------------------------

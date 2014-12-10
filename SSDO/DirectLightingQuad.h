@@ -29,11 +29,11 @@ public:
 private:
 	Light* mLight;
 
-	GLint mLightPositionLoc;
-	GLint mLightColorLoc;
-	GLint mPositionSamplerLoc;
-	GLint mNormalSamplerLoc;
-	GLint mReflectanceSamplerLoc;
+	ShaderUniform mLightPositionLoc;
+    ShaderUniform mLightColorLoc;
+    ShaderUniform mPositionSamplerLoc;
+    ShaderUniform mNormalSamplerLoc;
+    ShaderUniform mReflectanceSamplerLoc;
 };
 
 typedef RefPointer<DirectLightingQuad> DirectLightingQuadPtr;

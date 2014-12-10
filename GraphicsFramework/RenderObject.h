@@ -11,6 +11,7 @@
 #include "Material.h"
 #include "Camera.h"
 #include "Pass.h"
+#include "ShaderUniform.h"
 
 namespace RTGI
 {

@@ -65,43 +65,43 @@ void SSDOScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
     TriangleMesh::OnUpdateShaderConstants(technique, pass);
 
-    glUniform1f(mSampleRadiusLoc, SampleRadius);
-    glUniform1f(mStrengthLoc, Strength);
-    glUniform1f(mSingularityLoc, Singularity);
-    glUniform1f(mDepthBiasLoc, DepthBias);
-    glUniform1f(mBounceStrengthLoc, BounceStrength);
-    glUniform1f(mBounceSingularityLoc, BounceSingularity);
-    glUniform1i(mSampleCountLoc, SampleCount);
-    glUniform1i(mPatternSizeLoc, PatternSize);
-    glUniform1i(mPositionSamplerLoc, 0);
-    glUniform1i(mNormalSamplerLoc, 1);
-    glUniform1i(mColorSamplerLoc, 2);
-    glUniform1i(mDirectLightingSamplerLoc, 3);
-    glUniform1i(mRandomSamplerLoc, 4);
-    glUniform1i(mEnvMapSamplerLoc, 5);
+    mSampleRadiusLoc.SetValue(SampleRadius);
+    mStrengthLoc.SetValue(Strength);
+    mSingularityLoc.SetValue(Singularity);
+    mDepthBiasLoc.SetValue(DepthBias);
+    mBounceStrengthLoc.SetValue(BounceStrength);
+    mBounceSingularityLoc.SetValue(BounceSingularity);
+    mSampleCountLoc.SetValue(SampleCount);
+    mPatternSizeLoc.SetValue(PatternSize);
+    mPositionSamplerLoc.SetValue(0);
+    mNormalSamplerLoc.SetValue(1);
+    mColorSamplerLoc.SetValue(2);
+    mDirectLightingSamplerLoc.SetValue(3);
+    mRandomSamplerLoc.SetValue(4);
+    mEnvMapSamplerLoc.SetValue(5);
 }
 //----------------------------------------------------------------------------
 void SSDOScreenQuad::OnGetShaderConstants()
 {
 	TriangleMesh::OnGetShaderConstants();
 
-	GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+	ShaderProgram* program = mMaterial->GetProgram(0, 0);
 
-	mSampleRadiusLoc = glGetUniformLocation(program, "sampleRadius");
-	mStrengthLoc = glGetUniformLocation(program, "strength");
-	mSingularityLoc = glGetUniformLocation(program, "singularity");
-	mDepthBiasLoc = glGetUniformLocation(program, "depthBias");
-	mBounceStrengthLoc = glGetUniformLocation(program, "bounceStrength");
-	mBounceSingularityLoc = glGetUniformLocation(program, "bounceSingularity");
-	mSampleCountLoc = glGetUniformLocation(program, "sampleCount");
-	mPatternSizeLoc = glGetUniformLocation(program, "patternSize");
+    program->GetUniformLocation(&mSampleRadiusLoc, "sampleRadius");
+    program->GetUniformLocation(&mStrengthLoc, "strength");
+    program->GetUniformLocation(&mSingularityLoc, "singularity");
+    program->GetUniformLocation(&mDepthBiasLoc, "depthBias");
+    program->GetUniformLocation(&mBounceStrengthLoc, "bounceStrength");
+    program->GetUniformLocation(&mBounceSingularityLoc, "bounceSingularity");
+    program->GetUniformLocation(&mSampleCountLoc, "sampleCount");
+    program->GetUniformLocation(&mPatternSizeLoc, "patternSize");
 
-	mPositionSamplerLoc = glGetUniformLocation(program, "positionSampler");
-	mNormalSamplerLoc = glGetUniformLocation(program, "normalSampler");
-	mColorSamplerLoc = glGetUniformLocation(program, "colorSampler");
-	mDirectLightingSamplerLoc = glGetUniformLocation(program, 
+    program->GetUniformLocation(&mPositionSamplerLoc, "positionSampler");
+    program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
+    program->GetUniformLocation(&mColorSamplerLoc, "colorSampler");
+    program->GetUniformLocation(&mDirectLightingSamplerLoc,
 		"directLightingSampler");
-	mRandomSamplerLoc = glGetUniformLocation(program, "randomSampler");
-	mEnvMapSamplerLoc = glGetUniformLocation(program, "envMapSampler");
+    program->GetUniformLocation(&mRandomSamplerLoc, "randomSampler");
+    program->GetUniformLocation(&mEnvMapSamplerLoc, "envMapSampler");
 }
 //----------------------------------------------------------------------------

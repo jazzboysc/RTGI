@@ -38,21 +38,21 @@ public:
 	Texture2DPtr EnvMapTexture;
 
 private:
-	GLint mSampleRadiusLoc;
-	GLint mStrengthLoc;
-	GLint mSingularityLoc;
-	GLint mDepthBiasLoc;
-	GLint mBounceStrengthLoc;
-	GLint mBounceSingularityLoc;
-	GLint mSampleCountLoc;
-	GLint mPatternSizeLoc;
+	ShaderUniform mSampleRadiusLoc;
+    ShaderUniform mStrengthLoc;
+    ShaderUniform mSingularityLoc;
+    ShaderUniform mDepthBiasLoc;
+    ShaderUniform mBounceStrengthLoc;
+    ShaderUniform mBounceSingularityLoc;
+    ShaderUniform mSampleCountLoc;
+    ShaderUniform mPatternSizeLoc;
 
-	GLint mPositionSamplerLoc;
-	GLint mNormalSamplerLoc;
-	GLint mColorSamplerLoc;
-	GLint mDirectLightingSamplerLoc;
-	GLint mRandomSamplerLoc;
-	GLint mEnvMapSamplerLoc;
+    ShaderUniform mPositionSamplerLoc;
+    ShaderUniform mNormalSamplerLoc;
+    ShaderUniform mColorSamplerLoc;
+    ShaderUniform mDirectLightingSamplerLoc;
+    ShaderUniform mRandomSamplerLoc;
+    ShaderUniform mEnvMapSamplerLoc;
 };
 
 typedef RefPointer<SSDOScreenQuad> SSDOScreenQuadPtr;

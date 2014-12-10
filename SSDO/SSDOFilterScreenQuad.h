@@ -33,15 +33,15 @@ public:
 	int KernelSize;
 
 private:
-	GLint mSSDOSamplerLoc;
-	GLint mPositionSamplerLoc;
-	GLint mNormalSamplerLoc;
-	GLint mColorSamplerLoc;
-	GLint mDirectLightingSamplerLoc;
-	GLint mPositionThresholdLoc;
-	GLint mNormalThresholdLoc;
-	GLint mMaxRadianceLoc;
-	GLint mKernelSizeLoc;
+	ShaderUniform mSSDOSamplerLoc;
+    ShaderUniform mPositionSamplerLoc;
+    ShaderUniform mNormalSamplerLoc;
+    ShaderUniform mColorSamplerLoc;
+    ShaderUniform mDirectLightingSamplerLoc;
+    ShaderUniform mPositionThresholdLoc;
+    ShaderUniform mNormalThresholdLoc;
+    ShaderUniform mMaxRadianceLoc;
+    ShaderUniform mKernelSizeLoc;
 };
 
 typedef RefPointer<SSDOFilterScreenQuad> SSDOFilterScreenQuadPtr;

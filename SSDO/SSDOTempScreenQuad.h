@@ -24,7 +24,7 @@ public:
 	Texture2DPtr TempTexture;
 
 private:
-	GLint mTempSamplerLoc;
+	ShaderUniform mTempSamplerLoc;
 };
 
 typedef RefPointer<SSDOTempScreenQuad> SSDOTempScreenQuadPtr;
