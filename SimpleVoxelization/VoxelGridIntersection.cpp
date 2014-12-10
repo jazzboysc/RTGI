@@ -15,26 +15,33 @@ VoxelGridIntersection::~VoxelGridIntersection()
 void VoxelGridIntersection::OnGetShaderConstants()
 {
     ComputePass* p = (ComputePass*)GetPass(0);
-    GLuint program = p->GetShaderProgram()->GetProgram();
+    ShaderProgram* program = p->GetShaderProgram();
 
-    mSceneBBCenterLoc = glGetUniformLocation(program, "SceneBBCenter");
-    mSceneBBExtensionLoc = glGetUniformLocation(program, "SceneBBExtension");
-    mDimLoc = glGetUniformLocation(program, "dim");
-    mRayStartPointLoc = glGetUniformLocation(program, "RayStartPoint");
-    mRayEndPointLoc = glGetUniformLocation(program, "RayEndPoint");
+    program->GetUniformLocation(&mSceneBBCenterLoc, "SceneBBCenter");
+    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
+    program->GetUniformLocation(&mDimLoc, "dim");
+    program->GetUniformLocation(&mRayStartPointLoc, "RayStartPoint");
+    program->GetUniformLocation(&mRayEndPointLoc, "RayEndPoint");
 }
 //----------------------------------------------------------------------------
 void VoxelGridIntersection::OnPreDispatch(unsigned int pass)
 {
     vec3 center = SceneBB->GetBoxCenter();
     vec3 extension = SceneBB->GetExtension();
-    glUniform3fv(mSceneBBCenterLoc, 1, (GLfloat*)&center);
-    glUniform3fv(mSceneBBExtensionLoc, 1, (GLfloat*)&extension);
-    glUniform1i(mDimLoc, SimpleVoxelizationApp::VOXEL_DIMENSION);
-    GLfloat* start = (GLfloat*)&SimpleVoxelizationApp::RaySegment[0];
-    glUniform3fv(mRayStartPointLoc, 1, start);
-    GLfloat* end = (GLfloat*)&SimpleVoxelizationApp::RaySegment[3];
-    glUniform3fv(mRayEndPointLoc, 1, end);
+    mSceneBBCenterLoc.SetValue(center);
+    mSceneBBExtensionLoc.SetValue(extension);
+    mDimLoc.SetValue(SimpleVoxelizationApp::VOXEL_DIMENSION);
+
+    vec3 start, end;
+    start.x = SimpleVoxelizationApp::RaySegment[0];
+    start.y = SimpleVoxelizationApp::RaySegment[1];
+    start.z = SimpleVoxelizationApp::RaySegment[2];
+    mRayStartPointLoc.SetValue(start);
+
+    end.x = SimpleVoxelizationApp::RaySegment[3];
+    end.y = SimpleVoxelizationApp::RaySegment[4];
+    end.z = SimpleVoxelizationApp::RaySegment[5];
+    mRayEndPointLoc.SetValue(end);
 }
 //----------------------------------------------------------------------------
 void VoxelGridIntersection::OnPostDispatch(unsigned int pass)

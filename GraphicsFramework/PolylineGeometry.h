@@ -10,6 +10,7 @@
 #include "RenderObject.h"
 #include "Camera.h"
 #include "GPUResource.h"
+#include "ShaderUniform.h"
 
 namespace RTGI
 {

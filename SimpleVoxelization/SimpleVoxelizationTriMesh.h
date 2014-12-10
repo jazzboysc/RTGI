@@ -4,6 +4,7 @@
 #include "TriangleMesh.h"
 #include "Texture3D.h"
 #include "AABB.h"
+#include "ShaderUniform.h"
 
 namespace RTGI
 {
@@ -27,18 +28,18 @@ public:
 
 private:
     // pass 1.
-    GLint mSceneBBCenterLoc;
-    GLint mSceneBBExtensionLoc;
-    GLint mMaterialColorLoc;
-    GLint mDimLoc;
-    GLint mShowWorldPositionLoc;
-    GLint mInv2SceneBBExtensionLoc;
+    ShaderUniform mSceneBBCenterLoc;
+    ShaderUniform mSceneBBExtensionLoc;
+    ShaderUniform mMaterialColorLoc;
+    ShaderUniform mDimLoc;
+    ShaderUniform mShowWorldPositionLoc;
+    ShaderUniform mInv2SceneBBExtensionLoc;
 
     // pass 2.
-    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
-    GLint mSceneBBCenterLoc2;
-    GLint mSceneBBExtensionLoc2;
-    GLint mDimLoc2;
+    ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
+    ShaderUniform mSceneBBCenterLoc2;
+    ShaderUniform mSceneBBExtensionLoc2;
+    ShaderUniform mDimLoc2;
 };
 
 typedef RefPointer<SimpleVoxelizationTriMesh> SimpleVoxelizationTriMeshPtr;

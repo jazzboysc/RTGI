@@ -3,6 +3,7 @@
 
 #include "ComputeTask.h"
 #include "AABB.h"
+#include "ShaderUniform.h"
 
 namespace RTGI
 {
@@ -25,11 +26,11 @@ public:
     AABB* SceneBB;
 
 private:
-    GLint mSceneBBCenterLoc;
-    GLint mSceneBBExtensionLoc;
-    GLint mDimLoc;
-    GLint mRayStartPointLoc;
-    GLint mRayEndPointLoc;
+    ShaderUniform mSceneBBCenterLoc;
+    ShaderUniform mSceneBBExtensionLoc;
+    ShaderUniform mDimLoc;
+    ShaderUniform mRayStartPointLoc;
+    ShaderUniform mRayEndPointLoc;
 };
 
 typedef RefPointer<VoxelGridIntersection> VoxelGridIntersectionPtr;

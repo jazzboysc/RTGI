@@ -22,22 +22,22 @@ void SimpleVoxelizationTriMesh::OnGetShaderConstants()
 	TriangleMesh::OnGetShaderConstants();
 
 	// Get pass 1 uniform locations.
-    GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
-    mSceneBBCenterLoc = glGetUniformLocation(program, "SceneBBCenter");
-    mSceneBBExtensionLoc = glGetUniformLocation(program, "SceneBBExtension");
-    mMaterialColorLoc = glGetUniformLocation(program, "MaterialColor");
-    mDimLoc = glGetUniformLocation(program, "dim");
-    mInv2SceneBBExtensionLoc = glGetUniformLocation(program, "Inv2SceneBBExtension");
+    ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    program->GetUniformLocation(&mSceneBBCenterLoc, "SceneBBCenter");
+    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
+    program->GetUniformLocation(&mMaterialColorLoc, "MaterialColor");
+    program->GetUniformLocation(&mDimLoc, "dim");
+    program->GetUniformLocation(&mInv2SceneBBExtensionLoc, "Inv2SceneBBExtension");
 
     // Get pass 2 uniform locations.
-    program = mMaterial->GetProgram(0, 1)->GetProgram();
-    mSceneBBCenterLoc2 = glGetUniformLocation(program, "SceneBBCenter");
-    mSceneBBExtensionLoc2 = glGetUniformLocation(program, "SceneBBExtension");
-    mWorldLoc2 = glGetUniformLocation(program, "World");
-    mViewLoc2 = glGetUniformLocation(program, "View");
-    mProjLoc2 = glGetUniformLocation(program, "Proj");
-    mDimLoc2 = glGetUniformLocation(program, "dim");
-    mShowWorldPositionLoc = glGetUniformLocation(program, "ShowWorldPosition");
+    program = mMaterial->GetProgram(0, 1);
+    program->GetUniformLocation(&mSceneBBCenterLoc2, "SceneBBCenter");
+    program->GetUniformLocation(&mSceneBBExtensionLoc2, "SceneBBExtension");
+    program->GetUniformLocation(&mWorldLoc2, "World");
+    program->GetUniformLocation(&mViewLoc2, "View");
+    program->GetUniformLocation(&mProjLoc2, "Proj");
+    program->GetUniformLocation(&mDimLoc2, "dim");
+    program->GetUniformLocation(&mShowWorldPositionLoc, "ShowWorldPosition");
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -50,38 +50,39 @@ void SimpleVoxelizationTriMesh::OnUpdateShaderConstants(int technique, int pass)
         vec3 center = SceneBB->GetBoxCenter();
         vec3 extension = SceneBB->GetExtension();
         vec3 inv2extension = vec3(1.0f / (2.0f*extension.x), 1.0f / (2.0f*extension.y), 1.0f / (2.0f*extension.z));
-        glUniform3fv(mSceneBBCenterLoc, 1, (GLfloat*)&center);
-        glUniform3fv(mSceneBBExtensionLoc, 1, (GLfloat*)&extension);
-        glUniform3fv(mMaterialColorLoc, 1, (GLfloat*)&MaterialColor);
-        glUniform1i(mDimLoc, SimpleVoxelizationApp::VOXEL_DIMENSION);
-        glUniform3fv(mInv2SceneBBExtensionLoc, 1, (GLfloat*)&inv2extension);
+
+        mSceneBBCenterLoc.SetValue(center);
+        mSceneBBExtensionLoc.SetValue(extension);
+        mMaterialColorLoc.SetValue(MaterialColor);
+        mDimLoc.SetValue(SimpleVoxelizationApp::VOXEL_DIMENSION);
+        mInv2SceneBBExtensionLoc.SetValue(inv2extension);
 	}
 
     if( pass == 1 )
     {
-        glUniformMatrix4fv(mWorldLoc2, 1, GL_TRUE, mWorldTransform);
+        mWorldLoc2.SetValue(mWorldTransform);
         if( mCamera )
         {
             mat4 viewTrans = mCamera->GetViewTransform();
-            glUniformMatrix4fv(mViewLoc2, 1, GL_TRUE, viewTrans);
+            mViewLoc2.SetValue(viewTrans);
 
             mat4 projTrans = mCamera->GetProjectionTransform();
-            glUniformMatrix4fv(mProjLoc2, 1, GL_TRUE, projTrans);
+            mProjLoc2.SetValue(projTrans);
 
             vec3 center = SceneBB->GetBoxCenter();
             vec3 extension = SceneBB->GetExtension();
-            glUniform3fv(mSceneBBCenterLoc2, 1, (GLfloat*)&center);
-            glUniform3fv(mSceneBBExtensionLoc2, 1, (GLfloat*)&extension);
-            glUniform1i(mDimLoc2, SimpleVoxelizationApp::VOXEL_DIMENSION);
+            mSceneBBCenterLoc2.SetValue(center);
+            mSceneBBExtensionLoc2.SetValue(extension);
+            mDimLoc2.SetValue(SimpleVoxelizationApp::VOXEL_DIMENSION);
 
             SimpleVoxelizationApp* app = (SimpleVoxelizationApp*)Application::GetInstance();
             if( app->mShowMode == SimpleVoxelizationApp::SM_WorldPosition )
             {
-                glUniform1i(mShowWorldPositionLoc, 1);
+                mShowWorldPositionLoc.SetValue(1);
             }
             else
             {
-                glUniform1i(mShowWorldPositionLoc, 0);
+                mShowWorldPositionLoc.SetValue(0);
             }
         }
     }

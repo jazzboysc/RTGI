@@ -3,6 +3,7 @@
 
 #include "ComputeTask.h"
 #include "AABB.h"
+#include "ShaderUniform.h"
 
 namespace RTGI
 {
@@ -25,8 +26,8 @@ public:
     AABB* SceneBB;
 
 private:
-    GLint mSceneBBMinLoc;
-    GLint mSceneBBExtensionLoc;
+    ShaderUniform mSceneBBMinLoc;
+    ShaderUniform mSceneBBExtensionLoc;
 };
 
 typedef RefPointer<GatherVoxelBuffer> GatherVoxelBufferPtr;

@@ -25,7 +25,7 @@ public:
 	SimpleVoxelizationApp(int width, int height);
 	~SimpleVoxelizationApp();
 
-	void Initialize();
+    void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

@@ -24,8 +24,10 @@ SimpleVoxelizationApp::~SimpleVoxelizationApp()
 {
 }
 //----------------------------------------------------------------------------
-void SimpleVoxelizationApp::Initialize()
+void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 {
+    Application::Initialize(device);
+
     float a = 0.0f;
     float b = -1.0f / a;
 
@@ -98,7 +100,7 @@ void SimpleVoxelizationApp::Initialize()
     ComputePass* passResetVoxelBuffer = new ComputePass(resetVoxelBufferProgramInfo);
     mResetVoxelBufferTask = new ResetVoxelBuffer();
     mResetVoxelBufferTask->AddPass(passResetVoxelBuffer);
-    mResetVoxelBufferTask->CreateDeviceResource();
+    mResetVoxelBufferTask->CreateDeviceResource(mDevice);
 
     // Create gather voxel buffer task.
     ShaderProgramInfo gatherVoxelBufferProgramInfo;
@@ -108,7 +110,7 @@ void SimpleVoxelizationApp::Initialize()
     ComputePass* passGatherVoxelBuffer = new ComputePass(gatherVoxelBufferProgramInfo);
     mGatherVoxelBufferTask = new GatherVoxelBuffer();
     mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
-    mGatherVoxelBufferTask->CreateDeviceResource();
+    mGatherVoxelBufferTask->CreateDeviceResource(mDevice);
     mGatherVoxelBufferTask->SceneBB = &mSceneBB;
 
     // Create voxel grid intersection task.
@@ -119,7 +121,7 @@ void SimpleVoxelizationApp::Initialize()
     ComputePass* passVoxelGridIntersection = new ComputePass(voxelGridIntersectionProgramInfo);
     mVoxelGridIntersectionTask = new VoxelGridIntersection();
     mVoxelGridIntersectionTask->AddPass(passVoxelGridIntersection);
-    mVoxelGridIntersectionTask->CreateDeviceResource();
+    mVoxelGridIntersectionTask->CreateDeviceResource(mDevice);
     mVoxelGridIntersectionTask->SceneBB = &mSceneBB;
 
     // Create scene voxel buffer.
@@ -146,7 +148,7 @@ void SimpleVoxelizationApp::Initialize()
     mat4 scale = Scale(vec3(60.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
-	mModel->CreateDeviceResource();
+	mModel->CreateDeviceResource(mDevice);
     mModel->SetWorldTranslation(vec3(0.0f, 4.4f, 3.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
     mModel->SceneBB = &mSceneBB;
@@ -156,7 +158,7 @@ void SimpleVoxelizationApp::Initialize()
 	mGround = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
-	mGround->CreateDeviceResource();
+	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.8f, 0.8f, 0.0f);
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
@@ -165,7 +167,7 @@ void SimpleVoxelizationApp::Initialize()
 	mCeiling = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
-	mCeiling->CreateDeviceResource();
+	mCeiling->CreateDeviceResource(mDevice);
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
@@ -177,7 +179,7 @@ void SimpleVoxelizationApp::Initialize()
 	mBackWall = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
-	mBackWall->CreateDeviceResource();
+	mBackWall->CreateDeviceResource(mDevice);
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
@@ -189,7 +191,7 @@ void SimpleVoxelizationApp::Initialize()
 	mLeftWall = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
-	mLeftWall->CreateDeviceResource();
+	mLeftWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
@@ -201,7 +203,7 @@ void SimpleVoxelizationApp::Initialize()
 	mRightWall = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
-	mRightWall->CreateDeviceResource();
+	mRightWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(90.0f);
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
@@ -216,7 +218,7 @@ void SimpleVoxelizationApp::Initialize()
     mVoxelCubeModel->GenerateNormals();
     mVoxelCubeModel->IsIndirect = true;
     mVoxelCubeModel->IndirectCommandBuffer = mIndirectCommandBuffer;
-    mVoxelCubeModel->CreateDeviceResource();
+    mVoxelCubeModel->CreateDeviceResource(mDevice);
 
     // Create GUI elements.
     InformationPanel::GetInstance()->AddListener(this);
@@ -529,6 +531,6 @@ void SimpleVoxelizationApp::OnButtonClick(System::Object^  sender,
     temp.reserve(1);
     temp.push_back(2);
     mVoxelRaySegment->LoadFromMemory(1, temp, 2, RaySegment);
-    mVoxelRaySegment->CreateDeviceResource();
+    mVoxelRaySegment->CreateDeviceResource(mDevice);
 }
 //----------------------------------------------------------------------------
