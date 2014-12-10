@@ -55,6 +55,8 @@ public:
 
 	void CreateDeviceResource(GPUDevice* device);
 
+    void GetUniformLocation(ShaderUniform* dstUniform, const char* name);
+
 	ShaderProgramHandle* GetProgramHandle() const;
 	VertexShader* GetVertexShader() const;
     FragmentShader* GetFragmentShader() const;

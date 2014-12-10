@@ -24,23 +24,23 @@ void SceneMesh::OnGetShaderConstants()
 
 	// Get pass 1 uniform locations.
     ShaderProgram* program = mMaterial->GetProgram(0, 0);
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightProjectorNearFarLoc, 
-        "LightProjectorNearFar");
+    program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
 
     // Get pass 2 uniform locations.
     program = mMaterial->GetProgram(0, 1);
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mWorldLoc2, "World");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mViewLoc2, "View");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mProjLoc2, "Proj");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mMaterialColorLoc2, "MaterialColor");
+    program->GetUniformLocation(&mWorldLoc2, "World");
+    program->GetUniformLocation(&mViewLoc2, "View");
+    program->GetUniformLocation(&mProjLoc2, "Proj");
+    program->GetUniformLocation(&mMaterialColorLoc2, "MaterialColor");
 
     // Get pass 3 uniform locations.
     program = mMaterial->GetProgram(0, 2);
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mWorldLoc3, "World");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mProjLoc3, "Proj");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightPositionWorldLoc, "LightPositionWorld");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightColorLoc, "LightColor");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mMaterialColorLoc3, "MaterialColor");
+    program->GetUniformLocation(&mWorldLoc3, "World");
+    program->GetUniformLocation(&mProjLoc3, "Proj");
+    program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
+    program->GetUniformLocation(&mLightColorLoc, "LightColor");
+    program->GetUniformLocation(&mMaterialColorLoc3, "MaterialColor");
+
     GPU_DEVICE_FUNC_SetProgramParameterInt(program, 
         GL_GEOMETRY_VERTICES_OUT_EXT, 
         BidirectionalVoxelGIApp::RSM_FACE_COUNT * 3);

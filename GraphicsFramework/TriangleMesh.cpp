@@ -320,9 +320,9 @@ void TriangleMesh::CreateDeviceResource(GPUDevice* device)
 void TriangleMesh::OnGetShaderConstants()
 {
 	ShaderProgram* program = mMaterial->GetProgram(0, 0);
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mWorldLoc, "World");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mViewLoc, "View");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mProjLoc, "Proj");
+    program->GetUniformLocation(&mWorldLoc, "World");
+    program->GetUniformLocation(&mViewLoc, "View");
+    program->GetUniformLocation(&mProjLoc, "Proj");
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::SetWorldTransform(const mat4& worldTrans)

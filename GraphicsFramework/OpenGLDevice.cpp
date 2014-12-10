@@ -229,6 +229,8 @@ void OpenGLDevice::__GetUniformLocation(ShaderProgram* program,
 {
     OpenGLShaderProgramHandle* programHandle = 
         (OpenGLShaderProgramHandle*)program->GetProgramHandle();
+    assert(programHandle);
+
     GLint loc = glGetUniformLocation(programHandle->mProgram, name);
     if( !uniform->mUniformHandle )
     {
@@ -238,6 +240,11 @@ void OpenGLDevice::__GetUniformLocation(ShaderProgram* program,
     ((OpenGLShaderUniformHandle*)uniform->mUniformHandle)->mUniform = loc;
 
 #ifdef _DEBUG
+    if( loc < 0 )
+    {
+        printf("Uniform: %s not found\n", name);
+    }
+
     GLenum res = glGetError();
     assert(res == GL_NO_ERROR);
 #endif
@@ -248,6 +255,8 @@ void OpenGLDevice::__SetUniformValueMat4(ShaderUniform* uniform,
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
+    assert(uniformHandle);
+
     glUniformMatrix4fv(uniformHandle->mUniform, 1, GL_TRUE, *value);
 
 #ifdef _DEBUG
@@ -261,6 +270,8 @@ void OpenGLDevice::__SetUniformValueVec3(ShaderUniform* uniform,
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
+    assert(uniformHandle);
+
     glUniform3fv(uniformHandle->mUniform, 1, (GLfloat*)value);
 
 #ifdef _DEBUG
@@ -273,6 +284,8 @@ void OpenGLDevice::__SetUniformValueInt(ShaderUniform* uniform, int value)
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
+    assert(uniformHandle);
+
     glUniform1i(uniformHandle->mUniform, value);
 
 #ifdef _DEBUG
@@ -285,6 +298,8 @@ void OpenGLDevice::__SetUniformValueFloat(ShaderUniform* uniform, float value)
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
+    assert(uniformHandle);
+
     glUniform1f(uniformHandle->mUniform, value);
 
 #ifdef _DEBUG
@@ -298,6 +313,8 @@ void OpenGLDevice::__SetUniformValueFloat2(ShaderUniform* uniform,
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
+    assert(uniformHandle);
+
     glUniform2fv(uniformHandle->mUniform, 1, value);
 
 #ifdef _DEBUG

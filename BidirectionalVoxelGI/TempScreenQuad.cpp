@@ -25,9 +25,10 @@ void TempScreenQuad::OnUpdateShaderConstants(int, int)
 
     if( TempTexture )
     {
+        GPU_DEVICE_FUNC_SetUniformValueInt(mTempSamplerLoc, 0);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, TempTexture->GetTexture());
-        GPU_DEVICE_FUNC_SetUniformValueInt(mTempSamplerLoc, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -36,9 +37,10 @@ void TempScreenQuad::OnUpdateShaderConstants(int, int)
 
     if( TempTexture2 )
     {
+        GPU_DEVICE_FUNC_SetUniformValueInt(mTempSampler2Loc, 1);
+
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, TempTexture2->GetTexture());
-        GPU_DEVICE_FUNC_SetUniformValueInt(mTempSampler2Loc, 1);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -47,9 +49,10 @@ void TempScreenQuad::OnUpdateShaderConstants(int, int)
 
     if( TempTextureArray )
     {
+        GPU_DEVICE_FUNC_SetUniformValueInt(mTempSamplerArrayLoc, 2);
+
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D_ARRAY, TempTextureArray->GetTexture());
-        GPU_DEVICE_FUNC_SetUniformValueInt(mTempSamplerArrayLoc, 2);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -60,10 +63,10 @@ void TempScreenQuad::OnUpdateShaderConstants(int, int)
 void TempScreenQuad::OnGetShaderConstants()
 {
 	ShaderProgram* program = mMaterial->GetProgram(0, 0);
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mTempSamplerLoc, "tempSampler");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mTempSampler2Loc, "tempSampler2");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mTempSamplerArrayLoc, "tempSamplerArray");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mShowModeLoc, "ShowMode");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mTextureArrayIndexLoc, "TextureArrayIndex");
+    program->GetUniformLocation(&mTempSamplerLoc, "tempSampler");
+    program->GetUniformLocation(&mTempSampler2Loc, "tempSampler2");
+    program->GetUniformLocation(&mTempSamplerArrayLoc, "tempSamplerArray");
+    program->GetUniformLocation(&mShowModeLoc, "ShowMode");
+    program->GetUniformLocation(&mTextureArrayIndexLoc, "TextureArrayIndex");
 }
 //----------------------------------------------------------------------------

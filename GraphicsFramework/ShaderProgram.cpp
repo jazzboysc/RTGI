@@ -78,6 +78,12 @@ void ShaderProgram::CreateDeviceResource(GPUDevice* device)
     mProgramHandle = GPU_DEVICE_FUNC(device, CreateProgram)(this);
 }
 //----------------------------------------------------------------------------
+void ShaderProgram::GetUniformLocation(ShaderUniform* dstUniform, 
+    const char* name)
+{
+    GPU_DEVICE_FUNC_GetUniformLocation(this, *dstUniform, name);
+}
+//----------------------------------------------------------------------------
 ShaderProgramHandle* ShaderProgram::GetProgramHandle() const
 {
 	return mProgramHandle;
