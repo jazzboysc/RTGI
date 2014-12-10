@@ -276,11 +276,6 @@ void BidirectionalVoxelGIApp::Run()
     workLoad = mGBufferRenderer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Scene G-buffer Pass", workLoad);
 
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
-
     // Scene light RSM pass.
     mRSMRenderer->Render(0, 2, 0);
     workLoad = mRSMRenderer->GetTimeElapsed();

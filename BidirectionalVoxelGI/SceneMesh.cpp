@@ -57,42 +57,41 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
         {
             float nearFarPlane[2];
             mCamera->GetNearFarPlane(nearFarPlane);
-            GPU_DEVICE_FUNC_SetUniformValueFloat2(mLightProjectorNearFarLoc, 
-                nearFarPlane);
+            mLightProjectorNearFarLoc.SetValue(nearFarPlane);
         }
 	}
 
     // Update pass 2 uniform data.
     if( pass == 1 )
     {
-        GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc2, mWorldTransform);
-        GPU_DEVICE_FUNC_SetUniformValueVec3(mMaterialColorLoc2, MaterialColor);
+        mWorldLoc2.SetValue(mWorldTransform);
+        mMaterialColorLoc2.SetValue(MaterialColor);
 
         if( mCamera )
         {
             mat4 viewTrans = mCamera->GetViewTransform();
-            GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc2, viewTrans);
+            mViewLoc2.SetValue(viewTrans);
 
             mat4 projTrans = mCamera->GetProjectionTransform();
-            GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc2, projTrans);
+            mProjLoc2.SetValue(projTrans);
         }
     }
 
     // Update pass 3 uniform data.
     if( pass == 2 )
     {
-        GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc3, mWorldTransform);
-        GPU_DEVICE_FUNC_SetUniformValueVec3(mLightColorLoc, LightColor);
-        GPU_DEVICE_FUNC_SetUniformValueVec3(mMaterialColorLoc3, MaterialColor);
+        mWorldLoc3.SetValue(mWorldTransform);
+        mLightColorLoc.SetValue(LightColor);
+        mMaterialColorLoc3.SetValue(MaterialColor);
 
         assert( LightProjector );
         if( LightProjector )
         {
             vec3 lightPosition = LightProjector->GetLocation();
-            GPU_DEVICE_FUNC_SetUniformValueVec3(mLightPositionWorldLoc, lightPosition);
+            mLightPositionWorldLoc.SetValue(lightPosition);
 
             mat4 projTrans = LightProjector->GetProjectionTransform();
-            GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc3, projTrans);
+            mProjLoc3.SetValue(projTrans);
         }
     }
 }

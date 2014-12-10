@@ -16,22 +16,22 @@ IndirectLightingScreenQuad::~IndirectLightingScreenQuad()
 //----------------------------------------------------------------------------
 void IndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 {
-    GPU_DEVICE_FUNC_SetUniformValueInt(mVPLCountLoc, VPLCount);
-    GPU_DEVICE_FUNC_SetUniformValueFloat(mBounceSingularityLoc, BounceSingularity);
-    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferPositionSamplerLoc, 0);
-    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferNormalSamplerLoc, 1);
-    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferAlbedoSamplerLoc, 2);
+    mVPLCountLoc.SetValue(VPLCount);
+    mBounceSingularityLoc.SetValue(BounceSingularity);
+    mGBufferPositionSamplerLoc.SetValue(0);
+    mGBufferNormalSamplerLoc.SetValue(1);
+    mGBufferAlbedoSamplerLoc.SetValue(2);
 }
 //----------------------------------------------------------------------------
 void IndirectLightingScreenQuad::OnGetShaderConstants()
 {
     ShaderProgram* program = mMaterial->GetProgram(0, 0);
 
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mVPLCountLoc, "VPLCount");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mBounceSingularityLoc, "BounceSingularity");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferPositionSamplerLoc, "GBufferPositionSampler");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferNormalSamplerLoc, "GBufferNormalSampler");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
+    program->GetUniformLocation(&mVPLCountLoc, "VPLCount");
+    program->GetUniformLocation(&mBounceSingularityLoc, "BounceSingularity");
+    program->GetUniformLocation(&mGBufferPositionSamplerLoc, "GBufferPositionSampler");
+    program->GetUniformLocation(&mGBufferNormalSamplerLoc, "GBufferNormalSampler");
+    program->GetUniformLocation(&mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
 }
 //----------------------------------------------------------------------------
 

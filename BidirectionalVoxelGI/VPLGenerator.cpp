@@ -18,9 +18,9 @@ void SampleRSM::OnGetShaderConstants()
     ComputePass* p = (ComputePass*)GetPass(0);
     ShaderProgram* program = p->GetShaderProgram();
 
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mRSMPositionLoc, "RSMPosition");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mRSMNormalLoc, "RSMNormal");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mRSMFluxLoc, "RSMFlux");
+    program->GetUniformLocation(&mRSMPositionLoc, "RSMPosition");
+    program->GetUniformLocation(&mRSMNormalLoc, "RSMNormal");
+    program->GetUniformLocation(&mRSMFluxLoc, "RSMFlux");
 }
 //----------------------------------------------------------------------------
 void SampleRSM::OnPreDispatch(unsigned int pass)
@@ -28,9 +28,9 @@ void SampleRSM::OnPreDispatch(unsigned int pass)
     VPLSamplePattern->BindToImageUnit(0, GL_READ_ONLY);
     VPLSampleTest->BindToImageUnit(1, GL_WRITE_ONLY);
 
-    GPU_DEVICE_FUNC_SetUniformValueInt(mRSMPositionLoc, 0);
-    GPU_DEVICE_FUNC_SetUniformValueInt(mRSMNormalLoc, 1);
-    GPU_DEVICE_FUNC_SetUniformValueInt(mRSMFluxLoc, 2);
+    mRSMPositionLoc.SetValue(0);
+    mRSMNormalLoc.SetValue(1);
+    mRSMFluxLoc.SetValue(2);
 }
 //----------------------------------------------------------------------------
 void SampleRSM::OnPostDispatch(unsigned int pass)

@@ -8,6 +8,9 @@
 
 #include "GPUResource.h"
 
+#include "Angel.h"
+using namespace Angel;
+
 namespace RTGI
 {
 
@@ -32,6 +35,12 @@ public:
         UT_UserPerObject,
         UT_Max
     };
+
+    void SetValue(int value);
+    void SetValue(float value);
+    void SetValue(float value[2]);
+    void SetValue(const mat4& value);
+    void SetValue(const vec3& value);
 
 public:
     std::string mName;

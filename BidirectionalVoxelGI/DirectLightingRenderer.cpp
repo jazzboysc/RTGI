@@ -16,40 +16,39 @@ DirectLightingScreenQuad::~DirectLightingScreenQuad()
 //----------------------------------------------------------------------------
 void DirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 {
-    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferPositionSamplerLoc, 0);
-    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferNormalSamplerLoc, 1);
-    GPU_DEVICE_FUNC_SetUniformValueInt(mGBufferAlbedoSamplerLoc, 2);
-    GPU_DEVICE_FUNC_SetUniformValueInt(mShadowMapSamplerLoc, 3);
+    mGBufferPositionSamplerLoc.SetValue(0);
+    mGBufferNormalSamplerLoc.SetValue(1);
+    mGBufferAlbedoSamplerLoc.SetValue(2);
+    mShadowMapSamplerLoc.SetValue(3);
 
     assert(LightProjector);
     if( LightProjector )
     {
         mat4 viewTrans = LightProjector->GetViewTransform();
-        GPU_DEVICE_FUNC_SetUniformValueMat4(mLightProjectorViewLoc, viewTrans);
+        mLightProjectorViewLoc.SetValue(viewTrans);
 
         vec3 lightPosition = LightProjector->GetLocation();
-        GPU_DEVICE_FUNC_SetUniformValueVec3(mLightPositionWorldLoc, lightPosition);
+        mLightPositionWorldLoc.SetValue(lightPosition);
 
         float nearFarPlane[2];
         LightProjector->GetNearFarPlane(nearFarPlane);
-        GPU_DEVICE_FUNC_SetUniformValueFloat2(mLightProjectorNearFarLoc,
-            nearFarPlane);
+        mLightProjectorNearFarLoc.SetValue(nearFarPlane);
     }
-    GPU_DEVICE_FUNC_SetUniformValueVec3(mLightColorLoc, LightColor);
+    mLightColorLoc.SetValue(LightColor);
 }
 //----------------------------------------------------------------------------
 void DirectLightingScreenQuad::OnGetShaderConstants()
 {
     ShaderProgram* program = mMaterial->GetProgram(0, 0);
 
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferPositionSamplerLoc, "GBufferPositionSampler");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferNormalSamplerLoc, "GBufferNormalSampler");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mShadowMapSamplerLoc, "ShadowMapSampler");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightProjectorViewLoc, "LightProjectorView");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightPositionWorldLoc, "LightPositionWorld");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightColorLoc, "LightColor");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mLightProjectorNearFarLoc, "LightProjectorNearFar");
+    program->GetUniformLocation(&mGBufferPositionSamplerLoc, "GBufferPositionSampler");
+    program->GetUniformLocation(&mGBufferNormalSamplerLoc, "GBufferNormalSampler");
+    program->GetUniformLocation(&mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
+    program->GetUniformLocation(&mShadowMapSamplerLoc, "ShadowMapSampler");
+    program->GetUniformLocation(&mLightProjectorViewLoc, "LightProjectorView");
+    program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
+    program->GetUniformLocation(&mLightColorLoc, "LightColor");
+    program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
 }
 //----------------------------------------------------------------------------
 

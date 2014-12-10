@@ -20,12 +20,12 @@ TempScreenQuad::~TempScreenQuad()
 //----------------------------------------------------------------------------
 void TempScreenQuad::OnUpdateShaderConstants(int, int)
 {
-    GPU_DEVICE_FUNC_SetUniformValueInt(mShowModeLoc, ShowMode);
-    GPU_DEVICE_FUNC_SetUniformValueInt(mTextureArrayIndexLoc, TextureArrayIndex);
+    mShowModeLoc.SetValue(ShowMode);
+    mTextureArrayIndexLoc.SetValue(TextureArrayIndex);
 
     if( TempTexture )
     {
-        GPU_DEVICE_FUNC_SetUniformValueInt(mTempSamplerLoc, 0);
+        mTempSamplerLoc.SetValue(0);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, TempTexture->GetTexture());
@@ -37,7 +37,7 @@ void TempScreenQuad::OnUpdateShaderConstants(int, int)
 
     if( TempTexture2 )
     {
-        GPU_DEVICE_FUNC_SetUniformValueInt(mTempSampler2Loc, 1);
+        mTempSampler2Loc.SetValue(1);
 
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, TempTexture2->GetTexture());
@@ -49,7 +49,7 @@ void TempScreenQuad::OnUpdateShaderConstants(int, int)
 
     if( TempTextureArray )
     {
-        GPU_DEVICE_FUNC_SetUniformValueInt(mTempSamplerArrayLoc, 2);
+        mTempSamplerArrayLoc.SetValue(2);
 
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D_ARRAY, TempTextureArray->GetTexture());
