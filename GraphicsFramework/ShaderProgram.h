@@ -14,6 +14,7 @@
 #include "ComputeShader.h"
 #include "TessellationControlShader.h"
 #include "TessellationEvaluationShader.h"
+#include "ShaderUniform.h"
 
 namespace RTGI
 {

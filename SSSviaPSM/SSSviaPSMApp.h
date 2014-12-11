@@ -18,7 +18,7 @@ public:
 	SSSviaPSMApp(int width, int height);
 	~SSSviaPSMApp();
 
-	void Initialize();
+	void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

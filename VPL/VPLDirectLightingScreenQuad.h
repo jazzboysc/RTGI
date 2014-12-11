@@ -29,14 +29,14 @@ public:
     vec3 LightColor;
 
 private:
-	GLint mGBufferPositionSamplerLoc;
-    GLint mGBufferNormalSamplerLoc;
-    GLint mGBufferAlbedoSamplerLoc;
-    GLint mShadowMapSamplerLoc;
-    GLint mLightProjectorViewLoc;
-    GLint mLightPositionWorldLoc;
-    GLint mLightColorLoc;
-    GLint mLightProjectorNearFarLoc;
+	ShaderUniform mGBufferPositionSamplerLoc;
+    ShaderUniform mGBufferNormalSamplerLoc;
+    ShaderUniform mGBufferAlbedoSamplerLoc;
+    ShaderUniform mShadowMapSamplerLoc;
+    ShaderUniform mLightProjectorViewLoc;
+    ShaderUniform mLightPositionWorldLoc;
+    ShaderUniform mLightColorLoc;
+    ShaderUniform mLightProjectorNearFarLoc;
 };
 
 typedef RefPointer<VPLDirectLightingScreenQuad> VPLDirectLightingScreenQuadPtr;

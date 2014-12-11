@@ -30,11 +30,11 @@ public:
     StructuredBufferPtr VPLBuffer;
 
 private:
-    GLint mVPLCountLoc;
-    GLint mBounceSingularityLoc;
-	GLint mGBufferPositionSamplerLoc;
-    GLint mGBufferNormalSamplerLoc;
-    GLint mGBufferAlbedoSamplerLoc;
+    ShaderUniform mVPLCountLoc;
+    ShaderUniform mBounceSingularityLoc;
+    ShaderUniform mGBufferPositionSamplerLoc;
+    ShaderUniform mGBufferNormalSamplerLoc;
+    ShaderUniform mGBufferAlbedoSamplerLoc;
 };
 
 typedef RefPointer<VPLIndirectLightingScreenQuad> VPLIndirectLightingScreenQuadPtr;

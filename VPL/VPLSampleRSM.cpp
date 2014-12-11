@@ -20,11 +20,11 @@ VPLSampleRSM::~VPLSampleRSM()
 void VPLSampleRSM::OnGetShaderConstants()
 {
     ComputePass* p = (ComputePass*)GetPass(0);
-    GLuint program = p->GetShaderProgram()->GetProgram();
+    ShaderProgram* program = p->GetShaderProgram();
 
-    mRSMPositionLoc = glGetUniformLocation(program, "RSMPosition");
-    mRSMNormalLoc = glGetUniformLocation(program, "RSMNormal");
-    mRSMFluxLoc = glGetUniformLocation(program, "RSMFlux");
+    program->GetUniformLocation(&mRSMPositionLoc, "RSMPosition");
+    program->GetUniformLocation(&mRSMNormalLoc, "RSMNormal");
+    program->GetUniformLocation(&mRSMFluxLoc, "RSMFlux");
 }
 //----------------------------------------------------------------------------
 void VPLSampleRSM::OnPreDispatch(unsigned int pass)
@@ -33,9 +33,12 @@ void VPLSampleRSM::OnPreDispatch(unsigned int pass)
     VPLSampleTest->BindToImageUnit(1, GL_WRITE_ONLY);
     VPLBuffer->Bind(0);
 
+    mRSMPositionLoc.SetValue(0);
+    mRSMNormalLoc.SetValue(1);
+    mRSMFluxLoc.SetValue(2);
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D_ARRAY, RSMPosition->GetTexture());
-    glUniform1i(mRSMPositionLoc, 0);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -43,7 +46,6 @@ void VPLSampleRSM::OnPreDispatch(unsigned int pass)
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D_ARRAY, RSMNormal->GetTexture());
-    glUniform1i(mRSMNormalLoc, 1);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -51,7 +53,6 @@ void VPLSampleRSM::OnPreDispatch(unsigned int pass)
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D_ARRAY, RSMFlux->GetTexture());
-    glUniform1i(mRSMFluxLoc, 2);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);

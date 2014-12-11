@@ -20,14 +20,15 @@ VPLTempScreenQuad::~VPLTempScreenQuad()
 //----------------------------------------------------------------------------
 void VPLTempScreenQuad::OnUpdateShaderConstants(int, int)
 {
-    glUniform1i(mShowModeLoc, ShowMode);
-    glUniform1i(mTextureArrayIndexLoc, TextureArrayIndex);
+    mShowModeLoc.SetValue(ShowMode);
+    mTextureArrayIndexLoc.SetValue(TextureArrayIndex);
 
     if( TempTexture )
     {
+        mTempSamplerLoc.SetValue(0);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, TempTexture->GetTexture());
-        glUniform1i(mTempSamplerLoc, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -36,9 +37,10 @@ void VPLTempScreenQuad::OnUpdateShaderConstants(int, int)
 
     if( TempTexture2 )
     {
+        mTempSampler2Loc.SetValue(1);
+
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, TempTexture2->GetTexture());
-        glUniform1i(mTempSampler2Loc, 1);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -47,9 +49,10 @@ void VPLTempScreenQuad::OnUpdateShaderConstants(int, int)
 
     if( TempTextureArray )
     {
+        mTempSamplerArrayLoc.SetValue(2);
+
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D_ARRAY, TempTextureArray->GetTexture());
-        glUniform1i(mTempSamplerArrayLoc, 2);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -59,11 +62,11 @@ void VPLTempScreenQuad::OnUpdateShaderConstants(int, int)
 //----------------------------------------------------------------------------
 void VPLTempScreenQuad::OnGetShaderConstants()
 {
-	GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
-	mTempSamplerLoc = glGetUniformLocation(program, "tempSampler");
-    mTempSampler2Loc = glGetUniformLocation(program, "tempSampler2");
-    mTempSamplerArrayLoc = glGetUniformLocation(program, "tempSamplerArray");
-    mShowModeLoc = glGetUniformLocation(program, "ShowMode");
-    mTextureArrayIndexLoc = glGetUniformLocation(program, "TextureArrayIndex");
+	ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    program->GetUniformLocation(&mTempSamplerLoc, "tempSampler");
+    program->GetUniformLocation(&mTempSampler2Loc, "tempSampler2");
+    program->GetUniformLocation(&mTempSamplerArrayLoc, "tempSamplerArray");
+    program->GetUniformLocation(&mShowModeLoc, "ShowMode");
+    program->GetUniformLocation(&mTextureArrayIndexLoc, "TextureArrayIndex");
 }
 //----------------------------------------------------------------------------

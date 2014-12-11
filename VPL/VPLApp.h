@@ -22,7 +22,7 @@ public:
 	VPLApp(int width, int height);
 	~VPLApp();
 
-	void Initialize();
+	void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

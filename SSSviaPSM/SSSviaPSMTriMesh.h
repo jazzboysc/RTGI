@@ -29,18 +29,18 @@ public:
 
 private:
     // pass 1 uniform locations.
-    GLint mLightProjectorNearFarLoc;
+    ShaderUniform mLightProjectorNearFarLoc;
 
     // pass 2 uniform locations.
-    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
-    GLint mLightProjectorViewLoc;
-    GLint mShadowMapSamplerLoc;
-    GLint mLightPositionWorldLoc;
-    GLint mCameraPositionWorldLoc;
-    GLint mLightColorLoc;
-    GLint mMaterialColorLoc;
-    GLint mLightProjectorNearFarLoc2;
-    GLint mIsSSSLoc;
+    ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
+    ShaderUniform mLightProjectorViewLoc;
+    ShaderUniform mShadowMapSamplerLoc;
+    ShaderUniform mLightPositionWorldLoc;
+    ShaderUniform mCameraPositionWorldLoc;
+    ShaderUniform mLightColorLoc;
+    ShaderUniform mMaterialColorLoc;
+    ShaderUniform mLightProjectorNearFarLoc2;
+    ShaderUniform mIsSSSLoc;
 };
 
 typedef RefPointer<SSSviaPSMTriMesh> SSSviaPSMTriMeshPtr;

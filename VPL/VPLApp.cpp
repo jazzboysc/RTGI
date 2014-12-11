@@ -21,8 +21,10 @@ VPLApp::~VPLApp()
 {
 }
 //----------------------------------------------------------------------------
-void VPLApp::Initialize()
+void VPLApp::Initialize(GPUDevice* device)
 {
+    Application::Initialize(device);
+
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -240,7 +242,7 @@ void VPLApp::Initialize()
     ComputePass* passSampleRSM = new ComputePass(sampleRSMProgramInfo);
     mSampleRSMTask = new VPLSampleRSM();
     mSampleRSMTask->AddPass(passSampleRSM);
-    mSampleRSMTask->CreateDeviceResource();
+    mSampleRSMTask->CreateDeviceResource(mDevice);
     mSampleRSMTask->VPLSamplePattern = mVPLSamplePattern;
     mSampleRSMTask->VPLSampleTest = mVPLSampleTest;
     mSampleRSMTask->RSMPosition = mRSMPositionTextureArray;
@@ -256,7 +258,7 @@ void VPLApp::Initialize()
     mat4 scale = Scale(vec3(60.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
-	mModel->CreateDeviceResource();
+	mModel->CreateDeviceResource(mDevice);
 	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
 	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
@@ -267,7 +269,7 @@ void VPLApp::Initialize()
 	mGround = new VPLTriMesh(material, mCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
-	mGround->CreateDeviceResource();
+	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mGround->LightProjector = mLightProjector;
     mGround->ShadowMap = mShadowMapTexture;
@@ -277,7 +279,7 @@ void VPLApp::Initialize()
 	mCeiling = new VPLTriMesh(material, mCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
-	mCeiling->CreateDeviceResource();
+	mCeiling->CreateDeviceResource(mDevice);
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
@@ -290,7 +292,7 @@ void VPLApp::Initialize()
 	mBackWall = new VPLTriMesh(material, mCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
-	mBackWall->CreateDeviceResource();
+	mBackWall->CreateDeviceResource(mDevice);
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
@@ -303,7 +305,7 @@ void VPLApp::Initialize()
 	mLeftWall = new VPLTriMesh(material, mCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
-	mLeftWall->CreateDeviceResource();
+	mLeftWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
@@ -316,7 +318,7 @@ void VPLApp::Initialize()
 	mRightWall = new VPLTriMesh(material, mCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
-	mRightWall->CreateDeviceResource();
+	mRightWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(90.0f);
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
@@ -333,7 +335,7 @@ void VPLApp::Initialize()
     mTempScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mTempScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mTempScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mTempScreenQuad->CreateDeviceResource();
+    mTempScreenQuad->CreateDeviceResource(mDevice);
     mTempScreenQuad->TempTexture = mShadowMapTexture;
     mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
 
@@ -344,7 +346,7 @@ void VPLApp::Initialize()
     mDirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mDirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mDirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mDirectLightingScreenQuad->CreateDeviceResource();
+    mDirectLightingScreenQuad->CreateDeviceResource(mDevice);
     mDirectLightingScreenQuad->GBufferPositionTexture = mGBufferPositionTexture;
     mDirectLightingScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;
     mDirectLightingScreenQuad->GBufferAlbedoTexture = mGBufferAlbedoTexture;
@@ -358,7 +360,7 @@ void VPLApp::Initialize()
     mIndirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mIndirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mIndirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mIndirectLightingScreenQuad->CreateDeviceResource();
+    mIndirectLightingScreenQuad->CreateDeviceResource(mDevice);
     mIndirectLightingScreenQuad->VPLCount = VPL_SAMPLE_COUNT;
     mIndirectLightingScreenQuad->GBufferPositionTexture = mGBufferPositionTexture;
     mIndirectLightingScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;

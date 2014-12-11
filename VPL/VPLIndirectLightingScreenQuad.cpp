@@ -20,12 +20,15 @@ VPLIndirectLightingScreenQuad::~VPLIndirectLightingScreenQuad()
 //----------------------------------------------------------------------------
 void VPLIndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 {
-    glUniform1i(mVPLCountLoc, VPLCount);
-    glUniform1f(mBounceSingularityLoc, BounceSingularity);
+    mVPLCountLoc.SetValue(VPLCount);
+    mBounceSingularityLoc.SetValue(BounceSingularity);
+
+    mGBufferPositionSamplerLoc.SetValue(0);
+    mGBufferNormalSamplerLoc.SetValue(1);
+    mGBufferAlbedoSamplerLoc.SetValue(2);
 
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, GBufferPositionTexture->GetTexture());
-    glUniform1i(mGBufferPositionSamplerLoc, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -33,7 +36,6 @@ void VPLIndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, GBufferNormalTexture->GetTexture());
-    glUniform1i(mGBufferNormalSamplerLoc, 1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -41,7 +43,6 @@ void VPLIndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, GBufferAlbedoTexture->GetTexture());
-    glUniform1i(mGBufferAlbedoSamplerLoc, 2);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -52,12 +53,12 @@ void VPLIndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 //----------------------------------------------------------------------------
 void VPLIndirectLightingScreenQuad::OnGetShaderConstants()
 {
-	GLuint program = mMaterial->GetProgram(0, 0)->GetProgram();
+	ShaderProgram* program = mMaterial->GetProgram(0, 0);
 
-    mVPLCountLoc = glGetUniformLocation(program, "VPLCount");
-    mBounceSingularityLoc = glGetUniformLocation(program, "BounceSingularity");
-    mGBufferPositionSamplerLoc = glGetUniformLocation(program, "GBufferPositionSampler");
-    mGBufferNormalSamplerLoc = glGetUniformLocation(program, "GBufferNormalSampler");
-    mGBufferAlbedoSamplerLoc = glGetUniformLocation(program, "GBufferAlbedoSampler");
+    program->GetUniformLocation(&mVPLCountLoc, "VPLCount");
+    program->GetUniformLocation(&mBounceSingularityLoc, "BounceSingularity");
+    program->GetUniformLocation(&mGBufferPositionSamplerLoc, "GBufferPositionSampler");
+    program->GetUniformLocation(&mGBufferNormalSamplerLoc, "GBufferNormalSampler");
+    program->GetUniformLocation(&mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
 }
 //----------------------------------------------------------------------------

@@ -30,21 +30,21 @@ public:
 
 private:
     // pass 1, scene shadow pass.
-    GLint mLightProjectorNearFarLoc;
+    ShaderUniform mLightProjectorNearFarLoc;
 
     // pass 2, G-buffer pass.
-    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
-    GLint mMaterialColorLoc2;
+    ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
+    ShaderUniform mMaterialColorLoc2;
 
     // pass 3, RSM pass.
-    GLint mWorldLoc3, mProjLoc3;
-    GLint mLightPositionWorldLoc;
-    GLint mLightColorLoc;
-    GLint mMaterialColorLoc3;
+    ShaderUniform mWorldLoc3, mProjLoc3;
+    ShaderUniform mLightPositionWorldLoc;
+    ShaderUniform mLightColorLoc;
+    ShaderUniform mMaterialColorLoc3;
 
     // pass 4, VPL shadow pass.
-    GLint mWorldLoc4;
-    GLint mLightProjectorNearFarLoc4;
+    ShaderUniform mWorldLoc4;
+    ShaderUniform mLightProjectorNearFarLoc4;
 };
 
 typedef RefPointer<VPLTriMesh> VPLTriMeshPtr;

@@ -32,9 +32,9 @@ public:
     StructuredBufferPtr VPLBuffer;
 
 private:
-    GLint mRSMPositionLoc;
-    GLint mRSMNormalLoc;
-    GLint mRSMFluxLoc;
+    ShaderUniform mRSMPositionLoc;
+    ShaderUniform mRSMNormalLoc;
+    ShaderUniform mRSMFluxLoc;
 };
 
 typedef RefPointer<VPLSampleRSM> VPLSampleRSMPtr;
