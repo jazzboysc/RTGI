@@ -29,10 +29,10 @@ public:
 
 private:
     // pass 1 uniform locations.
-    GLint mRSMPositionTextureLoc;
-    GLint mRSMNormalTextureLoc;
-    GLint mRSMFluxTextureLoc;
-    GLint mRSMSampleTextureLoc;
+    ShaderUniform mRSMPositionTextureLoc;
+    ShaderUniform mRSMNormalTextureLoc;
+    ShaderUniform mRSMFluxTextureLoc;
+    ShaderUniform mRSMSampleTextureLoc;
 };
 
 typedef RefPointer<SIIVPLQuad> SIIVPLQuadPtr;

@@ -58,6 +58,8 @@ RayBundleApp::~RayBundleApp()
 //----------------------------------------------------------------------------
 void RayBundleApp::Initialize(GPUDevice* device)
 {
+    Application::Initialize(device);
+
 	GLboolean supportNVAtomicFloatOp = QueryExtension("GL_NV_shader_atomic_float");
 	assert( supportNVAtomicFloatOp );
 

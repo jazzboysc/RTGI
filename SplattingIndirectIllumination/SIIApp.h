@@ -19,7 +19,7 @@ public:
 	SIIApp(int width, int height);
 	~SIIApp();
 
-	void Initialize();
+	void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

@@ -1,4 +1,5 @@
 #include "SIIApp.h"
+#include "OpenGLDevice.h"
 
 using namespace RTGI;
 
@@ -52,12 +53,6 @@ int main(int argc, char **argv)
 	int height = 512;
     glutInitWindowSize(width, height);
 
-    // If you are using freeglut, the next two lines will check if 
-    // the code is truly 3.2. Otherwise, comment them out
-    
-    //glutInitContextVersion(3, 3);
-    //glutInitContextProfile(GLUT_CORE_PROFILE);
-
 	// create GLUT window for drawing
     glutCreateWindow(0);
 
@@ -66,9 +61,12 @@ int main(int argc, char **argv)
     glewInit();
 #endif
 
+    // Create GPU device.
+    OpenGLDevice* gpuDevice = new OpenGLDevice();
+
 	// Initialize application.
 	app = new SIIApp(width, height);
-	app->Initialize();
+    app->Initialize(gpuDevice);
 
 	// assign handlers
     glutDisplayFunc(OnIdle);

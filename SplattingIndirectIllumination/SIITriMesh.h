@@ -28,20 +28,20 @@ public:
 
 private:
     // pass 1 uniform locations.
-    GLint mLightProjectorNearFarLoc;
+    ShaderUniform mLightProjectorNearFarLoc;
 
     // pass 2 uniform locations.
-    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
-    GLint mMaterialColorLoc2;
+    ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
+    ShaderUniform mMaterialColorLoc2;
 
     // pass 3 uniform locations.
-    GLint mWorldLoc3, mViewLoc3, mProjLoc3;
-    GLint mLightProjectorViewLoc3;
-    GLint mShadowMapSamplerLoc3;
-    GLint mLightPositionWorldLoc3;
-    GLint mLightColorLoc3;
-    GLint mMaterialColorLoc3;
-    GLint mLightProjectorNearFarLoc3;
+    ShaderUniform mWorldLoc3, mViewLoc3, mProjLoc3;
+    ShaderUniform mLightProjectorViewLoc3;
+    ShaderUniform mShadowMapSamplerLoc3;
+    ShaderUniform mLightPositionWorldLoc3;
+    ShaderUniform mLightColorLoc3;
+    ShaderUniform mMaterialColorLoc3;
+    ShaderUniform mLightProjectorNearFarLoc3;
 };
 
 typedef RefPointer<SIITriMesh> SIITriMeshPtr;
