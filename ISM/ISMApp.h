@@ -18,7 +18,7 @@ public:
 	ISMApp(int width, int height);
 	~ISMApp();
 
-	void Initialize();
+	void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

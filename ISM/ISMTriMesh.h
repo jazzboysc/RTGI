@@ -28,16 +28,16 @@ public:
 
 private:
     // pass 1 uniform locations.
-    GLint mLightProjectorNearFarLoc;
+    ShaderUniform mLightProjectorNearFarLoc;
 
     // pass 2 uniform locations.
-    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
-    GLint mLightProjectorViewLoc;
-    GLint mShadowMapSamplerLoc;
-    GLint mLightPositionWorldLoc;
-    GLint mLightColorLoc;
-    GLint mMaterialColorLoc;
-    GLint mLightProjectorNearFarLoc2;
+    ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
+    ShaderUniform mLightProjectorViewLoc;
+    ShaderUniform mShadowMapSamplerLoc;
+    ShaderUniform mLightPositionWorldLoc;
+    ShaderUniform mLightColorLoc;
+    ShaderUniform mMaterialColorLoc;
+    ShaderUniform mLightProjectorNearFarLoc2;
 };
 
 typedef RefPointer<ISMTriMesh> ISMTriMeshPtr;

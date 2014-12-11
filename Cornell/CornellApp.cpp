@@ -16,8 +16,10 @@ CornellApp::~CornellApp()
 {
 }
 //----------------------------------------------------------------------------
-void CornellApp::Initialize()
+void CornellApp::Initialize(GPUDevice* device)
 {
+    Application::Initialize(device);
+
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -51,7 +53,7 @@ void CornellApp::Initialize()
 	mModel = new CornellTriMesh(material, mCamera);
 	mModel->LoadFromFile("beethoven.ply");
 	mModel->GenerateNormals();
-	mModel->CreateDeviceResource();
+	mModel->CreateDeviceResource(mDevice);
 	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
 
@@ -59,14 +61,14 @@ void CornellApp::Initialize()
 	mGround = new CornellTriMesh(material, mCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
-	mGround->CreateDeviceResource();
+	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
 
 	material = new Material(mtScene);
 	mCeiling = new CornellTriMesh(material, mCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
-	mCeiling->CreateDeviceResource();
+	mCeiling->CreateDeviceResource(mDevice);
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
@@ -76,7 +78,7 @@ void CornellApp::Initialize()
 	mLight = new CornellTriMesh(material, mCamera);
 	mLight->LoadFromFile("square.ply");
 	mLight->GenerateNormals();
-	mLight->CreateDeviceResource();
+	mLight->CreateDeviceResource(mDevice);
 	rotM = RotateX(180.0f);
 	mLight->SetWorldTransform(rotM);
 	mLight->SetWorldScale(vec3(0.5f));
@@ -88,7 +90,7 @@ void CornellApp::Initialize()
 	mBackWall = new CornellTriMesh(material, mCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
-	mBackWall->CreateDeviceResource();
+	mBackWall->CreateDeviceResource(mDevice);
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
@@ -98,7 +100,7 @@ void CornellApp::Initialize()
 	mLeftWall = new CornellTriMesh(material, mCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
-	mLeftWall->CreateDeviceResource();
+	mLeftWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
@@ -108,7 +110,7 @@ void CornellApp::Initialize()
 	mRightWall = new CornellTriMesh(material, mCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
-	mRightWall->CreateDeviceResource();
+	mRightWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(90.0f);
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));

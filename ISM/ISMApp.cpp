@@ -18,8 +18,10 @@ ISMApp::~ISMApp()
 {
 }
 //----------------------------------------------------------------------------
-void ISMApp::Initialize()
+void ISMApp::Initialize(GPUDevice* device)
 {
+    Application::Initialize(device);
+
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -105,7 +107,7 @@ void ISMApp::Initialize()
     mat4 scale = Scale(vec3(2.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
-	mModel->CreateDeviceResource();
+	mModel->CreateDeviceResource(mDevice);
 	mModel->SetWorldTranslation(vec3(-2.0f, 3.0f, 3.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
     mModel->LightProjector = mLightProjector;
@@ -115,7 +117,7 @@ void ISMApp::Initialize()
 	mGround = new ISMTriMesh(material, mCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
-	mGround->CreateDeviceResource();
+	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
     mGround->LightProjector = mLightProjector;
     mGround->ShadowMap = mShadowMapTexture;
@@ -124,7 +126,7 @@ void ISMApp::Initialize()
 	mCeiling = new ISMTriMesh(material, mCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
-	mCeiling->CreateDeviceResource();
+	mCeiling->CreateDeviceResource(mDevice);
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
@@ -136,7 +138,7 @@ void ISMApp::Initialize()
 	mBackWall = new ISMTriMesh(material, mCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
-	mBackWall->CreateDeviceResource();
+	mBackWall->CreateDeviceResource(mDevice);
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
@@ -148,7 +150,7 @@ void ISMApp::Initialize()
 	mLeftWall = new ISMTriMesh(material, mCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
-	mLeftWall->CreateDeviceResource();
+	mLeftWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
@@ -160,7 +162,7 @@ void ISMApp::Initialize()
 	mRightWall = new ISMTriMesh(material, mCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
-	mRightWall->CreateDeviceResource();
+	mRightWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(90.0f);
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
@@ -175,7 +177,7 @@ void ISMApp::Initialize()
     mShadowMapScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mShadowMapScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mShadowMapScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mShadowMapScreenQuad->CreateDeviceResource();
+    mShadowMapScreenQuad->CreateDeviceResource(mDevice);
     mShadowMapScreenQuad->TempTexture = mShadowMapTexture;
 }
 //----------------------------------------------------------------------------

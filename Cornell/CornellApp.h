@@ -17,7 +17,7 @@ public:
 	CornellApp(int width, int height);
 	~CornellApp();
 
-	void Initialize();
+	void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 
