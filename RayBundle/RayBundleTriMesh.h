@@ -27,13 +27,13 @@ public:
 
 private:
 	// pass 1 uniform locations.
-	GLint mIsLightLoc0;
+    ShaderUniform mIsLightLoc0;
 
     // pass 2 uniform locations.
-    GLint mWorldLoc2, mViewLoc2, mProjLoc2;
-	GLint mIsLightLoc;
-	GLint mMaterialColorLoc;
-	GLint mEmissionColorLoc;
+    ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
+    ShaderUniform mIsLightLoc;
+    ShaderUniform mMaterialColorLoc;
+    ShaderUniform mEmissionColorLoc;
 };
 
 typedef RefPointer<RayBundleTriMesh> RayBundleTriMeshPtr;

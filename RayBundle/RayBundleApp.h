@@ -18,7 +18,7 @@ public:
 	RayBundleApp(int width, int height);
 	~RayBundleApp();
 
-	void Initialize();
+	void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

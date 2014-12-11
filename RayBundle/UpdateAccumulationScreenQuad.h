@@ -24,8 +24,8 @@ public:
 	vec3 VoxelGridCenter;
 
 private:
-	GLint mWorldRayBundleDirectionLoc;
-	GLint mVoxelGridCenterLoc;
+	ShaderUniform mWorldRayBundleDirectionLoc;
+    ShaderUniform mVoxelGridCenterLoc;
 };
 
 typedef RefPointer<UpdateAccumulationScreenQuad> UpdateAccumulationScreenQuadPtr;

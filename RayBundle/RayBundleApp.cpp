@@ -56,7 +56,7 @@ RayBundleApp::~RayBundleApp()
 {
 }
 //----------------------------------------------------------------------------
-void RayBundleApp::Initialize()
+void RayBundleApp::Initialize(GPUDevice* device)
 {
 	GLboolean supportNVAtomicFloatOp = QueryExtension("GL_NV_shader_atomic_float");
 	assert( supportNVAtomicFloatOp );
@@ -87,15 +87,28 @@ void RayBundleApp::Initialize()
 
 	// Create material templates.
 	Material* material = 0;
-	Pass* passScene = new Pass("vScene.glsl", "fScene.glsl");
-	Pass* passRayBundle = new Pass("vRayBundle.glsl", "fRayBundle.glsl");
+
+    ShaderProgramInfo sceneProgramInfo;
+    sceneProgramInfo.VShaderFileName = "vScene.glsl";
+    sceneProgramInfo.FShaderFileName = "fScene.glsl";
+    sceneProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex | ShaderType::ST_Fragment;
+    Pass* passScene = new Pass(sceneProgramInfo);
+    ShaderProgramInfo rayBundleProgramInfo;
+    rayBundleProgramInfo.VShaderFileName = "vRayBundle.glsl";
+    rayBundleProgramInfo.FShaderFileName = "fRayBundle.glsl";
+    rayBundleProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex | ShaderType::ST_Fragment;
+    Pass* passRayBundle = new Pass(rayBundleProgramInfo);
 	Technique* techRayBundle = new Technique();
 	techRayBundle->AddPass(passScene);
 	techRayBundle->AddPass(passRayBundle);
 	MaterialTemplate* mtRayBundle = new MaterialTemplate();
 	mtRayBundle->AddTechnique(techRayBundle);
 
-	Pass* passUpdateAccumulation = new Pass("vUpdateAccumulation.glsl", "fUpdateAccumulation.glsl");
+    ShaderProgramInfo updateAccumulationProgramInfo;
+    updateAccumulationProgramInfo.VShaderFileName = "vUpdateAccumulation.glsl";
+    updateAccumulationProgramInfo.FShaderFileName = "fUpdateAccumulation.glsl";
+    updateAccumulationProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex | ShaderType::ST_Fragment;
+    Pass* passUpdateAccumulation = new Pass(updateAccumulationProgramInfo);
 	Technique* techUpdateAccumulation = new Technique();
 	techUpdateAccumulation->AddPass(passUpdateAccumulation);
 	MaterialTemplate* mtUpdateAccumulation = new MaterialTemplate();
@@ -107,7 +120,7 @@ void RayBundleApp::Initialize()
 	mModel = new RayBundleTriMesh(material, mCamera);
 	mModel->LoadFromFile("beethoven.ply");
 	mModel->GenerateNormals();
-	mModel->CreateDeviceResource();
+	mModel->CreateDeviceResource(mDevice);
 	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
 	mSceneBB.Merge(mModel->GetWorldSpaceBB());
@@ -116,7 +129,7 @@ void RayBundleApp::Initialize()
 	mGround = new RayBundleTriMesh(material, mCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
-	mGround->CreateDeviceResource();
+	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
 	mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
@@ -124,7 +137,7 @@ void RayBundleApp::Initialize()
 	mCeiling = new RayBundleTriMesh(material, mCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
-	mCeiling->CreateDeviceResource();
+	mCeiling->CreateDeviceResource(mDevice);
 	rotM = RotateX(180.0f);
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
@@ -135,7 +148,7 @@ void RayBundleApp::Initialize()
 	mLight = new RayBundleTriMesh(material, mCamera);
 	mLight->LoadFromFile("square.ply");
 	mLight->GenerateNormals();
-	mLight->CreateDeviceResource();
+	mLight->CreateDeviceResource(mDevice);
 	rotM = RotateX(180.0f);
 	mLight->SetWorldTransform(rotM);
 	mLight->SetWorldScale(vec3(0.5f));
@@ -149,7 +162,7 @@ void RayBundleApp::Initialize()
 	mBackWall = new RayBundleTriMesh(material, mCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
-	mBackWall->CreateDeviceResource();
+	mBackWall->CreateDeviceResource(mDevice);
 	rotM = RotateX(90.0f);
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
@@ -160,7 +173,7 @@ void RayBundleApp::Initialize()
 	mLeftWall = new RayBundleTriMesh(material, mCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
-	mLeftWall->CreateDeviceResource();
+	mLeftWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(-90.0f);
 	mLeftWall->SetWorldTransform(rotM);
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
@@ -171,7 +184,7 @@ void RayBundleApp::Initialize()
 	mRightWall = new RayBundleTriMesh(material, mCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
-	mRightWall->CreateDeviceResource();
+	mRightWall->CreateDeviceResource(mDevice);
 	rotM = RotateZ(90.0f);
 	mRightWall->SetWorldTransform(rotM);
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
@@ -193,7 +206,7 @@ void RayBundleApp::Initialize()
 	pixelCount = mRayBundleRTWidth * mRayBundleRTHeight;
 	mRayHeadPointerTextureInitData = new PixelBuffer();
 	mRayHeadPointerTextureInitData->ReserveDeviceResource(
-		pixelCount*sizeof(GLuint), GL_STATIC_DRAW);
+		pixelCount*sizeof(GLuint), BU_Static_Draw);
 	mRayHeadPointerTextureInitData->Bind();
 	pixelBufferData = mRayHeadPointerTextureInitData->Map(GL_WRITE_ONLY);
 	assert( pixelBufferData );
@@ -207,7 +220,7 @@ void RayBundleApp::Initialize()
 
 	// Create per-voxel mutex texture init data.
 	mPerVoxelMutexTextureInitData = new PixelBuffer();
-	mPerVoxelMutexTextureInitData->ReserveDeviceResource(voxelMutexCount*sizeof(GLuint), GL_STATIC_DRAW);
+	mPerVoxelMutexTextureInitData->ReserveDeviceResource(voxelMutexCount*sizeof(GLuint), BU_Static_Draw);
 	mPerVoxelMutexTextureInitData->Bind();
 	pixelBufferData = mPerVoxelMutexTextureInitData->Map(GL_WRITE_ONLY);
 	assert( pixelBufferData );
@@ -236,7 +249,7 @@ void RayBundleApp::Initialize()
 	mRayBundleDepth = new Texture2D();
 	mRayBundleDepth->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, Texture2D::TF_Depth);
 
-	Texture2D* rayBundleRT[1] = {mRayBundleRT};
+	Texture* rayBundleRT[1] = {mRayBundleRT};
 	mRayBundleFB = new FrameBuffer();
 	mRayBundleFB->SetRenderTargets(1, rayBundleRT, mRayBundleDepth);
 
@@ -248,7 +261,7 @@ void RayBundleApp::Initialize()
 	mUpdateAccuScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
 	mUpdateAccuScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
 	mUpdateAccuScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-	mUpdateAccuScreenQuad->CreateDeviceResource();
+	mUpdateAccuScreenQuad->CreateDeviceResource(mDevice);
 
 	for( int i = 0; i < RAYBUNDLE_SAMPLE_COUNT; ++i )
 	{
