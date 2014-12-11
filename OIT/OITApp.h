@@ -18,7 +18,7 @@ public:
 	OITApp(int width, int height);
 	~OITApp();
 
-	void Initialize();
+	void Initialize(GPUDevice* device);
 	void Run();
 	void Terminate();
 

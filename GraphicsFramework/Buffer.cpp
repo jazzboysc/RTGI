@@ -11,8 +11,10 @@ GLenum Buffer::msBufferUsage[BU_Max] =
 {
     GL_STATIC_READ,
     GL_STATIC_COPY,
+    GL_STATIC_DRAW,
     GL_DYNAMIC_READ,
-    GL_DYNAMIC_COPY
+    GL_DYNAMIC_COPY,
+    GL_DYNAMIC_DRAW
 };
 
 //----------------------------------------------------------------------------

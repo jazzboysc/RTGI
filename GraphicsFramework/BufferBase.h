@@ -28,19 +28,21 @@ enum RendererDataType
 enum BindingFlag
 {
     BF_Bindless       = 0,
-    BF_Bind           = 1,
-    BF_BindIndex      = 2,
-    BF_BindToIndirect = 3,
-    BF_Max            = 4
+    BF_Bind,
+    BF_BindIndex,
+    BF_BindToIndirect,
+    BF_Max
 };
 
 enum BufferUsage
 {
     BU_Static_Read     = 0,
-    BU_Static_Copy     = 1,
-    BU_Dynamic_Read    = 2,
-    BU_Dynamic_Copy    = 3,
-    BU_Max             = 4
+    BU_Static_Copy,
+    BU_Static_Draw,
+    BU_Dynamic_Read,
+    BU_Dynamic_Copy,
+    BU_Dynamic_Draw,
+    BU_Max
 };
 
 enum FilterType

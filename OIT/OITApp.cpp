@@ -15,8 +15,10 @@ OITApp::~OITApp()
 {
 }
 //----------------------------------------------------------------------------
-void OITApp::Initialize()
+void OITApp::Initialize(GPUDevice* device)
 {
+    Application::Initialize(device);
+
 	std::string title = mWindowTitle;
 	glutSetWindowTitle(title.c_str());
 
@@ -38,13 +40,24 @@ void OITApp::Initialize()
 
 	// Create material templates.
 	Material* material = 0;
-	Pass* passGPUABuffer = new Pass("vGPUABuffer.glsl", "fGPUABuffer.glsl");
+
+    ShaderProgramInfo gpuABufferProgramInfo;
+    gpuABufferProgramInfo.VShaderFileName = "vGPUABuffer.glsl";
+    gpuABufferProgramInfo.FShaderFileName = "fGPUABuffer.glsl";
+    gpuABufferProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex | ShaderType::ST_Fragment;
+
+    Pass* passGPUABuffer = new Pass(gpuABufferProgramInfo);
 	Technique* techGPUABuffer = new Technique();
 	techGPUABuffer->AddPass(passGPUABuffer);
 	MaterialTemplate* mtGPUABuffer = new MaterialTemplate();
 	mtGPUABuffer->AddTechnique(techGPUABuffer);
 
-	Pass* passOIT = new Pass("vOIT.glsl", "fOIT.glsl");
+    ShaderProgramInfo oitProgramInfo;
+    oitProgramInfo.VShaderFileName = "vOIT.glsl";
+    oitProgramInfo.FShaderFileName = "fOIT.glsl";
+    oitProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex | ShaderType::ST_Fragment;
+
+    Pass* passOIT = new Pass(oitProgramInfo);
 	Technique* techOIT = new Technique();
 	techOIT->AddPass(passOIT);
 	MaterialTemplate* mtOIT = new MaterialTemplate();
@@ -58,7 +71,7 @@ void OITApp::Initialize()
 	mScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
 	mScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
 	mScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-	mScreenQuad->CreateDeviceResource();
+	mScreenQuad->CreateDeviceResource(mDevice);
 	mScreenQuad->HeadPointerTexture = mHeadPointerTexture;
 	mScreenQuad->GPUMemPool = mGPUMemPool;
     
@@ -67,7 +80,7 @@ void OITApp::Initialize()
 	mModel = new OITTriMesh(material, mCamera);
 	mModel->LoadFromFile("dragon_s.ply");
 	mModel->GenerateNormals();
-	mModel->CreateDeviceResource();
+	mModel->CreateDeviceResource(mDevice);
 	mat4 rot = RotateY(30.0f);
 	mModel->SetWorldTransform(rot);
 	mModel->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
@@ -82,7 +95,7 @@ void OITApp::Initialize()
 	int pixelCount = mWidth * mHeight;
 	mHeadPointerTextureInitData = new PixelBuffer();
 	mHeadPointerTextureInitData->ReserveDeviceResource(
-		pixelCount*sizeof(GLuint), GL_STATIC_DRAW);
+		pixelCount*sizeof(GLuint), BU_Static_Draw);
 	mHeadPointerTextureInitData->Bind();
 	void* pixelBufferData = mHeadPointerTextureInitData->Map(GL_WRITE_ONLY);
 	assert( pixelBufferData );
