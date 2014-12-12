@@ -85,5 +85,6 @@
 
 // Utils
 #include "GPUTimer.h"
+#include "Terminal.h"
 
 #endif

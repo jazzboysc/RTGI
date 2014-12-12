@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------
 
 #include "OpenGLDevice.h"
+#include "Terminal.h"
 
 using namespace RTGI;
 
@@ -50,7 +51,8 @@ ShaderHandle* OpenGLDevice::__CreateShader(Shader* shader)
         {
             char* acInfoLog = new char[iInfoLen];
             glGetShaderInfoLog(shaderHandle->mShader, iInfoLen, 0, acInfoLog);
-            printf("Failed compiling %s\n%s\n", fileName.c_str(), acInfoLog);
+            Terminal::Output(Terminal::OC_Error, "Failed compiling %s\n%s\n", 
+                fileName.c_str(), acInfoLog);
 
             delete[] acInfoLog;
         }
@@ -61,7 +63,8 @@ ShaderHandle* OpenGLDevice::__CreateShader(Shader* shader)
     }
 
 #ifdef RTGI_OUTPUT_RESOURCE_LOADING
-    printf("Loading shader %s finished\n", fileName.c_str());
+    Terminal::Output(Terminal::OC_Success, "Loading shader %s finished\n", 
+        fileName.c_str());
 #endif
 
 #ifdef _DEBUG
@@ -163,7 +166,8 @@ ShaderProgramHandle* OpenGLDevice::__CreateProgram(ShaderProgram* program)
             glGetProgramInfoLog(__program, iInfoLen, 0, acInfoLog);
             linkingString += " failed";
 
-            printf("%s\n%s\n", linkingString.c_str(), acInfoLog);
+            Terminal::Output(Terminal::OC_Error, "%s\n%s\n", 
+                linkingString.c_str(), acInfoLog);
             delete[] acInfoLog;
         }
 
@@ -173,7 +177,7 @@ ShaderProgramHandle* OpenGLDevice::__CreateProgram(ShaderProgram* program)
 
 #ifdef RTGI_OUTPUT_RESOURCE_LOADING
     linkingString += " finished";
-    printf("%s\n", linkingString.c_str());
+    Terminal::Output(Terminal::OC_Success, "%s\n", linkingString.c_str());
 #endif
 
 #ifdef _DEBUG
@@ -242,7 +246,44 @@ void OpenGLDevice::__GetUniformLocation(ShaderProgram* program,
 #ifdef _DEBUG
     if( loc < 0 )
     {
-        printf("Uniform: %s not found\n", name);
+        Terminal::Output(Terminal::OC_Warning_Level4, 
+            "Uniform: \'%s\' not found in: \n", name);
+        VertexShader* vs = program->GetVertexShader();
+        if( vs )
+        {
+            Terminal::Output(Terminal::OC_Warning_Level4, "    %s\n",
+                vs->GetShaderFileName().c_str());
+        }
+        FragmentShader* fs = program->GetFragmentShader();
+        if( fs )
+        {
+            Terminal::Output(Terminal::OC_Warning_Level4, "    %s\n",
+                fs->GetShaderFileName().c_str());
+        }
+        TessellationControlShader* tcs = program->GetTessellationControlShader();
+        if( tcs )
+        {
+            Terminal::Output(Terminal::OC_Warning_Level4, "    %s\n",
+                tcs->GetShaderFileName().c_str());
+        }
+        TessellationEvaluationShader* tes = program->GetTessellationEvaluationShader();
+        if( tes )
+        {
+            Terminal::Output(Terminal::OC_Warning_Level4, "    %s\n",
+                tes->GetShaderFileName().c_str());
+        }
+        GeometryShader* gs = program->GetGeometryShader();
+        if( gs )
+        {
+            Terminal::Output(Terminal::OC_Warning_Level4, "    %s\n",
+                gs->GetShaderFileName().c_str());
+        }
+        ComputeShader* cs = program->GetComputeShader();
+        if( cs )
+        {
+            Terminal::Output(Terminal::OC_Warning_Level4, "    %s\n",
+                cs->GetShaderFileName().c_str());
+        }
     }
 
     GLenum res = glGetError();

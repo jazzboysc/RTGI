@@ -5,6 +5,7 @@
 
 #include "Texture2D.h"
 #include "bmpread.h"
+#include "Terminal.h"
 
 using namespace RTGI;
 
@@ -28,7 +29,8 @@ bool Texture2D::LoadBMPFromFile(const std::string& fileName)
 	bmpread_t bitmap;
 	if( !bmpread(fileName.c_str(), 0, &bitmap) )
 	{
-		printf("Failed loading texture %s\n", fileName.c_str());
+		Terminal::Output(Terminal::OC_Error, "Failed loading texture %s\n", 
+            fileName.c_str());
         assert( false );
         
 		return false;
@@ -47,7 +49,8 @@ bool Texture2D::LoadBMPFromFile(const std::string& fileName)
 	mType = GL_UNSIGNED_BYTE;
     
 #ifdef RTGI_OUTPUT_RESOURCE_LOADING
-    printf("Loading texture %s finished\n", fileName.c_str());
+    Terminal::Output(Terminal::OC_Success, "Loading texture %s finished\n", 
+        fileName.c_str());
 #endif
 
 	return true;
@@ -72,14 +75,16 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
  
     if( infile == 0 )
 	{ 
-		printf("Error loading %s !\n", fileName.c_str()); 
+        Terminal::Output(Terminal::OC_Error, "Error loading %s !\n", 
+            fileName.c_str());
 		return false; 
     } 
  
     // Read the header.
     fscanf(infile, " %s %d %d ", (char*)&imageformat, &Width, &Height);
 #ifdef RTGI_OUTPUT_RESOURCE_LOADING
-    printf("Image format %s Width %d Height %d\n", imageformat, Width, Height);
+    Terminal::Output(Terminal::OC_Success, "Image format %s Width %d Height %d\n", 
+        imageformat, Width, Height);
 #endif
    
     float* pixels = (float*)(malloc(Width * Height * 3 * sizeof(float)));
@@ -129,7 +134,8 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 	free(pixels);
 
 #ifdef RTGI_OUTPUT_RESOURCE_LOADING
-    printf("Loading texture %s finished\n", fileName.c_str());
+    Terminal::Output(Terminal::OC_Success, "Loading texture %s finished\n", 
+        fileName.c_str());
 #endif
     
     RevGamma = 1.0f / 2.2f; 
