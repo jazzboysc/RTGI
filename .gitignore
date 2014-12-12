@@ -36,3 +36,4 @@ CTestTestfile.cmake
 
 # Shortcut
 *.lnk
+Binaries/libfbxsdk.dll
