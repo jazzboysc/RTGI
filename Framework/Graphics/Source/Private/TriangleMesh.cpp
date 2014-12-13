@@ -272,7 +272,7 @@ bool TriangleMesh::LoadFromFile(const std::string& fileName)
 
 	OnLoadFromFile();
     
-#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+#ifdef RTGI_OUTPUT_MESH_RESOURCE_LOADING
     Terminal::Output(Terminal::OC_Success, "Loading mesh %s finished\n", 
         fileName.c_str());
 #endif

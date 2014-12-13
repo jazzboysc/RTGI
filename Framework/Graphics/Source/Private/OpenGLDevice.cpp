@@ -68,7 +68,7 @@ ShaderHandle* OpenGLDevice::__CreateShader(Shader* shader)
         return 0;
     }
 
-#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+#ifdef RTGI_OUTPUT_SHADER_RESOURCE_LOADING
     Terminal::Output(Terminal::OC_Success, "Loading shader %s finished\n", 
         fileName.c_str());
 #endif
@@ -181,7 +181,7 @@ ShaderProgramHandle* OpenGLDevice::__CreateProgram(ShaderProgram* program)
         return 0;
     }
 
-#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+#ifdef RTGI_OUTPUT_SHADER_RESOURCE_LOADING
     linkingString += " finished";
     Terminal::Output(Terminal::OC_Success, "%s\n", linkingString.c_str());
 #endif

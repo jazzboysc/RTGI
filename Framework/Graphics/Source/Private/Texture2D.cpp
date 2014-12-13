@@ -48,7 +48,7 @@ bool Texture2D::LoadBMPFromFile(const std::string& fileName)
 	mFormat = GL_RGB;
 	mType = GL_UNSIGNED_BYTE;
     
-#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+#ifdef RTGI_OUTPUT_TEXTURE_RESOURCE_LOADING
     Terminal::Output(Terminal::OC_Success, "Loading texture %s finished\n", 
         fileName.c_str());
 #endif
@@ -82,7 +82,7 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
  
     // Read the header.
     fscanf(infile, " %s %d %d ", (char*)&imageformat, &Width, &Height);
-#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+#ifdef RTGI_OUTPUT_TEXTURE_RESOURCE_LOADING
     Terminal::Output(Terminal::OC_Success, "Image format %s Width %d Height %d\n", 
         imageformat, Width, Height);
 #endif
@@ -133,7 +133,7 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 
 	free(pixels);
 
-#ifdef RTGI_OUTPUT_RESOURCE_LOADING
+#ifdef RTGI_OUTPUT_TEXTURE_RESOURCE_LOADING
     Terminal::Output(Terminal::OC_Success, "Loading texture %s finished\n", 
         fileName.c_str());
 #endif
