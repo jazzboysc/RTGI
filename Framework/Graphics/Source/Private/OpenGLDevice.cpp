@@ -5,8 +5,14 @@
 
 #include "OpenGLDevice.h"
 #include "Terminal.h"
+#include "ShaderProgram.h"
 
 using namespace RTGI;
+
+GLenum gsShaderProgramParams[SPP_Max] = 
+{
+    GL_GEOMETRY_VERTICES_OUT_EXT
+};
 
 //----------------------------------------------------------------------------
 void OpenGLDevice::__Initialize(GPUDeviceDescription* deviceDesc)
@@ -216,11 +222,12 @@ void OpenGLDevice::__DisableProgram(ShaderProgram* program)
 }
 //----------------------------------------------------------------------------
 void OpenGLDevice::__SetProgramParameterInt(ShaderProgram* program, 
-    GLenum pname, int value)
+    ShaderProgramParameter pname, int value)
 {
+    GLenum name = gsShaderProgramParams[(int)pname];
     OpenGLShaderProgramHandle* programHandle =
         (OpenGLShaderProgramHandle*)program->GetProgramHandle();
-    glProgramParameteri(programHandle->mProgram, pname, value);
+    glProgramParameteri(programHandle->mProgram, name, value);
 
 #ifdef _DEBUG
     GLenum res = glGetError();

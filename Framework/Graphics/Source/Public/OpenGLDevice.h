@@ -45,8 +45,8 @@ private:
     void __DeleteProgram(ShaderProgram* program);
     void __EnableProgram(ShaderProgram* program);
     void __DisableProgram(ShaderProgram* program);
-    void __SetProgramParameterInt(ShaderProgram* program, GLenum pname, 
-        int value);
+    void __SetProgramParameterInt(ShaderProgram* program, 
+        ShaderProgramParameter pname, int value);
 
     // Uniform.
     void __GetUniformLocation(ShaderProgram* program, ShaderUniform* uniform, 
@@ -60,7 +60,6 @@ private:
 private:
     bool mEnable4xMsaa;
     UINT m4xMsaaQuality;
-
 
 };
 

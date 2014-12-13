@@ -42,7 +42,7 @@ void SceneMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mMaterialColorLoc3, "MaterialColor");
 
     GPU_DEVICE_FUNC_SetProgramParameterInt(program, 
-        GL_GEOMETRY_VERTICES_OUT_EXT, 
+        SPP_Geometry_Vertices_Out,
         BidirectionalVoxelGIApp::RSM_FACE_COUNT * 3);
 }
 //----------------------------------------------------------------------------

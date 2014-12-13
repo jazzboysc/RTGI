@@ -42,7 +42,7 @@ void VPLTriMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mLightColorLoc, "LightColor");
     program->GetUniformLocation(&mMaterialColorLoc3, "MaterialColor");
     GPU_DEVICE_FUNC_SetProgramParameterInt(program,
-        GL_GEOMETRY_VERTICES_OUT_EXT, VPLApp::RSM_FACE_COUNT * 3);
+        SPP_Geometry_Vertices_Out, VPLApp::RSM_FACE_COUNT * 3);
 
     // Get pass 4 uniform locations.
     program = mMaterial->GetProgram(0, 3);

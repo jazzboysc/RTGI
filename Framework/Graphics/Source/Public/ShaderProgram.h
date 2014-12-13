@@ -30,6 +30,12 @@ enum ShaderType
     ST_TessellationEvaluation = 32
 };
 
+enum ShaderProgramParameter
+{
+    SPP_Geometry_Vertices_Out = 0,
+    SPP_Max
+};
+
 struct ShaderProgramInfo
 {
     std::string VShaderFileName;

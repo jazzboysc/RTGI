@@ -66,6 +66,8 @@ struct ShaderProgramHandle;
 struct PassInfoHandle;
 struct ShaderUniformHandle;
 
+enum ShaderProgramParameter;
+
 typedef void (GPUDevice::*GPUDeviceInitialize)(GPUDeviceDescription* deviceDesc);
 typedef void (GPUDevice::*GPUDeviceTerminate)();
 typedef ShaderHandle* (GPUDevice::*GPUDeviceCreateShader)(Shader* shader);
@@ -82,7 +84,7 @@ typedef void (GPUDevice::*GPUDeviceSetUniformValueVec3)(ShaderUniform* uniform, 
 typedef void (GPUDevice::*GPUDeviceSetUniformValueInt)(ShaderUniform* uniform, int value);
 typedef void (GPUDevice::*GPUDeviceSetUniformValueFloat)(ShaderUniform* uniform, float value);
 typedef void (GPUDevice::*GPUDeviceSetUniformValueFloat2)(ShaderUniform* uniform, const float* value);
-typedef void (GPUDevice::*GPUDeviceSetProgramParameterInt)(ShaderProgram* program, GLenum pname, int value);
+typedef void (GPUDevice::*GPUDeviceSetProgramParameterInt)(ShaderProgram* program, ShaderProgramParameter pname, int value);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
