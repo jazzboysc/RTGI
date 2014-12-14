@@ -5,7 +5,7 @@ SET( MACROS
     RTGI_OUTPUT_SHADER_RESOURCE_LOADING
 )
 SET( INCLUDE_DIRS
-	FreeGlut
+	glfw
 	Math
 	glm
     libbmpread

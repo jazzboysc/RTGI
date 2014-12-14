@@ -157,3 +157,31 @@ glm::vec3 Camera::GetDirection() const
 	return mDirection;
 }
 //----------------------------------------------------------------------------
+glm::vec3 RTGI::Camera::GetRight() const
+{
+	return mRight;
+}
+//----------------------------------------------------------------------------
+void RTGI::Camera::SetAngle(const float& horizontalAngle, const float& verticalAngle)
+{
+	glm::vec3 direction(
+		cos(verticalAngle) * sin(horizontalAngle),
+		sin(verticalAngle),
+		cos(verticalAngle) * cos(horizontalAngle)
+		);
+
+	// Right vector
+	glm::vec3 rightDir = glm::vec3(
+		sin(horizontalAngle - glm::pi<float>() * 0.5f),
+		0,
+		cos(horizontalAngle - glm::pi<float>() * 0.5f)
+		);
+
+	// Up vector
+	glm::vec3 up = glm::cross(rightDir, direction);
+
+	mRight = glm::normalize(-rightDir);
+	mUp = glm::normalize(up);
+	mDirection = glm::normalize(direction);
+}
+

@@ -1,15 +1,14 @@
 #include "SSDOApp.h"
-
+#include <glfw3.h>
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
 SSDOApp::SSDOApp(int width, int height)
-	:
-	mWidth(width),
-	mHeight(height),
-	mWindowTitle("SSDO demo")
 {
 	mShowMode = SM_FilteredSSDO;
+	mWidth = width;
+	mHeight = height;
+	mTitle = "SSDO demo";
 }
 //----------------------------------------------------------------------------
 SSDOApp::~SSDOApp()
@@ -18,20 +17,9 @@ SSDOApp::~SSDOApp()
 //----------------------------------------------------------------------------
 void SSDOApp::Initialize(GPUDevice* device)
 {
-    Application::Initialize(device);
-
-	std::string title = mWindowTitle;
-	glutSetWindowTitle(title.c_str());
-
-	float color = 0.5f;
-	glClearColor(color, color, color, 0.0f);
-	glEnable(GL_DEPTH_TEST);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 	// Create camera.
-	mCamera = new Camera;
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 100.0f);
-	mCamera->SetLookAt(vec3(0.0f, 9.0f, 26.0f), vec3(0.0f, 0.0f, 0.0f),
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 1.0f, 100.0f);
+	mMainCamera->SetLookAt(vec3(0.0f, 9.0f, 26.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
 	// Create light.
@@ -156,7 +144,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create SSDO screen quad.
 	material = new Material(mtSSDO);
-	mSSDOQuad = new SSDOScreenQuad(material, mCamera);
+	mSSDOQuad = new SSDOScreenQuad(material, mMainCamera);
 	mSSDOQuad->LoadFromFile("screenquad.ply");
 	mSSDOQuad->SetTCoord(0, tcoord00);
 	mSSDOQuad->SetTCoord(1, tcoord10);
@@ -210,7 +198,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create scene.
 	material = new Material(mtGBuffer);
-	mModel1 = new SSDOTriMesh(material, mCamera);
+	mModel1 = new SSDOTriMesh(material, mMainCamera);
 	mModel1->LoadFromFile("dragon_s.ply");
 	mModel1->GenerateNormals();
 	mModel1->CreateDeviceResource(mDevice);
@@ -221,7 +209,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	mModel1->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
 
 	material = new Material(mtGBuffer);
-	mModel2 = new SSDOTriMesh(material, mCamera);
+	mModel2 = new SSDOTriMesh(material, mMainCamera);
 	mModel2->LoadFromFile("happy_s.ply");
 	mModel2->GenerateNormals();
 	mModel2->CreateDeviceResource(mDevice);
@@ -232,7 +220,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	mModel2->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
 
 	material = new Material(mtGBuffer);
-	mGround = new SSDOTriMesh(material, mCamera);
+	mGround = new SSDOTriMesh(material, mMainCamera);
 	mGround->LoadFromFile("ground.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
@@ -244,7 +232,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	for( int i = 0; i < CubeCount; ++i )
 	{
 		material = new Material(mtGBuffer);
-		mCubes[i] = new SSDOTriMesh(material, mCamera);
+		mCubes[i] = new SSDOTriMesh(material, mMainCamera);
 		mCubes[i]->LoadFromFile("cube.ply");
 		mCubes[i]->GenerateNormals();
 		mCubes[i]->CreateDeviceResource(mDevice);
@@ -290,19 +278,8 @@ void SSDOApp::DrawScene()
 	}
 }
 //----------------------------------------------------------------------------
-void SSDOApp::Run()
+void SSDOApp::FrameFunc()
 {
-	//static DWORD time = 0;
-	//DWORD curTime = ::GetTickCount();
-	//if( curTime - time >= 10 )
-	//{
-	//	time = curTime;
-	//}
-	//else
-	//{
-	//	return;
-	//}
-
 	// Draw scene to G-buffer.
 	mGBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -349,15 +326,11 @@ void SSDOApp::Run()
 	default:
 		break;
 	}
-
-	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
 void SSDOApp::Terminate()
 {
 	// Release all resources.
-
-	delete mCamera;
 
 	mLight = 0;
 	mModel1 = 0;
@@ -389,53 +362,30 @@ void SSDOApp::Terminate()
 	mDirectLightingQuad = 0;
 }
 //----------------------------------------------------------------------------
-void SSDOApp::OnKeyboard(unsigned char key, int x, int y)
+void SSDOApp::ProcessInput()
 {
-	switch( key )
+	if (glfwGetKey(mWindow, GLFW_KEY_1) == GLFW_PRESS)
 	{
-	case '1':
 		mShowMode = SM_FilteredSSDO;
-		break;
-
-	case '2':
+	}
+	if (glfwGetKey(mWindow, GLFW_KEY_2) == GLFW_PRESS)
+	{
 		mSSDOTempResultQuad->TempTexture = mNormalTexture;
 		mShowMode = SM_Normal;
-		break;
-
-	case '3':
+	}
+	if (glfwGetKey(mWindow, GLFW_KEY_3) == GLFW_PRESS)
+	{
 		mSSDOTempResultQuad->TempTexture = mColorTexture;
 		mShowMode = SM_Color;
-		break;
-
-	case '4':
+	}
+	if (glfwGetKey(mWindow, GLFW_KEY_4) == GLFW_PRESS)
+	{
 		mSSDOTempResultQuad->TempTexture = mDirectLightingTexture;
 		mShowMode = SM_DirectLighting;
-		break;
-
-	case '5':
+	}
+	if (glfwGetKey(mWindow, GLFW_KEY_5) == GLFW_PRESS)
+	{
 		mSSDOTempResultQuad->TempTexture = mRandomTexture;
 		mShowMode = SM_Random;
-
-	default:
-		break;
 	}
 }
-//----------------------------------------------------------------------------
-void SSDOApp::OnKeyboardUp(unsigned char key, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void SSDOApp::OnMouse(int button, int state, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void SSDOApp::OnMouseMove(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void SSDOApp::OnReshape(int x, int y)
-{
-	mWidth = x;
-	mHeight = y;
-}
-//----------------------------------------------------------------------------

@@ -8,6 +8,8 @@
 
 
 #include "BufferBase.h"
+// Make a glbuffer class to replace this
+#include <GL/glew.h>
 
 namespace RTGI
 {

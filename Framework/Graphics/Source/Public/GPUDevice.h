@@ -9,14 +9,7 @@
 #include "RefObject.h"
 #include "GPUResource.h"
 
-#ifdef __APPLE__  // include Mac OS X verions of headers
-#  include <OpenGL/OpenGL.h>
-#  include <GLUT/glut.h>
-#else // non-Mac OS X operating systems
-#  include <GL/glew.h>
-#  include <freeglut.h>
-#  include <freeglut_ext.h>
-#endif  // __APPLE__
+#include <GL/glew.h>
 
 namespace RTGI
 {

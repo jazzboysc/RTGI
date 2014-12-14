@@ -6,14 +6,14 @@
 #ifndef RTGI_OpenGLDevice_H
 #define RTGI_OpenGLDevice_H
 
-#ifdef __APPLE__  // include Mac OS X verions of headers
-#  include <OpenGL/OpenGL.h>
-#  include <GLUT/glut.h>
-#else // non-Mac OS X operating systems
+// shouldn't include glew.h in header file
 #  include <GL/glew.h>
-#  include <freeglut.h>
-#  include <freeglut_ext.h>
-#endif  // __APPLE__
+//#include <windows.h>
+// #       pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
+// #       pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
+// #       pragma comment (lib, "gdi32.lib")    /* link Windows GDI lib        */
+// #       pragma comment (lib, "winmm.lib")    /* link Windows MultiMedia lib */
+// #       pragma comment (lib, "user32.lib")   /* link Windows user lib       */
 
 #include "GPUDevice.h"
 #include "OpenGLResource.h"

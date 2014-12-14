@@ -1,7 +1,6 @@
 #ifndef RTGI_SSDOApp_H
 #define RTGI_SSDOApp_H
 
-#include "GraphicsFrameworkHeader.h"
 #include "SSDOScreenQuad.h"
 #include "SSDOFilterScreenQuad.h"
 #include "SSDOTempScreenQuad.h"
@@ -21,16 +20,10 @@ public:
 	SSDOApp(int width, int height);
 	~SSDOApp();
 
-	void Initialize(GPUDevice* device);
-	void Run();
-	void Terminate();
-
-	// Event handlers.
-	void OnKeyboard(unsigned char key, int x, int y);
-	void OnKeyboardUp(unsigned char key, int x, int y);
-	void OnMouse(int button, int state, int x, int y);
-	void OnMouseMove(int x, int y);
-	void OnReshape(int x, int y);
+	void Initialize(GPUDevice* device) override;
+	void ProcessInput() override;
+	void FrameFunc() override;
+	void Terminate() override;
 
 private:
 	void DrawScene();
@@ -46,11 +39,6 @@ private:
 		SM_FilteredSSDO
 	};
 
-	int mWidth, mHeight;
-
-	std::string mWindowTitle;
-
-	Camera* mCamera;
 	LightPtr mLight;
 	SSDOTriMeshPtr mModel1;
 	SSDOTriMeshPtr mModel2;

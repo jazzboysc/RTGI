@@ -8,6 +8,14 @@
 
 #include "Application.h"
 
+// Utils
+#include "RefObject.h"
+#include "RefPointer.h"
+
+// TODO: move this somewhere else
+// Timer
+#include "Timer.h"
+
 // Textures
 #include "bmpread.h"
 #include "Texture.h"
@@ -55,8 +63,6 @@
 #include "Light.h"
 #include "PointSet.h"
 #include "PolylineGeometry.h"
-#include "RefObject.h"
-#include "RefPointer.h"
 #include "RenderObject.h"
 #include "TriangleMesh.h"
 #include "ScreenQuad.h"

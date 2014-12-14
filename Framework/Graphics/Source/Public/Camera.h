@@ -41,6 +41,7 @@ public:
 	void SetLookAt(const glm::vec3& location, const glm::vec3& lookAt, const glm::vec3& up);
     void SetLocation(const glm::vec3& location);
     void SetAxes(const glm::vec3& right, const glm::vec3& up, const glm::vec3& direction);
+	void SetAngle(const float& horizontalAngle, const float& verticalAngle);
 	void SetPerspectiveFrustum(float upFovDegrees, float aspectRatio, float nearPlane, 
 		float farPlane);
 	void SetOrthogonalFrustum(float upMax, float aspectRatio, float nearPlane, 
@@ -48,6 +49,8 @@ public:
 
 	glm::vec3 GetLocation() const;
 	glm::vec3 GetDirection() const;
+	glm::vec3 GetRight() const;
+
     void GetNearFarPlane(float* nearFarPlane) const;
 	glm::mat4 GetViewTransform();
 	glm::mat4 GetProjectionTransform();

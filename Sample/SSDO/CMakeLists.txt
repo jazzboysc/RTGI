@@ -15,7 +15,7 @@ SET( INCLUDE
 	glew
 	glm
 	fbxsdk
-	FreeGlut
+	glfw
 	Graphics
 	Resource
 	GUI
@@ -29,7 +29,7 @@ SET( LINK
 	# ----- OpenGL & Window -----
 	${OPENGL_LIBRARIES}
 	glew
-	FreeGlut
+	glfw
 	# ----- Core Framework -----
 	Graphics
 	Resource
