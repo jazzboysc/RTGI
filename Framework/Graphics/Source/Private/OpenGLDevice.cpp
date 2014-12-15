@@ -19,14 +19,14 @@ void OpenGLDevice::__Initialize(GPUDeviceDescription* deviceDesc)
 {
     // TODO:
     //  Should create OpenGL context here. Nothing to do now since we are
-    // using GLUT.
+    // using GLFW.
 }
 //----------------------------------------------------------------------------
 void OpenGLDevice::__Terminate()
 {
     // TODO:
     //  Should destroy OpenGL context here. Nothing to do now since we are
-    // using GLUT.
+    // using GLFW.
 }
 //----------------------------------------------------------------------------
 void OpenGLDevice::__OnResize(unsigned int width, unsigned int height)

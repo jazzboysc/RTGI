@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 	OpenGLDevice* gpuDevice = new OpenGLDevice();
 
 	// Initialize application.
-	app = new SimpleVoxelizationApp();
+    app = new SimpleVoxelizationApp(768, 768);
 	app->RTGI::Application::Initialize(gpuDevice);
 	app->RTGI::Application::Run();
 	app->RTGI::Application::Terminate();
