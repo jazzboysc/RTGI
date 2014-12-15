@@ -47,10 +47,12 @@ public:
 	void SetOrthogonalFrustum(float upMax, float aspectRatio, float nearPlane, 
 		float farPlane);
 
+	void Rotate(glm::vec3 _rotation);
+
 	glm::vec3 GetLocation() const;
 	glm::vec3 GetDirection() const;
 	glm::vec3 GetRight() const;
-	void GetAngle(float& _horizontalAngle, float& _verticalAngle) const;
+	void GetAngle(float& _horizontalAngle, float& _verticalAngle);
 
     void GetNearFarPlane(float* nearFarPlane) const;
 	glm::mat4 GetViewTransform();
@@ -71,6 +73,7 @@ public:
     };
 
 private:
+	glm::fquat mRot;
 	glm::vec3 mLocation, mRight, mUp, mDirection;
     float mFrustum[VF_COUNT];  // near, far, bottom, top, left, right
 	float mUpFovDegrees, mAspectRatio;

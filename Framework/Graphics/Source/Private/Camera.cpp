@@ -14,7 +14,8 @@ Camera::Camera(bool IsPerspective)
 	mRight(1.0f, 0.0f, 0.0f),
 	mUp(0.0f, 1.0f, 0.0f), 
 	mDirection(0.0f, 0.0f, 1.0f),
-	mIsPerspective(IsPerspective)
+	mIsPerspective(IsPerspective),
+	mRot()
 {
 	if( mIsPerspective )
 	{
@@ -164,32 +165,49 @@ glm::vec3 Camera::GetRight() const
 //----------------------------------------------------------------------------
 void Camera::SetAngle(const float& horizontalAngle, const float& verticalAngle)
 {
-	glm::vec3 direction(
-		cos(verticalAngle) * sin(horizontalAngle),
-		sin(verticalAngle),
-		cos(verticalAngle) * cos(horizontalAngle)
-		);
+	auto test = glm::rotate(glm::mat4(), glm::radians(-45.0f), glm::vec3(0, 1, 0));
 
-	// Right vector
-	glm::vec3 rightDir = glm::vec3(
-		sin(horizontalAngle - glm::pi<float>() * 0.5f),
-		0,
-		cos(horizontalAngle - glm::pi<float>() * 0.5f)
-		);
+	mRot = glm::normalize(glm::quat(glm::radians(glm::vec3(verticalAngle, horizontalAngle, 0))));
+	glm::mat4 res = glm::mat4_cast(mRot);
+	auto euler = glm::degrees(glm::eulerAngles(mRot));
+	mRight.x = res[0][0];
+	mRight.y = res[1][0];
+	mRight.z = res[2][0];
 
-	// Up vector
-	glm::vec3 up = glm::cross(rightDir, direction);
+	mUp.x = res[0][1];
+	mUp.y = res[1][1];
+	mUp.z = res[2][1];
 
-	mRight = glm::normalize(-rightDir);
-	mUp = glm::normalize(up);
-	mDirection = glm::normalize(direction);
+	mDirection.x = res[0][2];
+	mDirection.y = res[1][2];
+	mDirection.z = res[2][2];
 }
 //----------------------------------------------------------------------------
-void Camera::GetAngle(float& _horizontalAngle, float& _verticalAngle) const
+void Camera::GetAngle(float& _horizontalAngle, float& _verticalAngle)
 {
-	float v = asin(mDirection.y);
-	float h = asin(mDirection.x / cos(v));
+	//mRot = glm::normalize(glm::quat(this->GetViewTransform()));
+	auto euler = glm::degrees(glm::eulerAngles(mRot));
 
-	_horizontalAngle = h;
-	_verticalAngle = v;
+	_horizontalAngle = euler.y;
+	_verticalAngle = euler.x;
+}
+//----------------------------------------------------------------------------
+void Camera::Rotate(glm::vec3 _rotation)
+{
+	mRot = glm::rotate(mRot, glm::radians(_rotation.y), glm::vec3(1, 0, 0));
+	mRot = glm::rotate(mRot, glm::radians(_rotation.x), glm::vec3(0, 1, 0));
+
+	glm::mat4 res = glm::mat4_cast(mRot);
+	auto euler = glm::degrees(glm::eulerAngles(mRot));
+	mRight.x = res[0][0];
+	mRight.y = res[1][0];
+	mRight.z = res[2][0];
+
+	mUp.x = res[0][1];
+	mUp.y = res[1][1];
+	mUp.z = res[2][1];
+
+	mDirection.x = res[0][2];
+	mDirection.y = res[1][2];
+	mDirection.z = res[2][2];
 }

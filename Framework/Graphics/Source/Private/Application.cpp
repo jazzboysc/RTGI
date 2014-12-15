@@ -84,7 +84,7 @@ void Application::UpdateMainCamera()
 
 	static auto lastMousePos = glm::vec2(-1, -1);
 	static auto mouseStartPos = glm::vec2(0, 0);
-	const float mouseSpeed = 0.003f;
+	const float mouseSpeed = 0.15f;
 
 	auto camDir = mMainCamera->GetDirection();
 	auto camPos = mMainCamera->GetLocation();
@@ -113,8 +113,10 @@ void Application::UpdateMainCamera()
 		else
 		{
 			// Calculate camera direction with mouse displacement
-			horizontalAngle += mouseSpeed * float(mouseStartPos.x - newMousePos.x);
-			verticalAngle -= mouseSpeed * float(mouseStartPos.y - newMousePos.y);
+			auto h = mouseSpeed * float(newMousePos.x - mouseStartPos.x);
+			auto v = mouseSpeed * float(newMousePos.y - mouseStartPos.y);
+			auto rot = glm::vec3(h, v, 0);
+			mMainCamera->Rotate(rot);
 			// Reset mouse position for next frame
 			glfwSetCursorPos(Window, mouseStartPos.x, mouseStartPos.y);
 		}
@@ -125,7 +127,6 @@ void Application::UpdateMainCamera()
 		// Show the cursor
 		glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
-	mMainCamera->SetAngle(horizontalAngle, verticalAngle);
 	auto rightDir = mMainCamera->GetRight();
 
 	// Camera Position
