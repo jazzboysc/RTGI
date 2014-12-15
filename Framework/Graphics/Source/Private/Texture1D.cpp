@@ -31,6 +31,12 @@ bool Texture1D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 	mType = type;
 
 	glBindTexture(GL_TEXTURE_1D, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
 	return true;
 }
 //----------------------------------------------------------------------------
@@ -43,6 +49,11 @@ void Texture1D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 		0);
 	glBindTexture(GL_TEXTURE_1D, 0);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //--------------------------------------------------------------------------
 void Texture1D::BindToImageUnit(GLuint unit, GLenum access)
@@ -52,6 +63,12 @@ void Texture1D::BindToImageUnit(GLuint unit, GLenum access)
 #else
 	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, 
 		mInternalFormat);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
 #endif
 }
 //--------------------------------------------------------------------------
@@ -104,6 +121,11 @@ void Texture1D::CreateUniformRandomTexture(int sampleCount, int channelCount)
     delete[] pixels;
 
     glBindTexture(GL_TEXTURE_1D, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //--------------------------------------------------------------------------
 void Texture1D::GetDataFromGPUMemory(void* dstData)
@@ -111,6 +133,11 @@ void Texture1D::GetDataFromGPUMemory(void* dstData)
     glBindTexture(GL_TEXTURE_1D, mTexture);
     glGetTexImage(GL_TEXTURE_1D, 0, mFormat, mType, dstData);
     glBindTexture(GL_TEXTURE_1D, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //--------------------------------------------------------------------------
 Texture::TextureType Texture1D::GetType()

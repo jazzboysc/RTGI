@@ -33,6 +33,10 @@ void ComputeTask::Dispatch(unsigned int pass, unsigned int globalX,
     OnPreDispatch(pass);
 
     glDispatchCompute(globalX, globalY, globalZ);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 
     OnPostDispatch(pass);
     p->GetShaderProgram()->Disable();

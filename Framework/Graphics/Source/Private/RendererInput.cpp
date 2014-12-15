@@ -45,6 +45,11 @@ void EnableTexture(RendererInput* input)
         gsWrapType[(int)input->View.Sampler.WrapS]);
     glTexParameteri(target, GL_TEXTURE_WRAP_T,
         gsWrapType[(int)input->View.Sampler.WrapT]);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void EnableBuffer(RendererInput* input)

@@ -44,6 +44,11 @@ bool Texture2D::LoadBMPFromFile(const std::string& fileName)
 		GL_RGB, GL_UNSIGNED_BYTE, bitmap.rgb_data);
 	bmpread_free(&bitmap);
 
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
 	mInternalFormat = GL_RGB;
 	mFormat = GL_RGB;
 	mType = GL_UNSIGNED_BYTE;
@@ -127,6 +132,11 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F_ARB, Width, Height, 0, GL_RGB,
 		GL_FLOAT, pixels);
 
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
 	mInternalFormat = GL_RGB32F_ARB;
 	mFormat = GL_RGB;
 	mType = GL_FLOAT;
@@ -162,6 +172,11 @@ bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
 	return true;
 }
 //----------------------------------------------------------------------------
@@ -177,6 +192,11 @@ bool Texture2D::LoadFromTextureBuffer(TextureBuffer* textureBuffer,
     glBindTexture(GL_TEXTURE_BUFFER, mTexture);
     glTexBuffer(GL_TEXTURE_BUFFER, internalFormat, buffer);
     glBindTexture(GL_TEXTURE_BUFFER, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 
 	return true;
 }
@@ -251,7 +271,12 @@ void Texture2D::CreateRenderTarget(int width, int height,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	glBindTexture(GL_TEXTURE_2D, 0);	
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //--------------------------------------------------------------------------
 void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
@@ -263,6 +288,11 @@ void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 		mFormat, mType, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //--------------------------------------------------------------------------
 void Texture2D::BindToImageUnit(GLuint unit, GLenum access)
@@ -272,6 +302,12 @@ void Texture2D::BindToImageUnit(GLuint unit, GLenum access)
 #else
 	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, 
 		mInternalFormat);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
 #endif
 }
 //--------------------------------------------------------------------------
@@ -315,7 +351,12 @@ void Texture2D::CreateLDRandomTextureRGBF(int maxSampleCount,
 	glGenTextures(1, &mTexture);
 	glBindTexture(GL_TEXTURE_2D, mTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F_ARB, maxSampleCount, 
-		patternSizeSquared, 0, GL_RGB, GL_FLOAT, pixels); 
+		patternSizeSquared, 0, GL_RGB, GL_FLOAT, pixels);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 			
 	delete[] pixels;
 }
@@ -325,6 +366,11 @@ void Texture2D::GetImageData(void* dstPixels)
     glBindTexture(GL_TEXTURE_2D, mTexture);
     glGetTexImage(GL_TEXTURE_2D, 0, mFormat, mType, dstPixels);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //--------------------------------------------------------------------------
 Texture::TextureType Texture2D::GetType()

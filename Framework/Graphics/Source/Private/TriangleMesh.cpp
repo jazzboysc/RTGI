@@ -87,6 +87,11 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
             glDrawArraysInstanced(GL_QUADS, 0, 4, 128);
         }
     }
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -585,6 +590,11 @@ void TriangleMesh::CreateVertexBufferDeviceResource()
 			(GLvoid*)&tempVB[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::CreateIndexBufferDeviceResource()
@@ -599,5 +609,10 @@ void TriangleMesh::CreateIndexBufferDeviceResource()
 			GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------

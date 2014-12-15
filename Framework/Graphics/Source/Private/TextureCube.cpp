@@ -55,6 +55,11 @@ bool TextureCube::LoadFromFile(const std::string& pX, const std::string& nX,
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, nZBitmap.width, 
 		nZBitmap.height, 0, GL_RGB, GL_UNSIGNED_BYTE, nZBitmap.rgb_data);
 
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
 	bmpread_free(&pXBitmap);
 	bmpread_free(&nXBitmap);
 	bmpread_free(&pYBitmap);

@@ -9,6 +9,7 @@
 #include "VPLGenerator.h"
 #include "DirectLightingRenderer.h"
 #include "IndirectLightingRenderer.h"
+#include "Voxelizer.h"
 
 namespace RTGI
 {
@@ -51,6 +52,9 @@ private:
     ShowMode mShowMode;
 
     Camera* mLightProjector;
+
+    // Scene voxelization.
+    VoxelizerPtr mVoxelizer;
 
     // G-buffer.
     GBufferRendererPtr mGBufferRenderer;

@@ -42,6 +42,22 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	// Create material templates.
 	Material* material = 0;
 
+    ShaderProgramInfo voxelizationProgramInfo;
+    voxelizationProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vVoxelization.glsl";
+    voxelizationProgramInfo.GShaderFileName = "BidirectionalVoxelGI/gVoxelization.glsl";
+    voxelizationProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fVoxelization.glsl";
+    voxelizationProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                              ShaderType::ST_Geometry |
+                                              ShaderType::ST_Fragment;
+    Pass* passVoxelization = new Pass(voxelizationProgramInfo);
+
+    ShaderProgramInfo showVoxelizationProgramInfo;
+    showVoxelizationProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShowVoxelization.glsl";
+    showVoxelizationProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fShowVoxelization.glsl";
+    showVoxelizationProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                                  ShaderType::ST_Fragment;
+    Pass* passShowVoxelization = new Pass(showVoxelizationProgramInfo);
+
     ShaderProgramInfo shadowProgramInfo;
     shadowProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShadow.glsl";
     shadowProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fShadow.glsl";
@@ -69,12 +85,14 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
                                      ShaderType::ST_Fragment;
     Pass* passRSM = new Pass(rsmProgramInfo);
 
-	Technique* techVPL = new Technique();
-    techVPL->AddPass(passShadow);
-    techVPL->AddPass(passGBuffer);
-    techVPL->AddPass(passRSM);
-	MaterialTemplate* mtVPL = new MaterialTemplate();
-	mtVPL->AddTechnique(techVPL);
+	Technique* techScene = new Technique();
+    techScene->AddPass(passShadow);
+    techScene->AddPass(passGBuffer);
+    techScene->AddPass(passRSM);
+    techScene->AddPass(passVoxelization);
+    techScene->AddPass(passShowVoxelization);
+	MaterialTemplate* mtScene = new MaterialTemplate();
+    mtScene->AddTechnique(techScene);
 
     ShaderProgramInfo vplTempProgramInfo;
     vplTempProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vVPLTemp.glsl";
@@ -87,6 +105,10 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     techScreenQuad->AddPass(passScreenQuad);
     MaterialTemplate* mtScreenQuad = new MaterialTemplate();
     mtScreenQuad->AddTechnique(techScreenQuad);
+
+    // Create scene voxelizer.
+    mVoxelizer = new Voxelizer();
+    mVoxelizer->Initialize();
 
     // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer();
@@ -127,6 +149,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     // Create GPU timer.
     mTimer = new GPUTimer();
     mTimer->CreateDeviceResource();
+    mVoxelizer->SetTimer(mTimer);
     mShadowMapRenderer->SetTimer(mTimer);
     mGBufferRenderer->SetTimer(mTimer);
     mRSMRenderer->SetTimer(mTimer);
@@ -136,12 +159,13 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 
 	// Create scene.
     mSceneObjects = new RenderSet();
+    mVoxelizer->SetRenderSet(mSceneObjects);
     mShadowMapRenderer->SetRenderSet(mSceneObjects);
     mGBufferRenderer->SetRenderSet(mSceneObjects);
     mRSMRenderer->SetRenderSet(mSceneObjects);
 
 	mat4 rotM;
-	material = new Material(mtVPL);
+    material = new Material(mtScene);
 	mModel = new SceneMesh(material, mMainCamera);
 	mModel->LoadFromFile("dragon_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(60.0f));
@@ -151,10 +175,9 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
 	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
-
     mSceneObjects->AddRenderObject(mModel);
 
-    material = new Material(mtVPL);
+    material = new Material(mtScene);
 	mGround = new SceneMesh(material, mMainCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
@@ -163,7 +186,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mGround->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mGround);
 
-    material = new Material(mtVPL);
+    material = new Material(mtScene);
 	mCeiling = new SceneMesh(material, mMainCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
@@ -175,7 +198,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mCeiling->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mCeiling);
 
-    material = new Material(mtVPL);
+    material = new Material(mtScene);
 	mBackWall = new SceneMesh(material, mMainCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
@@ -187,7 +210,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mBackWall->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mBackWall);
 
-    material = new Material(mtVPL);
+    material = new Material(mtScene);
 	mLeftWall = new SceneMesh(material, mMainCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
@@ -199,7 +222,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mLeftWall->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mLeftWall);
 
-    material = new Material(mtVPL);
+    material = new Material(mtScene);
 	mRightWall = new SceneMesh(material, mMainCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
@@ -233,12 +256,21 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	infoPanel->SetDesktopLocation(screenX + Width + 12, screenY - 30);
 
     // Create labels.
-    InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, 20);
-    InformationPanel::GetInstance()->AddTimingLabel("Scene G-buffer Pass", 16, 40);
-    InformationPanel::GetInstance()->AddTimingLabel("RSM Pass", 16, 60);
-    InformationPanel::GetInstance()->AddTimingLabel("VPL Creation Pass", 16, 80);
-    InformationPanel::GetInstance()->AddTimingLabel("Direct Lighting Pass", 16, 100);
-    InformationPanel::GetInstance()->AddTimingLabel("Indirect Lighting Pass", 16, 120);
+    int infoStartY = 20;
+    int infoIncY = 20;
+    InformationPanel::GetInstance()->AddTimingLabel("Scene Voxelization Pass", 16, infoStartY);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, infoStartY);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddTimingLabel("Scene G-buffer Pass", 16, infoStartY);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddTimingLabel("RSM Pass", 16, infoStartY);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddTimingLabel("VPL Creation Pass", 16, infoStartY);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddTimingLabel("Direct Lighting Pass", 16, infoStartY);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddTimingLabel("Indirect Lighting Pass", 16, infoStartY);
 }
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::FrameFunc()
@@ -306,6 +338,8 @@ void BidirectionalVoxelGIApp::Terminate()
 {
 	// Release all resources.
     delete mLightProjector;
+
+    mVoxelizer = 0;
 
     mGBufferRenderer = 0;
     mGBufferPositionTexture = 0;

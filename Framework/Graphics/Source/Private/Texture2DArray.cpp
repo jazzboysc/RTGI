@@ -84,6 +84,11 @@ void Texture2DArray::CreateRenderTarget(int width, int height, int depth,
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //--------------------------------------------------------------------------
 void Texture2DArray::BindToImageUnit(GLuint unit, GLenum access)
@@ -93,6 +98,12 @@ void Texture2DArray::BindToImageUnit(GLuint unit, GLenum access)
 #else
     glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access,
         mInternalFormat);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
 #endif
 }
 //--------------------------------------------------------------------------

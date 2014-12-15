@@ -106,6 +106,11 @@ void Texture3D::CreateRenderTarget(int width, int height, int depth,
         mFormat, mType, 0);
 
     glBindTexture(GL_TEXTURE_3D, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void Texture3D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
@@ -117,6 +122,11 @@ void Texture3D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 		mFormat, mType, 0);
 	glBindTexture(GL_TEXTURE_3D, 0);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //--------------------------------------------------------------------------
 void Texture3D::BindToImageUnit(GLuint unit, GLenum access)
@@ -126,6 +136,12 @@ void Texture3D::BindToImageUnit(GLuint unit, GLenum access)
 #else
 	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, 
 		mInternalFormat);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
 #endif
 }
 //--------------------------------------------------------------------------

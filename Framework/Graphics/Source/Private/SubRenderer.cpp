@@ -433,5 +433,10 @@ void SubRenderer::ApplyPipelineStateBlock(PipelineStateBlock* psb)
             glClear(psb->OutputMerger.ClearMask);
         }
     }
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------

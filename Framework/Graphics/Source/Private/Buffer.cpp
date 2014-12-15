@@ -44,12 +44,20 @@ GLuint Buffer::GetSize() const
 void* Buffer::Map(GLenum access)
 {
 	void* data = glMapBuffer(mType, access);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 	return data;
 }
 //----------------------------------------------------------------------------
 void Buffer::Unmap()
 {
 	glUnmapBuffer(mType);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void Buffer::Bind(GLuint index)
@@ -71,11 +79,19 @@ void Buffer::Bind(GLuint index)
 void Buffer::Bind()
 {
 	glBindBuffer(mType, mBuffer);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void Buffer::BindToIndirect()
 {
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mBuffer);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void Buffer::UpdateSubData(GLuint bindingPoint, int offset, size_t size, 
@@ -83,6 +99,10 @@ void Buffer::UpdateSubData(GLuint bindingPoint, int offset, size_t size,
 {
 	Bind(bindingPoint);
 	glBufferSubData(mType, offset, size, data);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 bool Buffer::LoadFromSystemMemory(size_t size, void* data, BufferUsage usage)
@@ -91,6 +111,10 @@ bool Buffer::LoadFromSystemMemory(size_t size, void* data, BufferUsage usage)
 	glGenBuffers(1, &mBuffer);
 	glBindBuffer(mType, mBuffer);
     glBufferData(mType, size, data, msBufferUsage[(int)usage]);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 
 	return true;
 }
@@ -102,5 +126,9 @@ void Buffer::ReserveDeviceResource(size_t size, BufferUsage usage)
 	glBindBuffer(mType, mBuffer);
     glBufferData(mType, size, 0, msBufferUsage[(int)usage]);
 	glBindBuffer(mType, 0);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
