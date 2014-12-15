@@ -341,125 +341,127 @@ void BidirectionalVoxelGIApp::Terminate()
     mTimer = 0;
 }
 //----------------------------------------------------------------------------
-void BidirectionalVoxelGIApp::ProcessInput(int key, int scancode, int action, int mods)
+void BidirectionalVoxelGIApp::ProcessInput()
 {
-	switch (key)
+	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-	case '1':
 		mShowMode = SM_Shadow;
 		mTempScreenQuad->ShowMode = 0;
 		mTempScreenQuad->TempTexture = mShadowMapTexture;
-		break;
-
-	case '2':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
+	{
 		mShowMode = SM_GBufferPosition;
 		mTempScreenQuad->ShowMode = 0;
 		mTempScreenQuad->TempTexture = mGBufferPositionTexture;
-		break;
-
-	case '3':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
+	{
 		mShowMode = SM_GBufferNormal;
 		mTempScreenQuad->ShowMode = 0;
 		mTempScreenQuad->TempTexture = mGBufferNormalTexture;
-		break;
-
-	case '4':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_4) == GLFW_PRESS)
+	{
 		mShowMode = SM_GBufferAlbedo;
 		mTempScreenQuad->ShowMode = 0;
 		mTempScreenQuad->TempTexture = mGBufferAlbedoTexture;
-		break;
-
-	case '5':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_5) == GLFW_PRESS)
+	{
 		mShowMode = SM_RSMPosition;
 		mTempScreenQuad->ShowMode = 1;
 		mTempScreenQuad->TempTextureArray = mRSMPositionTextureArray;
-		break;
-
-	case '6':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_6) == GLFW_PRESS)
+	{
 		mShowMode = SM_RSMNormal;
 		mTempScreenQuad->ShowMode = 1;
 		mTempScreenQuad->TempTextureArray = mRSMNormalTextureArray;
-		break;
-
-	case '7':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_7) == GLFW_PRESS)
+	{
 		mShowMode = SM_RSMFlux;
 		mTempScreenQuad->ShowMode = 1;
 		mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
-		break;
-
-	case '8':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_8) == GLFW_PRESS)
+	{
 		mShowMode = SM_DirectLighting;
 		mTempScreenQuad->ShowMode = 0;
 		mTempScreenQuad->TempTexture = mDirectLightingTexture;
-		break;
-
-	case '9':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_9) == GLFW_PRESS)
+	{
 		mShowMode = SM_IndirectLighting;
 		mTempScreenQuad->ShowMode = 0;
 		mTempScreenQuad->TempTexture = mIndirectLightingTexture;
-		break;
-
-	case '0':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_0) == GLFW_PRESS)
+	{
 		mShowMode = SM_Final;
 		mTempScreenQuad->ShowMode = 2;
 		mTempScreenQuad->TempTexture = mIndirectLightingTexture;
 		mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
-		break;
+	}
 
-	case 'X':
-		mTempScreenQuad->TextureArrayIndex = 0;
-		break;
+	bool isShift = glfwGetKey(Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
+		glfwGetKey(Window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
+	bool isCap = isShift ^ glfwGetKey(Window, GLFW_KEY_CAPS_LOCK) == GLFW_PRESS;
+	if (isCap)
+	{
+		// Uppercase
+		if (glfwGetKey(Window, GLFW_KEY_X) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 0;
+		}
+		if (glfwGetKey(Window, GLFW_KEY_Y) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 2;
+		}
+		if (glfwGetKey(Window, GLFW_KEY_Z) == GLFW_PRESS)
+		{
+		}
+	}
+	else
+	{
+		// Lowercase
+		if (glfwGetKey(Window, GLFW_KEY_X) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 1;
+		}
+		if (glfwGetKey(Window, GLFW_KEY_Y) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 3;
+		}
+		if (glfwGetKey(Window, GLFW_KEY_Z) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 4;
+		}
+	}
 
-	case 'x':
-		mTempScreenQuad->TextureArrayIndex = 1;
-		break;
-
-	case 'Y':
-		mTempScreenQuad->TextureArrayIndex = 2;
-		break;
-
-	case 'y':
-		mTempScreenQuad->TextureArrayIndex = 3;
-		break;
-
-	case 'Z':
-		break;
-
-	case 'z':
-		mTempScreenQuad->TextureArrayIndex = 4;
-		break;
-
-	case 'w':
-		mIsWireframe = !mIsWireframe;
-		break;
-
-	case 'r':
+	if (glfwGetKey(Window, GLFW_KEY_R) == GLFW_PRESS)
+	{
 		mIsRotatingModel = !mIsRotatingModel;
-		break;
-
-	case '=':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_T) == GLFW_PRESS)
+	{
+		mIsWireframe = !mIsWireframe;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+	{
 		if (mShowMode == SM_VPLShadow)
 		{
 			mTempScreenQuad->TextureArrayIndex++;
 			mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
 		}
-		break;
-
-	case '-':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_MINUS) == GLFW_PRESS)
+	{
 		if (mShowMode == SM_VPLShadow)
 		{
 			mTempScreenQuad->TextureArrayIndex--;
 			mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
 		}
-		break;
-
-	default:
-		break;
 	}
-}
-
-void CALLBACK KeyboardCallback(GLFWwindow* window, int key,
-	int scancode, int action, int mods)
-{
-
 }

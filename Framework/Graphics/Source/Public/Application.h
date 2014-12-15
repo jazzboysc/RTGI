@@ -28,11 +28,13 @@ public:
 	virtual void Initialize(GPUDevice* device);
 	virtual void Run();
 	virtual void Terminate();
+	virtual void ProcessInput();
+	virtual void FrameFunc();
+	void UpdateMainCamera();
+
 	virtual void ProcessInput(int key, int scancode, int action, int mods);
 	static void KeyboardCallbackWrapper(
 		GLFWwindow* window, int key, int scancode, int action, int mods);
-	virtual void FrameFunc();
-	void UpdateMainCamera();
 
 	static Application* GetInstance();
 

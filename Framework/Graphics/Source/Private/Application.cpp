@@ -167,7 +167,7 @@ void Application::UpdateMainCamera()
 	mMainCamera->SetLocation(camPos);
 }
 //----------------------------------------------------------------------------
-void Application::ProcessInput(int key, int scancode, int action, int mods)
+void Application::ProcessInput()
 {
 	glfwGetWindowSize(Window, &Width, &Height);
 	UpdateMainCamera();
@@ -175,13 +175,14 @@ void Application::ProcessInput(int key, int scancode, int action, int mods)
 	{
 		glfwSetWindowShouldClose(Window, true);
 	}
-	this->ProcessInput(key, scancode, action, mods);
+	this->ProcessInput();
 }
 //----------------------------------------------------------------------------
 void Application::Run()
 {
 	while (!glfwWindowShouldClose(Window))
 	{
+		this->Application::ProcessInput();
 		this->Application::FrameFunc();
 	}
 }
@@ -209,7 +210,10 @@ Application* Application::GetInstance()
 //----------------------------------------------------------------------------
 void Application::KeyboardCallbackWrapper(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	mInstance->ProcessInput(key, scancode, action, mods);
+	//mInstance->Application::ProcessInput(key, scancode, action, mods);
 }
-
 //----------------------------------------------------------------------------
+void Application::ProcessInput(int key, int scancode, int action, int mods)
+{
+
+}

@@ -24,7 +24,7 @@ public:
 	~BidirectionalVoxelGIApp();
 
 	void Initialize(GPUDevice* device) override;
-	void ProcessInput(int key, int scancode, int action, int mods) override;
+	void ProcessInput() override;
 	void FrameFunc() override;
 	void Terminate() override;
 
