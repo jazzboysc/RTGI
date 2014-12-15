@@ -8,8 +8,24 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
+ViewportState::ViewportState()
+{
+    memset(this, 0, sizeof(ViewportState));
+}
+//----------------------------------------------------------------------------
+RasterizerState::RasterizerState()
+{
+    Flag = 0;
+}
+//----------------------------------------------------------------------------
+OutputMergerState::OutputMergerState()
+{
+    Flag = 0;
+    ClearMask = 0;
+}
+//----------------------------------------------------------------------------
 PipelineStateBlock::PipelineStateBlock()
 {
-    memset(this, 0, sizeof(PipelineStateBlock));
+    Flag = 0;
 }
 //----------------------------------------------------------------------------

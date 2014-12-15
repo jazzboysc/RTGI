@@ -30,6 +30,8 @@ enum OutputMergerBit
 
 struct ViewportState
 {
+    ViewportState();
+
     GLint X;
     GLint Y;
     GLsizei Width;
@@ -38,12 +40,16 @@ struct ViewportState
 
 struct RasterizerState
 {
+    RasterizerState();
+
     unsigned int Flag;
     ViewportState Viewport;
 };
 
 struct OutputMergerState
 {
+    OutputMergerState();
+
     unsigned int Flag;
     GLbitfield ClearMask;
 };
