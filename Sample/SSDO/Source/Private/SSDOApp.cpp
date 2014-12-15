@@ -6,9 +6,9 @@ using namespace RTGI;
 SSDOApp::SSDOApp(int width, int height)
 {
 	mShowMode = SM_FilteredSSDO;
-	mWidth = width;
-	mHeight = height;
-	mTitle = "SSDO demo";
+	Width = width;
+	Height = height;
+	Title = "SSDO demo";
 }
 //----------------------------------------------------------------------------
 SSDOApp::~SSDOApp()
@@ -18,7 +18,7 @@ SSDOApp::~SSDOApp()
 void SSDOApp::Initialize(GPUDevice* device)
 {
 	// Create camera.
-	mMainCamera->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 1.0f, 100.0f);
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 1.0f, 100.0f);
 	mMainCamera->SetLookAt(vec3(0.0f, 9.0f, 26.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
@@ -93,13 +93,13 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create MRT textures.
 	mPositionTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mPositionTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 	mNormalTexture = new Texture2D();
-	mNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mNormalTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 	mColorTexture = new Texture2D();
-	mColorTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mColorTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 	mDepthTexture = new Texture2D();
-	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_Depth);
+	mDepthTexture->CreateRenderTarget(Width, Height, Texture2D::TF_Depth);
 
 	// Create G-buffer.
 	Texture* colorTextures[3] = {mPositionTexture, mNormalTexture, mColorTexture};
@@ -108,7 +108,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create direct lighting render target.
 	mDirectLightingTexture = new Texture2D();
-	mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mDirectLightingTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 
 	// Create direct lighting framebuffer.
 	Texture* directLightingTexture[1] = {mDirectLightingTexture};
@@ -117,7 +117,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create SSDO render target.
 	mSSDOTexture = new Texture2D();
-	mSSDOTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mSSDOTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 
 	// Create SSDO framebuffer.
 	Texture* ssdoTexture[1] = {mSSDOTexture};
@@ -364,26 +364,26 @@ void SSDOApp::Terminate()
 //----------------------------------------------------------------------------
 void SSDOApp::ProcessInput()
 {
-	if (glfwGetKey(mWindow, GLFW_KEY_1) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
 	{
 		mShowMode = SM_FilteredSSDO;
 	}
-	if (glfwGetKey(mWindow, GLFW_KEY_2) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
 	{
 		mSSDOTempResultQuad->TempTexture = mNormalTexture;
 		mShowMode = SM_Normal;
 	}
-	if (glfwGetKey(mWindow, GLFW_KEY_3) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
 	{
 		mSSDOTempResultQuad->TempTexture = mColorTexture;
 		mShowMode = SM_Color;
 	}
-	if (glfwGetKey(mWindow, GLFW_KEY_4) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_4) == GLFW_PRESS)
 	{
 		mSSDOTempResultQuad->TempTexture = mDirectLightingTexture;
 		mShowMode = SM_DirectLighting;
 	}
-	if (glfwGetKey(mWindow, GLFW_KEY_5) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_5) == GLFW_PRESS)
 	{
 		mSSDOTempResultQuad->TempTexture = mRandomTexture;
 		mShowMode = SM_Random;

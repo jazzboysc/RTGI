@@ -1,7 +1,6 @@
 #ifndef RTGI_ISMApp_H
 #define RTGI_ISMApp_H
 
-#include "GraphicsFrameworkHeader.h"
 #include "ISMTriMesh.h"
 #include "ISMTempScreenQuad.h"
 
@@ -15,19 +14,13 @@ namespace RTGI
 class ISMApp : public Application
 {
 public:
-	ISMApp(int width, int height);
+	ISMApp(int width = 1024, int height = 768);
 	~ISMApp();
 
-	void Initialize(GPUDevice* device);
-	void Run();
-	void Terminate();
-
-	// Event handlers.
-	void OnKeyboard(unsigned char key, int x, int y);
-	void OnKeyboardUp(unsigned char key, int x, int y);
-	void OnMouse(int button, int state, int x, int y);
-	void OnMouseMove(int x, int y);
-	void OnReshape(int x, int y);
+	void Initialize(GPUDevice* device) override;
+	void ProcessInput() override;
+	void FrameFunc() override;
+	void Terminate() override;
 
 private:
     enum ShowMode
@@ -42,10 +35,6 @@ private:
 	void DrawShadow();
     void DrawScene();
 
-	int mWidth, mHeight;
-	std::string mWindowTitle;
-
-	Camera* mCamera;
     Camera* mLightProjector;
 
     Texture2DPtr mShadowMapTexture;

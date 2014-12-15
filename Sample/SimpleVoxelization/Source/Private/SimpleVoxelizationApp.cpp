@@ -1,6 +1,5 @@
 #include "SimpleVoxelizationApp.h"
-#include "RNG.h"
-
+#include <glfw3.h>
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
@@ -11,11 +10,10 @@ float SimpleVoxelizationApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f,
 
 //----------------------------------------------------------------------------
 SimpleVoxelizationApp::SimpleVoxelizationApp(int width, int height)
-	:
-	mWidth(width),
-	mHeight(height),
-	mWindowTitle("Simple voxelization demo")
 {
+	Width = width;
+	Height = height;
+	Title = "Simple voxelization demo";
     mIsRotatingModel = false;
     mShowMode = SM_VoxelGrid;
 }
@@ -26,8 +24,6 @@ SimpleVoxelizationApp::~SimpleVoxelizationApp()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 {
-    Application::Initialize(device);
-
     float a = 0.0f;
     float b = -1.0f / a;
 
@@ -39,17 +35,13 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
            globalY >= VOXEL_DIMENSION / LOCAL_GROUP_DIM &&
            globalZ >= VOXEL_DIMENSION / LOCAL_GROUP_DIM);
 
-	std::string title = mWindowTitle;
-	glutSetWindowTitle(title.c_str());
-
 	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
    
     // Create scene camera.
-    mCamera = new Camera();
-    mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 1.0f, 50.0f);
-    mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
+    mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 1.0f, 50.0f);
+    mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
     // Create voxelization projector.
@@ -213,12 +205,19 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 
     // Create voxel cube model.
     material = new Material(mtShowVoxelGrid);
-    mVoxelCubeModel = new VoxelCubeTriMesh(material, mCamera);
+    mVoxelCubeModel = new VoxelCubeTriMesh(material, mMainCamera);
     mVoxelCubeModel->LoadFromFile("box.ply");
     mVoxelCubeModel->GenerateNormals();
     mVoxelCubeModel->IsIndirect = true;
     mVoxelCubeModel->IndirectCommandBuffer = mIndirectCommandBuffer;
     mVoxelCubeModel->CreateDeviceResource(mDevice);
+
+	// Create information panel.
+	int screenX, screenY;
+	glfwGetWindowPos(Window, &screenX, &screenY);
+	InformationPanel^ infoPanel = gcnew InformationPanel();
+	infoPanel->Show();
+	infoPanel->SetDesktopLocation(screenX + Width + 12, screenY - 30);
 
     // Create GUI elements.
     InformationPanel::GetInstance()->AddListener(this);
@@ -280,12 +279,12 @@ void SimpleVoxelizationApp::VoxelizeScene()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::ShowVoxelization()
 {
-    mGround->SetCamera(mCamera);
-    mCeiling->SetCamera(mCamera);
-    mBackWall->SetCamera(mCamera);
-    mLeftWall->SetCamera(mCamera);
-    mRightWall->SetCamera(mCamera);
-    mModel->SetCamera(mCamera);
+    mGround->SetCamera(mMainCamera);
+    mCeiling->SetCamera(mMainCamera);
+    mBackWall->SetCamera(mMainCamera);
+    mLeftWall->SetCamera(mMainCamera);
+    mRightWall->SetCamera(mMainCamera);
+    mModel->SetCamera(mMainCamera);
 
     mGround->Render(0, 1);
     mCeiling->Render(0, 1);
@@ -295,7 +294,7 @@ void SimpleVoxelizationApp::ShowVoxelization()
     mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
-void SimpleVoxelizationApp::Run()
+void SimpleVoxelizationApp::FrameFunc()
 {
     static float angle = 0.0f;
     if( mIsRotatingModel )
@@ -375,7 +374,7 @@ void SimpleVoxelizationApp::Run()
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glViewport(0, 0, mWidth, mHeight);
+    glViewport(0, 0, Width, Height);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mTimer->Start();
@@ -429,15 +428,11 @@ void SimpleVoxelizationApp::Run()
 
         mVoxelRaySegment->Render(0, 0);
     }
-
-	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::Terminate()
 {
 	// Release all resources.
-
-    delete mCamera;
 	delete mVoxelizationProjector;
 
     mResetVoxelBufferTask = 0;
@@ -458,45 +453,24 @@ void SimpleVoxelizationApp::Terminate()
     mTimer = 0;
 }
 //----------------------------------------------------------------------------
-void SimpleVoxelizationApp::OnKeyboard(unsigned char key, int x, int y)
+void SimpleVoxelizationApp::ProcessInput()
 {
-    switch( key )
-    {
-    case '1':
-        mShowMode = SM_VoxelGrid;
-        break;
-
-    case '2':
-        mShowMode = SM_Scene;
-        break;
-
-    case '3':
-        mShowMode = SM_WorldPosition;
-        break;
-
-    case 'r':
-        mIsRotatingModel = !mIsRotatingModel;
-        break;
-
-    default:
-        break;
-    }
-}
-//----------------------------------------------------------------------------
-void SimpleVoxelizationApp::OnKeyboardUp(unsigned char key, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void SimpleVoxelizationApp::OnMouse(int button, int state, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void SimpleVoxelizationApp::OnMouseMove(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void SimpleVoxelizationApp::OnReshape(int x, int y)
-{
+	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
+	{
+		mShowMode = SM_VoxelGrid;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
+	{
+		mShowMode = SM_Scene;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
+	{
+		mShowMode = SM_WorldPosition;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_R) == GLFW_PRESS)
+	{
+		mIsRotatingModel = !mIsRotatingModel;
+	}
 }
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::OnButtonClick(System::Object^  sender, 
@@ -525,7 +499,7 @@ void SimpleVoxelizationApp::OnButtonClick(System::Object^  sender,
     MaterialTemplate* mtVoxelRaySegment = new MaterialTemplate();
     mtVoxelRaySegment->AddTechnique(techVoxelRaySegment);
     Material* material = new Material(mtVoxelRaySegment);
-    mVoxelRaySegment = new VoxelRaySegment(material, mCamera);
+    mVoxelRaySegment = new VoxelRaySegment(material, mMainCamera);
     mVoxelRaySegment->LineWidth = 3.0f;
     std::vector<int> temp;
     temp.reserve(1);

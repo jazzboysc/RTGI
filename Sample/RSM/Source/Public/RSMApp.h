@@ -1,7 +1,6 @@
 #ifndef RTGI_RSMApp_H
 #define RTGI_RSMApp_H
 
-#include "GraphicsFrameworkHeader.h"
 #include "RSMTriMesh.h"
 #include "RSMTempScreenQuad.h"
 #include "RSMDeferredLightingQuad.h"
@@ -16,19 +15,13 @@ namespace RTGI
 class RSMApp : public Application
 {
 public:
-	RSMApp(int width, int height);
+	RSMApp(int width = 1024, int height = 768);
 	~RSMApp();
 
-	void Initialize(GPUDevice* device);
-	void Run();
-	void Terminate();
-
-	// Event handlers.
-	void OnKeyboard(unsigned char key, int x, int y);
-	void OnKeyboardUp(unsigned char key, int x, int y);
-	void OnMouse(int button, int state, int x, int y);
-	void OnMouseMove(int x, int y);
-	void OnReshape(int x, int y);
+	void Initialize(GPUDevice* device) override;
+	void ProcessInput() override;
+	void FrameFunc() override;
+	void Terminate() override;
 
 private:
     void DrawSceneToRSMBuffer();
@@ -48,12 +41,7 @@ private:
         SM_DeferredLighting
 	};
 
-	int mWidth, mHeight;
-
-	std::string mWindowTitle;
-
     Camera* mLightProjector;
-	Camera* mCamera;
 	LightPtr mLight;
 	RSMTriMeshPtr mGround;
 	RSMTriMeshPtr mBackWall;

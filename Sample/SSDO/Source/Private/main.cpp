@@ -4,7 +4,6 @@
 using namespace RTGI;
 
 Application* app = 0;
-
 //----------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -12,10 +11,10 @@ int main(int argc, char **argv)
     OpenGLDevice* gpuDevice = new OpenGLDevice();
 
 	// Initialize application.
-	app = new SSDOApp(1024, 768);
-	app->Application::Initialize(gpuDevice);
-	app->Application::Run();
-	app->Application::Terminate();
+	app = new SSDOApp();
+	app->RTGI::Application::Initialize(gpuDevice);
+	app->RTGI::Application::Run();
+	app->RTGI::Application::Terminate();
 	delete app;
 
     return 0;

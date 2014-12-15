@@ -8,6 +8,7 @@
 
 
 #include "BufferBase.h"
+#include <GL/glew.h>
 
 namespace RTGI
 {

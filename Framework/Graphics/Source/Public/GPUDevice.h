@@ -9,8 +9,6 @@
 #include "RefObject.h"
 #include "GPUResource.h"
 
-#include <GL/glew.h>
-
 namespace RTGI
 {
 

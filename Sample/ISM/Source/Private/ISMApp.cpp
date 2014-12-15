@@ -1,15 +1,13 @@
 #include "ISMApp.h"
-#include "RNG.h"
-
+#include <glfw3.h>
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
 ISMApp::ISMApp(int width, int height)
-	:
-	mWidth(width),
-	mHeight(height),
-	mWindowTitle("ISM demo")
 {
+	Width = width;
+	Height = height;
+	Title = "ISM demo";
     mShowMode = SM_Scene;
     mIsWireframe = false;
 }
@@ -20,11 +18,6 @@ ISMApp::~ISMApp()
 //----------------------------------------------------------------------------
 void ISMApp::Initialize(GPUDevice* device)
 {
-    Application::Initialize(device);
-
-	std::string title = mWindowTitle;
-	glutSetWindowTitle(title.c_str());
-
 	float color = 1.0f;
 	glClearColor(color, color, color, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -32,14 +25,13 @@ void ISMApp::Initialize(GPUDevice* device)
     glEnable(GL_CULL_FACE);
     
     // Create scene camera.
-	mCamera = new Camera();
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 0.01f, 50.0f);
-	mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 0.01f, 50.0f);
+	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
     // Create light projector.
     mLightProjector = new Camera();
-    mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 0.01f, 50.0f);
+    mLightProjector->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 50.0f);
     //mLightProjector->SetLookAt(vec3(-10.0f, 1.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f),
     //    vec3(0.0f, 1.0f, 0.0f));
     mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
@@ -98,7 +90,7 @@ void ISMApp::Initialize(GPUDevice* device)
 	// Create scene.
 	mat4 rotM;
 	material = new Material(mtISM);
-	mModel = new ISMTriMesh(material, mCamera);
+	mModel = new ISMTriMesh(material, mMainCamera);
 	mModel->LoadFromFile("cow.ply");
     mat4 scale = glm::scale(mat4(), vec3(2.0f));
     mModel->UpdateModelSpaceVertices(scale);
@@ -110,7 +102,7 @@ void ISMApp::Initialize(GPUDevice* device)
     mModel->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
-	mGround = new ISMTriMesh(material, mCamera);
+	mGround = new ISMTriMesh(material, mMainCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
@@ -119,7 +111,7 @@ void ISMApp::Initialize(GPUDevice* device)
     mGround->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
-	mCeiling = new ISMTriMesh(material, mCamera);
+	mCeiling = new ISMTriMesh(material, mMainCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
@@ -131,7 +123,7 @@ void ISMApp::Initialize(GPUDevice* device)
     mCeiling->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
-	mBackWall = new ISMTriMesh(material, mCamera);
+	mBackWall = new ISMTriMesh(material, mMainCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
@@ -143,7 +135,7 @@ void ISMApp::Initialize(GPUDevice* device)
     mBackWall->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
-	mLeftWall = new ISMTriMesh(material, mCamera);
+	mLeftWall = new ISMTriMesh(material, mMainCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
@@ -155,7 +147,7 @@ void ISMApp::Initialize(GPUDevice* device)
     mLeftWall->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
-	mRightWall = new ISMTriMesh(material, mCamera);
+	mRightWall = new ISMTriMesh(material, mMainCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
@@ -200,26 +192,26 @@ void ISMApp::DrawShadow()
 //----------------------------------------------------------------------------
 void ISMApp::DrawScene()
 {
-    mGround->SetCamera(mCamera);
+    mGround->SetCamera(mMainCamera);
     mGround->Render(0, 1);
 
-    mCeiling->SetCamera(mCamera);
+    mCeiling->SetCamera(mMainCamera);
     mCeiling->Render(0, 1);
 
-    mBackWall->SetCamera(mCamera);
+    mBackWall->SetCamera(mMainCamera);
     mBackWall->Render(0, 1);
 
-    mLeftWall->SetCamera(mCamera);
+    mLeftWall->SetCamera(mMainCamera);
     mLeftWall->Render(0, 1);
 
-    mRightWall->SetCamera(mCamera);
+    mRightWall->SetCamera(mMainCamera);
     mRightWall->Render(0, 1);
 
-    mModel->SetCamera(mCamera);
+    mModel->SetCamera(mMainCamera);
     mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
-void ISMApp::Run()
+void ISMApp::FrameFunc()
 {
     static float angle = 0.0f;
     angle += 1.0f;
@@ -253,15 +245,12 @@ void ISMApp::Run()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         mShadowMapScreenQuad->Render(0, 0);
     }
-
-	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
 void ISMApp::Terminate()
 {
 	// Release all resources.
 
-	delete mCamera;
     delete mLightProjector;
 
     mShadowMapTexture = 0;
@@ -277,40 +266,18 @@ void ISMApp::Terminate()
 	mModel = 0;
 }
 //----------------------------------------------------------------------------
-void ISMApp::OnKeyboard(unsigned char key, int x, int y)
+void ISMApp::ProcessInput()
 {
-    switch( key )
-    {
-    case '1':
-        mShowMode = SM_Scene;
-        break;
-
-    case '2':
-        mShowMode = SM_Shadow;
-        break;
-
-    case 'w':
-        mIsWireframe = !mIsWireframe;
-        break;
-
-    default:
-        break;
-    }
+	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
+	{
+		mShowMode = SM_Scene;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
+	{
+		mShowMode = SM_Shadow;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
+	{
+		mIsWireframe = !mIsWireframe;
+	}
 }
-//----------------------------------------------------------------------------
-void ISMApp::OnKeyboardUp(unsigned char key, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void ISMApp::OnMouse(int button, int state, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void ISMApp::OnMouseMove(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void ISMApp::OnReshape(int x, int y)
-{
-}
-//----------------------------------------------------------------------------

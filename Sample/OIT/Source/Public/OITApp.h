@@ -15,26 +15,15 @@ namespace RTGI
 class OITApp : public Application
 {
 public:
-	OITApp(int width, int height);
+	OITApp(int width = 1024, int height = 768);
 	~OITApp();
 
-	void Initialize(GPUDevice* device);
-	void Run();
-	void Terminate();
-
-	// Event handlers.
-	void OnKeyboard(unsigned char key, int x, int y);
-	void OnKeyboardUp(unsigned char key, int x, int y);
-	void OnMouse(int button, int state, int x, int y);
-	void OnMouseMove(int x, int y);
-	void OnReshape(int x, int y);
+	void Initialize(GPUDevice* device) override;
+	void ProcessInput() override;
+	void FrameFunc() override;
+	void Terminate() override;
 
 private:
-	int mWidth, mHeight;
-	std::string mWindowTitle;
-
-	Camera* mCamera;
-
 	AtomicCounterBufferPtr mGPUMemAllocCounter;
 	Texture2DPtr mHeadPointerTexture;
 	PixelBufferPtr mHeadPointerTextureInitData;

@@ -47,15 +47,15 @@ void Application::Initialize(GPUDevice* device)
 	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	mWindow = glfwCreateWindow(1024, 768, mTitle.c_str(), NULL, NULL);
-	if (mWindow == NULL)
+	Window = glfwCreateWindow(Width, Height, Title.c_str(), NULL, NULL);
+	if (Window == NULL)
 	{
 		fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n");
 		glfwTerminate();
 		return;
 	}
-	glfwMakeContextCurrent(mWindow);
-
+	glfwMakeContextCurrent(Window);
+	glfwSetKeyCallback(Window, Application::KeyboardCallbackWrapper);
 	// Initialize GLEW
 	//glewExperimental = true; // set to true for core profile
 	if (glewInit() != GLEW_OK)
@@ -89,22 +89,23 @@ void Application::UpdateMainCamera()
 	auto camDir = mMainCamera->GetDirection();
 	auto camPos = mMainCamera->GetLocation();
 	auto camSpeed = 5.0f;
-	static float horizontalAngle = 0;
-	static float verticalAngle = 0;
+	auto horizontalAngle = 0.f;
+	auto verticalAngle = 0.f;
+	mMainCamera->GetAngle(horizontalAngle, verticalAngle);
 
 	// Get mouse position
 	auto newMousePos = glm::dvec2();
-	glfwGetCursorPos(mWindow, &newMousePos.x, &newMousePos.y);
+	glfwGetCursorPos(Window, &newMousePos.x, &newMousePos.y);
 
 	// Camera Orientation
 	// If left click
-	if (glfwGetMouseButton(mWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	if (glfwGetMouseButton(Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	{
 		// proceed only if left button is just clicked
 		if (lastMousePos == glm::vec2(-1, -1))
 		{
 			// Hide cursor
-			glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 			// Just clicked, do nothing but record initial values
 			mouseStartPos = newMousePos;
 			lastMousePos = newMousePos;
@@ -115,50 +116,50 @@ void Application::UpdateMainCamera()
 			horizontalAngle += mouseSpeed * float(mouseStartPos.x - newMousePos.x);
 			verticalAngle -= mouseSpeed * float(mouseStartPos.y - newMousePos.y);
 			// Reset mouse position for next frame
-			glfwSetCursorPos(mWindow, mouseStartPos.x, mouseStartPos.y);
+			glfwSetCursorPos(Window, mouseStartPos.x, mouseStartPos.y);
 		}
 	}
 	else
 	{
 		lastMousePos = glm::vec2(-1, -1);
 		// Show the cursor
-		glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 	mMainCamera->SetAngle(horizontalAngle, verticalAngle);
 	auto rightDir = mMainCamera->GetRight();
 
 	// Camera Position
 	// Move forward
-	if (glfwGetKey(mWindow, GLFW_KEY_UP) == GLFW_PRESS ||
-		glfwGetKey(mWindow, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_UP) == GLFW_PRESS ||
+		glfwGetKey(Window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		camPos -= camDir * deltaTime * camSpeed;
 	}
 	// Move backward
-	if (glfwGetKey(mWindow, GLFW_KEY_DOWN) == GLFW_PRESS ||
-		glfwGetKey(mWindow, GLFW_KEY_S) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_DOWN) == GLFW_PRESS ||
+		glfwGetKey(Window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		camPos += camDir * deltaTime * camSpeed;
 	}
 	// Move up
-	if (glfwGetKey(mWindow, GLFW_KEY_E) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_E) == GLFW_PRESS)
 	{
 		camPos.y += deltaTime * camSpeed;
 	}
 	// Move down
-	if (glfwGetKey(mWindow, GLFW_KEY_Q) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		camPos.y -= deltaTime * camSpeed;
 	}
 	// Strafe right
-	if (glfwGetKey(mWindow, GLFW_KEY_RIGHT) == GLFW_PRESS ||
-		glfwGetKey(mWindow, GLFW_KEY_D) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_RIGHT) == GLFW_PRESS ||
+		glfwGetKey(Window, GLFW_KEY_D) == GLFW_PRESS)
 	{
 		camPos += rightDir * deltaTime * camSpeed;
 	}
 	// Strafe left
-	if (glfwGetKey(mWindow, GLFW_KEY_LEFT) == GLFW_PRESS ||
-		glfwGetKey(mWindow, GLFW_KEY_A) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_LEFT) == GLFW_PRESS ||
+		glfwGetKey(Window, GLFW_KEY_A) == GLFW_PRESS)
 	{
 		camPos -= rightDir * deltaTime * camSpeed;
 	}
@@ -166,22 +167,21 @@ void Application::UpdateMainCamera()
 	mMainCamera->SetLocation(camPos);
 }
 //----------------------------------------------------------------------------
-void Application::ProcessInput()
+void Application::ProcessInput(int key, int scancode, int action, int mods)
 {
-	glfwGetWindowSize(mWindow, &mWidth, &mHeight);
+	glfwGetWindowSize(Window, &Width, &Height);
 	UpdateMainCamera();
-	if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(mWindow, true);
+		glfwSetWindowShouldClose(Window, true);
 	}
-	this->ProcessInput();
+	this->ProcessInput(key, scancode, action, mods);
 }
 //----------------------------------------------------------------------------
 void Application::Run()
 {
-	while (!glfwWindowShouldClose(mWindow))
+	while (!glfwWindowShouldClose(Window))
 	{
-		this->Application::ProcessInput();
 		this->Application::FrameFunc();
 	}
 }
@@ -190,7 +190,7 @@ void Application::FrameFunc()
 {
 	this->FrameFunc();
 	// Swap buffers
-	glfwSwapBuffers(mWindow);
+	glfwSwapBuffers(Window);
 	glfwPollEvents();
 }
 //----------------------------------------------------------------------------
@@ -206,4 +206,10 @@ Application* Application::GetInstance()
 {
     return mInstance;
 }
+//----------------------------------------------------------------------------
+void Application::KeyboardCallbackWrapper(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	mInstance->ProcessInput(key, scancode, action, mods);
+}
+
 //----------------------------------------------------------------------------

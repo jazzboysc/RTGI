@@ -8,20 +8,22 @@ find_package(OpenGL REQUIRED)
 SET( MACROS
 	FBXSDK_SHARED
 	GLEW_STATIC
-	FREEGLUT_STATIC
 )
 # Can include project name and directory
 SET( INCLUDE
+	# ----- OpenGL & Window -----
 	glew
 	glm
-	fbxsdk
 	glfw
+	fbxsdk
+	# ----- Core Framework -----
 	Graphics
 	Resource
 	GUI
+	Math
+	# ----- App Specific -----
 	zlib
     libbmpread
-	Math
 	assimp
 )
 # Can include project name and absolute path to library

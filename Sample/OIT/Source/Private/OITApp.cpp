@@ -4,11 +4,10 @@ using namespace RTGI;
 
 //----------------------------------------------------------------------------
 OITApp::OITApp(int width, int height)
-	:
-    mWidth(width),
-    mHeight(height),
-	mWindowTitle("Order Independent Transparency demo")
 {
+	Width = width;
+	Height = height;
+	Title = "Order Independent Transparency demo";
 }
 //----------------------------------------------------------------------------
 OITApp::~OITApp()
@@ -17,11 +16,6 @@ OITApp::~OITApp()
 //----------------------------------------------------------------------------
 void OITApp::Initialize(GPUDevice* device)
 {
-    Application::Initialize(device);
-
-	std::string title = mWindowTitle;
-	glutSetWindowTitle(title.c_str());
-
 	const char* version = (const char*)glGetString(GL_VERSION);
 	const char* vendor = (const char*)glGetString(GL_VENDOR);
 	printf("OpenGL version: %s, vendor: %s\n", version, vendor);
@@ -33,9 +27,8 @@ void OITApp::Initialize(GPUDevice* device)
     glDisable(GL_CULL_FACE);
 
 	// Create camera.
-	mCamera = new Camera;
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 0.0001f, 100.0f);
-	mCamera->SetLookAt(vec3(0.0f, 9.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f),
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 0.0001f, 100.0f);
+	mMainCamera->SetLookAt(vec3(0.0f, 9.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
 	// Create material templates.
@@ -77,7 +70,7 @@ void OITApp::Initialize(GPUDevice* device)
     
 	// Create scene.
 	material = new Material(mtGPUABuffer);
-	mModel = new OITTriMesh(material, mCamera);
+	mModel = new OITTriMesh(material, mMainCamera);
 	mModel->LoadFromFile("dragon_s.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource(mDevice);
@@ -88,11 +81,11 @@ void OITApp::Initialize(GPUDevice* device)
 
 	// Create head pointer texture.
 	mHeadPointerTexture = new Texture2D();
-	mHeadPointerTexture->CreateRenderTarget(mWidth, mHeight, 
+	mHeadPointerTexture->CreateRenderTarget(Width, Height, 
 		Texture2D::TF_R32UI);
 
 	// Create head pointer texture init data.
-	int pixelCount = mWidth * mHeight;
+	int pixelCount = Width * Height;
 	mHeadPointerTextureInitData = new PixelBuffer();
 	mHeadPointerTextureInitData->ReserveDeviceResource(
 		pixelCount*sizeof(GLuint), BU_Static_Draw);
@@ -122,7 +115,7 @@ void OITApp::Initialize(GPUDevice* device)
 	mGPUMemPoolTexture->LoadFromTextureBuffer(mGPUMemPool, GL_RGBA32UI);
 }
 //----------------------------------------------------------------------------
-void OITApp::Run()
+void OITApp::FrameFunc()
 {
 	// Reset atomic counter.
 	//GLuint zero = 0;
@@ -148,14 +141,10 @@ void OITApp::Run()
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	mScreenQuad->Render(0, 0);
-    
-	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
 void OITApp::Terminate()
 {
-	mCamera = 0;
-
 	mGPUMemAllocCounter = 0;
 	mHeadPointerTexture = 0;
 	mHeadPointerTextureInitData = 0;
@@ -167,23 +156,7 @@ void OITApp::Terminate()
     mModel = 0;
 }
 //----------------------------------------------------------------------------
-void OITApp::OnKeyboard(unsigned char key, int x, int y)
+void OITApp::ProcessInput()
 {
+
 }
-//----------------------------------------------------------------------------
-void OITApp::OnKeyboardUp(unsigned char key, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void OITApp::OnMouse(int button, int state, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void OITApp::OnMouseMove(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void OITApp::OnReshape(int x, int y)
-{
-}
-//----------------------------------------------------------------------------

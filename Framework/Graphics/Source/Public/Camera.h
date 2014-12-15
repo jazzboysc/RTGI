@@ -50,6 +50,7 @@ public:
 	glm::vec3 GetLocation() const;
 	glm::vec3 GetDirection() const;
 	glm::vec3 GetRight() const;
+	void GetAngle(float& _horizontalAngle, float& _verticalAngle) const;
 
     void GetNearFarPlane(float* nearFarPlane) const;
 	glm::mat4 GetViewTransform();

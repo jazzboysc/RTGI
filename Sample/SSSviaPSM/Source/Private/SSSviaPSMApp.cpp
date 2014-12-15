@@ -1,15 +1,14 @@
 #include "SSSviaPSMApp.h"
-#include "RNG.h"
+#include <glfw3.h>
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
 SSSviaPSMApp::SSSviaPSMApp(int width, int height)
-	:
-	mWidth(width),
-	mHeight(height),
-	mWindowTitle("Subsurface Scattering via PSM demo")
 {
+	Width = width;
+	Height = height;
+	Title = "Subsurface Scattering via PSM demo";
     mShowMode = SM_Scene;
     mIsRotatingModel = false;
     mIsWireframe = false;
@@ -21,26 +20,20 @@ SSSviaPSMApp::~SSSviaPSMApp()
 //----------------------------------------------------------------------------
 void SSSviaPSMApp::Initialize(GPUDevice* device)
 {
-    Application::Initialize(device);
-
-	std::string title = mWindowTitle;
-	glutSetWindowTitle(title.c_str());
 
 	float color = 1.0f;
 	glClearColor(color, color, color, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    
     // Create scene camera.
-	mCamera = new Camera();
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 0.01f, 50.0f);
-	mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 0.01f, 50.0f);
+	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
     // Create light projector.
     mLightProjector = new Camera();
-    mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth / (float)mHeight, 0.01f, 50.0f);
+    mLightProjector->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 50.0f);
     mLightProjector->SetLookAt(vec3(0.0f, 5.0f, -9.5f), vec3(0.0f, 5.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
@@ -101,7 +94,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
 	// Create scene.
 	mat4 rotM;
 	material = new Material(mtISM);
-	mModel = new SSSviaPSMTriMesh(material, mCamera);
+	mModel = new SSSviaPSMTriMesh(material, mMainCamera);
 	mModel->LoadFromFile("dragon_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(60.0f));
     //mat4 scale = Scale(vec3(1.0f));
@@ -116,7 +109,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
     mModel->IsSSS = true;
 
     material = new Material(mtISM);
-	mGround = new SSSviaPSMTriMesh(material, mCamera);
+	mGround = new SSSviaPSMTriMesh(material, mMainCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
@@ -125,7 +118,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
     mGround->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
-	mCeiling = new SSSviaPSMTriMesh(material, mCamera);
+	mCeiling = new SSSviaPSMTriMesh(material, mMainCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
@@ -137,7 +130,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
     mCeiling->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
-	mBackWall = new SSSviaPSMTriMesh(material, mCamera);
+	mBackWall = new SSSviaPSMTriMesh(material, mMainCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
@@ -149,7 +142,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
     mBackWall->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
-	mLeftWall = new SSSviaPSMTriMesh(material, mCamera);
+	mLeftWall = new SSSviaPSMTriMesh(material, mMainCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
@@ -161,7 +154,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
     mLeftWall->ShadowMap = mShadowMapTexture;
 
     material = new Material(mtISM);
-	mRightWall = new SSSviaPSMTriMesh(material, mCamera);
+	mRightWall = new SSSviaPSMTriMesh(material, mMainCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
@@ -206,26 +199,26 @@ void SSSviaPSMApp::DrawShadow()
 //----------------------------------------------------------------------------
 void SSSviaPSMApp::DrawScene()
 {
-    mGround->SetCamera(mCamera);
+    mGround->SetCamera(mMainCamera);
     mGround->Render(0, 1);
 
-    mCeiling->SetCamera(mCamera);
+    mCeiling->SetCamera(mMainCamera);
     mCeiling->Render(0, 1);
 
-    mBackWall->SetCamera(mCamera);
+    mBackWall->SetCamera(mMainCamera);
     mBackWall->Render(0, 1);
 
-    mLeftWall->SetCamera(mCamera);
+    mLeftWall->SetCamera(mMainCamera);
     mLeftWall->Render(0, 1);
 
-    mRightWall->SetCamera(mCamera);
+    mRightWall->SetCamera(mMainCamera);
     mRightWall->Render(0, 1);
 
-    mModel->SetCamera(mCamera);
+    mModel->SetCamera(mMainCamera);
     mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
-void SSSviaPSMApp::Run()
+void SSSviaPSMApp::FrameFunc()
 {
     static float angle = 0.0f;
     if( mIsRotatingModel )
@@ -262,15 +255,12 @@ void SSSviaPSMApp::Run()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         mShadowMapScreenQuad->Render(0, 0);
     }
-
-	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
 void SSSviaPSMApp::Terminate()
 {
 	// Release all resources.
 
-	delete mCamera;
     delete mLightProjector;
 
     mShadowMapTexture = 0;
@@ -286,44 +276,22 @@ void SSSviaPSMApp::Terminate()
 	mModel = 0;
 }
 //----------------------------------------------------------------------------
-void SSSviaPSMApp::OnKeyboard(unsigned char key, int x, int y)
+void SSSviaPSMApp::ProcessInput()
 {
-    switch( key )
-    {
-    case '1':
-        mShowMode = SM_Scene;
-        break;
-
-    case '2':
-        mShowMode = SM_Shadow;
-        break;
-
-    case 'w':
-        mIsWireframe = !mIsWireframe;
-        break;
-
-    case 'r':
-        mIsRotatingModel = !mIsRotatingModel;
-        break;
-
-    default:
-        break;
-    }
+	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
+	{
+		mShowMode = SM_Scene;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
+	{
+		mShowMode = SM_Shadow;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
+	{
+		mIsWireframe = !mIsWireframe;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_4) == GLFW_PRESS)
+	{
+		mIsRotatingModel = !mIsRotatingModel;
+	}
 }
-//----------------------------------------------------------------------------
-void SSSviaPSMApp::OnKeyboardUp(unsigned char key, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void SSSviaPSMApp::OnMouse(int button, int state, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void SSSviaPSMApp::OnMouseMove(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void SSSviaPSMApp::OnReshape(int x, int y)
-{
-}
-//----------------------------------------------------------------------------

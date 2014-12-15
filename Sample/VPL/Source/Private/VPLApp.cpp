@@ -1,17 +1,16 @@
 #include "VPLApp.h"
-#include "RNG.h"
 #include "InformationPanel.h"
+#include <glfw3.h>
 
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
 //----------------------------------------------------------------------------
 VPLApp::VPLApp(int width, int height)
-	:
-	mWidth(width),
-	mHeight(height),
-	mWindowTitle("VPL demo")
 {
+	Width = width;
+	Height = height;
+	Title = "VPL demo";
     mShowMode = SM_Shadow;
     mIsRotatingModel = false;
     mIsWireframe = false;
@@ -23,11 +22,6 @@ VPLApp::~VPLApp()
 //----------------------------------------------------------------------------
 void VPLApp::Initialize(GPUDevice* device)
 {
-    Application::Initialize(device);
-
-	std::string title = mWindowTitle;
-	glutSetWindowTitle(title.c_str());
-
 	float color = 0.5f;
     glClearColor(color, color, color, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -35,9 +29,8 @@ void VPLApp::Initialize(GPUDevice* device)
     glEnable(GL_CULL_FACE);
     
     // Create scene camera.
-	mCamera = new Camera();
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 0.01f, 50.0f);
-	mCamera->SetLookAt(vec3(0.0f, 10.0f, 33.2f), vec3(0.0f, 10.0f, 0.0f),
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 0.01f, 50.0f);
+	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 33.2f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
     // Create light projector.
@@ -137,13 +130,13 @@ void VPLApp::Initialize(GPUDevice* device)
 
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();
-    mGBufferPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
+    mGBufferPositionTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
     mGBufferNormalTexture = new Texture2D();
-    mGBufferNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
+    mGBufferNormalTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
     mGBufferAlbedoTexture = new Texture2D();
-    mGBufferAlbedoTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
+    mGBufferAlbedoTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
     mGBufferDepthTexture = new Texture2D();
-    mGBufferDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_Depth);
+    mGBufferDepthTexture->CreateRenderTarget(Width, Height, Texture::TF_Depth);
 
     // Create G-buffer.
     Texture* gbufferTextures[3] = { mGBufferPositionTexture, mGBufferNormalTexture, mGBufferAlbedoTexture };
@@ -169,10 +162,10 @@ void VPLApp::Initialize(GPUDevice* device)
 
     // Create direct lighting render target.
     mDirectLightingTexture = new Texture2D();
-    mDirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
+    mDirectLightingTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
 
     mDirectLightingDepthTexture = new Texture2D();
-    mDirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_Depth);
+    mDirectLightingDepthTexture->CreateRenderTarget(Width, Height, Texture::TF_Depth);
 
     // Create direct lighting frame buffer.
     Texture* dlRenderTargets[] = { mDirectLightingTexture };
@@ -181,10 +174,10 @@ void VPLApp::Initialize(GPUDevice* device)
 
     // Create indirect lighting render target.
     mIndirectLightingTexture = new Texture2D();
-    mIndirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_RGBAF);
+    mIndirectLightingTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
 
     mIndirectLightingDepthTexture = new Texture2D();
-    mIndirectLightingDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture::TF_Depth);
+    mIndirectLightingDepthTexture->CreateRenderTarget(Width, Height, Texture::TF_Depth);
 
     // Create indirect lighting frame buffer.
     Texture* indlRenderTargets[] = { mIndirectLightingTexture };
@@ -253,7 +246,7 @@ void VPLApp::Initialize(GPUDevice* device)
 	// Create scene.
 	mat4 rotM;
 	material = new Material(mtVPL);
-	mModel = new VPLTriMesh(material, mCamera);
+	mModel = new VPLTriMesh(material, mMainCamera);
 	mModel->LoadFromFile("dragon_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(60.0f));
     mModel->UpdateModelSpaceVertices(scale);
@@ -266,7 +259,7 @@ void VPLApp::Initialize(GPUDevice* device)
     mModel->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
-	mGround = new VPLTriMesh(material, mCamera);
+	mGround = new VPLTriMesh(material, mMainCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
@@ -276,7 +269,7 @@ void VPLApp::Initialize(GPUDevice* device)
     mGround->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
-	mCeiling = new VPLTriMesh(material, mCamera);
+	mCeiling = new VPLTriMesh(material, mMainCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
@@ -289,7 +282,7 @@ void VPLApp::Initialize(GPUDevice* device)
     mCeiling->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
-	mBackWall = new VPLTriMesh(material, mCamera);
+	mBackWall = new VPLTriMesh(material, mMainCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
@@ -302,7 +295,7 @@ void VPLApp::Initialize(GPUDevice* device)
     mBackWall->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
-	mLeftWall = new VPLTriMesh(material, mCamera);
+	mLeftWall = new VPLTriMesh(material, mMainCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
@@ -315,7 +308,7 @@ void VPLApp::Initialize(GPUDevice* device)
     mLeftWall->VPLBuffer = mVPLBuffer;
 
     material = new Material(mtVPL);
-	mRightWall = new VPLTriMesh(material, mCamera);
+	mRightWall = new VPLTriMesh(material, mMainCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
@@ -371,6 +364,13 @@ void VPLApp::Initialize(GPUDevice* device)
     mTimer = new GPUTimer();
     mTimer->CreateDeviceResource();
 
+	// Create information panel.
+	int screenX, screenY;
+	glfwGetWindowPos(Window, &screenX, &screenY);
+	InformationPanel^ infoPanel = gcnew InformationPanel();
+	infoPanel->Show();
+	infoPanel->SetDesktopLocation(screenX + Width + 12, screenY - 30);
+
     // Create labels.
     InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, 20);
     InformationPanel::GetInstance()->AddTimingLabel("Scene G-buffer Pass", 16, 40);
@@ -399,12 +399,12 @@ void VPLApp::ShadowPass()
 //----------------------------------------------------------------------------
 void VPLApp::GBufferPass()
 {
-    mGround->SetCamera(mCamera);
-    mCeiling->SetCamera(mCamera);
-    mBackWall->SetCamera(mCamera);
-    mLeftWall->SetCamera(mCamera);
-    mRightWall->SetCamera(mCamera);
-    mModel->SetCamera(mCamera);
+    mGround->SetCamera(mMainCamera);
+    mCeiling->SetCamera(mMainCamera);
+    mBackWall->SetCamera(mMainCamera);
+    mLeftWall->SetCamera(mMainCamera);
+    mRightWall->SetCamera(mMainCamera);
+    mModel->SetCamera(mMainCamera);
 
     mGround->Render(0, 1);
     mCeiling->Render(0, 1);
@@ -434,7 +434,7 @@ void VPLApp::VPLShadowPass()
     mModel->Render(0, 3);
 }
 //----------------------------------------------------------------------------
-void VPLApp::Run()
+void VPLApp::FrameFunc()
 {
     static float angle = 0.0f;
     if( mIsRotatingModel )
@@ -528,15 +528,12 @@ void VPLApp::Run()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     mTempScreenQuad->Render(0, 0);
-    
-	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
 void VPLApp::Terminate()
 {
 	// Release all resources.
 
-	delete mCamera;
     delete mLightProjector;
 
     mGBufferFB = 0;
@@ -586,142 +583,132 @@ void VPLApp::Terminate()
     mTimer = 0;
 }
 //----------------------------------------------------------------------------
-void VPLApp::OnKeyboard(unsigned char key, int x, int y)
+void VPLApp::ProcessInput()
 {
-    switch( key )
-    {
-    case '1':
-        mShowMode = SM_Shadow;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mShadowMapTexture;
-        break;
+	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
+	{
+		mShowMode = SM_Shadow;
+		mTempScreenQuad->ShowMode = 0;
+		mTempScreenQuad->TempTexture = mShadowMapTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
+	{
+		mShowMode = SM_GBufferPosition;
+		mTempScreenQuad->ShowMode = 0;
+		mTempScreenQuad->TempTexture = mGBufferPositionTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
+	{
+		mShowMode = SM_GBufferNormal;
+		mTempScreenQuad->ShowMode = 0;
+		mTempScreenQuad->TempTexture = mGBufferNormalTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_4) == GLFW_PRESS)
+	{
+		mShowMode = SM_GBufferAlbedo;
+		mTempScreenQuad->ShowMode = 0;
+		mTempScreenQuad->TempTexture = mGBufferAlbedoTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_5) == GLFW_PRESS)
+	{
+		mShowMode = SM_RSMPosition;
+		mTempScreenQuad->ShowMode = 1;
+		mTempScreenQuad->TempTextureArray = mRSMPositionTextureArray;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_6) == GLFW_PRESS)
+	{
+		mShowMode = SM_RSMNormal;
+		mTempScreenQuad->ShowMode = 1;
+		mTempScreenQuad->TempTextureArray = mRSMNormalTextureArray;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_7) == GLFW_PRESS)
+	{
+		mShowMode = SM_RSMFlux;
+		mTempScreenQuad->ShowMode = 1;
+		mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_8) == GLFW_PRESS)
+	{
+		mShowMode = SM_DirectLighting;
+		mTempScreenQuad->ShowMode = 0;
+		mTempScreenQuad->TempTexture = mDirectLightingTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_9) == GLFW_PRESS)
+	{
+		mShowMode = SM_IndirectLighting;
+		mTempScreenQuad->ShowMode = 0;
+		mTempScreenQuad->TempTexture = mIndirectLightingTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_0) == GLFW_PRESS)
+	{
+		mShowMode = SM_Final;
+		mTempScreenQuad->ShowMode = 2;
+		mTempScreenQuad->TempTexture = mIndirectLightingTexture;
+		mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_R) == GLFW_PRESS)
+	{
+		mIsRotatingModel = !mIsRotatingModel;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_T) == GLFW_PRESS)
+	{
+		mIsWireframe = !mIsWireframe;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_V) == GLFW_PRESS)
+	{
+		mShowMode = SM_VPLShadow;
+		mTempScreenQuad->ShowMode = 3;
+		mTempScreenQuad->TempTextureArray = mVPLShadowMapTextureArray;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+	{
+		if (mShowMode == SM_VPLShadow)
+		{
+			mTempScreenQuad->TextureArrayIndex++;
+			mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
+		}
+	}
+	if (glfwGetKey(Window, GLFW_KEY_MINUS) == GLFW_PRESS)
+	{
+		if (mShowMode == SM_VPLShadow)
+		{
+			mTempScreenQuad->TextureArrayIndex--;
+			mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
+		}
+	}
 
-    case '2':
-        mShowMode = SM_GBufferPosition;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mGBufferPositionTexture;
-        break;
+	bool isShift = glfwGetKey(Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
+				   glfwGetKey(Window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
 
-    case '3':
-        mShowMode = SM_GBufferNormal;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mGBufferNormalTexture;
-        break;
-
-    case '4':
-        mShowMode = SM_GBufferAlbedo;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mGBufferAlbedoTexture;
-        break;
-
-    case '5':
-        mShowMode = SM_RSMPosition;
-        mTempScreenQuad->ShowMode = 1;
-        mTempScreenQuad->TempTextureArray = mRSMPositionTextureArray;
-        break;
-
-    case '6':
-        mShowMode = SM_RSMNormal;
-        mTempScreenQuad->ShowMode = 1;
-        mTempScreenQuad->TempTextureArray = mRSMNormalTextureArray;
-        break;
-
-    case '7':
-        mShowMode = SM_RSMFlux;
-        mTempScreenQuad->ShowMode = 1;
-        mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
-        break;
-
-    case '8':
-        mShowMode = SM_DirectLighting;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mDirectLightingTexture;
-        break;
-
-    case '9':
-        mShowMode = SM_IndirectLighting;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mIndirectLightingTexture;
-        break;
-
-    case '0':
-        mShowMode = SM_Final;
-        mTempScreenQuad->ShowMode = 2;
-        mTempScreenQuad->TempTexture = mIndirectLightingTexture;
-        mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
-        break;
-
-    case 'X':
-        mTempScreenQuad->TextureArrayIndex = 0;
-        break;
-
-    case 'x':
-        mTempScreenQuad->TextureArrayIndex = 1;
-        break;
-
-    case 'Y':
-        mTempScreenQuad->TextureArrayIndex = 2;
-        break;
-
-    case 'y':
-        mTempScreenQuad->TextureArrayIndex = 3;
-        break;
-
-    case 'Z':
-        break;
-
-    case 'z':
-        mTempScreenQuad->TextureArrayIndex = 4;
-        break;
-
-    case 'w':
-        mIsWireframe = !mIsWireframe;
-        break;
-
-    case 'r':
-        mIsRotatingModel = !mIsRotatingModel;
-        break;
-
-    case 'v':
-        mShowMode = SM_VPLShadow;
-        mTempScreenQuad->ShowMode = 3;
-        mTempScreenQuad->TempTextureArray = mVPLShadowMapTextureArray;
-        break;
-
-    case '=':
-        if( mShowMode == SM_VPLShadow )
-        {
-            mTempScreenQuad->TextureArrayIndex++;
-            mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
-        }
-        break;
-
-    case '-':
-        if( mShowMode == SM_VPLShadow )
-        {
-            mTempScreenQuad->TextureArrayIndex--;
-            mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
-        }
-        break;
-
-    default:
-        break;
-    }
+	if (isShift ^ glfwGetKey(Window, GLFW_KEY_CAPS_LOCK) == GLFW_PRESS)
+	{
+		// Uppercase
+		if (glfwGetKey(Window, GLFW_KEY_X) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 0;
+		}
+		if (glfwGetKey(Window, GLFW_KEY_Y) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 2;
+		}
+		if (glfwGetKey(Window, GLFW_KEY_Z) == GLFW_PRESS)
+		{
+		}
+	}
+	else
+	{
+		// Lowercase
+		if (glfwGetKey(Window, GLFW_KEY_X) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 1;
+		}
+		if (glfwGetKey(Window, GLFW_KEY_Y) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 3;
+		}
+		if (glfwGetKey(Window, GLFW_KEY_Z) == GLFW_PRESS)
+		{
+			mTempScreenQuad->TextureArrayIndex = 4;
+		}
+	}
 }
-//----------------------------------------------------------------------------
-void VPLApp::OnKeyboardUp(unsigned char key, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void VPLApp::OnMouse(int button, int state, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void VPLApp::OnMouseMove(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void VPLApp::OnReshape(int x, int y)
-{
-}
-//----------------------------------------------------------------------------

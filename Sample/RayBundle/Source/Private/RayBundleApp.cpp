@@ -39,11 +39,10 @@ static GLboolean QueryExtension(char *extName)
 
 //----------------------------------------------------------------------------
 RayBundleApp::RayBundleApp(int width, int height)
-	:
-	mWidth(width),
-	mHeight(height),
-	mWindowTitle("Ray-bundle demo")
 {
+	Width = width;
+	Height = height;
+	Title = "Ray-bundle demo";
 	sphereRadius = 14.15f;
 	sphereCenter = vec3(0.0f, 10.0f, 0.0f);
 	mVoxelGridDim = 128;
@@ -58,13 +57,8 @@ RayBundleApp::~RayBundleApp()
 //----------------------------------------------------------------------------
 void RayBundleApp::Initialize(GPUDevice* device)
 {
-    Application::Initialize(device);
-
 	GLboolean supportNVAtomicFloatOp = QueryExtension("GL_NV_shader_atomic_float");
 	assert( supportNVAtomicFloatOp );
-
-	std::string title = mWindowTitle;
-	glutSetWindowTitle(title.c_str());
 
 	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
@@ -82,9 +76,8 @@ void RayBundleApp::Initialize(GPUDevice* device)
 		vec3(0.0f, 0.0f, 1.0f));
     
     // Create scene camera.
-	mCamera = new Camera();
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
-	mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 1.0f, 50.0f);
+	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
 	// Create material templates.
@@ -119,7 +112,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	// Create scene.
 	mat4 rotM;
 	material = new Material(mtRayBundle);
-	mModel = new RayBundleTriMesh(material, mCamera);
+	mModel = new RayBundleTriMesh(material, mMainCamera);
 	mModel->LoadFromFile("beethoven.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource(mDevice);
@@ -128,7 +121,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
-	mGround = new RayBundleTriMesh(material, mCamera);
+	mGround = new RayBundleTriMesh(material, mMainCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
@@ -136,7 +129,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
-	mCeiling = new RayBundleTriMesh(material, mCamera);
+	mCeiling = new RayBundleTriMesh(material, mMainCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
@@ -147,7 +140,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
-	mLight = new RayBundleTriMesh(material, mCamera);
+	mLight = new RayBundleTriMesh(material, mMainCamera);
 	mLight->LoadFromFile("square.ply");
 	mLight->GenerateNormals();
 	mLight->CreateDeviceResource(mDevice);
@@ -161,7 +154,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	mSceneBB.Merge(mLight->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
-	mBackWall = new RayBundleTriMesh(material, mCamera);
+	mBackWall = new RayBundleTriMesh(material, mMainCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
@@ -172,7 +165,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
-	mLeftWall = new RayBundleTriMesh(material, mCamera);
+	mLeftWall = new RayBundleTriMesh(material, mMainCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
@@ -183,7 +176,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
 	material = new Material(mtRayBundle);
-	mRightWall = new RayBundleTriMesh(material, mCamera);
+	mRightWall = new RayBundleTriMesh(material, mMainCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
@@ -299,29 +292,29 @@ void RayBundleApp::DrawRayBundle()
 //----------------------------------------------------------------------------
 void RayBundleApp::DrawScene()
 {
-	mGround->SetCamera(mCamera);
+	mGround->SetCamera(mMainCamera);
 	mGround->Render(0, 0);
 
 	//mCeiling->SetCamera(mCamera);
 	//mCeiling->Render(0, 0);
 
-	mLight->SetCamera(mCamera);
+	mLight->SetCamera(mMainCamera);
 	mLight->Render(0, 0);
 
 	//mBackWall->SetCamera(mCamera);
 	//mBackWall->Render(0, 0);
 
-	mLeftWall->SetCamera(mCamera);
+	mLeftWall->SetCamera(mMainCamera);
 	mLeftWall->Render(0, 0);
 
-	mRightWall->SetCamera(mCamera);
+	mRightWall->SetCamera(mMainCamera);
 	mRightWall->Render(0, 0);
 
-	mModel->SetCamera(mCamera);
+	mModel->SetCamera(mMainCamera);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
-void RayBundleApp::Run()
+void RayBundleApp::FrameFunc()
 {
 	// Reset accumulation buffer.
 	mAccumulationBuffer->Bind(1);
@@ -427,7 +420,6 @@ void RayBundleApp::Run()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	DrawScene();
 
-	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
 void RayBundleApp::Terminate()
@@ -435,7 +427,6 @@ void RayBundleApp::Terminate()
 	// Release all resources.
 
     delete mRayBundleProjector;
-	delete mCamera;
 
 	mGround = 0;
 	mCeiling = 0;
@@ -459,23 +450,7 @@ void RayBundleApp::Terminate()
 	mUpdateAccuScreenQuad = 0;
 }
 //----------------------------------------------------------------------------
-void RayBundleApp::OnKeyboard(unsigned char key, int x, int y)
+void RayBundleApp::ProcessInput()
 {
+
 }
-//----------------------------------------------------------------------------
-void RayBundleApp::OnKeyboardUp(unsigned char key, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void RayBundleApp::OnMouse(int button, int state, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void RayBundleApp::OnMouseMove(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void RayBundleApp::OnReshape(int x, int y)
-{
-}
-//----------------------------------------------------------------------------

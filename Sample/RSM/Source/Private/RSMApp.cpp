@@ -1,15 +1,13 @@
 #include "RSMApp.h"
-#include "RNG.h"
-
+#include <glfw3.h>
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
 RSMApp::RSMApp(int width, int height)
-	:
-	mWidth(width),
-	mHeight(height),
-	mWindowTitle("RSM demo")
 {
+	Width = width;
+	Height = height;
+	Title = "RSM demo";
 	mShowMode = SM_DeferredLighting;
 }
 //----------------------------------------------------------------------------
@@ -19,26 +17,19 @@ RSMApp::~RSMApp()
 //----------------------------------------------------------------------------
 void RSMApp::Initialize(GPUDevice* device)
 {
-    Application::Initialize(device);
-
-	std::string title = mWindowTitle;
-	glutSetWindowTitle(title.c_str());
-
 	float color = 0.5f;
 	glClearColor(color, color, color, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
 	// Create light projector.
 	mLightProjector = new Camera;
-	mLightProjector->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 60.0f);
+	mLightProjector->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 1.0f, 60.0f);
 	mLightProjector->SetLookAt(vec3(10.0f, 23.0f, 32.0f), vec3(-7.0f, 0.0f, -12.0f),
 		vec3(0.0f, 1.0f, 0.0f));
     
     // Create scene camera.
-	mCamera = new Camera;
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
-	mCamera->SetLookAt(vec3(18.0f, 15.0f, 5.0f), vec3(0.0f, 6.0f, -2.0f),
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 1.0f, 50.0f);
+	mMainCamera->SetLookAt(vec3(18.0f, 15.0f, 5.0f), vec3(0.0f, 6.0f, -2.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
 	// Create light.
@@ -79,13 +70,13 @@ void RSMApp::Initialize(GPUDevice* device)
 
 	// Create RSM-buffer MRT textures.
 	mRSMPositionTexture = new Texture2D();
-	mRSMPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mRSMPositionTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 	mRSMNormalTexture = new Texture2D();
-	mRSMNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mRSMNormalTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 	mRSMFluxTexture = new Texture2D();
-	mRSMFluxTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mRSMFluxTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 	mRSMDepthTexture = new Texture2D();
-	mRSMDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_Depth);
+	mRSMDepthTexture->CreateRenderTarget(Width, Height, Texture2D::TF_Depth);
 
 	// Create RSM-buffer.
 	Texture* rsmTextures[3] = {mRSMPositionTexture, mRSMNormalTexture, mRSMFluxTexture};
@@ -94,15 +85,15 @@ void RSMApp::Initialize(GPUDevice* device)
     
 	// Create G-buffer MRT textures.
 	mPositionTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mPositionTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 	mNormalTexture = new Texture2D();
-	mNormalTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mNormalTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 	mColorTexture = new Texture2D();
-	mColorTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mColorTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
 	mDepthTexture = new Texture2D();
-	mDepthTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_Depth);
+	mDepthTexture->CreateRenderTarget(Width, Height, Texture2D::TF_Depth);
 	mIndirectLightingTexture = new Texture2D();
-	mIndirectLightingTexture->CreateRenderTarget(mWidth, mHeight, Texture2D::TF_RGBF);
+	mIndirectLightingTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
     
 	// Create G-buffer.
 	Texture* gbufferTextures[4] = {mPositionTexture, mNormalTexture, mColorTexture, mIndirectLightingTexture};
@@ -126,7 +117,7 @@ void RSMApp::Initialize(GPUDevice* device)
     
 	// Create RSM temp result screen quad.
 	material = new Material(mtRSMTemp);
-	mRSMTempResultQuad = new RSMTempScreenQuad(material, mCamera);
+	mRSMTempResultQuad = new RSMTempScreenQuad(material, mMainCamera);
 	mRSMTempResultQuad->LoadFromFile("screenquad.ply");
 	mRSMTempResultQuad->SetTCoord(0, vec2(0.0f, 0.0f));
 	mRSMTempResultQuad->SetTCoord(1, vec2(1.0f, 0.0f));
@@ -153,7 +144,7 @@ void RSMApp::Initialize(GPUDevice* device)
     float RSMSamplingRadius = 0.05f;
 	mat4 rotM;
 	material = new Material(mtRSM);
-	mModel = new RSMTriMesh(material, mCamera);
+	mModel = new RSMTriMesh(material, mMainCamera);
 	mModel->LoadFromFile("beethoven.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource(mDevice);
@@ -170,7 +161,7 @@ void RSMApp::Initialize(GPUDevice* device)
     mModel->RSMSamplingPatternTexture = mSamplingPatternTexture;
 
 	material = new Material(mtRSM);
-	mGround = new RSMTriMesh(material, mCamera);
+	mGround = new RSMTriMesh(material, mMainCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
@@ -184,7 +175,7 @@ void RSMApp::Initialize(GPUDevice* device)
     mGround->RSMSamplingPatternTexture = mSamplingPatternTexture;
 
 	material = new Material(mtRSM);
-	mBackWall = new RSMTriMesh(material, mCamera);
+	mBackWall = new RSMTriMesh(material, mMainCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
@@ -201,7 +192,7 @@ void RSMApp::Initialize(GPUDevice* device)
     mBackWall->RSMSamplingPatternTexture = mSamplingPatternTexture;
 
 	material = new Material(mtRSM);
-	mLeftWall = new RSMTriMesh(material, mCamera);
+	mLeftWall = new RSMTriMesh(material, mMainCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
@@ -218,7 +209,7 @@ void RSMApp::Initialize(GPUDevice* device)
     mLeftWall->RSMSamplingPatternTexture = mSamplingPatternTexture;
 
 	material = new Material(mtRSM);
-	mSphere = new RSMTriMesh(material, mCamera);
+	mSphere = new RSMTriMesh(material, mMainCamera);
 	mSphere->LoadFromFile("sphere.ply");
 	mSphere->GenerateNormals();
 	mSphere->CreateDeviceResource(mDevice);
@@ -239,13 +230,13 @@ void RSMApp::DrawSceneToRSMBuffer()
 //----------------------------------------------------------------------------
 void RSMApp::DrawScene()
 {
-    mModel->SetCamera(mCamera);
+    mModel->SetCamera(mMainCamera);
 	mModel->Render(0, 1);
-    mLeftWall->SetCamera(mCamera);
+    mLeftWall->SetCamera(mMainCamera);
 	mLeftWall->Render(0, 1);
-    mBackWall->SetCamera(mCamera);
+    mBackWall->SetCamera(mMainCamera);
 	mBackWall->Render(0, 1);
-    mGround->SetCamera(mCamera);
+    mGround->SetCamera(mMainCamera);
 	mGround->Render(0, 1);
 
 //	mSphere->MaterialColor = vec3(0.0f, 0.0f, 1.0f);
@@ -268,7 +259,7 @@ void RSMApp::DrawScene()
 //	}
 }
 //----------------------------------------------------------------------------
-void RSMApp::Run()
+void RSMApp::FrameFunc()
 {
 	// Generate RSM-buffer.
 	mRSMBuffer->Enable();
@@ -292,8 +283,6 @@ void RSMApp::Run()
     {
         mRSMTempResultQuad->Render(0, 0);
     }
-
-	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
 void RSMApp::Terminate()
@@ -301,7 +290,6 @@ void RSMApp::Terminate()
 	// Release all resources.
 
     delete mLightProjector;
-	delete mCamera;
 	mLight = 0;
 	mGround = 0;
 	mBackWall = 0;
@@ -328,88 +316,64 @@ void RSMApp::Terminate()
 	mSamplingPatternTexture = 0;
 }
 //----------------------------------------------------------------------------
-void RSMApp::OnKeyboard(unsigned char key, int x, int y)
+void RSMApp::ProcessInput()
 {
-	switch( key )
+	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-	case '1':
 		mShowMode = SM_RSMPosition;
-        mRSMTempResultQuad->ShowMode = 1;
+		mRSMTempResultQuad->ShowMode = 1;
 		mRSMTempResultQuad->TempTexture = mRSMPositionTexture;
-		break;
-
-	case '2':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
+	{
 		mShowMode = SM_RSMNormal;
-        mRSMTempResultQuad->ShowMode = 2;
-        mRSMTempResultQuad->TempTexture = mRSMNormalTexture;
-		break;
-
-	case '3':
+		mRSMTempResultQuad->ShowMode = 2;
+		mRSMTempResultQuad->TempTexture = mRSMNormalTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
+	{
 		mShowMode = SM_RSMFlux;
 		mRSMTempResultQuad->ShowMode = 3;
 		mRSMTempResultQuad->TempTexture = mRSMFluxTexture;
-		break;
-
-	case '4':
+	}
+	if (glfwGetKey(Window, GLFW_KEY_4) == GLFW_PRESS)
+	{
 		mShowMode = SM_RSMDepth;
-        mRSMTempResultQuad->ShowMode = 4;
-        mRSMTempResultQuad->TempTexture = mRSMDepthTexture;
-		break;
-
-	case '5':
+		mRSMTempResultQuad->ShowMode = 4;
+		mRSMTempResultQuad->TempTexture = mRSMDepthTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_5) == GLFW_PRESS)
+	{
 		mShowMode = SM_IndirectLighting;
-        mRSMTempResultQuad->ShowMode = 5;
-        mRSMTempResultQuad->TempTexture = mIndirectLightingTexture;
-        break;
-            
-    case '6':
-        mShowMode = SM_Position;
-        mRSMTempResultQuad->ShowMode = 6;
-        mRSMTempResultQuad->TempTexture = mPositionTexture;
-        break;
-          
-    case '7':
-        mShowMode = SM_Normal;
-        mRSMTempResultQuad->ShowMode = 7;
-        mRSMTempResultQuad->TempTexture = mNormalTexture;
-        break;
-           
-    case '8':
-        mShowMode = SM_Color;
-        mRSMTempResultQuad->ShowMode = 8;
-        mRSMTempResultQuad->TempTexture = mColorTexture;
-        break;
-
-    case '9':
-        mShowMode = SM_Depth;
-        mRSMTempResultQuad->ShowMode = 9;
-        mRSMTempResultQuad->TempTexture = mDepthTexture;
-        break;
-            
-    case '0':
-        mShowMode = SM_DeferredLighting;
-        break;
-            
-	default:
-		break;
+		mRSMTempResultQuad->ShowMode = 5;
+		mRSMTempResultQuad->TempTexture = mIndirectLightingTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_6) == GLFW_PRESS)
+	{
+		mShowMode = SM_Position;
+		mRSMTempResultQuad->ShowMode = 6;
+		mRSMTempResultQuad->TempTexture = mPositionTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_7) == GLFW_PRESS)
+	{
+		mShowMode = SM_Normal;
+		mRSMTempResultQuad->ShowMode = 7;
+		mRSMTempResultQuad->TempTexture = mNormalTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_8) == GLFW_PRESS)
+	{
+		mShowMode = SM_Color;
+		mRSMTempResultQuad->ShowMode = 8;
+		mRSMTempResultQuad->TempTexture = mColorTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_9) == GLFW_PRESS)
+	{
+		mShowMode = SM_Depth;
+		mRSMTempResultQuad->ShowMode = 9;
+		mRSMTempResultQuad->TempTexture = mDepthTexture;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_0) == GLFW_PRESS)
+	{
+		mShowMode = SM_DeferredLighting;
 	}
 }
-//----------------------------------------------------------------------------
-void RSMApp::OnKeyboardUp(unsigned char key, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void RSMApp::OnMouse(int button, int state, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void RSMApp::OnMouseMove(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void RSMApp::OnReshape(int x, int y)
-{
-	mWidth = x;
-	mHeight = y;
-}
-//----------------------------------------------------------------------------

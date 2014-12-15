@@ -1,7 +1,6 @@
 #ifndef RTGI_BidirectionalVoxelGIApp_H
 #define RTGI_BidirectionalVoxelGIApp_H
 
-#include "GraphicsFrameworkHeader.h"
 #include "SceneMesh.h"
 #include "TempScreenQuad.h"
 #include "GPUTimer.h"
@@ -21,19 +20,13 @@ namespace RTGI
 class BidirectionalVoxelGIApp : public Application
 {
 public:
-	BidirectionalVoxelGIApp(int width, int height);
+	BidirectionalVoxelGIApp(int width = 1024, int height = 768);
 	~BidirectionalVoxelGIApp();
 
-    void Initialize(GPUDevice* device);
-	void Run();
-	void Terminate();
-
-	// Event handlers.
-	void OnKeyboard(unsigned char key, int x, int y);
-	void OnKeyboardUp(unsigned char key, int x, int y);
-	void OnMouse(int button, int state, int x, int y);
-	void OnMouseMove(int x, int y);
-	void OnReshape(int x, int y);
+	void Initialize(GPUDevice* device) override;
+	void ProcessInput(int key, int scancode, int action, int mods) override;
+	void FrameFunc() override;
+	void Terminate() override;
 
 private:
     friend class SceneMesh;
@@ -57,10 +50,6 @@ private:
     bool mIsWireframe;
     ShowMode mShowMode;
 
-	int mWidth, mHeight;
-	std::string mWindowTitle;
-
-	Camera* mCamera;
     Camera* mLightProjector;
 
     // G-buffer.

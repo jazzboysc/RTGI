@@ -1,7 +1,6 @@
 #ifndef RTGI_SimpleVoxelizationApp_H
 #define RTGI_SimpleVoxelizationApp_H
 
-#include "GraphicsFrameworkHeader.h"
 #include "SimpleVoxelizationTriMesh.h"
 #include "VoxelCubeTriMesh.h"
 #include "VoxelRaySegment.h"
@@ -22,19 +21,13 @@ namespace RTGI
 class SimpleVoxelizationApp : public Application, GUIFramework::FormEventListener
 {
 public:
-	SimpleVoxelizationApp(int width, int height);
+	SimpleVoxelizationApp(int width = 1024, int height = 768);
 	~SimpleVoxelizationApp();
 
-    void Initialize(GPUDevice* device);
-	void Run();
-	void Terminate();
-
-	// Event handlers.
-	void OnKeyboard(unsigned char key, int x, int y);
-	void OnKeyboardUp(unsigned char key, int x, int y);
-	void OnMouse(int button, int state, int x, int y);
-	void OnMouseMove(int x, int y);
-	void OnReshape(int x, int y);
+	void Initialize(GPUDevice* device) override;
+	void ProcessInput() override;
+	void FrameFunc() override;
+	void Terminate() override;
     void OnButtonClick(System::Object^  sender, System::EventArgs^  e);
 
 public:
@@ -55,12 +48,8 @@ private:
     };
 
     ShowMode mShowMode;
-	int mWidth, mHeight;
-	std::string mWindowTitle;
-
     bool mIsRotatingModel;
 
-    Camera* mCamera;
 	Camera* mVoxelizationProjector;
 
     AtomicCounterBufferPtr mGatheredVoxelAllocCounter;

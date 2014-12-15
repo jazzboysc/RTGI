@@ -1,7 +1,6 @@
 #ifndef RTGI_SIIApp_H
 #define RTGI_SIIApp_H
 
-#include "GraphicsFrameworkHeader.h"
 #include "SIITriMesh.h"
 #include "SIITempScreenQuad.h"
 #include "SIIVPLQuad.h"
@@ -16,19 +15,13 @@ namespace RTGI
 class SIIApp : public Application
 {
 public:
-	SIIApp(int width, int height);
+	SIIApp(int width = 1024, int height = 768);
 	~SIIApp();
 
-	void Initialize(GPUDevice* device);
-	void Run();
-	void Terminate();
-
-	// Event handlers.
-	void OnKeyboard(unsigned char key, int x, int y);
-	void OnKeyboardUp(unsigned char key, int x, int y);
-	void OnMouse(int button, int state, int x, int y);
-	void OnMouseMove(int x, int y);
-	void OnReshape(int x, int y);
+	void Initialize(GPUDevice* device) override;
+	void ProcessInput() override;
+	void FrameFunc() override;
+	void Terminate() override;
 
 private:
     enum ShowMode
@@ -48,10 +41,6 @@ private:
     void SampleRSMs();
     void DrawScene();
 
-	int mWidth, mHeight;
-	std::string mWindowTitle;
-
-	Camera* mCamera;
     Camera* mLightProjector;
 
     FrameBufferPtr mShadowMapFB;

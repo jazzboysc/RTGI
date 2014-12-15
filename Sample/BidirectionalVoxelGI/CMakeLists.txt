@@ -8,33 +8,34 @@ find_package(OpenGL REQUIRED)
 SET( MACROS
 	FBXSDK_SHARED
 	GLEW_STATIC
-	FREEGLUT_STATIC
 	GLM_FORCE_PURE
 )
-
 # Can include project name and directory
 SET( INCLUDE
 	# ----- OpenGL & Window -----
 	glew
+	glm
+	glfw
+	fbxsdk
 	# ----- Core Framework -----
+	Graphics
+	Resource
 	GUI
 	Math
-	glm
-	Graphics	
 	# ----- App Specific -----
-    libbmpread
-	fbxsdk
 	zlib
-	FreeGlut
+    libbmpread
+	assimp
 )
 # Can include project name and absolute path to library
 SET( LINK
 	# ----- OpenGL & Window -----
 	${OPENGL_LIBRARIES}
 	glew
-	FreeGlut
+	glfw
 	# ----- Core Framework -----
 	Graphics
+	Resource
 	GUI
 	Math
 	# ----- App Specific -----
@@ -42,6 +43,7 @@ SET( LINK
 	libpng
     libbmpread
 	${fbxsdk_SOURCE_DIR}/lib/x86/debug/libfbxsdk.lib
+	assimp
 )
 
 SET( VS_DOTNET_REFERENCES

@@ -17,7 +17,7 @@ namespace RTGI
 class SSDOApp : public Application
 {
 public:
-	SSDOApp(int width, int height);
+	SSDOApp(int width = 1024, int height = 768);
 	~SSDOApp();
 
 	void Initialize(GPUDevice* device) override;

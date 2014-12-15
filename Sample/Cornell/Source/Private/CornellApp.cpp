@@ -1,15 +1,13 @@
 #include "CornellApp.h"
-#include "RNG.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
 CornellApp::CornellApp(int width, int height)
-	:
-	mWidth(width),
-	mHeight(height),
-	mWindowTitle("Cornell demo")
 {
+	Width = width;
+	Height = height;
+	Title = "Cornell demo";
 }
 //----------------------------------------------------------------------------
 CornellApp::~CornellApp()
@@ -18,11 +16,6 @@ CornellApp::~CornellApp()
 //----------------------------------------------------------------------------
 void CornellApp::Initialize(GPUDevice* device)
 {
-    Application::Initialize(device);
-
-	std::string title = mWindowTitle;
-	glutSetWindowTitle(title.c_str());
-
 	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -30,9 +23,8 @@ void CornellApp::Initialize(GPUDevice* device)
     glEnable(GL_CULL_FACE);
     
     // Create scene camera.
-	mCamera = new Camera();
-	mCamera->SetPerspectiveFrustum(45.0f, (float)mWidth/(float)mHeight, 1.0f, 50.0f);
-	mCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 1.0f, 50.0f);
+	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
 	// Create material templates.
@@ -50,7 +42,7 @@ void CornellApp::Initialize(GPUDevice* device)
 	// Create scene.
 	mat4 rotM;
 	material = new Material(mtScene);
-	mModel = new CornellTriMesh(material, mCamera);
+	mModel = new CornellTriMesh(material, mMainCamera);
 	mModel->LoadFromFile("beethoven.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource(mDevice);
@@ -58,14 +50,14 @@ void CornellApp::Initialize(GPUDevice* device)
 	mModel->MaterialColor = vec3(0.65f, 0.65f, 0.65f);
 
 	material = new Material(mtScene);
-	mGround = new CornellTriMesh(material, mCamera);
+	mGround = new CornellTriMesh(material, mMainCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
 
 	material = new Material(mtScene);
-	mCeiling = new CornellTriMesh(material, mCamera);
+	mCeiling = new CornellTriMesh(material, mMainCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
@@ -75,7 +67,7 @@ void CornellApp::Initialize(GPUDevice* device)
     mCeiling->MaterialColor = vec3(0.0f, 0.0f, 0.75f);
 
 	material = new Material(mtScene);
-	mLight = new CornellTriMesh(material, mCamera);
+	mLight = new CornellTriMesh(material, mMainCamera);
 	mLight->LoadFromFile("square.ply");
 	mLight->GenerateNormals();
 	mLight->CreateDeviceResource(mDevice);
@@ -87,7 +79,7 @@ void CornellApp::Initialize(GPUDevice* device)
 	mLight->IsLight = true;
 
 	material = new Material(mtScene);
-	mBackWall = new CornellTriMesh(material, mCamera);
+	mBackWall = new CornellTriMesh(material, mMainCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
@@ -97,7 +89,7 @@ void CornellApp::Initialize(GPUDevice* device)
     mBackWall->MaterialColor = vec3(0.75f, 0.75f, 0.75f);
 
 	material = new Material(mtScene);
-	mLeftWall = new CornellTriMesh(material, mCamera);
+	mLeftWall = new CornellTriMesh(material, mMainCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
@@ -107,7 +99,7 @@ void CornellApp::Initialize(GPUDevice* device)
     mLeftWall->MaterialColor = vec3(1.0f, 0.0f, 0.0f);
 
 	material = new Material(mtScene);
-	mRightWall = new CornellTriMesh(material, mCamera);
+	mRightWall = new CornellTriMesh(material, mMainCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
@@ -120,41 +112,37 @@ void CornellApp::Initialize(GPUDevice* device)
 //----------------------------------------------------------------------------
 void CornellApp::DrawScene()
 {
-	mGround->SetCamera(mCamera);
+	mGround->SetCamera(mMainCamera);
 	mGround->Render(0, 0);
 
-	mCeiling->SetCamera(mCamera);
+	mCeiling->SetCamera(mMainCamera);
 	mCeiling->Render(0, 0);
 
-	mLight->SetCamera(mCamera);
+	mLight->SetCamera(mMainCamera);
 	mLight->Render(0, 0);
 
-	mBackWall->SetCamera(mCamera);
+	mBackWall->SetCamera(mMainCamera);
 	mBackWall->Render(0, 0);
 
-	mLeftWall->SetCamera(mCamera);
+	mLeftWall->SetCamera(mMainCamera);
 	mLeftWall->Render(0, 0);
 
-	mRightWall->SetCamera(mCamera);
+	mRightWall->SetCamera(mMainCamera);
 	mRightWall->Render(0, 0);
 
-	mModel->SetCamera(mCamera);
+	mModel->SetCamera(mMainCamera);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
-void CornellApp::Run()
+void CornellApp::FrameFunc()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	DrawScene();
-
-	glutSwapBuffers();
 }
 //----------------------------------------------------------------------------
 void CornellApp::Terminate()
 {
 	// Release all resources.
-
-	delete mCamera;
 
 	mGround = 0;
 	mCeiling = 0;
@@ -164,24 +152,7 @@ void CornellApp::Terminate()
 	mRightWall = 0;
 	mModel = 0;
 }
-//----------------------------------------------------------------------------
-void CornellApp::OnKeyboard(unsigned char key, int x, int y)
+void CornellApp::ProcessInput()
 {
+
 }
-//----------------------------------------------------------------------------
-void CornellApp::OnKeyboardUp(unsigned char key, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void CornellApp::OnMouse(int button, int state, int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void CornellApp::OnMouseMove(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
-void CornellApp::OnReshape(int x, int y)
-{
-}
-//----------------------------------------------------------------------------
