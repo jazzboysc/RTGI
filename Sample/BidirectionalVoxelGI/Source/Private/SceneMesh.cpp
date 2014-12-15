@@ -20,27 +20,49 @@ SceneMesh::~SceneMesh()
 //----------------------------------------------------------------------------
 void SceneMesh::OnGetShaderConstants()
 {
-	TriangleMesh::OnGetShaderConstants();
+    ShaderProgram* program = 0;
 
-	// Get pass 1 uniform locations.
-    ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    // Get scene voxelization pass uniform locations.
+    program = mMaterial->GetProgram(0, BidirectionalVoxelGIApp::SMP_Voxelization);
+    program->GetUniformLocation(&mWorldLocSV, "World");
+    program->GetUniformLocation(&mViewLocSV, "View");
+    program->GetUniformLocation(&mProjLocSV, "Proj");
+    program->GetUniformLocation(&mSceneBBCenterLocSV, "SceneBBCenter");
+    program->GetUniformLocation(&mSceneBBExtensionLocSV, "SceneBBExtension");
+    program->GetUniformLocation(&mMaterialColorLocSV, "MaterialColor");
+    program->GetUniformLocation(&mDimLocSV, "dim");
+    program->GetUniformLocation(&mInv2SceneBBExtensionLocSV, "Inv2SceneBBExtension");
+
+    // Get show voxelization pass uniform locations.
+    program = mMaterial->GetProgram(0, BidirectionalVoxelGIApp::SMP_ShowVoxelization);
+    program->GetUniformLocation(&mWorldLocSSV, "World");
+    program->GetUniformLocation(&mViewLocSSV, "View");
+    program->GetUniformLocation(&mProjLocSSV, "Proj");
+    program->GetUniformLocation(&mSceneBBCenterLocSSV, "SceneBBCenter");
+    program->GetUniformLocation(&mSceneBBExtensionLocSSV, "SceneBBExtension");
+    program->GetUniformLocation(&mDimLocSSV, "dim");
+
+	// Get shadow map pass uniform locations.
+    program = mMaterial->GetProgram(0, BidirectionalVoxelGIApp::SMP_ShadowMap);
+    program->GetUniformLocation(&mWorldLocShadowMap, "World");
+    program->GetUniformLocation(&mViewLocShadowMap, "View");
+    program->GetUniformLocation(&mProjLocShadowMap, "Proj");
     program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
 
-    // Get pass 2 uniform locations.
-    program = mMaterial->GetProgram(0, 1);
-    program->GetUniformLocation(&mWorldLoc2, "World");
-    program->GetUniformLocation(&mViewLoc2, "View");
-    program->GetUniformLocation(&mProjLoc2, "Proj");
-    program->GetUniformLocation(&mMaterialColorLoc2, "MaterialColor");
+    // Get G-buffer pass uniform locations.
+    program = mMaterial->GetProgram(0, BidirectionalVoxelGIApp::SMP_GBuffer);
+    program->GetUniformLocation(&mWorldLocGBuffer, "World");
+    program->GetUniformLocation(&mViewLocGBuffer, "View");
+    program->GetUniformLocation(&mProjLocGBuffer, "Proj");
+    program->GetUniformLocation(&mMaterialColorLocGBuffer, "MaterialColor");
 
-    // Get pass 3 uniform locations.
-    program = mMaterial->GetProgram(0, 2);
-    program->GetUniformLocation(&mWorldLoc3, "World");
-    program->GetUniformLocation(&mProjLoc3, "Proj");
+    // Get RSM pass uniform locations.
+    program = mMaterial->GetProgram(0, BidirectionalVoxelGIApp::SMP_RSM);
+    program->GetUniformLocation(&mWorldLocRSM, "World");
+    program->GetUniformLocation(&mProjLocRSM, "Proj");
     program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
     program->GetUniformLocation(&mLightColorLoc, "LightColor");
-    program->GetUniformLocation(&mMaterialColorLoc3, "MaterialColor");
-
+    program->GetUniformLocation(&mMaterialColorLocRSM, "MaterialColor");
     GPU_DEVICE_FUNC_SetProgramParameterInt(program, 
         SPP_Geometry_Vertices_Out,
         BidirectionalVoxelGIApp::RSM_FACE_COUNT * 3);
@@ -48,41 +70,81 @@ void SceneMesh::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
 {
-    // Update pass 1 uniform data.
-    if( pass == 0 )
+    if( pass == BidirectionalVoxelGIApp::SMP_Voxelization )
     {
-		TriangleMesh::OnUpdateShaderConstants(technique, pass);
+        mWorldLocSV.SetValue(mWorldTransform);
+
+        vec3 center = SceneBB->GetBoxCenter();
+        vec3 extension = SceneBB->GetExtension();
+        vec3 inv2extension = vec3(1.0f / (2.0f*extension.x), 1.0f / (2.0f*extension.y), 1.0f / (2.0f*extension.z));
+
+        mSceneBBCenterLocSV.SetValue(center);
+        mSceneBBExtensionLocSV.SetValue(extension);
+        mMaterialColorLocSV.SetValue(MaterialColor);
+        mDimLocSV.SetValue(BidirectionalVoxelGIApp::VOXEL_DIMENSION);
+        mInv2SceneBBExtensionLocSV.SetValue(inv2extension);
+    }
+
+    if( pass == BidirectionalVoxelGIApp::SMP_ShowVoxelization )
+    {
+        mWorldLocSSV.SetValue(mWorldTransform);
+        if( mCamera )
+        {
+            mat4 viewTrans = mCamera->GetViewTransform();
+            mViewLocSSV.SetValue(viewTrans);
+
+            mat4 projTrans = mCamera->GetProjectionTransform();
+            mProjLocSSV.SetValue(projTrans);
+        }
+
+        vec3 center = SceneBB->GetBoxCenter();
+        vec3 extension = SceneBB->GetExtension();
+        mSceneBBCenterLocSSV.SetValue(center);
+        mSceneBBExtensionLocSSV.SetValue(extension);
+        mDimLocSSV.SetValue(BidirectionalVoxelGIApp::VOXEL_DIMENSION);
+    }
+
+    // Update shadow map pass uniform data.
+    if( pass == BidirectionalVoxelGIApp::SMP_ShadowMap )
+    {
+        mWorldLocShadowMap.SetValue(mWorldTransform);
 
         if( mCamera )
         {
+            mat4 viewTrans = mCamera->GetViewTransform();
+            mViewLocShadowMap.SetValue(viewTrans);
+
+            mat4 projTrans = mCamera->GetProjectionTransform();
+            mProjLocShadowMap.SetValue(projTrans);
+
             float nearFarPlane[2];
             mCamera->GetNearFarPlane(nearFarPlane);
             mLightProjectorNearFarLoc.SetValue(nearFarPlane);
         }
 	}
 
-    // Update pass 2 uniform data.
-    if( pass == 1 )
+    // Update G-buffer pass uniform data.
+    if( pass == BidirectionalVoxelGIApp::SMP_GBuffer )
     {
-        mWorldLoc2.SetValue(mWorldTransform);
-        mMaterialColorLoc2.SetValue(MaterialColor);
+        mWorldLocGBuffer.SetValue(mWorldTransform);
+        mMaterialColorLocGBuffer.SetValue(MaterialColor);
 
         if( mCamera )
         {
             mat4 viewTrans = mCamera->GetViewTransform();
-            mViewLoc2.SetValue(viewTrans);
+            mViewLocGBuffer.SetValue(viewTrans);
 
             mat4 projTrans = mCamera->GetProjectionTransform();
-            mProjLoc2.SetValue(projTrans);
+            mProjLocGBuffer.SetValue(projTrans);
         }
     }
 
-    // Update pass 3 uniform data.
-    if( pass == 2 )
+    // Update RSM pass uniform data.
+    if( pass == BidirectionalVoxelGIApp::SMP_RSM )
     {
-        mWorldLoc3.SetValue(mWorldTransform);
+        mWorldLocRSM.SetValue(mWorldTransform);
         mLightColorLoc.SetValue(LightColor);
-        mMaterialColorLoc3.SetValue(MaterialColor);
+        mMaterialColorLocRSM.SetValue(MaterialColor);
 
         assert( LightProjector );
         if( LightProjector )
@@ -91,7 +153,7 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
             mLightPositionWorldLoc.SetValue(lightPosition);
 
             mat4 projTrans = LightProjector->GetProjectionTransform();
-            mProjLoc3.SetValue(projTrans);
+            mProjLocRSM.SetValue(projTrans);
         }
     }
 }

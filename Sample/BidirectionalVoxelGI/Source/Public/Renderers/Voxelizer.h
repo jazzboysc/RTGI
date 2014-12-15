@@ -16,14 +16,14 @@ public:
     Voxelizer(RenderSet* renderSet = 0);
     virtual ~Voxelizer();
 
-    void Initialize();
+    void Initialize(int voxelGridDim, int voxelGridLocalGroupDim);
 
     int GetVoxelGridDim() const;
     int GetVoxelGridLocalGroupDim() const;
 
 private:
-    enum { VOXEL_DIMENSION = 64 };
-    enum { VOXEL_LOCAL_GROUP_DIM = 8 };
+    int mVoxelGridDim;
+    int mVoxelGridLocalGroupDim;
 };
 
 typedef RefPointer<Voxelizer> VoxelizerPtr;

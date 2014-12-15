@@ -86,11 +86,11 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     Pass* passRSM = new Pass(rsmProgramInfo);
 
 	Technique* techScene = new Technique();
+    techScene->AddPass(passVoxelization);
+    techScene->AddPass(passShowVoxelization);
     techScene->AddPass(passShadow);
     techScene->AddPass(passGBuffer);
     techScene->AddPass(passRSM);
-    techScene->AddPass(passVoxelization);
-    techScene->AddPass(passShowVoxelization);
 	MaterialTemplate* mtScene = new MaterialTemplate();
     mtScene->AddTechnique(techScene);
 
@@ -108,7 +108,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 
     // Create scene voxelizer.
     mVoxelizer = new Voxelizer();
-    mVoxelizer->Initialize();
+    mVoxelizer->Initialize(VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM);
 
     // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer();
@@ -176,6 +176,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mModel);
+    mModel->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
     material = new Material(mtScene);
 	mGround = new SceneMesh(material, mMainCamera);
@@ -185,6 +187,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mGround->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mGround->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mGround);
+    mGround->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
     material = new Material(mtScene);
 	mCeiling = new SceneMesh(material, mMainCamera);
@@ -197,6 +201,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mCeiling->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mCeiling->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mCeiling);
+    mCeiling->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
     material = new Material(mtScene);
 	mBackWall = new SceneMesh(material, mMainCamera);
@@ -209,6 +215,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mBackWall->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
     mBackWall->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mBackWall);
+    mBackWall->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
     material = new Material(mtScene);
 	mLeftWall = new SceneMesh(material, mMainCamera);
@@ -221,6 +229,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mLeftWall->MaterialColor = vec3(1.0f, 0.2f, 0.2f);
     mLeftWall->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mLeftWall);
+    mLeftWall->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
     material = new Material(mtScene);
 	mRightWall = new SceneMesh(material, mMainCamera);
@@ -233,6 +243,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mRightWall->MaterialColor = vec3(0.2f, 1.0f, 0.2f);
     mRightWall->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mRightWall);
+    mRightWall->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
     // Create screen quads.
     material = new Material(mtScreenQuad);
@@ -299,17 +311,17 @@ void BidirectionalVoxelGIApp::FrameFunc()
     static double workLoad = 0.0;
 
     // Scene shadow pass.
-    mShadowMapRenderer->Render(0, 0, mLightProjector);
+    mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);
     workLoad = mShadowMapRenderer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Scene Shadow Pass", workLoad);
 
     // Scene G-buffer pass.
-    mGBufferRenderer->Render(0, 1, mMainCamera);
+    mGBufferRenderer->Render(0, SMP_GBuffer, mMainCamera);
     workLoad = mGBufferRenderer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Scene G-buffer Pass", workLoad);
 
     // Scene light RSM pass.
-    mRSMRenderer->Render(0, 2, 0);
+    mRSMRenderer->Render(0, SMP_RSM, 0);
     workLoad = mRSMRenderer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("RSM Pass", workLoad);
 
@@ -441,7 +453,7 @@ void BidirectionalVoxelGIApp::ProcessInput()
 
 	bool isShift = glfwGetKey(Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
 		glfwGetKey(Window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
-	bool isCap = isShift ^ glfwGetKey(Window, GLFW_KEY_CAPS_LOCK) == GLFW_PRESS;
+	bool isCap = isShift ^ (glfwGetKey(Window, GLFW_KEY_CAPS_LOCK) == GLFW_PRESS);
 	if (isCap)
 	{
 		// Uppercase

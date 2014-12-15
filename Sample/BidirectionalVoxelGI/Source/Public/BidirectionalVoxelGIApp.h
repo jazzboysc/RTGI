@@ -54,6 +54,8 @@ private:
     Camera* mLightProjector;
 
     // Scene voxelization.
+    enum { VOXEL_DIMENSION = 64 };
+    enum { VOXEL_LOCAL_GROUP_DIM = 8 };
     VoxelizerPtr mVoxelizer;
 
     // G-buffer.
@@ -89,6 +91,16 @@ private:
 
     TempScreenQuadPtr mTempScreenQuad;
 
+    friend class SceneMesh;
+    enum SceneModelPass
+    {
+        SMP_Voxelization = 0,
+        SMP_ShowVoxelization,
+        SMP_ShadowMap,
+        SMP_GBuffer,
+        SMP_RSM
+    };
+
     // Scene models.
 	SceneMeshPtr mGround;
 	SceneMeshPtr mCeiling;
@@ -97,6 +109,8 @@ private:
     SceneMeshPtr mRightWall;
     SceneMeshPtr mModel;
     RenderSetPtr mSceneObjects;
+
+    AABB mSceneBB;
 
     GPUTimerPtr mTimer;
 };

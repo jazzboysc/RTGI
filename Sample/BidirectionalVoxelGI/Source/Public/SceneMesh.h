@@ -22,23 +22,39 @@ public:
 	virtual void OnGetShaderConstants();
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 
+    AABB* SceneBB;
 	vec3 MaterialColor;
     vec3 LightColor;
     Camera* LightProjector;
 
 private:
-    // pass 1, scene shadow pass.
+    // Scene voxelization pass.
+    ShaderUniform mWorldLocSV, mViewLocSV, mProjLocSV;
+    ShaderUniform mSceneBBCenterLocSV;
+    ShaderUniform mSceneBBExtensionLocSV;
+    ShaderUniform mMaterialColorLocSV;
+    ShaderUniform mDimLocSV;
+    ShaderUniform mInv2SceneBBExtensionLocSV;
+
+    // Show scene voxelization pass.
+    ShaderUniform mWorldLocSSV, mViewLocSSV, mProjLocSSV;
+    ShaderUniform mSceneBBCenterLocSSV;
+    ShaderUniform mSceneBBExtensionLocSSV;
+    ShaderUniform mDimLocSSV;
+
+    // Scene shadow map pass.
+    ShaderUniform mWorldLocShadowMap, mViewLocShadowMap, mProjLocShadowMap;
     ShaderUniform mLightProjectorNearFarLoc;
 
-    // pass 2, G-buffer pass.
-    ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
-    ShaderUniform mMaterialColorLoc2;
+    // G-buffer pass.
+    ShaderUniform mWorldLocGBuffer, mViewLocGBuffer, mProjLocGBuffer;
+    ShaderUniform mMaterialColorLocGBuffer;
 
-    // pass 3, RSM pass.
-    ShaderUniform mWorldLoc3, mProjLoc3;
+    // RSM pass.
+    ShaderUniform mWorldLocRSM, mProjLocRSM;
     ShaderUniform mLightPositionWorldLoc;
     ShaderUniform mLightColorLoc;
-    ShaderUniform mMaterialColorLoc3;
+    ShaderUniform mMaterialColorLocRSM;
 };
 
 typedef RefPointer<SceneMesh> SceneMeshPtr;

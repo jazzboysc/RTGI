@@ -13,18 +13,19 @@ Voxelizer::~Voxelizer()
 {
 }
 //----------------------------------------------------------------------------
-void Voxelizer::Initialize()
+void Voxelizer::Initialize(int voxelGridDim, int voxelGridLocalGroupDim)
 {
-
+    mVoxelGridDim = voxelGridDim;
+    mVoxelGridLocalGroupDim = voxelGridLocalGroupDim;
 }
 //----------------------------------------------------------------------------
 int Voxelizer::GetVoxelGridDim() const
 {
-    return VOXEL_DIMENSION;
+    return mVoxelGridDim;
 }
 //----------------------------------------------------------------------------
 int Voxelizer::GetVoxelGridLocalGroupDim() const
 {
-    return VOXEL_LOCAL_GROUP_DIM;
+    return mVoxelGridLocalGroupDim;
 }
 //----------------------------------------------------------------------------
