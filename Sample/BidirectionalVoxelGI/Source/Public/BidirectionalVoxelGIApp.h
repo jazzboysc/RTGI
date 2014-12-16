@@ -10,6 +10,7 @@
 #include "DirectLightingRenderer.h"
 #include "IndirectLightingRenderer.h"
 #include "Voxelizer.h"
+#include "FormEventListener.h"
 
 namespace RTGI
 {
@@ -18,7 +19,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 11/29/2014
 //----------------------------------------------------------------------------
-class BidirectionalVoxelGIApp : public Application
+class BidirectionalVoxelGIApp : public Application, GUIFramework::FormEventListener
 {
 public:
 	BidirectionalVoxelGIApp(int width = 1024, int height = 768);
@@ -28,6 +29,7 @@ public:
 	void ProcessInput() override;
 	void FrameFunc() override;
 	void Terminate() override;
+    void OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e);
 
 private:
     friend class SceneMesh;

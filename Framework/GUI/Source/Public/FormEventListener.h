@@ -12,6 +12,7 @@ namespace RTGI {
             virtual ~FormEventListener(){}
 
             virtual void OnButtonClick(System::Object^  sender, System::EventArgs^  e){}
+            virtual void OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e){}
         };
     }
 }

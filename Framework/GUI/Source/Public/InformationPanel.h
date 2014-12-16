@@ -50,6 +50,24 @@ namespace RTGI {
                 groupBoxUserInputs->Controls->Add(button);
             }
 
+            void AddRadioButton(String^ radioButtonName, int x, int y, int width, int height, bool checked)
+            {
+                RadioButton^ radioButton = gcnew RadioButton();
+
+                radioButton->AutoSize = true;
+                radioButton->Location = System::Drawing::Point(x, y);
+                radioButton->Name = radioButtonName;
+                radioButton->Size = System::Drawing::Size(width, height);
+                radioButton->TabIndex = 1;
+                radioButton->TabStop = true;
+                radioButton->Text = radioButtonName;
+                radioButton->UseVisualStyleBackColor = true;
+                radioButton->Checked = checked;
+                radioButton->Click += gcnew System::EventHandler(this, &InformationPanel::radioButton_Click);
+
+                groupBoxUserInputs->Controls->Add(radioButton);
+            }
+
             void AddTimingLabel(String^ labelName, int x, int y)
             {
                 Label^ label = gcnew Label();
@@ -176,6 +194,8 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
 
 
 
+
+
         protected:
 
         protected:
@@ -204,16 +224,16 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
                 // 
                 this->groupBoxWorkloadTiming->Location = System::Drawing::Point(12, 12);
                 this->groupBoxWorkloadTiming->Name = L"groupBoxWorkloadTiming";
-                this->groupBoxWorkloadTiming->Size = System::Drawing::Size(214, 272);
+                this->groupBoxWorkloadTiming->Size = System::Drawing::Size(214, 339);
                 this->groupBoxWorkloadTiming->TabIndex = 0;
                 this->groupBoxWorkloadTiming->TabStop = false;
                 this->groupBoxWorkloadTiming->Text = L"Workload Timing (ms):";
                 // 
                 // groupBoxUserInputs
                 // 
-                this->groupBoxUserInputs->Location = System::Drawing::Point(12, 290);
+                this->groupBoxUserInputs->Location = System::Drawing::Point(12, 357);
                 this->groupBoxUserInputs->Name = L"groupBoxUserInputs";
-                this->groupBoxUserInputs->Size = System::Drawing::Size(214, 272);
+                this->groupBoxUserInputs->Size = System::Drawing::Size(214, 392);
                 this->groupBoxUserInputs->TabIndex = 1;
                 this->groupBoxUserInputs->TabStop = false;
                 this->groupBoxUserInputs->Text = L"User Inputs :";
@@ -222,7 +242,7 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
                 // 
                 this->groupBoxDebugOutputs->Location = System::Drawing::Point(232, 12);
                 this->groupBoxDebugOutputs->Name = L"groupBoxDebugOutputs";
-                this->groupBoxDebugOutputs->Size = System::Drawing::Size(214, 549);
+                this->groupBoxDebugOutputs->Size = System::Drawing::Size(214, 737);
                 this->groupBoxDebugOutputs->TabIndex = 2;
                 this->groupBoxDebugOutputs->TabStop = false;
                 this->groupBoxDebugOutputs->Text = L"Debug Outputs :";
@@ -231,7 +251,7 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
                 // 
                 this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
                 this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-                this->ClientSize = System::Drawing::Size(459, 584);
+                this->ClientSize = System::Drawing::Size(459, 761);
                 this->Controls->Add(this->groupBoxDebugOutputs);
                 this->Controls->Add(this->groupBoxUserInputs);
                 this->Controls->Add(this->groupBoxWorkloadTiming);
@@ -244,6 +264,12 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
             for( int i = 0; i < (int)mListeners->size(); ++i )
             {
                 (*mListeners)[i]->OnButtonClick(sender, e);
+            }
+        }
+        private: System::Void radioButton_Click(System::Object^  sender, System::EventArgs^  e) {
+            for( int i = 0; i < (int)mListeners->size(); ++i )
+            {
+                (*mListeners)[i]->OnRadioButtonClick(sender, e);
             }
         }
 };
