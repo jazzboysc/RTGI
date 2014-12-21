@@ -27,6 +27,7 @@ public:
     Texture2DArrayPtr TempTextureArray;
     int ShowMode;
     int TextureArrayIndex;
+    AABB* SceneBB;
 
 private:
     ShaderUniform mShowModeLoc;
@@ -34,6 +35,8 @@ private:
     ShaderUniform mTempSampler2Loc;
     ShaderUniform mTempSamplerArrayLoc;
     ShaderUniform mTextureArrayIndexLoc;
+    ShaderUniform mSceneBBMinLoc;
+    ShaderUniform mSceneBBExtensionLoc;
 };
 
 typedef RefPointer<TempScreenQuad> TempScreenQuadPtr;

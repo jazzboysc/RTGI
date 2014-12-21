@@ -95,8 +95,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mtScene->AddTechnique(techScene);
 
     ShaderProgramInfo vplTempProgramInfo;
-    vplTempProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vVPLTemp.glsl";
-    vplTempProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fVPLTemp.glsl";
+    vplTempProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vTempResult.glsl";
+    vplTempProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fTempResult.glsl";
     vplTempProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
                                          ShaderType::ST_Fragment;
     Pass* passScreenQuad = new Pass(vplTempProgramInfo);
@@ -259,6 +259,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mTempScreenQuad->TempTexture = mIndirectLightingTexture;
     mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
     mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
+    mTempScreenQuad->SceneBB = &mSceneBB;
 
 	// Create information panel.
 	int screenX, screenY;
@@ -474,6 +475,10 @@ void BidirectionalVoxelGIApp::ProcessInput()
 void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e)
 {
     RadioButton^ radioButton = (RadioButton^)sender;
+    if( !mTempScreenQuad )
+    {
+        return;
+    }
 
     if( radioButton->Name == "Scene Shadow Map" )
     {
@@ -485,7 +490,7 @@ void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^  sender, System
     if( radioButton->Name == "G-Buffer Position" )
     {
         mShowMode = SM_GBufferPosition;
-        mTempScreenQuad->ShowMode = 0;
+        mTempScreenQuad->ShowMode = 3;
         mTempScreenQuad->TempTexture = mGBufferPositionTexture;
     }
 

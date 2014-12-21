@@ -9,6 +9,7 @@ TempScreenQuad::TempScreenQuad(Material* material)
 {
     ShowMode = 0;
     TextureArrayIndex = 0;
+    SceneBB = 0;
 }
 //----------------------------------------------------------------------------
 TempScreenQuad::~TempScreenQuad()
@@ -58,6 +59,12 @@ void TempScreenQuad::OnUpdateShaderConstants(int, int)
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
     }
+
+    if( SceneBB )
+    {
+        mSceneBBMinLoc.SetValue(SceneBB->Min);
+        mSceneBBExtensionLoc.SetValue(SceneBB->GetExtension());
+    }
 }
 //----------------------------------------------------------------------------
 void TempScreenQuad::OnGetShaderConstants()
@@ -68,5 +75,7 @@ void TempScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mTempSamplerArrayLoc, "tempSamplerArray");
     program->GetUniformLocation(&mShowModeLoc, "ShowMode");
     program->GetUniformLocation(&mTextureArrayIndexLoc, "TextureArrayIndex");
+    program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
+    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
 }
 //----------------------------------------------------------------------------

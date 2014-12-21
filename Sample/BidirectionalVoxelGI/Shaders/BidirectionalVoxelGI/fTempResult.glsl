@@ -5,6 +5,9 @@ in vec2 pTCoord;
 uniform int ShowMode;
 uniform int TextureArrayIndex;
 
+uniform vec3 SceneBBMin;
+uniform vec3 SceneBBExtension;
+
 uniform sampler2D tempSampler;
 uniform sampler2D tempSampler2;
 uniform sampler2DArray tempSamplerArray;
@@ -34,6 +37,8 @@ void main()
     }
     else if( ShowMode == 3 )
     {
-        gl_FragData[0] = texture(tempSamplerArray, vec3(pTCoord, TextureArrayIndex));
+        vec3 worldPosition = texture(tempSampler, pTCoord).rgb;
+        vec3 normalizedPosition = (worldPosition - SceneBBMin) / (2.0*SceneBBExtension);
+        gl_FragData[0] = vec4(normalizedPosition, 1.0);
     }
 }
