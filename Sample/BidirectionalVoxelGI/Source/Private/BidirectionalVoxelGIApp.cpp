@@ -108,7 +108,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 
     // Create scene voxelizer.
     mVoxelizer = new Voxelizer();
-    mVoxelizer->Initialize(VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM);
+    mVoxelizer->Initialize(mDevice, VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM, &mSceneBB);
 
     // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer();
@@ -175,7 +175,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
 	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
-    mSceneObjects->AddRenderObject(mModel);
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
@@ -245,6 +244,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mSceneObjects->AddRenderObject(mRightWall);
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
+
+    mSceneObjects->AddRenderObject(mModel);
 
     // Create screen quads.
     material = new Material(mtScreenQuad);
@@ -331,6 +332,10 @@ void BidirectionalVoxelGIApp::FrameFunc()
 
     InformationPanel^ infoPanel = InformationPanel::GetInstance();
     static double workLoad = 0.0;
+
+    // Scene voxelization pass.
+    mVoxelizer->Render(0, SMP_Voxelization);
+    glViewport(0, 0, Width, Height);
 
     // Scene shadow pass.
     mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);

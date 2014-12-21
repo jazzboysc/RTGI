@@ -24,9 +24,6 @@ SimpleVoxelizationApp::~SimpleVoxelizationApp()
 //----------------------------------------------------------------------------
 void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 {
-    float a = 0.0f;
-    float b = -1.0f / a;
-
     GLint globalX, globalY, globalZ;
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &globalX);
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &globalY);

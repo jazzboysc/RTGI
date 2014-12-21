@@ -68,7 +68,8 @@ public:
     // GenericBuffer stuff.
     void AddGenericBufferTarget(const std::string& name, 
         RendererDataType bufferType, int size, BufferUsage usage, 
-        BindingFlag flag, unsigned int binding);
+        BindingFlag flag, unsigned int binding, bool reset = false, 
+        int resetValue = 0);
     int GetGenericBufferTargetCount() const;
     RendererOutput* GetGenericBufferTarget(int i) const;
     RendererOutput* GetGenericBufferTargetByName(const std::string& name) const;

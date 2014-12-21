@@ -8,15 +8,21 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
+RendererOutput::RendererOutput()
+{
+}
+//----------------------------------------------------------------------------
 RendererOutput::RendererOutput(const std::string& name, 
     BufferBase* outputBuffer, bool isTexture, BindingFlag flag, 
-    unsigned int binding)
+    unsigned int binding, bool reset, int resetValue)
 {
     Name = name;
     OutputBuffer = outputBuffer;
     IsTexture = isTexture;
     Flag = flag;
     Binding = binding;
+    Reset = reset;
+    ResetValue = resetValue;
 }
 //----------------------------------------------------------------------------
 RendererOutput::~RendererOutput()
@@ -45,6 +51,14 @@ void RendererOutput::Enable()
     default:
         assert(false);
         break;
+    }
+
+    if( Reset )
+    {
+        int* bufferData = (int*)buffer->Map(GL_WRITE_ONLY);
+        assert(bufferData);
+        bufferData[0] = ResetValue;
+        buffer->Unmap();
     }
 }
 //----------------------------------------------------------------------------

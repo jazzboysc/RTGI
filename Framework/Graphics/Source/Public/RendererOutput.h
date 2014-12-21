@@ -23,7 +23,7 @@ class RendererOutput : public RefObject
 public:
     RendererOutput(const std::string& name, BufferBase* outputBuffer, 
         bool isTexture = true, BindingFlag flag = BF_Bindless, 
-        unsigned int binding = 0);
+        unsigned int binding = 0, bool reset = false, int resetValue = 0);
     virtual ~RendererOutput();
 
     void Enable();
@@ -34,6 +34,11 @@ public:
     bool IsTexture;
     BindingFlag Flag;
     unsigned int Binding;
+    bool Reset;
+    int ResetValue;
+
+private:
+    RendererOutput();
 };
 
 typedef RefPointer<RendererOutput> RendererOutputPtr;

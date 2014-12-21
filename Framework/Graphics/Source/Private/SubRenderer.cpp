@@ -242,7 +242,7 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight,
 //----------------------------------------------------------------------------
 void SubRenderer::AddGenericBufferTarget(const std::string& name, 
     RendererDataType bufferType, int size, BufferUsage usage, 
-    BindingFlag flag, unsigned int binding)
+    BindingFlag flag, unsigned int binding, bool reset, int resetValue)
 {
     assert(GetFrameBufferTargetByName(name) == 0);
     assert(GetGenericBufferTargetByName(name) == 0);
@@ -254,7 +254,7 @@ void SubRenderer::AddGenericBufferTarget(const std::string& name,
         usage);
 
     RendererOutput* ro = new RendererOutput(name, genericBufferTarget, false, 
-        flag, binding);
+        flag, binding, reset, resetValue);
     mGenericBufferTargets.push_back(ro);
 }
 //----------------------------------------------------------------------------
