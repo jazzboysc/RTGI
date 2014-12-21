@@ -36,6 +36,7 @@ private:
 
     enum ShowMode
     {
+        SM_VoxelBuffer,
         SM_Shadow,
         SM_VPLShadow,
         SM_GBufferPosition,
@@ -59,6 +60,7 @@ private:
     enum { VOXEL_DIMENSION = 64 };
     enum { VOXEL_LOCAL_GROUP_DIM = 8 };
     VoxelizerPtr mVoxelizer;
+    StructuredBufferPtr mVoxelBuffer;
 
     // G-buffer.
     GBufferRendererPtr mGBufferRenderer;
@@ -97,7 +99,6 @@ private:
     enum SceneModelPass
     {
         SMP_Voxelization = 0,
-        SMP_ShowVoxelization,
         SMP_ShadowMap,
         SMP_GBuffer,
         SMP_RSM

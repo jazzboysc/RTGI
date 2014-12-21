@@ -36,12 +36,6 @@ private:
     ShaderUniform mDimLocSV;
     ShaderUniform mInv2SceneBBExtensionLocSV;
 
-    // Show scene voxelization pass.
-    ShaderUniform mWorldLocSSV, mViewLocSSV, mProjLocSSV;
-    ShaderUniform mSceneBBCenterLocSSV;
-    ShaderUniform mSceneBBExtensionLocSSV;
-    ShaderUniform mDimLocSSV;
-
     // Scene shadow map pass.
     ShaderUniform mWorldLocShadowMap, mViewLocShadowMap, mProjLocShadowMap;
     ShaderUniform mLightProjectorNearFarLoc;

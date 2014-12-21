@@ -28,6 +28,8 @@ public:
     int ShowMode;
     int TextureArrayIndex;
     AABB* SceneBB;
+    StructuredBufferPtr VoxelBuffer;
+    int VoxelGridDim;
 
 private:
     ShaderUniform mShowModeLoc;
@@ -37,6 +39,7 @@ private:
     ShaderUniform mTextureArrayIndexLoc;
     ShaderUniform mSceneBBMinLoc;
     ShaderUniform mSceneBBExtensionLoc;
+    ShaderUniform mDimLoc;
 };
 
 typedef RefPointer<TempScreenQuad> TempScreenQuadPtr;

@@ -115,8 +115,8 @@ void Voxelizer::Initialize(GPUDevice* device, int voxelGridDim,
     // Create scene voxel buffer.
     int voxelCount = mVoxelGridDim * mVoxelGridDim * mVoxelGridDim;
     int bufferSize = voxelCount * sizeof(unsigned int) * 4;
-    AddGenericBufferTarget("VoxelBuffer", RDT_StructuredBuffer, bufferSize, 
-        BU_Dynamic_Copy, BF_BindIndex, 0);
+    AddGenericBufferTarget(RTGI_VoxelBuffer_Name, RDT_StructuredBuffer, 
+        bufferSize, BU_Dynamic_Copy, BF_BindIndex, 0);
 
     // Create indirect command buffer.
     bufferSize = sizeof(unsigned int) * 5 + sizeof(float) * 35 
@@ -168,7 +168,7 @@ void Voxelizer::OnRender(int technique, int pass, Camera* camera)
     renderObject->Render(technique, pass, this);
 
     // Gather voxel buffer pass.
-    mGatherVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
+    //mGatherVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);

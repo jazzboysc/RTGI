@@ -26,12 +26,12 @@ GBufferRenderer::~GBufferRenderer()
 void GBufferRenderer::CreateGBuffer(int width, int height, 
     Texture::TextureFormat format)
 {
-    AddFrameBufferTarget("Position", width, height, 0, Texture::TT_Texture2D, 
-        format);
-    AddFrameBufferTarget("Normal", width, height, 0, Texture::TT_Texture2D, 
-        format);
-    AddFrameBufferTarget("Albedo", width, height, 0, Texture::TT_Texture2D, 
-        format);
+    AddFrameBufferTarget(RTGI_GBuffer_Position_Name, width, height, 0, 
+        Texture::TT_Texture2D, format);
+    AddFrameBufferTarget(RTGI_GBuffer_Normal_Name, width, height, 0, 
+        Texture::TT_Texture2D, format);
+    AddFrameBufferTarget(RTGI_GBuffer_Albedo_Name, width, height, 0, 
+        Texture::TT_Texture2D, format);
     CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
 }
 //----------------------------------------------------------------------------

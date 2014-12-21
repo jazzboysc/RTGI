@@ -17,12 +17,14 @@ TempScreenQuad::~TempScreenQuad()
 	TempTexture = 0;
     TempTexture2 = 0;
     TempTextureArray = 0;
+    VoxelBuffer = 0;
 }
 //----------------------------------------------------------------------------
 void TempScreenQuad::OnUpdateShaderConstants(int, int)
 {
     mShowModeLoc.SetValue(ShowMode);
     mTextureArrayIndexLoc.SetValue(TextureArrayIndex);
+    mDimLoc.SetValue(VoxelGridDim);
 
     if( TempTexture )
     {
@@ -65,6 +67,11 @@ void TempScreenQuad::OnUpdateShaderConstants(int, int)
         mSceneBBMinLoc.SetValue(SceneBB->Min);
         mSceneBBExtensionLoc.SetValue(SceneBB->GetExtension());
     }
+
+    if( VoxelBuffer )
+    {
+        VoxelBuffer->Bind(0);
+    }
 }
 //----------------------------------------------------------------------------
 void TempScreenQuad::OnGetShaderConstants()
@@ -77,5 +84,6 @@ void TempScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mTextureArrayIndexLoc, "TextureArrayIndex");
     program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
     program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
+    program->GetUniformLocation(&mDimLoc, "dim");
 }
 //----------------------------------------------------------------------------

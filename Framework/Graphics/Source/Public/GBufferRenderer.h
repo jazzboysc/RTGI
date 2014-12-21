@@ -12,6 +12,10 @@
 namespace RTGI
 {
 
+#define RTGI_GBuffer_Position_Name "Position"
+#define RTGI_GBuffer_Normal_Name   "Normal"
+#define RTGI_GBuffer_Albedo_Name   "Albedo"
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/29/2014

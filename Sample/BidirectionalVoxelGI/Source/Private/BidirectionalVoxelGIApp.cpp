@@ -51,13 +51,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
                                               ShaderType::ST_Fragment;
     Pass* passVoxelization = new Pass(voxelizationProgramInfo);
 
-    ShaderProgramInfo showVoxelizationProgramInfo;
-    showVoxelizationProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShowVoxelization.glsl";
-    showVoxelizationProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fShowVoxelization.glsl";
-    showVoxelizationProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                                  ShaderType::ST_Fragment;
-    Pass* passShowVoxelization = new Pass(showVoxelizationProgramInfo);
-
     ShaderProgramInfo shadowProgramInfo;
     shadowProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShadow.glsl";
     shadowProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fShadow.glsl";
@@ -87,7 +80,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 
 	Technique* techScene = new Technique();
     techScene->AddPass(passVoxelization);
-    techScene->AddPass(passShowVoxelization);
     techScene->AddPass(passShadow);
     techScene->AddPass(passGBuffer);
     techScene->AddPass(passRSM);
@@ -109,13 +101,14 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     // Create scene voxelizer.
     mVoxelizer = new Voxelizer();
     mVoxelizer->Initialize(mDevice, VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM, &mSceneBB);
+    mVoxelBuffer = (StructuredBuffer*)mVoxelizer->GetGenericBufferByName(RTGI_VoxelBuffer_Name);
 
     // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer();
     mGBufferRenderer->CreateGBuffer(Width, Height, Texture::TF_RGBAF);
-    mGBufferPositionTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTexture(0);
-    mGBufferNormalTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTexture(1);
-    mGBufferAlbedoTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTexture(2);
+    mGBufferPositionTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTextureByName(RTGI_GBuffer_Position_Name);
+    mGBufferNormalTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTextureByName(RTGI_GBuffer_Normal_Name);
+    mGBufferAlbedoTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTextureByName(RTGI_GBuffer_Albedo_Name);
 
     // Create shadow map renderer.
     mShadowMapRenderer = new ShadowMapRenderer();
@@ -183,7 +176,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
-    mGround->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
+    mGround->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
     mGround->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mGround);
     mGround->SceneBB = &mSceneBB;
@@ -197,7 +190,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
 	mCeiling->SetWorldTransform(rotM);
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
-    mCeiling->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
+    mCeiling->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
     mCeiling->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mCeiling);
     mCeiling->SceneBB = &mSceneBB;
@@ -211,7 +204,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
 	mBackWall->SetWorldTransform(rotM);
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
-    mBackWall->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
+    mBackWall->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
     mBackWall->LightProjector = mLightProjector;
     mSceneObjects->AddRenderObject(mBackWall);
     mBackWall->SceneBB = &mSceneBB;
@@ -261,6 +254,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
     mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
     mTempScreenQuad->SceneBB = &mSceneBB;
+    mTempScreenQuad->VoxelBuffer = mVoxelBuffer;
+    mTempScreenQuad->VoxelGridDim = VOXEL_DIMENSION;
 
 	// Create information panel.
 	int screenX, screenY;
@@ -287,6 +282,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddTimingLabel("Indirect Lighting Pass", 16, infoStartY);
     infoStartY = 20;
+    InformationPanel::GetInstance()->AddRadioButton("Voxel Buffer", 16, infoStartY, 60, 20, false);
+    infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("Scene Shadow Map", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("G-Buffer Position", 16, infoStartY, 60, 20, false);
@@ -335,6 +332,8 @@ void BidirectionalVoxelGIApp::FrameFunc()
 
     // Scene voxelization pass.
     mVoxelizer->Render(0, SMP_Voxelization);
+    workLoad = mVoxelizer->GetTimeElapsed();
+    infoPanel->SetTimingLabelValue("Scene Voxelization Pass", workLoad);
     glViewport(0, 0, Width, Height);
 
     // Scene shadow pass.
@@ -483,6 +482,13 @@ void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^  sender, System
     if( !mTempScreenQuad )
     {
         return;
+    }
+
+    if( radioButton->Name == "Voxel Buffer" )
+    {
+        mShowMode = SM_VoxelBuffer;
+        mTempScreenQuad->ShowMode = 4;
+        mTempScreenQuad->TempTexture = mGBufferPositionTexture;
     }
 
     if( radioButton->Name == "Scene Shadow Map" )

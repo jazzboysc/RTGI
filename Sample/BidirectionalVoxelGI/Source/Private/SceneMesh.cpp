@@ -33,15 +33,6 @@ void SceneMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mDimLocSV, "dim");
     program->GetUniformLocation(&mInv2SceneBBExtensionLocSV, "Inv2SceneBBExtension");
 
-    // Get show voxelization pass uniform locations.
-    program = mMaterial->GetProgram(0, BidirectionalVoxelGIApp::SMP_ShowVoxelization);
-    program->GetUniformLocation(&mWorldLocSSV, "World");
-    program->GetUniformLocation(&mViewLocSSV, "View");
-    program->GetUniformLocation(&mProjLocSSV, "Proj");
-    program->GetUniformLocation(&mSceneBBCenterLocSSV, "SceneBBCenter");
-    program->GetUniformLocation(&mSceneBBExtensionLocSSV, "SceneBBExtension");
-    program->GetUniformLocation(&mDimLocSSV, "dim");
-
 	// Get shadow map pass uniform locations.
     program = mMaterial->GetProgram(0, BidirectionalVoxelGIApp::SMP_ShadowMap);
     program->GetUniformLocation(&mWorldLocShadowMap, "World");
@@ -70,6 +61,7 @@ void SceneMesh::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
 {
+    // Update scene voxelization pass uniform data.
     if( pass == BidirectionalVoxelGIApp::SMP_Voxelization )
     {
         mWorldLocSV.SetValue(mWorldTransform);
@@ -83,25 +75,6 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
         mMaterialColorLocSV.SetValue(MaterialColor);
         mDimLocSV.SetValue(BidirectionalVoxelGIApp::VOXEL_DIMENSION);
         mInv2SceneBBExtensionLocSV.SetValue(inv2extension);
-    }
-
-    if( pass == BidirectionalVoxelGIApp::SMP_ShowVoxelization )
-    {
-        mWorldLocSSV.SetValue(mWorldTransform);
-        if( mCamera )
-        {
-            mat4 viewTrans = mCamera->GetViewTransform();
-            mViewLocSSV.SetValue(viewTrans);
-
-            mat4 projTrans = mCamera->GetProjectionTransform();
-            mProjLocSSV.SetValue(projTrans);
-        }
-
-        vec3 center = SceneBB->GetBoxCenter();
-        vec3 extension = SceneBB->GetExtension();
-        mSceneBBCenterLocSSV.SetValue(center);
-        mSceneBBExtensionLocSSV.SetValue(extension);
-        mDimLocSSV.SetValue(BidirectionalVoxelGIApp::VOXEL_DIMENSION);
     }
 
     // Update shadow map pass uniform data.

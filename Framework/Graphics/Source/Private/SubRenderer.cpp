@@ -155,13 +155,24 @@ RendererOutput* SubRenderer::GetDepthTarget() const
 //----------------------------------------------------------------------------
 Texture* SubRenderer::GetFrameBufferTexture(int i) const
 {
-    return (Texture*)(BufferBase*)GetFrameBufferTarget(i)->OutputBuffer;
+    RendererOutput* output = GetFrameBufferTarget(i);
+    if( output )
+    {
+        return (Texture*)(BufferBase*)output->OutputBuffer;
+    }
+
+    return 0;
 }
 //----------------------------------------------------------------------------
 Texture* SubRenderer::GetFrameBufferTextureByName(const std::string& name) const
 {
-    return (Texture*)(BufferBase*)GetFrameBufferTargetByName(
-        name)->OutputBuffer;
+    RendererOutput* output = GetFrameBufferTargetByName(name);
+    if( output )
+    {
+        return (Texture*)(BufferBase*)output->OutputBuffer;
+    }
+
+    return 0;
 }
 //----------------------------------------------------------------------------
 Texture* SubRenderer::GetDepthTexture() const
@@ -278,6 +289,28 @@ RendererOutput* SubRenderer::GetGenericBufferTargetByName(
         {
             return mGenericBufferTargets[i];
         }
+    }
+
+    return 0;
+}
+//----------------------------------------------------------------------------
+Buffer* SubRenderer::GetGenericBuffer(int i) const
+{
+    RendererOutput* output = GetGenericBufferTarget(i);
+    if( output )
+    {
+        return (Buffer*)(BufferBase*)output->OutputBuffer;
+    }
+
+    return 0;
+}
+//----------------------------------------------------------------------------
+Buffer* SubRenderer::GetGenericBufferByName(const std::string& name) const
+{
+    RendererOutput* output = GetGenericBufferTargetByName(name);
+    if( output )
+    {
+        return (Buffer*)(BufferBase*)output->OutputBuffer;
     }
 
     return 0;

@@ -73,6 +73,8 @@ public:
     int GetGenericBufferTargetCount() const;
     RendererOutput* GetGenericBufferTarget(int i) const;
     RendererOutput* GetGenericBufferTargetByName(const std::string& name) const;
+    Buffer* GetGenericBuffer(int i) const;
+    Buffer* GetGenericBufferByName(const std::string& name) const;
 
     // Rendering stuff.
     virtual void Render(int technique, int pass, SubRendererOutput outputFlag, 

@@ -6,6 +6,8 @@
 namespace RTGI
 {
 
+#define RTGI_VoxelBuffer_Name "VoxelBuffer"
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/05/2014
