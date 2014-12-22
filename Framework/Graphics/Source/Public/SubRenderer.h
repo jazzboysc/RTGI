@@ -24,7 +24,8 @@ enum SubRendererOutput
 {
     SRO_Unknown       = 0,
     SRO_FrameBuffer   = 1,
-    SRO_GenericBuffer = 2
+    SRO_GenericBuffer = 2,
+    SRO_BackBuffer    = 4
 };
 
 typedef BufferBase* (*SubRendererCreateRendererData)(int size, 

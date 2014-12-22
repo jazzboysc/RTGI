@@ -11,7 +11,6 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	Width = width;
 	Height = height;
 	Title = "Bidirectional Voxel GI";
-    mShowMode = SM_Final;
     mIsRotatingModel = false;
     mIsWireframe = false;
 }
@@ -86,41 +85,21 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	MaterialTemplate* mtScene = new MaterialTemplate();
     mtScene->AddTechnique(techScene);
 
-    ShaderProgramInfo vplTempProgramInfo;
-    vplTempProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vTempResult.glsl";
-    vplTempProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fTempResult.glsl";
-    vplTempProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                         ShaderType::ST_Fragment;
-    Pass* passScreenQuad = new Pass(vplTempProgramInfo);
-
-    Technique* techScreenQuad = new Technique();
-    techScreenQuad->AddPass(passScreenQuad);
-    MaterialTemplate* mtScreenQuad = new MaterialTemplate();
-    mtScreenQuad->AddTechnique(techScreenQuad);
-
     // Create scene voxelizer.
     mVoxelizer = new Voxelizer();
     mVoxelizer->Initialize(mDevice, VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM, &mSceneBB);
-    mVoxelBuffer = (StructuredBuffer*)mVoxelizer->GetGenericBufferByName(RTGI_VoxelBuffer_Name);
 
     // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer();
     mGBufferRenderer->CreateGBuffer(Width, Height, Texture::TF_RGBAF);
-    mGBufferPositionTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTextureByName(RTGI_GBuffer_Position_Name);
-    mGBufferNormalTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTextureByName(RTGI_GBuffer_Normal_Name);
-    mGBufferAlbedoTexture = (Texture2D*)mGBufferRenderer->GetFrameBufferTextureByName(RTGI_GBuffer_Albedo_Name);
 
     // Create shadow map renderer.
     mShadowMapRenderer = new ShadowMapRenderer();
     mShadowMapRenderer->CreateShadowMap(1024, 1024, Texture::TF_RGBAF);
-    mShadowMapTexture = (Texture2D*)mShadowMapRenderer->GetFrameBufferTexture(0);
 
     // Create RSM renderer.
     mRSMRenderer = new RSMRenderer();
     mRSMRenderer->CreateRSM(256, 256, RSM_FACE_COUNT, Texture::TF_RGBAF);
-    mRSMPositionTextureArray = (Texture2DArray*)mRSMRenderer->GetFrameBufferTexture(0);
-    mRSMNormalTextureArray = (Texture2DArray*)mRSMRenderer->GetFrameBufferTexture(1);
-    mRSMFluxTextureArray = (Texture2DArray*)mRSMRenderer->GetFrameBufferTexture(2);
 
     // Create VPL generator.
     mVPLGenerator = new VPLGenerator();
@@ -131,13 +110,16 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mDirectLightingRenderer = new DirectLightingRenderer();
     mDirectLightingRenderer->SetInputs(mGBufferRenderer, mShadowMapRenderer);
     mDirectLightingRenderer->Initialize(mDevice, Width, Height, Texture::TF_RGBAF, mLightProjector);
-    mDirectLightingTexture = (Texture2D*)mDirectLightingRenderer->GetFrameBufferTexture(0);
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer();
     mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator);
     mIndirectLightingRenderer->Initialize(mDevice, Width, Height, Texture::TF_RGBAF, VPL_SAMPLE_COUNT);
-    mIndirectLightingTexture = (Texture2D*)mIndirectLightingRenderer->GetFrameBufferTexture(0);
+
+    // Create visualizer.
+    mVisualizer = new Visualizer();
+    mVisualizer->Initialize(mDevice, mVoxelizer, mShadowMapRenderer, mGBufferRenderer,
+        mRSMRenderer, mDirectLightingRenderer, mIndirectLightingRenderer, &mSceneBB, VOXEL_DIMENSION);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -149,6 +131,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mVPLGenerator->SetTimer(mTimer);
     mDirectLightingRenderer->SetTimer(mTimer);
     mIndirectLightingRenderer->SetTimer(mTimer);
+    mVisualizer->SetTimer(mTimer);
 
 	// Create scene.
     mSceneObjects = new RenderSet();
@@ -239,23 +222,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
     mSceneObjects->AddRenderObject(mModel);
-
-    // Create screen quads.
-    material = new Material(mtScreenQuad);
-    mTempScreenQuad = new TempScreenQuad(material);
-    mTempScreenQuad->LoadFromFile("screenquad.ply");
-    mTempScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
-    mTempScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
-    mTempScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
-    mTempScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mTempScreenQuad->CreateDeviceResource(mDevice);
-    mTempScreenQuad->ShowMode = 2;
-    mTempScreenQuad->TempTexture = mIndirectLightingTexture;
-    mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
-    mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
-    mTempScreenQuad->SceneBB = &mSceneBB;
-    mTempScreenQuad->VoxelBuffer = mVoxelBuffer;
-    mTempScreenQuad->VoxelGridDim = VOXEL_DIMENSION;
 
 	// Create information panel.
 	int screenX, screenY;
@@ -367,9 +333,7 @@ void BidirectionalVoxelGIApp::FrameFunc()
     infoPanel->SetTimingLabelValue("Indirect Lighting Pass", workLoad);
 
     // Show rendering result.
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    mTempScreenQuad->Render(0, 0);
+    mVisualizer->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::Terminate()
@@ -378,29 +342,13 @@ void BidirectionalVoxelGIApp::Terminate()
     delete mLightProjector;
 
     mVoxelizer = 0;
-
     mGBufferRenderer = 0;
-    mGBufferPositionTexture = 0;
-    mGBufferNormalTexture = 0;
-    mGBufferAlbedoTexture = 0;
-
     mShadowMapRenderer = 0;
-    mShadowMapTexture = 0;
-
     mDirectLightingRenderer = 0;
-    mDirectLightingTexture = 0;
-
     mIndirectLightingRenderer = 0;
-    mIndirectLightingTexture = 0;
-
     mRSMRenderer = 0;
-    mRSMPositionTextureArray = 0;
-    mRSMNormalTextureArray = 0;
-    mRSMFluxTextureArray = 0;
-
     mVPLGenerator = 0;
-
-    mTempScreenQuad = 0;
+    mVisualizer = 0;
 
 	mGround = 0;
 	mCeiling = 0;
@@ -415,41 +363,6 @@ void BidirectionalVoxelGIApp::Terminate()
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::ProcessInput()
 {
-	bool isShift = glfwGetKey(Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
-		glfwGetKey(Window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
-	bool isCap = isShift ^ (glfwGetKey(Window, GLFW_KEY_CAPS_LOCK) == GLFW_PRESS);
-	if (isCap)
-	{
-		// Uppercase
-		if (glfwGetKey(Window, GLFW_KEY_X) == GLFW_PRESS)
-		{
-			mTempScreenQuad->TextureArrayIndex = 0;
-		}
-		if (glfwGetKey(Window, GLFW_KEY_Y) == GLFW_PRESS)
-		{
-			mTempScreenQuad->TextureArrayIndex = 2;
-		}
-		if (glfwGetKey(Window, GLFW_KEY_Z) == GLFW_PRESS)
-		{
-		}
-	}
-	else
-	{
-		// Lowercase
-		if (glfwGetKey(Window, GLFW_KEY_X) == GLFW_PRESS)
-		{
-			mTempScreenQuad->TextureArrayIndex = 1;
-		}
-		if (glfwGetKey(Window, GLFW_KEY_Y) == GLFW_PRESS)
-		{
-			mTempScreenQuad->TextureArrayIndex = 3;
-		}
-		if (glfwGetKey(Window, GLFW_KEY_Z) == GLFW_PRESS)
-		{
-			mTempScreenQuad->TextureArrayIndex = 4;
-		}
-	}
-
 	if (glfwGetKey(Window, GLFW_KEY_R) == GLFW_PRESS)
 	{
 		mIsRotatingModel = !mIsRotatingModel;
@@ -458,108 +371,69 @@ void BidirectionalVoxelGIApp::ProcessInput()
 	{
 		mIsWireframe = !mIsWireframe;
 	}
-	if (glfwGetKey(Window, GLFW_KEY_EQUAL) == GLFW_PRESS)
-	{
-		if (mShowMode == SM_VPLShadow)
-		{
-			mTempScreenQuad->TextureArrayIndex++;
-			mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
-		}
-	}
-	if (glfwGetKey(Window, GLFW_KEY_MINUS) == GLFW_PRESS)
-	{
-		if (mShowMode == SM_VPLShadow)
-		{
-			mTempScreenQuad->TextureArrayIndex--;
-			mTempScreenQuad->TextureArrayIndex = mTempScreenQuad->TextureArrayIndex % VPL_SAMPLE_COUNT;
-		}
-	}
 }
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e)
 {
     RadioButton^ radioButton = (RadioButton^)sender;
-    if( !mTempScreenQuad )
+    if( !mVisualizer )
     {
         return;
     }
 
     if( radioButton->Name == "Voxel Buffer" )
     {
-        mShowMode = SM_VoxelBuffer;
-        mTempScreenQuad->ShowMode = 4;
-        mTempScreenQuad->TempTexture = mGBufferPositionTexture;
+        mVisualizer->SetShowMode(Visualizer::SM_VoxelBuffer);
     }
 
     if( radioButton->Name == "Scene Shadow Map" )
     {
-        mShowMode = SM_Shadow;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mShadowMapTexture;
+        mVisualizer->SetShowMode(Visualizer::SM_Shadow);
     }
 
     if( radioButton->Name == "G-Buffer Position" )
     {
-        mShowMode = SM_GBufferPosition;
-        mTempScreenQuad->ShowMode = 3;
-        mTempScreenQuad->TempTexture = mGBufferPositionTexture;
+        mVisualizer->SetShowMode(Visualizer::SM_GBufferPosition);
     }
 
     if( radioButton->Name == "G-Buffer Normal" )
     {
-        mShowMode = SM_GBufferNormal;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mGBufferNormalTexture;
+        mVisualizer->SetShowMode(Visualizer::SM_GBufferNormal);
     }
 
     if( radioButton->Name == "G-Buffer Albedo" )
     {
-        mShowMode = SM_GBufferAlbedo;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mGBufferAlbedoTexture;
+        mVisualizer->SetShowMode(Visualizer::SM_GBufferAlbedo);
     }
 
     if( radioButton->Name == "RSM Position" )
     {
-        mShowMode = SM_RSMPosition;
-        mTempScreenQuad->ShowMode = 1;
-        mTempScreenQuad->TempTextureArray = mRSMPositionTextureArray;
+        mVisualizer->SetShowMode(Visualizer::SM_RSMPosition);
     }
 
     if( radioButton->Name == "RSM Normal" )
     {
-        mShowMode = SM_RSMNormal;
-        mTempScreenQuad->ShowMode = 1;
-        mTempScreenQuad->TempTextureArray = mRSMNormalTextureArray;
+        mVisualizer->SetShowMode(Visualizer::SM_RSMNormal);
     }
 
     if( radioButton->Name == "RSM Flux" )
     {
-        mShowMode = SM_RSMFlux;
-        mTempScreenQuad->ShowMode = 1;
-        mTempScreenQuad->TempTextureArray = mRSMFluxTextureArray;
+        mVisualizer->SetShowMode(Visualizer::SM_RSMFlux);
     }
 
     if( radioButton->Name == "Direct Lighting" )
     {
-        mShowMode = SM_DirectLighting;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mDirectLightingTexture;
+        mVisualizer->SetShowMode(Visualizer::SM_DirectLighting);
     }
 
     if( radioButton->Name == "Indirect Lighting" )
     {
-        mShowMode = SM_IndirectLighting;
-        mTempScreenQuad->ShowMode = 0;
-        mTempScreenQuad->TempTexture = mIndirectLightingTexture;
+        mVisualizer->SetShowMode(Visualizer::SM_IndirectLighting);
     }
 
     if( radioButton->Name == "Final Result" )
     {
-        mShowMode = SM_Final;
-        mTempScreenQuad->ShowMode = 2;
-        mTempScreenQuad->TempTexture = mIndirectLightingTexture;
-        mTempScreenQuad->TempTexture2 = mDirectLightingTexture;
+        mVisualizer->SetShowMode(Visualizer::SM_Final);
     }
 }
 //----------------------------------------------------------------------------
