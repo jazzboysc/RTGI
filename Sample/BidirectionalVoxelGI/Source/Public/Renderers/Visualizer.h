@@ -73,6 +73,26 @@ typedef RefPointer<VisualizerScreenQuad> VisualizerScreenQuadPtr;
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
+// Date: 11/07/2014
+//----------------------------------------------------------------------------
+class VoxelCubeTriMesh : public TriangleMesh
+{
+public:
+    VoxelCubeTriMesh(Material* material, Camera* camera);
+    virtual ~VoxelCubeTriMesh();
+
+    // Implement base class interface.
+    virtual void OnGetShaderConstants();
+    virtual void OnUpdateShaderConstants(int technique, int pass);
+
+    vec3 MaterialColor;
+    StructuredBufferPtr VoxelBuffer;
+};
+
+typedef RefPointer<VoxelCubeTriMesh> VoxelCubeTriMeshPtr;
+
+//----------------------------------------------------------------------------
+// Author: Che Sun
 // Date: 12/05/2014
 //----------------------------------------------------------------------------
 class Visualizer : public SubRenderer
@@ -81,6 +101,7 @@ public:
     enum ShowMode
     {
         SM_VoxelBuffer,
+        SM_VoxelGrid,
         SM_Shadow,
         SM_VPLShadow,
         SM_GBufferPosition,
@@ -101,7 +122,7 @@ public:
         ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer,
         RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer, 
         IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
-        int voxelGridDim, int voxelGridLocalGroupDim);
+        int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera);
 
     void Render(int technique, int pass);
 
@@ -130,6 +151,9 @@ private:
     Texture2DPtr mDirectLightingTexture;
     Texture2DPtr mIndirectLightingTexture;
 
+    AtomicCounterBufferPtr mGatheredVoxelAllocCounter;
+    StructuredBufferPtr mIndirectCommandBuffer;
+    VoxelCubeTriMeshPtr mVoxelCubeModel;
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
 };
 

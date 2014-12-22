@@ -120,7 +120,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mVisualizer = new Visualizer();
     mVisualizer->Initialize(mDevice, mVoxelizer, mShadowMapRenderer, mGBufferRenderer,
         mRSMRenderer, mDirectLightingRenderer, mIndirectLightingRenderer, &mSceneBB, 
-        VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM);
+        VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM, mMainCamera);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
@@ -250,6 +250,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Indirect Lighting Pass", 16, infoStartY);
     infoStartY = 20;
     InformationPanel::GetInstance()->AddRadioButton("Voxel Buffer", 16, infoStartY, 60, 20, false);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddRadioButton("Voxel Grid", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("Scene Shadow Map", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
@@ -385,6 +387,11 @@ void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^  sender, System
     if( radioButton->Name == "Voxel Buffer" )
     {
         mVisualizer->SetShowMode(Visualizer::SM_VoxelBuffer);
+    }
+
+    if( radioButton->Name == "Voxel Grid" )
+    {
+        mVisualizer->SetShowMode(Visualizer::SM_VoxelGrid);
     }
 
     if( radioButton->Name == "Scene Shadow Map" )
