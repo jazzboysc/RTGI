@@ -26,38 +26,6 @@ void ResetVoxelBuffer::OnPostDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-GatherVoxelBuffer::GatherVoxelBuffer()
-{
-}
-//----------------------------------------------------------------------------
-GatherVoxelBuffer::~GatherVoxelBuffer()
-{
-}
-//----------------------------------------------------------------------------
-void GatherVoxelBuffer::OnGetShaderConstants()
-{
-    ComputePass* p = (ComputePass*)GetPass(0);
-    ShaderProgram* program = p->GetShaderProgram();
-
-    program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
-    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
-}
-//----------------------------------------------------------------------------
-void GatherVoxelBuffer::OnPreDispatch(unsigned int pass)
-{
-    vec3 min = SceneBB->Min;
-    vec3 extension = SceneBB->GetExtension();
-    mSceneBBMinLoc.SetValue(min);
-    mSceneBBExtensionLoc.SetValue(extension);
-}
-//----------------------------------------------------------------------------
-void GatherVoxelBuffer::OnPostDispatch(unsigned int pass)
-{
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-}
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 Voxelizer::Voxelizer(RenderSet* renderSet)
     :
     SubRenderer(renderSet)
@@ -68,7 +36,6 @@ Voxelizer::~Voxelizer()
 {
     delete mVoxelizationProjector;
     mResetVoxelBufferTask = 0;
-    mGatherVoxelBufferTask = 0;
 }
 //----------------------------------------------------------------------------
 void Voxelizer::Initialize(GPUDevice* device, int voxelGridDim, 
@@ -100,35 +67,11 @@ void Voxelizer::Initialize(GPUDevice* device, int voxelGridDim,
     mResetVoxelBufferTask->AddPass(passResetVoxelBuffer);
     mResetVoxelBufferTask->CreateDeviceResource(device);
 
-    // Create gather voxel buffer task.
-    ShaderProgramInfo gatherVoxelBufferProgramInfo;
-    gatherVoxelBufferProgramInfo.CShaderFileName = 
-        "BidirectionalVoxelGI/cGatherVoxelBuffer.glsl";
-    gatherVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-
-    ComputePass* passGatherVoxelBuffer = new ComputePass(gatherVoxelBufferProgramInfo);
-    mGatherVoxelBufferTask = new GatherVoxelBuffer();
-    mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
-    mGatherVoxelBufferTask->CreateDeviceResource(device);
-    mGatherVoxelBufferTask->SceneBB = sceneBB;
-
     // Create scene voxel buffer.
     int voxelCount = mVoxelGridDim * mVoxelGridDim * mVoxelGridDim;
     int bufferSize = voxelCount * sizeof(unsigned int) * 4;
     AddGenericBufferTarget(RTGI_VoxelBuffer_Name, RDT_StructuredBuffer, 
         bufferSize, BU_Dynamic_Copy, BF_BindIndex, 0);
-
-    // Create indirect command buffer.
-    bufferSize = sizeof(unsigned int) * 5 + sizeof(float) * 35 
-        + voxelCount*sizeof(float) * 4;
-    AddGenericBufferTarget("IndirectCommandBuffer", RDT_StructuredBuffer, 
-        bufferSize, BU_Dynamic_Copy, BF_BindIndex, 1);
-
-    // Create gathered voxel GPU memory allocator counter.
-    bufferSize = sizeof(unsigned int);
-    AddGenericBufferTarget("GPUMemoryAllocatorCounter", 
-        RDT_AtomicCounterBuffer, bufferSize, BU_Dynamic_Copy, BF_BindIndex, 0, 
-        true, 0);
 }
 //----------------------------------------------------------------------------
 void Voxelizer::Render(int technique, int pass)
@@ -166,9 +109,6 @@ void Voxelizer::OnRender(int technique, int pass, Camera* camera)
     glViewport(0, 0, (mVoxelGridDim >> 4) + 4, (mVoxelGridDim >> 4) + 4);
     RenderObject* renderObject = mRenderSet->GetRenderObject(renderObjectCount - 1);
     renderObject->Render(technique, pass, this);
-
-    // Gather voxel buffer pass.
-    //mGatherVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);

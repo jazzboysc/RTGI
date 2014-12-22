@@ -317,7 +317,7 @@ Buffer* SubRenderer::GetGenericBufferByName(const std::string& name) const
 }
 //----------------------------------------------------------------------------
 void SubRenderer::Render(int technique, int pass, 
-    SubRendererOutput outputFlag, PipelineStateBlock* psb, Camera* camera)
+    unsigned int outputFlag, PipelineStateBlock* psb, Camera* camera)
 {
     PreRender(outputFlag, psb);
 
@@ -380,7 +380,7 @@ double SubRenderer::GetTimeElapsed() const
     return 0.0;
 }
 //----------------------------------------------------------------------------
-void SubRenderer::PreRender(SubRendererOutput outputFlag, 
+void SubRenderer::PreRender(unsigned int outputFlag, 
     PipelineStateBlock* psb)
 {
     assert(mTimer);
@@ -418,7 +418,7 @@ void SubRenderer::PreRender(SubRendererOutput outputFlag,
     }
 }
 //----------------------------------------------------------------------------
-void SubRenderer::PostRender(SubRendererOutput outputFlag, 
+void SubRenderer::PostRender(unsigned int outputFlag, 
     PipelineStateBlock* psb)
 {
     // Disable renderer inputs.

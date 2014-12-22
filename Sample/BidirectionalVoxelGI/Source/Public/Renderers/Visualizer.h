@@ -13,6 +13,30 @@ namespace RTGI
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
+// Date: 11/06/2014
+//----------------------------------------------------------------------------
+class GatherVoxelBuffer : public ComputeTask
+{
+public:
+    GatherVoxelBuffer();
+    ~GatherVoxelBuffer();
+
+    // Implement base class interface.
+    virtual void OnGetShaderConstants();
+    virtual void OnPreDispatch(unsigned int pass);
+    virtual void OnPostDispatch(unsigned int pass);
+
+    AABB* SceneBB;
+
+private:
+    ShaderUniform mSceneBBMinLoc;
+    ShaderUniform mSceneBBExtensionLoc;
+};
+
+typedef RefPointer<GatherVoxelBuffer> GatherVoxelBufferPtr;
+
+//----------------------------------------------------------------------------
+// Author: Che Sun
 // Date: 11/29/2014
 //----------------------------------------------------------------------------
 class VisualizerScreenQuad : public ScreenQuad
@@ -77,7 +101,7 @@ public:
         ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer,
         RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer, 
         IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
-        int voxelGridDim);
+        int voxelGridDim, int voxelGridLocalGroupDim);
 
     void Render(int technique, int pass);
 
@@ -87,8 +111,14 @@ public:
     void SetShowMode(ShowMode mode);
 
 private:
+    int mVoxelGridDim;
+    int mVoxelGridLocalGroupDim;
+    int mGlobalDim;
+
     ShowMode mShowMode;
+
     VisualizerScreenQuadPtr mScreenQuad;
+
     StructuredBufferPtr mVoxelBuffer;
     Texture2DPtr mShadowMapTexture;
     Texture2DPtr mGBufferPositionTexture;
@@ -99,6 +129,8 @@ private:
     Texture2DArrayPtr mRSMFluxTextureArray;
     Texture2DPtr mDirectLightingTexture;
     Texture2DPtr mIndirectLightingTexture;
+
+    GatherVoxelBufferPtr mGatherVoxelBufferTask;
 };
 
 typedef RefPointer<Visualizer> VisualizerPtr;

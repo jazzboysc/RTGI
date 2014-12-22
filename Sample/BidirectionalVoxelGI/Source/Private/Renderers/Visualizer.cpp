@@ -3,6 +3,38 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
+GatherVoxelBuffer::GatherVoxelBuffer()
+{
+}
+//----------------------------------------------------------------------------
+GatherVoxelBuffer::~GatherVoxelBuffer()
+{
+}
+//----------------------------------------------------------------------------
+void GatherVoxelBuffer::OnGetShaderConstants()
+{
+    ComputePass* p = (ComputePass*)GetPass(0);
+    ShaderProgram* program = p->GetShaderProgram();
+
+    program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
+    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
+}
+//----------------------------------------------------------------------------
+void GatherVoxelBuffer::OnPreDispatch(unsigned int pass)
+{
+    vec3 min = SceneBB->Min;
+    vec3 extension = SceneBB->GetExtension();
+    mSceneBBMinLoc.SetValue(min);
+    mSceneBBExtensionLoc.SetValue(extension);
+}
+//----------------------------------------------------------------------------
+void GatherVoxelBuffer::OnPostDispatch(unsigned int pass)
+{
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
 VisualizerScreenQuad::VisualizerScreenQuad(Material* material)
     :
     ScreenQuad(material, 0)
@@ -26,10 +58,9 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
     mTextureArrayIndexLoc.SetValue(TextureArrayIndex);
     mDimLoc.SetValue(VoxelGridDim);
 
+    mTempSamplerLoc.SetValue(0);
     if( TempTexture )
     {
-        mTempSamplerLoc.SetValue(0);
-
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, TempTexture->GetTexture());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -38,10 +69,9 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     }
 
+    mTempSampler2Loc.SetValue(1);
     if( TempTexture2 )
     {
-        mTempSampler2Loc.SetValue(1);
-
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, TempTexture2->GetTexture());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -50,10 +80,9 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     }
 
+    mTempSamplerArrayLoc.SetValue(2);
     if( TempTextureArray )
     {
-        mTempSamplerArrayLoc.SetValue(2);
-
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D_ARRAY, TempTextureArray->GetTexture());
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -114,8 +143,12 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer, 
     RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer,
     IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
-    int voxelGridDim)
+    int voxelGridDim, int voxelGridLocalGroupDim)
 {
+    mVoxelGridDim = voxelGridDim;
+    mVoxelGridLocalGroupDim = voxelGridLocalGroupDim;
+    mGlobalDim = mVoxelGridDim / mVoxelGridLocalGroupDim;
+
     ShaderProgramInfo visualizerProgramInfo;
     visualizerProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vTempResult.glsl";
     visualizerProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fTempResult.glsl";
@@ -139,6 +172,31 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mDirectLightingTexture = (Texture2D*)directLightingRenderer->GetFrameBufferTexture(0);
     mIndirectLightingTexture = (Texture2D*)indirectLightingRenderer->GetFrameBufferTexture(0);
 
+    // Create gather voxel buffer task.
+    ShaderProgramInfo gatherVoxelBufferProgramInfo;
+    gatherVoxelBufferProgramInfo.CShaderFileName =
+        "BidirectionalVoxelGI/cGatherVoxelBuffer.glsl";
+    gatherVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+
+    ComputePass* passGatherVoxelBuffer = new ComputePass(gatherVoxelBufferProgramInfo);
+    mGatherVoxelBufferTask = new GatherVoxelBuffer();
+    mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
+    mGatherVoxelBufferTask->CreateDeviceResource(device);
+    mGatherVoxelBufferTask->SceneBB = sceneBB;
+
+    // Create indirect command buffer.
+    int voxelCount = voxelGridDim * voxelGridDim * voxelGridDim;
+    int bufferSize = sizeof(unsigned int) * 5 + sizeof(float) * 35
+        + voxelCount*sizeof(float) * 4;
+    AddGenericBufferTarget("IndirectCommandBuffer", RDT_StructuredBuffer,
+        bufferSize, BU_Dynamic_Copy, BF_BindIndex, 1);
+
+    // Create gathered voxel GPU memory allocator counter.
+    bufferSize = sizeof(unsigned int);
+    AddGenericBufferTarget("GPUMemoryAllocatorCounter",
+        RDT_AtomicCounterBuffer, bufferSize, BU_Dynamic_Copy, BF_BindIndex, 0,
+        true, 0);
+
     // Create screen quad.
     Material* material = new Material(mtScreenQuad);
     mScreenQuad = new VisualizerScreenQuad(material);
@@ -148,31 +206,25 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mScreenQuad->CreateDeviceResource(device);
-    mScreenQuad->ShowMode = 2;
-    mScreenQuad->TempTexture = mIndirectLightingTexture;
-    mScreenQuad->TempTexture2 = mDirectLightingTexture;
-    mScreenQuad->TempTextureArray = mRSMFluxTextureArray;
     mScreenQuad->SceneBB = sceneBB;
     mScreenQuad->VoxelBuffer = mVoxelBuffer;
     mScreenQuad->VoxelGridDim = voxelGridDim;
 
-    mShowMode = SM_Final;
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    SetShowMode(SM_Final);
 }
 //----------------------------------------------------------------------------
 void Visualizer::Render(int technique, int pass)
 {
-    SubRenderer::Render(technique, pass, SRO_BackBuffer, 0, 0);
+    SubRenderer::Render(technique, pass, SRO_GenericBuffer | SRO_BackBuffer, 0, 0);
 }
 //----------------------------------------------------------------------------
 void Visualizer::OnRender(int technique, int pass, Camera*)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    // Gather voxel buffer pass.
+    mGatherVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
 
     mScreenQuad->Render(technique, pass);
 }

@@ -78,7 +78,7 @@ public:
     Buffer* GetGenericBufferByName(const std::string& name) const;
 
     // Rendering stuff.
-    virtual void Render(int technique, int pass, SubRendererOutput outputFlag, 
+    virtual void Render(int technique, int pass, unsigned int outputFlag, 
         PipelineStateBlock* psb, Camera* camera = 0);
     virtual void RenderSingle(RenderObject* object, int technique, int pass, 
         SubRendererOutput outputFlag, PipelineStateBlock* psb, 
@@ -90,8 +90,8 @@ public:
     double GetTimeElapsed() const;
 
 protected:
-    void PreRender(SubRendererOutput outputFlag, PipelineStateBlock* psb);
-    void PostRender(SubRendererOutput outputFlag, PipelineStateBlock* psb);
+    void PreRender(unsigned int outputFlag, PipelineStateBlock* psb);
+    void PostRender(unsigned int outputFlag, PipelineStateBlock* psb);
     void ApplyPipelineStateBlock(PipelineStateBlock* psb);
 
     // Buffer inputs.

@@ -119,7 +119,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     // Create visualizer.
     mVisualizer = new Visualizer();
     mVisualizer->Initialize(mDevice, mVoxelizer, mShadowMapRenderer, mGBufferRenderer,
-        mRSMRenderer, mDirectLightingRenderer, mIndirectLightingRenderer, &mSceneBB, VOXEL_DIMENSION);
+        mRSMRenderer, mDirectLightingRenderer, mIndirectLightingRenderer, &mSceneBB, 
+        VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM);
 
     // Create GPU timer.
     mTimer = new GPUTimer();
