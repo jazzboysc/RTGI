@@ -61,7 +61,7 @@ void VPLSampleRSM::OnPreDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 void VPLSampleRSM::OnPostDispatch(unsigned int pass)
 {
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     // Test.
     //float* srcData = new float[16 * 4];

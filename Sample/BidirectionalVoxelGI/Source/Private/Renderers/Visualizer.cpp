@@ -30,7 +30,7 @@ void GatherVoxelBuffer::OnPreDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 void GatherVoxelBuffer::OnPostDispatch(unsigned int pass)
 {
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 }
 //----------------------------------------------------------------------------
 
@@ -295,6 +295,8 @@ void Visualizer::Render(int technique, int pass)
 
         // Gather voxel buffer pass.
         mGatherVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
+
+        // Show voxel grid.
         mVoxelCubeModel->Render(0, 0);
     }
     else

@@ -30,6 +30,6 @@ void GatherVoxelBuffer::OnPreDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 void GatherVoxelBuffer::OnPostDispatch(unsigned int pass)
 {
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 }
 //----------------------------------------------------------------------------

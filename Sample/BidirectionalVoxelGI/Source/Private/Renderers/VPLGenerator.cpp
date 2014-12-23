@@ -35,7 +35,7 @@ void SampleRSM::OnPreDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 void SampleRSM::OnPostDispatch(unsigned int pass)
 {
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 //----------------------------------------------------------------------------
 
