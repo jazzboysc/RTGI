@@ -70,28 +70,29 @@ void main()
     }
     else if( ShowMode == 3 )
     {
-        vec3 worldPosition = texture(tempSampler, pTCoord).rgb;
-        vec3 normalizedPosition = (worldPosition - SceneBBMin) / (2.0*SceneBBExtension);
+        vec4 worldPosition = texture(tempSampler, pTCoord).rgba;
+        if( worldPosition.w <= 0.0 )
+        {
+            discard;
+        }
+
+        vec3 normalizedPosition = (worldPosition.xyz - SceneBBMin) / (2.0*SceneBBExtension);
         gl_FragData[0] = vec4(normalizedPosition, 1.0);
     }
     else if( ShowMode == 4 )
     {
-        vec3 worldPosition = texture(tempSampler, pTCoord).rgb;
-        ivec3 res = GetIndex(worldPosition);
+        vec4 worldPosition = texture(tempSampler, pTCoord).rgba;
+        if( worldPosition.w <= 0.0 )
+        {
+            discard;
+        }
+
+        ivec3 res = GetIndex(worldPosition.xyz);
         int index = res.z * dim * dim + res.y * dim + res.x;
         vec4 color = UintToVec4(voxelBuffer.data[index].value1);
         color.xyz /= 255.0;
         color.w = 1.0;
         
         gl_FragData[0] = color;
-
-        //if( voxelBuffer.data[index].value2 > 0 )
-        //{
-        //    gl_FragData[0] = vec4(1,0,0,1);
-        //}
-        //else
-        //{
-        //    gl_FragData[0] = vec4(0, 0, 0, 1);
-        //}
     }
 }

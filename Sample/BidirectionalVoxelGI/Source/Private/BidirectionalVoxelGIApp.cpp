@@ -21,7 +21,7 @@ BidirectionalVoxelGIApp::~BidirectionalVoxelGIApp()
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 {
-	float color = 0.5f;
+	float color = 0.0f;
     glClearColor(color, color, color, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
