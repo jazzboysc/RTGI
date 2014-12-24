@@ -20,6 +20,7 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
 	mHasNormal(false),
 	mWorldScale(1.0f, 1.0f, 1.0f)
 {
+    mTriangleMaxEdgeLength = 0.0f;
     IsQuad = false;
     InstanceCount = 1;
     IsIndirect = false;
@@ -438,7 +439,15 @@ void TriangleMesh::GenerateNormals()
 
 		glm::vec3 e1 = v2 - v1;
 		glm::vec3 e2 = v3 - v1;
+        glm::vec3 e3 = v3 - v2;
 		glm::vec3 n = glm::cross(e1, e2);
+
+        // Get max edge length.
+        float lenE1 = glm::length(e1);
+        float lenE2 = glm::length(e2);
+        float lenE3 = glm::length(e3);
+        float maxLen = RTGI_MAX(lenE1, RTGI_MAX(lenE2, lenE3));
+        mTriangleMaxEdgeLength = RTGI_MAX(maxLen, mTriangleMaxEdgeLength);
 
 		// Update vertex normals.
 		mVertexNormalData[v1ID] += n;
@@ -521,6 +530,11 @@ AABB TriangleMesh::GetWorldSpaceBB() const
 		res.Max.z = RTGI_MAX(res.Max.z, tempV.z);
 	}
 	return res;
+}
+//----------------------------------------------------------------------------
+float TriangleMesh::GetTriangleMaxEdgeLength() const
+{
+    return mTriangleMaxEdgeLength;
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::UpdateModelSpaceVertices(const glm::mat4& trans)

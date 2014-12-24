@@ -64,6 +64,8 @@ public:
 	AABB GetModelSpaceBB() const;
 	AABB GetWorldSpaceBB() const;
 
+    float GetTriangleMaxEdgeLength() const;
+
 	void UpdateModelSpaceVertices(const glm::mat4& trans);
 
     // TODO:
@@ -81,6 +83,7 @@ protected:
 	void CreateIndexBufferDeviceResource();
 
 	AABB mModelSpaceBB;
+    float mTriangleMaxEdgeLength;
 
 	int mVertexCount;
 	int mFaceCount;

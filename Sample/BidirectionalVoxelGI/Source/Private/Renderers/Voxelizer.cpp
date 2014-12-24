@@ -30,11 +30,12 @@ Voxelizer::Voxelizer(RenderSet* renderSet)
     :
     SubRenderer(renderSet)
 {
+    mSceneBBMaxLength = 0.0f;
+    RasterizerDimBias = 0;
 }
 //----------------------------------------------------------------------------
 Voxelizer::~Voxelizer()
 {
-    delete mVoxelizationProjector;
     mResetVoxelBufferTask = 0;
 }
 //----------------------------------------------------------------------------
@@ -44,6 +45,7 @@ void Voxelizer::Initialize(GPUDevice* device, int voxelGridDim,
     mVoxelGridDim = voxelGridDim;
     mVoxelGridLocalGroupDim = voxelGridLocalGroupDim;
     mGlobalDim = mVoxelGridDim / mVoxelGridLocalGroupDim;
+    mSceneBB = sceneBB;
 
     GLint globalX, globalY, globalZ;
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &globalX);
@@ -51,10 +53,6 @@ void Voxelizer::Initialize(GPUDevice* device, int voxelGridDim,
     glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &globalZ);
     assert(globalX >= mGlobalDim && globalY >= mGlobalDim &&
         globalZ >= mGlobalDim);
-
-    // Create voxelization projector.
-    mVoxelizationProjector = new Camera(false);
-    mVoxelizationProjector->SetOrthogonalFrustum(10.5f, 1.0f, 0.01f, 20.5f);
 
     // Create reset voxel buffer task.
     ShaderProgramInfo resetVoxelBufferProgramInfo;
@@ -76,12 +74,20 @@ void Voxelizer::Initialize(GPUDevice* device, int voxelGridDim,
 //----------------------------------------------------------------------------
 void Voxelizer::Render(int technique, int pass)
 {
-    SubRenderer::Render(technique, pass, SRO_GenericBuffer, 0, 
-        mVoxelizationProjector);
+    SubRenderer::Render(technique, pass, SRO_GenericBuffer, 0);
 }
 //----------------------------------------------------------------------------
-void Voxelizer::OnRender(int technique, int pass, Camera* camera)
+static GLint oldViewport[4];
+//----------------------------------------------------------------------------
+void Voxelizer::OnRender(int technique, int pass, Camera*)
 {
+    // Cache old viewport values and set new values.
+    glGetIntegerv(GL_VIEWPORT, oldViewport);
+
+    vec3 sceneBBLen = mSceneBB->GetExtension() * 2.0f;
+    mSceneBBMaxLength = RTGI_MAX(sceneBBLen.x, 
+        RTGI_MAX(sceneBBLen.y, sceneBBLen.z));
+
     // Reset voxel buffer pass.
     mResetVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
 
@@ -92,27 +98,26 @@ void Voxelizer::OnRender(int technique, int pass, Camera* camera)
 
     assert(mRenderSet);
     int renderObjectCount = mRenderSet->GetRenderObjectCount();
-    if( camera )
+    for( int i = 0; i < renderObjectCount; ++i )
     {
-        for( int i = 0; i < renderObjectCount; ++i )
-        {
-            RenderObject* renderObject = mRenderSet->GetRenderObject(i);
-            renderObject->SetCamera(camera);
-        }
-    }
-    glViewport(0, 0, mVoxelGridDim, mVoxelGridDim);
-    for( int i = 0; i < renderObjectCount - 1; ++i )
-    {
-        RenderObject* renderObject = mRenderSet->GetRenderObject(i);
-        renderObject->Render(technique, pass, this);
-    }
-    glViewport(0, 0, (mVoxelGridDim >> 4) + 4, (mVoxelGridDim >> 4) + 4);
-    RenderObject* renderObject = mRenderSet->GetRenderObject(renderObjectCount - 1);
-    renderObject->Render(technique, pass, this);
+        // TODO:
+        // Only support trangle mesh for now.
+        TriangleMesh* mesh = (TriangleMesh*)mRenderSet->GetRenderObject(i);
+        float triangleDim = mesh->GetTriangleMaxEdgeLength();
+        float ratio = triangleDim / mSceneBBMaxLength;
+        int rasterizerDim = (int)ceilf(ratio * (float)mVoxelGridDim) + 
+            RasterizerDimBias;
 
+        glViewport(0, 0, rasterizerDim, rasterizerDim);
+        mesh->Render(technique, pass, this);
+    }
+
+    // Restore device states.
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glViewport(oldViewport[0], oldViewport[1], oldViewport[2],
+        oldViewport[3]);
 }
 //----------------------------------------------------------------------------
 int Voxelizer::GetVoxelGridDim() const

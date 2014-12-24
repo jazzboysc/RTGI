@@ -46,11 +46,16 @@ public:
     int GetVoxelGridDim() const;
     int GetVoxelGridLocalGroupDim() const;
 
+    int RasterizerDimBias;
+
 private:
     int mVoxelGridDim;
     int mVoxelGridLocalGroupDim;
     int mGlobalDim;
-    Camera* mVoxelizationProjector;
+
+    AABB* mSceneBB;
+    float mSceneBBMaxLength;
+
     ResetVoxelBufferPtr mResetVoxelBufferTask;
 };
 

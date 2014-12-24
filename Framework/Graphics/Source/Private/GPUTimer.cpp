@@ -34,7 +34,6 @@ void GPUTimer::Start()
 void GPUTimer::Stop()
 {
     glEndQuery(GL_TIME_ELAPSED);
-    mStarted = false;
 }
 //----------------------------------------------------------------------------
 double GPUTimer::GetTimeElapsed()
