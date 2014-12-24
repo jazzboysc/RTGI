@@ -105,8 +105,8 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, int heig
     mIndirectLightingScreenQuad->VPLCount = vplCount;
 
     // Create output.
-    AddFrameBufferTarget("IndirectLighting", width, height, 0, 
-        Texture::TT_Texture2D, format);
+    AddFrameBufferTarget(RTGI_IndirectLightingRenderer_IndirectLighting_Name,
+        width, height, 0, Texture::TT_Texture2D, format);
     CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
 }
 //----------------------------------------------------------------------------

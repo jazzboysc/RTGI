@@ -94,8 +94,8 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width, int height
     mDirectLightingScreenQuad->LightProjector = lightProjector;
 
     // Create output.
-    AddFrameBufferTarget("DirectLighting", width, height, 0,
-        Texture::TT_Texture2D, format);
+    AddFrameBufferTarget(RTGI_DirectLightingRenderer_DirectLighting_Name, 
+        width, height, 0, Texture::TT_Texture2D, format);
     CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
 }
 //----------------------------------------------------------------------------

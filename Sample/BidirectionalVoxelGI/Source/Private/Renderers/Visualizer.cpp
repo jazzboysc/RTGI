@@ -163,8 +163,6 @@ Visualizer::~Visualizer()
 
     mScreenQuad = 0;
     mVoxelCubeModel = 0;
-    mGatheredVoxelAllocCounter = 0;
-    mIndirectCommandBuffer = 0;
 }
 //----------------------------------------------------------------------------
 void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
@@ -202,24 +200,44 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mtShowVoxelGrid->AddTechnique(techShowVoxelGrid);
 
     // Cache temp buffer and textures needed for visualization.
-    mVoxelBuffer = (StructuredBuffer*)voxelizer->GetGenericBufferByName(RTGI_VoxelBuffer_Name);
-    mShadowMapTexture = (Texture2D*)shadowMapRenderer->GetFrameBufferTexture(0);
-    mGBufferPositionTexture = (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(RTGI_GBuffer_Position_Name);
-    mGBufferNormalTexture = (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(RTGI_GBuffer_Normal_Name);
-    mGBufferAlbedoTexture = (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(RTGI_GBuffer_Albedo_Name);
-    mRSMPositionTextureArray = (Texture2DArray*)rsmRenderer->GetFrameBufferTexture(0);
-    mRSMNormalTextureArray = (Texture2DArray*)rsmRenderer->GetFrameBufferTexture(1);
-    mRSMFluxTextureArray = (Texture2DArray*)rsmRenderer->GetFrameBufferTexture(2);
-    mDirectLightingTexture = (Texture2D*)directLightingRenderer->GetFrameBufferTexture(0);
-    mIndirectLightingTexture = (Texture2D*)indirectLightingRenderer->GetFrameBufferTexture(0);
+    mVoxelBuffer = 
+        (StructuredBuffer*)voxelizer->GetGenericBufferByName(
+        RTGI_VoxelBuffer_Name);
+    mShadowMapTexture = 
+        (Texture2D*)shadowMapRenderer->GetFrameBufferTextureByName(
+        RTGI_ShadowMapRenderer_ShadowMap_Name);
+    mGBufferPositionTexture = 
+        (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
+        RTGI_GBuffer_Position_Name);
+    mGBufferNormalTexture = 
+        (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
+        RTGI_GBuffer_Normal_Name);
+    mGBufferAlbedoTexture = 
+        (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
+        RTGI_GBuffer_Albedo_Name);
+    mRSMPositionTextureArray = 
+        (Texture2DArray*)rsmRenderer->GetFrameBufferTextureByName(
+        RTGI_RSMRenderer_RSMPosition_Name);
+    mRSMNormalTextureArray = 
+        (Texture2DArray*)rsmRenderer->GetFrameBufferTextureByName(
+        RTGI_RSMRenderer_RSMNormal_Name);
+    mRSMFluxTextureArray = 
+        (Texture2DArray*)rsmRenderer->GetFrameBufferTextureByName(
+        RTGI_RSMRenderer_RSMFlux_Name);
+    mDirectLightingTexture = 
+        (Texture2D*)directLightingRenderer->GetFrameBufferTextureByName(
+        RTGI_DirectLightingRenderer_DirectLighting_Name);
+    mIndirectLightingTexture = 
+        (Texture2D*)indirectLightingRenderer->GetFrameBufferTextureByName(
+        RTGI_IndirectLightingRenderer_IndirectLighting_Name);
 
     // Create gather voxel buffer task.
     ShaderProgramInfo gatherVoxelBufferProgramInfo;
     gatherVoxelBufferProgramInfo.CShaderFileName =
         "BidirectionalVoxelGI/cGatherVoxelBuffer.glsl";
     gatherVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-
-    ComputePass* passGatherVoxelBuffer = new ComputePass(gatherVoxelBufferProgramInfo);
+    ComputePass* passGatherVoxelBuffer = 
+        new ComputePass(gatherVoxelBufferProgramInfo);
     mGatherVoxelBufferTask = new GatherVoxelBuffer();
     mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
     mGatherVoxelBufferTask->CreateDeviceResource(device);
@@ -227,23 +245,17 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
 
     // Create indirect command buffer.
     int voxelCount = voxelGridDim * voxelGridDim * voxelGridDim;
-    //int bufferSize = sizeof(unsigned int) * 5 + sizeof(float) * 35
-    //    + voxelCount*sizeof(float) * 4;
-    //AddGenericBufferTarget("IndirectCommandBuffer", RDT_StructuredBuffer,
-    //    bufferSize, BU_Dynamic_Copy, BF_BindIndex, 1);
-    mIndirectCommandBuffer = new StructuredBuffer();
-    int bufferSize = sizeof(GLuint) * 5 + sizeof(GLfloat) * 35 + voxelCount*sizeof(GLfloat) * 4;
-    mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, BU_Dynamic_Copy);
+    int bufferSize = sizeof(unsigned int) * 5 + sizeof(float) * 35
+        + voxelCount*sizeof(float) * 4;
+    AddGenericBufferTarget(RTGI_Visualizer_IndirectCommandBuffer_Name, 
+        RDT_StructuredBuffer, bufferSize, BU_Dynamic_Copy, 
+        BF_BindIndexToIndirect, 1);
 
-    //// Create gathered voxel GPU memory allocator counter.
-    //bufferSize = sizeof(unsigned int);
-    //AddGenericBufferTarget("GPUMemoryAllocatorCounter",
-    //    RDT_AtomicCounterBuffer, bufferSize, BU_Dynamic_Copy, BF_BindIndex, 0,
-    //    true, 0);
     // Create gathered voxel GPU memory allocator counter.
-    mGatheredVoxelAllocCounter = new AtomicCounterBuffer();
-    mGatheredVoxelAllocCounter->ReserveDeviceResource(sizeof(GLuint), BU_Dynamic_Copy);
-
+    bufferSize = sizeof(unsigned int);
+    AddGenericBufferTarget("GPUMemoryAllocatorCounter",
+        RDT_AtomicCounterBuffer, bufferSize, BU_Dynamic_Copy, BF_BindIndex,
+        0, true, 0);
 
     // Create voxel cube model.
     Material* material = new Material(mtShowVoxelGrid);
@@ -251,9 +263,10 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mVoxelCubeModel->LoadFromFile("box.ply");
     mVoxelCubeModel->GenerateNormals();
     mVoxelCubeModel->IsIndirect = true;
-    mVoxelCubeModel->IndirectCommandBuffer = mIndirectCommandBuffer;
+    mVoxelCubeModel->IndirectCommandBuffer = 
+        (StructuredBuffer*)GetGenericBufferByName(
+        RTGI_Visualizer_IndirectCommandBuffer_Name);
     mVoxelCubeModel->CreateDeviceResource(device);
-    mVoxelCubeModel->VoxelBuffer = mVoxelBuffer;
 
     // Create screen quad.
     material = new Material(mtScreenQuad);
@@ -273,8 +286,12 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
 //----------------------------------------------------------------------------
 void Visualizer::Render(int technique, int pass)
 {
-//    SubRenderer::Render(technique, pass, SRO_GenericBuffer | SRO_BackBuffer, 
-//        0, 0);
+    SubRenderer::Render(technique, pass, SRO_GenericBuffer | SRO_BackBuffer, 
+        0, 0);
+}
+//----------------------------------------------------------------------------
+void Visualizer::OnRender(int technique, int pass, Camera*)
+{
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -283,15 +300,6 @@ void Visualizer::Render(int technique, int pass)
     if( mShowMode == SM_VoxelGrid )
     {
         mVoxelBuffer->Bind(0);
-        mIndirectCommandBuffer->Bind(1);
-        mIndirectCommandBuffer->BindToIndirect();
-
-        // Reset counter.
-        mGatheredVoxelAllocCounter->Bind(0);
-        GLuint* counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(GL_WRITE_ONLY);
-        assert(counterData);
-        counterData[0] = 0;
-        mGatheredVoxelAllocCounter->Unmap();
 
         // Gather voxel buffer pass.
         mGatherVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
@@ -303,25 +311,6 @@ void Visualizer::Render(int technique, int pass)
     {
         mScreenQuad->Render(technique, pass);
     }
-}
-//----------------------------------------------------------------------------
-void Visualizer::OnRender(int technique, int pass, Camera*)
-{
-    //glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    //if( mShowMode == SM_VoxelGrid )
-    //{
-    //    // Gather voxel buffer pass.
-    //    mGatherVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
-    //    mVoxelCubeModel->Render(0, 0);
-    //}
-    //else
-    //{
-    //    mScreenQuad->Render(technique, pass);
-    //}
 }
 //----------------------------------------------------------------------------
 void Visualizer::SetShowMode(ShowMode mode)

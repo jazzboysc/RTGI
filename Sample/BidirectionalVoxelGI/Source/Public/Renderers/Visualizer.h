@@ -11,6 +11,8 @@
 namespace RTGI
 {
 
+#define RTGI_Visualizer_IndirectCommandBuffer_Name "IndirectCommandBuffer"
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/06/2014
@@ -86,7 +88,6 @@ public:
     virtual void OnUpdateShaderConstants(int technique, int pass);
 
     vec3 MaterialColor;
-    StructuredBufferPtr VoxelBuffer;
 };
 
 typedef RefPointer<VoxelCubeTriMesh> VoxelCubeTriMeshPtr;
@@ -151,8 +152,6 @@ private:
     Texture2DPtr mDirectLightingTexture;
     Texture2DPtr mIndirectLightingTexture;
 
-    AtomicCounterBufferPtr mGatheredVoxelAllocCounter;
-    StructuredBufferPtr mIndirectCommandBuffer;
     VoxelCubeTriMeshPtr mVoxelCubeModel;
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
 };

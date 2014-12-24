@@ -12,6 +12,7 @@ GPUTimer::GPUTimer()
     :
     mTimer(0)
 {
+    mStarted = false;
 }
 //----------------------------------------------------------------------------
 GPUTimer::~GPUTimer()
@@ -27,15 +28,22 @@ void GPUTimer::CreateDeviceResource()
 void GPUTimer::Start()
 {
     glBeginQuery(GL_TIME_ELAPSED, mTimer);
+    mStarted = true;
 }
 //----------------------------------------------------------------------------
 void GPUTimer::Stop()
 {
     glEndQuery(GL_TIME_ELAPSED);
+    mStarted = false;
 }
 //----------------------------------------------------------------------------
 double GPUTimer::GetTimeElapsed()
 {
+    if( !mStarted )
+    {
+        return 0.0;
+    }
+
     GLuint64 timeElapsed = 0;
     double res = 0.0;
 

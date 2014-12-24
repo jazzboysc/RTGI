@@ -336,8 +336,9 @@ void TriangleMesh::CreateDeviceResource(GPUDevice* device)
 	// Get shader constants here.
 	OnGetShaderConstants();
 
-    if( IsIndirect && IndirectCommandBuffer != 0 )
+    if( IsIndirect )
     {
+        assert(IndirectCommandBuffer);
         IndirectCommandBuffer->Bind();
         DrawElementsIndirectCommand* bufferData = 
             (DrawElementsIndirectCommand*)IndirectCommandBuffer->Map(

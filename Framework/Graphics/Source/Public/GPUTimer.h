@@ -29,6 +29,7 @@ public:
 
 private:
     GLuint mTimer;
+    bool mStarted;
 };
 
 typedef RefPointer<GPUTimer> GPUTimerPtr;

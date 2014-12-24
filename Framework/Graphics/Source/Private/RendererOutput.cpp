@@ -48,6 +48,11 @@ void RendererOutput::Enable()
         buffer->BindToIndirect();
         break;
 
+    case BF_BindIndexToIndirect:
+        buffer->Bind(Binding);
+        buffer->BindToIndirect();
+        break;
+
     default:
         assert(false);
         break;
@@ -55,9 +60,10 @@ void RendererOutput::Enable()
 
     if( Reset )
     {
+        size_t bufferSize = buffer->GetSize();
         int* bufferData = (int*)buffer->Map(GL_WRITE_ONLY);
         assert(bufferData);
-        bufferData[0] = ResetValue;
+        memset(bufferData, ResetValue, bufferSize);
         buffer->Unmap();
     }
 }

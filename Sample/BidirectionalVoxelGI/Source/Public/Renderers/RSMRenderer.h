@@ -6,6 +6,10 @@
 namespace RTGI
 {
 
+#define RTGI_RSMRenderer_RSMPosition_Name "RSMPosition"
+#define RTGI_RSMRenderer_RSMNormal_Name "RSMNormal"
+#define RTGI_RSMRenderer_RSMFlux_Name "RSMFlux"
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 12/05/2014

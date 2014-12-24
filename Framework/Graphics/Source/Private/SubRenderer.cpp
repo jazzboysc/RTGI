@@ -257,8 +257,7 @@ void SubRenderer::AddGenericBufferTarget(const std::string& name,
 {
     assert(GetFrameBufferTargetByName(name) == 0);
     assert(GetGenericBufferTargetByName(name) == 0);
-    // TODO:
-    // Check this later.
+
     float typeValue = (float)(int)bufferType;
     int functionIndex = (int)glm::log2(typeValue) - 2;
     BufferBase* genericBufferTarget = msFactoryFunctions[functionIndex](size, 

@@ -21,11 +21,11 @@ RSMRenderer::~RSMRenderer()
 void RSMRenderer::CreateRSM(int width, int height, int depth,
     Texture::TextureFormat format)
 {
-    AddFrameBufferTarget("RSMPosition", width, height, depth, 
+    AddFrameBufferTarget(RTGI_RSMRenderer_RSMPosition_Name, width, height, 
+        depth, Texture::TT_Texture2DArray, format);
+    AddFrameBufferTarget(RTGI_RSMRenderer_RSMNormal_Name, width, height, depth,
         Texture::TT_Texture2DArray, format);
-    AddFrameBufferTarget("RSMNormal", width, height, depth,
-        Texture::TT_Texture2DArray, format);
-    AddFrameBufferTarget("RSMFlux", width, height, depth,
+    AddFrameBufferTarget(RTGI_RSMRenderer_RSMFlux_Name, width, height, depth,
         Texture::TT_Texture2DArray, format);
     CreateFrameBuffer(width, height, depth, Texture::TT_Texture2DArray);
 }

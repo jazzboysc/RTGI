@@ -31,6 +31,7 @@ enum BindingFlag
     BF_Bind,
     BF_BindIndex,
     BF_BindToIndirect,
+    BF_BindIndexToIndirect,
     BF_Max
 };
 

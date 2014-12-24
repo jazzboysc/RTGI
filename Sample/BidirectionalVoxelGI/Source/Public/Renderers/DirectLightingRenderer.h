@@ -7,6 +7,8 @@
 namespace RTGI
 {
 
+#define RTGI_DirectLightingRenderer_DirectLighting_Name "DirectLighting"
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/29/2014

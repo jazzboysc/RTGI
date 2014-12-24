@@ -21,8 +21,8 @@ ShadowMapRenderer::~ShadowMapRenderer()
 void ShadowMapRenderer::CreateShadowMap(int width, int height,
     Texture::TextureFormat format)
 {
-    AddFrameBufferTarget("ShadowMap", width, height, 0, Texture::TT_Texture2D, 
-        format);
+    AddFrameBufferTarget(RTGI_ShadowMapRenderer_ShadowMap_Name, width, height,
+        0, Texture::TT_Texture2D, format);
     CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
 }
 //----------------------------------------------------------------------------

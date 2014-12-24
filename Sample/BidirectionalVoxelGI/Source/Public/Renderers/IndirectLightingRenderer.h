@@ -10,6 +10,8 @@
 namespace RTGI
 {
 
+#define RTGI_IndirectLightingRenderer_IndirectLighting_Name "IndirectLighting"
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/29/2014
