@@ -19,7 +19,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 {
 	// Create camera.
 	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 1.0f, 100.0f);
-	mMainCamera->SetLookAt(vec3(0.0f, 9.0f, 26.0f), vec3(0.0f, 0.0f, 0.0f),
+	mMainCamera->SetLookAt(vec3(1.70f, 5.87f, 16.71f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
 	// Create light.
@@ -366,26 +366,36 @@ void SSDOApp::ProcessInput()
 {
 	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		mShowMode = SM_FilteredSSDO;
+		mSSDOTempResultQuad->TempTexture = mSSDOTexture;
+		mShowMode = SM_SSDO;
 	}
 	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
+	{
+		mSSDOTempResultQuad->TempTexture = mPositionTexture;
+		mShowMode = SM_Position;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
 	{
 		mSSDOTempResultQuad->TempTexture = mNormalTexture;
 		mShowMode = SM_Normal;
 	}
-	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_4) == GLFW_PRESS)
 	{
 		mSSDOTempResultQuad->TempTexture = mColorTexture;
 		mShowMode = SM_Color;
 	}
-	if (glfwGetKey(Window, GLFW_KEY_4) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_5) == GLFW_PRESS)
 	{
 		mSSDOTempResultQuad->TempTexture = mDirectLightingTexture;
 		mShowMode = SM_DirectLighting;
 	}
-	if (glfwGetKey(Window, GLFW_KEY_5) == GLFW_PRESS)
+	if (glfwGetKey(Window, GLFW_KEY_6) == GLFW_PRESS)
 	{
 		mSSDOTempResultQuad->TempTexture = mRandomTexture;
 		mShowMode = SM_Random;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_7) == GLFW_PRESS)
+	{
+		mShowMode = SM_FilteredSSDO;
 	}
 }

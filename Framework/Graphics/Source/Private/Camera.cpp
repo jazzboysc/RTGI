@@ -41,6 +41,7 @@ void Camera::SetLookAt(const glm::vec3& location, const glm::vec3& lookAt,
 	mRight = glm::normalize(r);
 	glm::vec3 u = glm::cross(mDirection, mRight);
 	mUp = glm::normalize(u);
+	mRot = glm::quat_cast(GetViewTransform());
 }
 //----------------------------------------------------------------------------
 void Camera::SetLocation(const glm::vec3& location)
