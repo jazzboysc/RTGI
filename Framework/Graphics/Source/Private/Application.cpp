@@ -116,7 +116,7 @@ void Application::UpdateMainCamera()
 			auto h = mouseSpeed * float(newMousePos.x - mouseStartPos.x);
 			auto v = mouseSpeed * float(newMousePos.y - mouseStartPos.y);
 			auto rot = glm::vec3(h, v, 0);
-			mMainCamera->RotateUpFixed(rot);
+			mMainCamera->Rotate(rot);
 			// Reset mouse position for next frame
 			glfwSetCursorPos(Window, mouseStartPos.x, mouseStartPos.y);
 		}

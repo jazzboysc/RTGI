@@ -48,7 +48,6 @@ public:
 		float farPlane);
 
 	void Rotate(glm::vec3 _rotation);
-	void RotateUpFixed(glm::vec3 _rotation);
 
 	glm::vec3 GetLocation() const;
 	glm::vec3 GetDirection() const;

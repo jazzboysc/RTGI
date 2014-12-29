@@ -194,8 +194,9 @@ void Camera::GetAngle(float& _horizontalAngle, float& _verticalAngle)
 //----------------------------------------------------------------------------
 void Camera::Rotate(glm::vec3 _rotation)
 {
-	mRot = glm::rotate(mRot, glm::radians(_rotation.y), glm::vec3(1, 0, 0));
-	mRot = glm::rotate(mRot, glm::radians(_rotation.x), glm::vec3(0, 1, 0));
+	auto yaw = glm::quat(glm::vec3(0, glm::radians(_rotation.x), 0));
+	auto pitch = glm::quat(glm::vec3(glm::radians(_rotation.y), 0, 0));
+	mRot = pitch * mRot * yaw;
 	mRot = glm::normalize(mRot);
 	glm::mat4 res = glm::mat4_cast(mRot);
 	mRight.x = res[0][0];
@@ -209,13 +210,4 @@ void Camera::Rotate(glm::vec3 _rotation)
 	mDirection.x = res[0][2];
 	mDirection.y = res[1][2];
 	mDirection.z = res[2][2];
-}
-//----------------------------------------------------------------------------
-void RTGI::Camera::RotateUpFixed(glm::vec3 _rotation)
-{
-	auto up = glm::vec3(0,1,0);
-	Rotate(_rotation);
-	mRight = glm::cross(up, mDirection);
-	mUp = glm::cross(mDirection, mRight);
-	int i = 0;
 }
