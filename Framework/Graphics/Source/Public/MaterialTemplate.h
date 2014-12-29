@@ -21,6 +21,7 @@ class MaterialTemplate : public RefObject
 {
 public:
 	MaterialTemplate();
+	MaterialTemplate(Technique* _pTechnique);
 	~MaterialTemplate();
 
 	void AddTechnique(Technique* technique);

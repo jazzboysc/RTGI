@@ -47,6 +47,32 @@ struct ShaderProgramInfo
     unsigned char ShaderStageFlag;
 
     ShaderProgramInfo(){ ShaderStageFlag = ShaderType::ST_Unknown; }
+
+	ShaderProgramInfo& operator+=(const char* _shaderName)
+	{
+		std::string shaderName = _shaderName;
+		std::transform(shaderName.begin(), shaderName.end(), shaderName.begin(),
+			::tolower);
+		auto size = shaderName.size();
+		auto fileExt = std::string(&shaderName.c_str()[size - 4]);
+		if (fileExt == "vert")
+		{
+			VShaderFileName = shaderName;
+			ShaderStageFlag |= ShaderType::ST_Vertex;
+		}
+		else if (fileExt == "frag")
+		{
+			FShaderFileName = shaderName;
+			ShaderStageFlag |= ShaderType::ST_Fragment;
+		}
+		else if (fileExt == "geom")
+		{
+			FShaderFileName = shaderName;
+			ShaderStageFlag |= ShaderType::ST_Geometry;
+		}
+		return *this;
+	}
+
 };
 
 //----------------------------------------------------------------------------

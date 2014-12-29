@@ -11,6 +11,12 @@ using namespace RTGI;
 MaterialTemplate::MaterialTemplate()
 {
 }
+
+RTGI::MaterialTemplate::MaterialTemplate(Technique* _pTechnique)
+{
+	AddTechnique(_pTechnique);
+}
+
 //----------------------------------------------------------------------------
 MaterialTemplate::~MaterialTemplate()
 {

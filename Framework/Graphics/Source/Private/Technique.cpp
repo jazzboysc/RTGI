@@ -11,6 +11,12 @@ using namespace RTGI;
 Technique::Technique()
 {
 }
+
+RTGI::Technique::Technique(Pass* _pPass)
+{
+	AddPass(_pPass);
+}
+
 //----------------------------------------------------------------------------
 Technique::~Technique()
 {
