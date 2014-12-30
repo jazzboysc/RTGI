@@ -11,6 +11,8 @@
 namespace RTGI
 {
 
+#define RTGI_VPLGenerator_VPLBuffer_Name "VPLBuffer"
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/29/2014

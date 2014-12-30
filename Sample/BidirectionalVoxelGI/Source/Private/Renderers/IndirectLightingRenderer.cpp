@@ -65,18 +65,18 @@ void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
     ClearInputDependency();
 
     view.BindingSlot = 0;
-    AddInputDependency(gbuffer, "Position", &view);
+    AddInputDependency(gbuffer, RTGI_GBuffer_Position_Name, &view);
 
     view.BindingSlot = 1;
-    AddInputDependency(gbuffer, "Normal", &view);
+    AddInputDependency(gbuffer, RTGI_GBuffer_Normal_Name, &view);
 
     view.BindingSlot = 2;
-    AddInputDependency(gbuffer, "Albedo", &view);
+    AddInputDependency(gbuffer, RTGI_GBuffer_Albedo_Name, &view);
 
     view.Type = RDT_StructuredBuffer;
     view.BindingType = BF_BindIndex;
     view.BindingSlot = 0;
-    AddInputDependency(vplBuffer, "VPLBuffer", &view);
+    AddInputDependency(vplBuffer, RTGI_VPLGenerator_VPLBuffer_Name, &view);
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, int height,

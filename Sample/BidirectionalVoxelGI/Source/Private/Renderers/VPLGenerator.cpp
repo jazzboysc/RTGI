@@ -102,8 +102,8 @@ void VPLGenerator::Initialize(GPUDevice* device, int vplCount)
 
     // Create VPL buffer.
     GLuint vplBufferSize = (sizeof(vec4) * 3 + sizeof(mat4)) * mVPLCount;
-    AddGenericBufferTarget("VPLBuffer", RDT_StructuredBuffer, vplBufferSize, 
-        BU_Dynamic_Copy, BF_BindIndex, 0);
+    AddGenericBufferTarget(RTGI_VPLGenerator_VPLBuffer_Name, 
+        RDT_StructuredBuffer, vplBufferSize, BU_Dynamic_Copy, BF_BindIndex, 0);
 
     // Create VPL sample compute tasks.
     ShaderProgramInfo sampleRSMProgramInfo;
