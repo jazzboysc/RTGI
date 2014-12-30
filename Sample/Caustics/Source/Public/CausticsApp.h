@@ -1,5 +1,6 @@
 #pragma once
 #include "CausticsTriMesh.h"
+#include "CausticsCube.h"
 #include "CausticsScreenQuad.h"
 namespace RTGI
 {
@@ -43,7 +44,7 @@ private:
 	TextureCubePtr mCubeMap;
 
 	CausticsTriMeshPtr mGround;
-	CausticsTriMeshPtr mPool;
+	CausticsCubePtr mPool;
 	CausticsTriMeshPtr mMesh;
 	CausticsScreenQuadPtr mCausticsScreenQuad;
 

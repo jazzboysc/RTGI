@@ -7,6 +7,7 @@ varying vec4 vPositionView;
 varying vec4 vNormalView;
 varying vec4 vPositionWorld;
 varying vec4 vNormalWorld;
+varying vec3 pTCoord;
 
 uniform mat4 World;
 uniform mat4 View;
@@ -16,7 +17,10 @@ void main()
 {
 	vNormalView = View * World * vec4(vNormal, 0.0);
 	vNormalWorld = World * vec4(vNormal, 0.0);
+
 	vPositionView = View * World * vPosition;
 	vPositionWorld = World * vPosition;
+
     gl_Position =  Proj * vPositionView;
+	pTCoord = vPosition.xyz;
 }

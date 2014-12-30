@@ -17,12 +17,16 @@ CausticsApp::~CausticsApp()
 //----------------------------------------------------------------------------
 void CausticsApp::Initialize(GPUDevice* device)
 {
+	//glEnable(GL_DEPTH_TEST);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glFrontFace(GL_CW);
+
 	// Create camera and light
-	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 1.0f, 100.0f);
-	mMainCamera->SetLookAt(vec3(1.70f, 5.87f, 16.71f), vec3(0.0f, 0.0f, 0.0f),
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 2.0f, 50.0f);
+	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 5.0f), vec3(0.0f, 10.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 	mLight = new Light;
-	mLight->SetLocation(vec3(0.0f, 10.0f, 5.0f));
+	mLight->SetLocation(vec3(0.0f, 10.0f, 0.0f));
 
 	ShaderProgramInfo SICaustics;
 	SICaustics += "Caustics/causticsDeferredLighting.vert";
@@ -49,6 +53,11 @@ void CausticsApp::Initialize(GPUDevice* device)
 	gbufferProgramInfo += "Caustics/GBuffer.vert";
 	gbufferProgramInfo += "Caustics/GBuffer.frag";
 	auto mtGBuffer = new MaterialTemplate(new Technique(new Pass(gbufferProgramInfo)));
+
+	ShaderProgramInfo gbufferCubeProgramInfo;
+	gbufferCubeProgramInfo += "Caustics/GBufferCube.vert";
+	gbufferCubeProgramInfo += "Caustics/GBufferCube.frag";
+	auto mtGBufferCube = new MaterialTemplate(new Technique(new Pass(gbufferCubeProgramInfo)));
 
 	mGround = new CausticsTriMesh(new Material(mtGBuffer), mMainCamera);
 	mGround->LoadFromFile("ground.ply");
@@ -86,11 +95,14 @@ void CausticsApp::Initialize(GPUDevice* device)
 		"Textures/pool/front.bmp",
 		"Textures/pool/back.bmp");
 
-	mPool = new CausticsTriMesh(new Material(mtGBuffer), mMainCamera);
+	mPool = new CausticsCube(new Material(mtGBufferCube), mMainCamera);
 	mPool->LoadFromFile("cube.ply");
 	mPool->GenerateNormals();
 	mPool->CreateDeviceResource(mDevice);
+	mPool->SetWorldTranslation(vec3(0.0f, 10.0f, 0.0f));
+	mPool->SetWorldScale(vec3(1, -1, 1));
 	mPool->MaterialColor = vec3(1.5, 1.5, 1.5);
+	mPool->CubeTexture = mCubeMap;
 //	Error |= !PoolSkyCubeMap.LoadTextureCubeMap(PoolSkyCubeMapFileNames);
 
 	// ------------------------------------------------------------------------------------------------------------------------

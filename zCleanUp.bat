@@ -1,7 +1,8 @@
 del *.sln
 del *.lnk
 
-@rmdir /s /q CMake
+for /d %%a in ("PortableCMake*") do (rmdir /s /q %%~fa)
+@rmdir /s /q Purify
 @rmdir /s /q Build
 
 cd Binaries/
@@ -11,3 +12,5 @@ del *.dll
 @rmdir /s /q Libraries
 @rmdir /s /q Shaders
 cd ../
+
+@rmdir /q Binaries
