@@ -20,6 +20,7 @@ public:
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 
 	vec3 MaterialColor;
+	Texture2DPtr Texture;
 
 private:
 	ShaderUniform mMaterialColorLoc;

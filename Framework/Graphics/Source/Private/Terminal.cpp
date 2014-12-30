@@ -27,6 +27,11 @@ enum FG_COLOR
 //----------------------------------------------------------------------------
 BOOL SetTextColor(const FG_COLOR color)
 {
+	HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
+	DWORD mode;
+	GetConsoleMode(hConsole, &mode);
+	SetConsoleMode(hConsole, mode & ~ENABLE_MOUSE_INPUT | ENABLE_PROCESSED_INPUT);
+
     HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo(handle, &info);

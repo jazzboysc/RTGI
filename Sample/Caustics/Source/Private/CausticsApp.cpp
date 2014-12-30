@@ -62,7 +62,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 	vec2 tcoord10(1.0f, 0.0f);
 	vec2 tcoord11(1.0f, 1.0f);
 
-	// Create direct lighting screen quad.
+	// Create screen quad.
 	Material* mat = new Material(mtCaustics);
 	mCausticsScreenQuad = new CausticsScreenQuad(mat, mMainCamera);
 	mCausticsScreenQuad->LoadFromFile("screenquad.ply");
@@ -73,12 +73,39 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mCausticsScreenQuad->CreateDeviceResource(mDevice);
 	mCausticsScreenQuad->PositionTexture = mPositionTexture;
 	mCausticsScreenQuad->NormalTexture = mNormalTexture;
-	mCausticsScreenQuad->ColorTexture = mColorTexture;
+	mCausticsScreenQuad->ReflectanceTexture = mColorTexture;
+
+	mCausticsScreenQuad->Light = mLight;
+
+	auto mCubeMap = new TextureCube();
+	mCubeMap->LoadFromFile(
+		"Textures/pool/right.bmp",
+		"Textures/pool/left.bmp",
+		"Textures/pool/bottom.bmp",
+		"Textures/pool/top.bmp",
+		"Textures/pool/front.bmp",
+		"Textures/pool/back.bmp");
+
+	mPool = new CausticsTriMesh(new Material(mtGBuffer), mMainCamera);
+	mPool->LoadFromFile("cube.ply");
+	mPool->GenerateNormals();
+	mPool->CreateDeviceResource(mDevice);
+	mPool->MaterialColor = vec3(1.5, 1.5, 1.5);
+//	Error |= !PoolSkyCubeMap.LoadTextureCubeMap(PoolSkyCubeMapFileNames);
+
+	// ------------------------------------------------------------------------------------------------------------------------
+
+// 	Error |= !WaterAddDropProgram.Load("wateradddrop.vs", "wateradddrop.fs");
+// 	Error |= !WaterHeightMapProgram.Load("waterheightmap.vs", "waterheightmap.fs");
+// 	Error |= !WaterNormalMapProgram.Load("waternormalmap.vs", "waternormalmap.fs");
+// 	Error |= !PoolSkyProgram.Load("poolsky.vs", "poolsky.fs");
+// 	Error |= !WaterProgram.Load("water.vs", "water.fs");
 }
 //----------------------------------------------------------------------------
 void CausticsApp::DrawScene()
 {
 	mGround->Render(0, 0);
+	mPool->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void CausticsApp::FrameFunc()

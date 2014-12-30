@@ -40,7 +40,10 @@ private:
 	Texture2DPtr mColorTexture;
 	Texture2DPtr mDepthTexture;
 
+	TextureCubePtr mCubeMap;
+
 	CausticsTriMeshPtr mGround;
+	CausticsTriMeshPtr mPool;
 	CausticsTriMeshPtr mMesh;
 	CausticsScreenQuadPtr mCausticsScreenQuad;
 

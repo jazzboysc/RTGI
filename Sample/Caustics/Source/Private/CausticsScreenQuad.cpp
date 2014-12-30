@@ -13,14 +13,15 @@ CausticsScreenQuad::~CausticsScreenQuad()
 {
 	PositionTexture = 0;
 	NormalTexture = 0;
-	ColorTexture = 0;
-	DirectLightingTexture = 0;
-	RandomTexture = 0;
-	EnvMapTexture = 0;
+	ReflectanceTexture = 0;
 }
 //----------------------------------------------------------------------------
 void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 {
+	vec3 lightLoc = Light->GetLocation();
+	mLightPositionLoc.SetValue(lightLoc);
+	mLightColorLoc.SetValue(Light->Color);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, PositionTexture->GetTexture());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -36,7 +37,7 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, ColorTexture->GetTexture());
+	glBindTexture(GL_TEXTURE_2D, ReflectanceTexture->GetTexture());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -44,7 +45,7 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
     mPositionSamplerLoc.SetValue(0);
     mNormalSamplerLoc.SetValue(1);
-    mColorSamplerLoc.SetValue(2);
+    mReflectanceSamplerLoc.SetValue(2);
 }
 //----------------------------------------------------------------------------
 void CausticsScreenQuad::OnGetShaderConstants()
@@ -53,8 +54,10 @@ void CausticsScreenQuad::OnGetShaderConstants()
 
 	ShaderProgram* program = mMaterial->GetProgram(0, 0);
 
+	program->GetUniformLocation(&mLightPositionLoc, "lightPosition");
+	program->GetUniformLocation(&mLightColorLoc, "lightColor");
     program->GetUniformLocation(&mPositionSamplerLoc, "positionSampler");
     program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
-    program->GetUniformLocation(&mColorSamplerLoc, "colorSampler");
+    program->GetUniformLocation(&mReflectanceSamplerLoc, "reflectanceSampler");
 }
 //----------------------------------------------------------------------------
