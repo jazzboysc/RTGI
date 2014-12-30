@@ -9,19 +9,22 @@ cmake_minimum_required( VERSION 2.8 )
 SET( CMakeScriptRepo "https://github.com/piaoasd123/CMake.git" )
 # Grab CMake Script
 # Requires Git.exe added to system path
-find_package(Git)
-if(GIT_FOUND)
-	message(STATUS "Git Executable: ${GIT_EXECUTABLE}")
-	message(STATUS "CMake Script: ${CMakeScriptRepo}")
-	if(EXISTS ${CMAKE_SOURCE_DIR}/CMake/)
-		execute_process(COMMAND ${GIT_EXECUTABLE}
-			"pull" ${CMakeScriptRepo}
-			WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/CMake/")
-	else()
-		execute_process(COMMAND ${GIT_EXECUTABLE}
-			"clone" ${CMakeScriptRepo}
-			WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
-	endif()
+if(WIN32)
+	set(githint "$ENV{APPDATA}/../Local/Github/PortableGit*/bin")
+	file( TO_CMAKE_PATH ${githint} githint )
+	file(GLOB GitPath "${githint}/git.exe")
+	set(Terminal $ENV{ComSpec})
+endif()
+message(STATUS "Git Executable: ${GIT_EXECUTABLE}")
+message(STATUS "CMake Script: ${CMakeScriptRepo}")
+if(EXISTS ${CMAKE_SOURCE_DIR}/CMake/)
+	execute_process(COMMAND ${Terminal}								#  |
+		"/c" ${GitPath} "pull" ${CMakeScriptRepo}					#  |
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/CMake/")				#  |
+else()																#  |
+	execute_process(COMMAND ${Terminal}								#  |
+		"/c" ${GitPath} "clone" ${CMakeScriptRepo}					#  |
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")					#  |
 endif()
 # Set module path
 if(IS_DIRECTORY "${CMAKE_SOURCE_DIR}/../CMake")
