@@ -19,7 +19,9 @@ DirectLightingQuad::~DirectLightingQuad()
 //----------------------------------------------------------------------------
 void DirectLightingQuad::OnUpdateShaderConstants(int, int)
 {
-    vec3 lightLoc = mLight->GetLocation();
+	TriangleMesh::OnUpdateShaderConstants(0, 0);
+
+	vec3 lightLoc = mLight->GetLocation();
     mLightPositionLoc.SetValue(lightLoc);
     mLightColorLoc.SetValue(mLight->Color);
 
@@ -45,6 +47,8 @@ void DirectLightingQuad::OnUpdateShaderConstants(int, int)
 //----------------------------------------------------------------------------
 void DirectLightingQuad::OnGetShaderConstants()
 {
+	TriangleMesh::OnGetShaderConstants();
+
 	ShaderProgram* program = mMaterial->GetProgram(0, 0);
     program->GetUniformLocation(&mLightPositionLoc, "lightPosition");
     program->GetUniformLocation(&mLightColorLoc, "lightColor");

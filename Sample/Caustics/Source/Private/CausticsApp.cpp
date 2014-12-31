@@ -17,16 +17,17 @@ CausticsApp::~CausticsApp()
 //----------------------------------------------------------------------------
 void CausticsApp::Initialize(GPUDevice* device)
 {
-	//glEnable(GL_DEPTH_TEST);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glFrontFace(GL_CW);
-
+	glEnable(GL_DEPTH_TEST);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glFrontFace(GL_CCW);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	// Create camera and light
 	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 2.0f, 50.0f);
-	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 5.0f), vec3(0.0f, 10.0f, 0.0f),
+	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 	mLight = new Light;
-	mLight->SetLocation(vec3(0.0f, 10.0f, 0.0f));
+	mLight->SetLocation(vec3(0.0f, 0.0f, 0.0f));
 
 	ShaderProgramInfo SICaustics;
 	SICaustics += "Caustics/causticsDeferredLighting.vert";
@@ -88,20 +89,20 @@ void CausticsApp::Initialize(GPUDevice* device)
 
 	auto mCubeMap = new TextureCube();
 	mCubeMap->LoadFromFile(
-		"Textures/pool/right.bmp",
-		"Textures/pool/left.bmp",
-		"Textures/pool/bottom.bmp",
-		"Textures/pool/top.bmp",
-		"Textures/pool/front.bmp",
-		"Textures/pool/back.bmp");
+		"Textures/pool.bmp",
+		"Textures/pool.bmp",
+		"Textures/pool.bmp",
+		"Textures/pool.bmp",
+		"Textures/pool.bmp",
+		"Textures/pool.bmp");
 
 	mPool = new CausticsCube(new Material(mtGBufferCube), mMainCamera);
 	mPool->LoadFromFile("cube.ply");
 	mPool->GenerateNormals();
 	mPool->CreateDeviceResource(mDevice);
-	mPool->SetWorldTranslation(vec3(0.0f, 10.0f, 0.0f));
+	//mPool->SetWorldTranslation(vec3(0.0f, 10.0f, 0.0f));
 	mPool->SetWorldScale(vec3(1, -1, 1));
-	mPool->MaterialColor = vec3(1.5, 1.5, 1.5);
+	mPool->MaterialColor = vec3(1, 1, 1);
 	mPool->CubeTexture = mCubeMap;
 //	Error |= !PoolSkyCubeMap.LoadTextureCubeMap(PoolSkyCubeMapFileNames);
 

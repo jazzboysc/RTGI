@@ -9,6 +9,10 @@ uniform sampler2D positionSampler;
 uniform sampler2D normalSampler;
 uniform sampler2D reflectanceSampler;
 
+uniform mat4 World;
+uniform mat4 View;
+uniform mat4 Proj;
+
 void main()
 {
 	vec3 position = texture2D(positionSampler, pTCoord).rgb;
@@ -18,7 +22,9 @@ void main()
 
 	vec3 reflectance = texture2D(reflectanceSampler, pTCoord).rgb;
 
-	vec3 lightDir = lightPosition - position;
+	vec3 ViewLightPosition = (View * World * vec4(lightPosition, 1.0)).xyz;
+
+	vec3 lightDir = ViewLightPosition - position;
 	float lightDistance = length(lightDir);
 	lightDir = lightDir / lightDistance;
 

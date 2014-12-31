@@ -4,8 +4,8 @@ attribute vec4 vPosition;
 attribute vec3 vNormal;
 
 varying vec4 vPositionView;
-varying vec4 vNormalView;
 varying vec4 vPositionWorld;
+varying vec4 vNormalView;
 varying vec4 vNormalWorld;
 varying vec3 pTCoord;
 
@@ -15,11 +15,11 @@ uniform mat4 Proj;
 
 void main()
 {
-	vNormalView = View * World * vec4(vNormal, 0.0);
 	vNormalWorld = World * vec4(vNormal, 0.0);
+	vNormalView = View * World * vec4(vNormal, 0.0);
 
-	vPositionView = View * World * vPosition;
 	vPositionWorld = World * vPosition;
+	vPositionView = View * vPositionWorld;
 
     gl_Position =  Proj * vPositionView;
 	pTCoord = vPosition.xyz;

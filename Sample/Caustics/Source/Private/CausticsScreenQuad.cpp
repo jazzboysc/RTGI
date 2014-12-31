@@ -18,6 +18,8 @@ CausticsScreenQuad::~CausticsScreenQuad()
 //----------------------------------------------------------------------------
 void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 {
+	TriangleMesh::OnUpdateShaderConstants(technique, pass);
+
 	vec3 lightLoc = Light->GetLocation();
 	mLightPositionLoc.SetValue(lightLoc);
 	mLightColorLoc.SetValue(Light->Color);

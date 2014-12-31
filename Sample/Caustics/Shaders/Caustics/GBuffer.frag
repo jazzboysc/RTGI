@@ -1,9 +1,9 @@
 #version 120
 
 varying vec4 vPositionView;
+varying vec4 vPositionWorld;
 varying vec4 vNormalView;
 varying vec4 vNormalWorld;
-varying vec4 vPositionWorld;
 
 uniform vec3 materialColor;
 

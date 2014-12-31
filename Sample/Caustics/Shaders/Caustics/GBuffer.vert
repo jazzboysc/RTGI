@@ -4,8 +4,8 @@ attribute vec4 vPosition;
 attribute vec3 vNormal;
 
 varying vec4 vPositionView;
-varying vec4 vNormalView;
 varying vec4 vPositionWorld;
+varying vec4 vNormalView;
 varying vec4 vNormalWorld;
 
 uniform mat4 World;
