@@ -5,8 +5,11 @@
 build/
 Binaries/Libraries/*
 Binaries/Shaders/*
+Purify/
 CMake/
+PortableCMake-Win32/
 *.exe
+*.dll
 *.ilk
 *.meta
 *.obj
