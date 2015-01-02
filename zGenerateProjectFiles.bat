@@ -23,13 +23,13 @@ rem ## Find Purify or clone from Git
 IF NOT EXIST %~dp0\Purify (
 		echo Purify is cloning itself from GitHub...
 		echo.
-		%Git% clone https://github.com/piaoasd123/CMake.git Purify
+		"%Git%" clone https://github.com/piaoasd123/CMake.git Purify
 		echo.
 ) else (
 		echo Purify is updating...
 		echo.
 		pushd %~dp0\Purify\
-		1>Nul %Git% pull https://github.com/piaoasd123/CMake.git
+		1>Nul "%Git%" pull https://github.com/piaoasd123/CMake.git
 		popd
 		echo.
 )
@@ -69,7 +69,7 @@ call "%VsComnToolsPath%/../../VC/bin/x86_amd64/vcvarsx86_amd64.bat" >NUL
 echo Purify is setting up project files...
 2>NUL mkdir Build
 pushd %~dp0\Build
-1>NUL 2>NUL %CMakePath% -G %CMakeArg% %~dp0
+1>Nul 2>Nul "%CMakePath%" -G %CMakeArg% %~dp0
 popd
 
 rem ## Generate Solution icon

@@ -17,21 +17,17 @@ if(WIN32)
 endif()
 message(STATUS "Git Executable: ${GIT_EXECUTABLE}")
 message(STATUS "CMake Script: ${CMakeScriptRepo}")
-if(EXISTS ${CMAKE_SOURCE_DIR}/CMake/)
-	execute_process(COMMAND ${Terminal}								#  |
-		"/c" ${GitPath} "pull" ${CMakeScriptRepo}					#  |
-		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/CMake/")				#  |
+if(EXISTS ${CMAKE_SOURCE_DIR}/Purify/)
+	#execute_process(COMMAND ${Terminal}								#  |
+	#	"/c" ${GitPath} "pull" ${CMakeScriptRepo}					#  |
+	#	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Purify/")			#  |
 else()																#  |
-	execute_process(COMMAND ${Terminal}								#  |
-		"/c" ${GitPath} "clone" ${CMakeScriptRepo}					#  |
-		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")					#  |
+	#execute_process(COMMAND ${Terminal}								#  |
+	#	"/c" ${GitPath} "clone" ${CMakeScriptRepo}					#  |
+	#	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")					#  |
 endif()
 # Set module path
-if(IS_DIRECTORY "${CMAKE_SOURCE_DIR}/../CMake")
-	set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMake")
-else()
-	set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake")
-endif()
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Purify")
 message(STATUS "CMake Path: ${CMAKE_MODULE_PATH}")
 
 # Include all modules
