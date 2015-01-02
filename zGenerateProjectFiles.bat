@@ -35,7 +35,7 @@ IF NOT EXIST %~dp0\Purify (
 )
 
 rem ## Find Visual Studio 2013 Full & Express
-:FindVS2013
+:FindVS2015
 pushd %~dp0\Purify\BatchFiles
 call GetVSComnToolsPath 14
 popd
