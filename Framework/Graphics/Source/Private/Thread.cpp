@@ -37,7 +37,7 @@
  */
 
 #include <stdio.h>
-#include "R3/thread.h"
+#include "thread.h"
 
 using namespace r3;
 
