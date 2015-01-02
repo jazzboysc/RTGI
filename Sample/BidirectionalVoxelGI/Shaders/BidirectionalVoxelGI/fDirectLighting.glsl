@@ -25,9 +25,10 @@ void main()
 
     vec4 MaterialColor = texture(GBufferAlbedoSampler, pTCoord);
 
+    // Compare with shadow map bias.
     bool skipShadow = false;
     vec4 viewPos = LightProjectorView * PositionWorld;
-    if( viewPos.z > 0.0 )
+    if( viewPos.z > -0.05 )
     {
         skipShadow = true;
     }

@@ -27,10 +27,12 @@ public:
     virtual void OnGetShaderConstants();
 
     int VPLCount;
+    int PatternSize;
     float BounceSingularity;
 
 private:
     ShaderUniform mVPLCountLoc;
+    ShaderUniform mPatternSizeLoc;
     ShaderUniform mBounceSingularityLoc;
     ShaderUniform mGBufferPositionSamplerLoc;
     ShaderUniform mGBufferNormalSamplerLoc;
@@ -50,7 +52,7 @@ public:
     virtual ~IndirectLightingRenderer();
 
     void Initialize(GPUDevice* device, int width, int height, Texture::TextureFormat format,
-        int vplCount);
+        int vplCount, int patternSize);
     void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer);
     void Render();
 

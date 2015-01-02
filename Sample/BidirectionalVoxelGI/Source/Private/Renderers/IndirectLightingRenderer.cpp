@@ -17,6 +17,7 @@ IndirectLightingScreenQuad::~IndirectLightingScreenQuad()
 void IndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 {
     mVPLCountLoc.SetValue(VPLCount);
+    mPatternSizeLoc.SetValue(PatternSize);
     mBounceSingularityLoc.SetValue(BounceSingularity);
     mGBufferPositionSamplerLoc.SetValue(0);
     mGBufferNormalSamplerLoc.SetValue(1);
@@ -28,6 +29,7 @@ void IndirectLightingScreenQuad::OnGetShaderConstants()
     ShaderProgram* program = mMaterial->GetProgram(0, 0);
 
     program->GetUniformLocation(&mVPLCountLoc, "VPLCount");
+    program->GetUniformLocation(&mPatternSizeLoc, "PatternSize");
     program->GetUniformLocation(&mBounceSingularityLoc, "BounceSingularity");
     program->GetUniformLocation(&mGBufferPositionSamplerLoc, "GBufferPositionSampler");
     program->GetUniformLocation(&mGBufferNormalSamplerLoc, "GBufferNormalSampler");
@@ -80,7 +82,7 @@ void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, int height,
-    Texture::TextureFormat format, int vplCount)
+    Texture::TextureFormat format, int vplCount, int patternSize)
 {
     ShaderProgramInfo indirectLightingProgramInfo;
     indirectLightingProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vIndirectLighting.glsl";
@@ -103,6 +105,7 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, int heig
     mIndirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mIndirectLightingScreenQuad->CreateDeviceResource(device);
     mIndirectLightingScreenQuad->VPLCount = vplCount;
+    mIndirectLightingScreenQuad->PatternSize = patternSize;
 
     // Create output.
     AddFrameBufferTarget(RTGI_IndirectLightingRenderer_IndirectLighting_Name,

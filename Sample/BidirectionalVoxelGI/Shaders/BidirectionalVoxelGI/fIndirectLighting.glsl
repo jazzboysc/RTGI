@@ -5,6 +5,7 @@ in vec2 pTCoord;
 #define PI 3.141593
 
 uniform int VPLCount;
+uniform int PatternSize;
 uniform float BounceSingularity;
 uniform sampler2D GBufferPositionSampler;
 uniform sampler2D GBufferNormalSampler;
@@ -36,10 +37,14 @@ void main()
 
     vec4 MaterialColor = texture(GBufferAlbedoSampler, pTCoord);
 
+    int patternIndex = int(gl_FragCoord.x) % PatternSize + (int(gl_FragCoord.y) % PatternSize) * PatternSize;
+    int sampleVPLCount = VPLCount / (PatternSize*PatternSize);
+    int vplBufferIndex = sampleVPLCount * patternIndex;
+
     vec3 indirectColor = vec3(0.0, 0.0, 0.0);
-    for( int i = 0; i < VPLCount; ++i )
+    for( int i = 0; i < sampleVPLCount; ++i )
     {
-        VPL vpl = VPLBuffer.vpls[i];
+        VPL vpl = VPLBuffer.vpls[vplBufferIndex + i];
         vpl.WorldNormal = vpl.WorldNormal*2.0 - 1.0;
 
         vec3 incidentDir = PositionWorld.xyz - vpl.WorldPosition.xyz;

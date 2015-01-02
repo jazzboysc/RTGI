@@ -28,7 +28,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     glEnable(GL_CULL_FACE);
     
     // Create scene camera.
-	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 0.01f, 50.0f);
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 0.01f, 150.0f);
 	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 33.2f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
@@ -110,12 +110,14 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     // Create direct lighting renderer.
     mDirectLightingRenderer = new DirectLightingRenderer();
     mDirectLightingRenderer->SetInputs(mGBufferRenderer, mShadowMapRenderer);
-    mDirectLightingRenderer->Initialize(mDevice, Width, Height, Texture::TF_RGBAF, mLightProjector);
+    mDirectLightingRenderer->Initialize(mDevice, Width, Height, Texture::TF_RGBAF, 
+        mLightProjector);
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer();
     mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator);
-    mIndirectLightingRenderer->Initialize(mDevice, Width, Height, Texture::TF_RGBAF, VPL_SAMPLE_COUNT);
+    mIndirectLightingRenderer->Initialize(mDevice, Width, Height, Texture::TF_RGBAF, 
+        VPL_SAMPLE_COUNT, INTERLEAVED_PATTERN_SIZE);
 
     // Create visualizer.
     mVisualizer = new Visualizer();
@@ -248,6 +250,9 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Direct Lighting Pass", 16, infoStartY);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddTimingLabel("Indirect Lighting Pass", 16, infoStartY);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddTimingLabel("Total", 16, infoStartY);
+
     infoStartY = 20;
     InformationPanel::GetInstance()->AddRadioButton("Voxel Buffer", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
@@ -297,42 +302,53 @@ void BidirectionalVoxelGIApp::FrameFunc()
     }
 
     InformationPanel^ infoPanel = InformationPanel::GetInstance();
-    static double workLoad = 0.0;
+    static double workLoad;
+    static double totalWorkLoad;
+    totalWorkLoad = 0.0;
 
     // Scene voxelization pass.
     mVoxelizer->Render(0, SMP_Voxelization);
     workLoad = mVoxelizer->GetTimeElapsed();
+    totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Scene Voxelization Pass", workLoad);
 
     // Scene shadow pass.
     mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);
     workLoad = mShadowMapRenderer->GetTimeElapsed();
+    totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Scene Shadow Pass", workLoad);
 
     // Scene G-buffer pass.
     mGBufferRenderer->Render(0, SMP_GBuffer, mMainCamera);
     workLoad = mGBufferRenderer->GetTimeElapsed();
+    totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Scene G-buffer Pass", workLoad);
 
     // Scene light RSM pass.
     mRSMRenderer->Render(0, SMP_RSM, 0);
     workLoad = mRSMRenderer->GetTimeElapsed();
+    totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("RSM Pass", workLoad);
 
     // Sample RSM pass (VPL generation).
     mVPLGenerator->Run();
     workLoad = mTimer->GetTimeElapsed();
+    totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("VPL Creation Pass", workLoad);
 
     // Deferred direct illumination pass.
     mDirectLightingRenderer->Render();
     workLoad = mTimer->GetTimeElapsed();
+    totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Direct Lighting Pass", workLoad);
 
     // Deferred indirect illumination pass.
     mIndirectLightingRenderer->Render();
     workLoad = mTimer->GetTimeElapsed();
+    totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Indirect Lighting Pass", workLoad);
+
+    infoPanel->SetTimingLabelValue("Total", totalWorkLoad);
 
     // Show rendering result.
     mVisualizer->Render(0, 0);
