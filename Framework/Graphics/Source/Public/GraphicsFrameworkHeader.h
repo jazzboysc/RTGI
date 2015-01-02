@@ -15,6 +15,7 @@
 // TODO: move this somewhere else
 // Timer
 #include "Timer.h"
+#include "Thread.h"
 
 // Textures
 #include "bmpread.h"
