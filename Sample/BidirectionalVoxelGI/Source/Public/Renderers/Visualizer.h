@@ -53,12 +53,19 @@ public:
 
     Texture2DPtr TempTexture;
     Texture2DPtr TempTexture2;
+    Texture2DPtr GBufferPositionTexture;
+    Texture2DPtr GBufferNormalTexture;
+    Texture2DPtr GBufferAlbedoTexture;
     Texture2DArrayPtr TempTextureArray;
     int ShowMode;
     int TextureArrayIndex;
     AABB* SceneBB;
     StructuredBufferPtr VoxelBuffer;
     int VoxelGridDim;
+    float PositionThreshold;
+    float NormalThreshold;
+    float MaxRadiance;
+    int KernelSize;
 
 private:
     ShaderUniform mShowModeLoc;
@@ -69,6 +76,13 @@ private:
     ShaderUniform mSceneBBMinLoc;
     ShaderUniform mSceneBBExtensionLoc;
     ShaderUniform mDimLoc;
+    ShaderUniform mPositionSamplerLoc;
+    ShaderUniform mNormalSamplerLoc;
+    ShaderUniform mColorSamplerLoc;
+    ShaderUniform mPositionThresholdLoc;
+    ShaderUniform mNormalThresholdLoc;
+    ShaderUniform mMaxRadianceLoc;
+    ShaderUniform mKernelSizeLoc;
 };
 
 typedef RefPointer<VisualizerScreenQuad> VisualizerScreenQuadPtr;
@@ -113,6 +127,7 @@ public:
         SM_RSMFlux,
         SM_DirectLighting,
         SM_IndirectLighting,
+        SM_FilteredIndirectLighting,
         SM_Final
     };
 

@@ -48,6 +48,9 @@ VisualizerScreenQuad::~VisualizerScreenQuad()
 {
     TempTexture = 0;
     TempTexture2 = 0;
+    GBufferPositionTexture = 0;
+    GBufferNormalTexture = 0;
+    GBufferAlbedoTexture = 0;
     TempTextureArray = 0;
     VoxelBuffer = 0;
 }
@@ -91,6 +94,44 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
     }
 
+    mPositionSamplerLoc.SetValue(3);
+    if( GBufferPositionTexture )
+    {
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, GBufferPositionTexture->GetTexture());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    }
+
+    mNormalSamplerLoc.SetValue(4);
+    if( GBufferNormalTexture )
+    {
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, GBufferNormalTexture->GetTexture());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    }
+
+    mColorSamplerLoc.SetValue(5);
+    if( GBufferAlbedoTexture )
+    {
+        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_2D, GBufferAlbedoTexture->GetTexture());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    }
+
+    mPositionThresholdLoc.SetValue(PositionThreshold);
+    mNormalThresholdLoc.SetValue(NormalThreshold);
+    mMaxRadianceLoc.SetValue(MaxRadiance);
+    mKernelSizeLoc.SetValue(KernelSize);
+
     if( SceneBB )
     {
         mSceneBBMinLoc.SetValue(SceneBB->Min);
@@ -114,6 +155,13 @@ void VisualizerScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
     program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
     program->GetUniformLocation(&mDimLoc, "dim");
+    program->GetUniformLocation(&mPositionSamplerLoc, "positionSampler");
+    program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
+    program->GetUniformLocation(&mColorSamplerLoc, "colorSampler");
+    program->GetUniformLocation(&mPositionThresholdLoc, "positionThreshold");
+    program->GetUniformLocation(&mNormalThresholdLoc, "normalThreshold");
+    program->GetUniformLocation(&mMaxRadianceLoc, "maxRadiance");
+    program->GetUniformLocation(&mKernelSizeLoc, "kernelSize");
 }
 //----------------------------------------------------------------------------
 
@@ -280,6 +328,13 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mScreenQuad->SceneBB = sceneBB;
     mScreenQuad->VoxelBuffer = mVoxelBuffer;
     mScreenQuad->VoxelGridDim = voxelGridDim;
+    mScreenQuad->GBufferPositionTexture = mGBufferPositionTexture;
+    mScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;
+    mScreenQuad->GBufferAlbedoTexture = mGBufferAlbedoTexture;
+    mScreenQuad->PositionThreshold = 5.5f;
+    mScreenQuad->NormalThreshold = 0.3f;
+    mScreenQuad->MaxRadiance = 4.5f;
+    mScreenQuad->KernelSize = 2;
 
     SetShowMode(SM_Final);
 }
@@ -371,6 +426,11 @@ void Visualizer::SetShowMode(ShowMode mode)
 
     case SM_IndirectLighting:
         mScreenQuad->ShowMode = 0;
+        mScreenQuad->TempTexture = mIndirectLightingTexture;
+        break;
+
+    case SM_FilteredIndirectLighting:
+        mScreenQuad->ShowMode = 5;
         mScreenQuad->TempTexture = mIndirectLightingTexture;
         break;
 

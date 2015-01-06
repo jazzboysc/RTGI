@@ -276,6 +276,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("Indirect Lighting", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddRadioButton("Filtered Indirect Lighting", 16, infoStartY, 60, 20, false);
+    infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("Final Result", 16, infoStartY, 60, 20, true);
 }
 //----------------------------------------------------------------------------
@@ -452,6 +454,11 @@ void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^  sender, System
     if( radioButton->Name == "Indirect Lighting" )
     {
         mVisualizer->SetShowMode(Visualizer::SM_IndirectLighting);
+    }
+
+    if( radioButton->Name == "Filtered Indirect Lighting" )
+    {
+        mVisualizer->SetShowMode(Visualizer::SM_FilteredIndirectLighting);
     }
 
     if( radioButton->Name == "Final Result" )
