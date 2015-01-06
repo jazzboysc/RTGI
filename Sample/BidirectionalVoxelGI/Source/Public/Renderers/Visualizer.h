@@ -55,7 +55,6 @@ public:
     Texture2DPtr TempTexture2;
     Texture2DPtr GBufferPositionTexture;
     Texture2DPtr GBufferNormalTexture;
-    Texture2DPtr GBufferAlbedoTexture;
     Texture2DArrayPtr TempTextureArray;
     int ShowMode;
     int TextureArrayIndex;
@@ -78,7 +77,6 @@ private:
     ShaderUniform mDimLoc;
     ShaderUniform mPositionSamplerLoc;
     ShaderUniform mNormalSamplerLoc;
-    ShaderUniform mColorSamplerLoc;
     ShaderUniform mPositionThresholdLoc;
     ShaderUniform mNormalThresholdLoc;
     ShaderUniform mMaxRadianceLoc;

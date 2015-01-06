@@ -50,7 +50,6 @@ VisualizerScreenQuad::~VisualizerScreenQuad()
     TempTexture2 = 0;
     GBufferPositionTexture = 0;
     GBufferNormalTexture = 0;
-    GBufferAlbedoTexture = 0;
     TempTextureArray = 0;
     VoxelBuffer = 0;
 }
@@ -116,17 +115,6 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     }
 
-    mColorSamplerLoc.SetValue(5);
-    if( GBufferAlbedoTexture )
-    {
-        glActiveTexture(GL_TEXTURE5);
-        glBindTexture(GL_TEXTURE_2D, GBufferAlbedoTexture->GetTexture());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    }
-
     mPositionThresholdLoc.SetValue(PositionThreshold);
     mNormalThresholdLoc.SetValue(NormalThreshold);
     mMaxRadianceLoc.SetValue(MaxRadiance);
@@ -157,7 +145,6 @@ void VisualizerScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mDimLoc, "dim");
     program->GetUniformLocation(&mPositionSamplerLoc, "positionSampler");
     program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
-    program->GetUniformLocation(&mColorSamplerLoc, "colorSampler");
     program->GetUniformLocation(&mPositionThresholdLoc, "positionThreshold");
     program->GetUniformLocation(&mNormalThresholdLoc, "normalThreshold");
     program->GetUniformLocation(&mMaxRadianceLoc, "maxRadiance");
@@ -330,7 +317,6 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mScreenQuad->VoxelGridDim = voxelGridDim;
     mScreenQuad->GBufferPositionTexture = mGBufferPositionTexture;
     mScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;
-    mScreenQuad->GBufferAlbedoTexture = mGBufferAlbedoTexture;
     mScreenQuad->PositionThreshold = 5.5f;
     mScreenQuad->NormalThreshold = 0.3f;
     mScreenQuad->MaxRadiance = 4.5f;

@@ -33,7 +33,6 @@ uniform sampler2D tempSampler2;
 uniform sampler2DArray tempSamplerArray;
 uniform sampler2D positionSampler;
 uniform sampler2D normalSampler;
-uniform sampler2D colorSampler;
 
 ivec3 GetIndex(vec3 worldPosition)
 {
@@ -70,7 +69,6 @@ void main()
         vec3 position = texture2D(positionSampler, pTCoord).rgb;
         vec3 normal = texture2D(normalSampler, pTCoord).rgb;
         normal = normal*2.0 - 1.0;
-        vec3 color = texture2D(colorSampler, pTCoord).rgb;
 
         vec2 textureSize = textureSize2D(positionSampler, 0);
         vec2 invTextureSize = 1.0 / textureSize;
@@ -162,7 +160,6 @@ void main()
         vec3 position = texture2D(positionSampler, pTCoord).rgb;
         vec3 normal = texture2D(normalSampler, pTCoord).rgb;
         normal = normal*2.0 - 1.0;
-        vec3 color = texture2D(colorSampler, pTCoord).rgb;
 
         vec2 textureSize = textureSize2D(positionSampler, 0);
         vec2 invTextureSize = 1.0 / textureSize;
