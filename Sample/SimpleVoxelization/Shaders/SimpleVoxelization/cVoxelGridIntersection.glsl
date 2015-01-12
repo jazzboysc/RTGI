@@ -106,17 +106,17 @@ void main()
     vec3 RayDirection = RayEndPoint - RayStartPoint;
     float maxT = length(RayDirection);
     RayDirection = RayDirection / maxT;
-    vec3 gridIntersect = RayStartPoint;
+    vec3 gridIntersect = RayStartPoint + RayDirection*0.05*maxT;
     vec3 voxelExtension = 2.0*SceneBBExtension / dim;
 
     // Debug RayDirection, voxelExtension, maxT.
-    indirectCommandBuffer.reserved5 = float(RayDirection[0]);
-    indirectCommandBuffer.reserved6 = float(RayDirection[1]);
-    indirectCommandBuffer.reserved7 = float(RayDirection[2]);
-    indirectCommandBuffer.reserved8 = float(voxelExtension[0]);
-    indirectCommandBuffer.reserved9 = float(voxelExtension[1]);
-    indirectCommandBuffer.reserved10 = float(voxelExtension[2]);
-    indirectCommandBuffer.reserved11 = maxT;
+    //indirectCommandBuffer.reserved5 = float(RayDirection[0]);
+    //indirectCommandBuffer.reserved6 = float(RayDirection[1]);
+    //indirectCommandBuffer.reserved7 = float(RayDirection[2]);
+    //indirectCommandBuffer.reserved8 = float(voxelExtension[0]);
+    //indirectCommandBuffer.reserved9 = float(voxelExtension[1]);
+    //indirectCommandBuffer.reserved10 = float(voxelExtension[2]);
+    //indirectCommandBuffer.reserved11 = maxT;
 
     // Set up 3D DDA for ray.
     vec3 NextCrossingT, DeltaT;
@@ -127,12 +127,12 @@ void main()
     CurPos = StartPos;
 
     // Debug StartPos, EndPos.
-    indirectCommandBuffer.reserved12 = float(StartPos[0]);
-    indirectCommandBuffer.reserved13 = float(StartPos[1]);
-    indirectCommandBuffer.reserved14 = float(StartPos[2]);
-    indirectCommandBuffer.reserved15 = float(EndPos[0]);
-    indirectCommandBuffer.reserved16 = float(EndPos[1]);
-    indirectCommandBuffer.reserved17 = float(EndPos[2]);
+    //indirectCommandBuffer.reserved12 = float(StartPos[0]);
+    //indirectCommandBuffer.reserved13 = float(StartPos[1]);
+    //indirectCommandBuffer.reserved14 = float(StartPos[2]);
+    //indirectCommandBuffer.reserved15 = float(EndPos[0]);
+    //indirectCommandBuffer.reserved16 = float(EndPos[1]);
+    //indirectCommandBuffer.reserved17 = float(EndPos[2]);
 
     vec3 tempWorldPosition;
     for( int axis = 0; axis < 3; ++axis )
@@ -201,10 +201,10 @@ void main()
         if( voxel.value2 == 1 )
         {
             // Debug.
-            indirectCommandBuffer.reserved18 = float(CurPos[0]);
-            indirectCommandBuffer.reserved19 = float(CurPos[1]);
-            indirectCommandBuffer.reserved20 = float(CurPos[2]);
-            indirectCommandBuffer.reserved21 = float(i);
+            //indirectCommandBuffer.reserved18 = float(CurPos[0]);
+            //indirectCommandBuffer.reserved19 = float(CurPos[1]);
+            //indirectCommandBuffer.reserved20 = float(CurPos[2]);
+            //indirectCommandBuffer.reserved21 = float(i);
 
             indirectCommandBuffer.reserved4 = 123.0;
             break;
