@@ -10,6 +10,9 @@ uniform float BounceSingularity;
 uniform sampler2D GBufferPositionSampler;
 uniform sampler2D GBufferNormalSampler;
 uniform sampler2D GBufferAlbedoSampler;
+uniform vec3 SceneBBCenter;
+uniform vec3 SceneBBExtension;
+uniform int dim;
 
 struct VPL
 {
@@ -23,6 +26,19 @@ layout(std430, binding = 0)  buffer _VPLBuffer
 {
     VPL vpls[];
 } VPLBuffer;
+
+struct Voxel
+{
+    uint value1;
+    uint value2;
+    uint value3;
+    uint value4;
+};
+
+layout(std430, binding = 1)  buffer _voxelBuffer
+{
+    Voxel data[];
+} voxelBuffer;
 
 void main()
 {

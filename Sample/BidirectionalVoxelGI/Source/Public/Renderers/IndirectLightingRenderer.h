@@ -6,6 +6,7 @@
 #include "Texture2D.h"
 #include "StructuredBuffer.h"
 #include "VPLGenerator.h"
+#include "Voxelizer.h"
 
 namespace RTGI
 {
@@ -29,6 +30,8 @@ public:
     int VPLCount;
     int PatternSize;
     float BounceSingularity;
+    AABB* SceneBB;
+    int VoxelGridDim;
 
 private:
     ShaderUniform mVPLCountLoc;
@@ -37,6 +40,9 @@ private:
     ShaderUniform mGBufferPositionSamplerLoc;
     ShaderUniform mGBufferNormalSamplerLoc;
     ShaderUniform mGBufferAlbedoSamplerLoc;
+    ShaderUniform mSceneBBCenterLoc;
+    ShaderUniform mSceneBBExtensionLoc;
+    ShaderUniform mDimLoc;
 };
 
 typedef RefPointer<IndirectLightingScreenQuad> IndirectLightingScreenQuadPtr;
@@ -51,9 +57,11 @@ public:
     IndirectLightingRenderer(RenderSet* renderSet = 0);
     virtual ~IndirectLightingRenderer();
 
-    void Initialize(GPUDevice* device, int width, int height, Texture::TextureFormat format,
-        int vplCount, int patternSize);
-    void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer);
+    void Initialize(GPUDevice* device, int width, int height, 
+        Texture::TextureFormat format, int vplCount, int patternSize, 
+        AABB* sceneBB, int voxelGridDim);
+    void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer, 
+        Voxelizer* voxelBuffer);
     void Render();
 
 private:

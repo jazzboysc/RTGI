@@ -22,6 +22,12 @@ void IndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
     mGBufferPositionSamplerLoc.SetValue(0);
     mGBufferNormalSamplerLoc.SetValue(1);
     mGBufferAlbedoSamplerLoc.SetValue(2);
+    mDimLoc.SetValue(VoxelGridDim);
+    if( SceneBB )
+    {
+        mSceneBBCenterLoc.SetValue(SceneBB->GetBoxCenter());
+        mSceneBBExtensionLoc.SetValue(SceneBB->GetExtension());
+    }
 }
 //----------------------------------------------------------------------------
 void IndirectLightingScreenQuad::OnGetShaderConstants()
@@ -34,6 +40,9 @@ void IndirectLightingScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mGBufferPositionSamplerLoc, "GBufferPositionSampler");
     program->GetUniformLocation(&mGBufferNormalSamplerLoc, "GBufferNormalSampler");
     program->GetUniformLocation(&mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
+    program->GetUniformLocation(&mSceneBBCenterLoc, "SceneBBCenter");
+    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
+    program->GetUniformLocation(&mDimLoc, "dim");
 }
 //----------------------------------------------------------------------------
 
@@ -54,7 +63,7 @@ IndirectLightingRenderer::~IndirectLightingRenderer()
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer, 
-    VPLGenerator* vplBuffer)
+    VPLGenerator* vplBuffer, Voxelizer* voxelBuffer)
 {
     RendererInputDataView view;
     view.Type = RDT_Texture;
@@ -79,10 +88,16 @@ void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
     view.BindingType = BF_BindIndex;
     view.BindingSlot = 0;
     AddInputDependency(vplBuffer, RTGI_VPLGenerator_VPLBuffer_Name, &view);
+
+    view.Type = RDT_StructuredBuffer;
+    view.BindingType = BF_BindIndex;
+    view.BindingSlot = 1;
+    AddInputDependency(voxelBuffer, RTGI_Voxelizer_VoxelBuffer_Name, &view);
 }
 //----------------------------------------------------------------------------
-void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, int height,
-    Texture::TextureFormat format, int vplCount, int patternSize)
+void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, 
+    int height, Texture::TextureFormat format, int vplCount, int patternSize, 
+    AABB* sceneBB, int voxelGridDim)
 {
     ShaderProgramInfo indirectLightingProgramInfo;
     indirectLightingProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vIndirectLighting.glsl";
@@ -106,6 +121,8 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, int heig
     mIndirectLightingScreenQuad->CreateDeviceResource(device);
     mIndirectLightingScreenQuad->VPLCount = vplCount;
     mIndirectLightingScreenQuad->PatternSize = patternSize;
+    mIndirectLightingScreenQuad->SceneBB = sceneBB;
+    mIndirectLightingScreenQuad->VoxelGridDim = voxelGridDim;
 
     // Create output.
     AddFrameBufferTarget(RTGI_IndirectLightingRenderer_IndirectLighting_Name,

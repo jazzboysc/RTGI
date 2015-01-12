@@ -115,9 +115,9 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer();
-    mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator);
+    mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator, mVoxelizer);
     mIndirectLightingRenderer->Initialize(mDevice, Width, Height, Texture::TF_RGBAF, 
-        VPL_SAMPLE_COUNT, INTERLEAVED_PATTERN_SIZE);
+        VPL_SAMPLE_COUNT, INTERLEAVED_PATTERN_SIZE, &mSceneBB, VOXEL_DIMENSION);
 
     // Create visualizer.
     mVisualizer = new Visualizer();
