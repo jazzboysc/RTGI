@@ -6,6 +6,7 @@ uniform mat4 LightProjectorView;
 uniform vec3 LightPositionWorld;
 uniform vec3 LightColor;
 uniform vec2 LightProjectorNearFar;
+uniform bool ShowShadow;
 
 uniform sampler2D GBufferPositionSampler;
 uniform sampler2D GBufferNormalSampler;
@@ -45,7 +46,7 @@ void main()
     texCoords = texCoords*0.5 + 0.5;
     float depth = texture(ShadowMapSampler, texCoords).r;
 
-    if( currDepth - depth > 0.01 && !skipShadow )
+    if( currDepth - depth > 0.01 && !skipShadow && ShowShadow )
     {
         // Shadow.
         gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0);

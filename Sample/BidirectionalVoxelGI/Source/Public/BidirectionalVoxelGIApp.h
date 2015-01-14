@@ -48,6 +48,7 @@ private:
     GBufferRendererPtr mGBufferRenderer;
 
     // Scene shadow map.
+    bool mShowShadow;
     ShadowMapRendererPtr mShadowMapRenderer;
 
     // Direct lighting.
@@ -65,7 +66,7 @@ private:
 
     // VPL stuff.
     enum { INTERLEAVED_PATTERN_SIZE = 2 };
-    enum { VPL_SAMPLE_COUNT = 256 };
+    enum { VPL_SAMPLE_COUNT = 512 };
 
     // Visualizer.
     VisualizerPtr mVisualizer;

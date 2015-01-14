@@ -25,6 +25,7 @@ public:
 
     Camera* LightProjector;
     vec3 LightColor;
+    bool ShowShadow;
 
 private:
     ShaderUniform mGBufferPositionSamplerLoc;
@@ -35,6 +36,7 @@ private:
     ShaderUniform mLightPositionWorldLoc;
     ShaderUniform mLightColorLoc;
     ShaderUniform mLightProjectorNearFarLoc;
+    ShaderUniform mShowShadow;
 };
 
 typedef RefPointer<DirectLightingScreenQuad> DirectLightingScreenQuadPtr;
@@ -53,6 +55,8 @@ public:
         Camera* LightProjector);
     void SetInputs(GBufferRenderer* gbuffer, ShadowMapRenderer* shadowMap);
     void Render();
+
+    void ShowShadow(bool value);
 
 private:
     PipelineStateBlockPtr mPSB;

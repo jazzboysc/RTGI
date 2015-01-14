@@ -118,7 +118,7 @@ void main()
             result.rgb = radiance.rgb / float((2 * kernelSize + 1) * (2 * kernelSize + 1));    // simple average if weightSum == 0
         }
 
-        result += texture(tempSampler2, pTCoord);
+        result = result + texture(tempSampler2, pTCoord);
 
         // Simple gamma tone mapper.
         float greyRadiance = max(0.001, 0.3 * result.r + 0.6 * result.g + 0.1 * result.b);

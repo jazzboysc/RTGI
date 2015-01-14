@@ -71,7 +71,9 @@ bool VoxelGridIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
     vec3 RayDirection = rayEndPoint - rayStartPoint;
     float maxT = length(RayDirection);
     RayDirection = RayDirection / maxT;
-    vec3 gridIntersect = rayStartPoint + RayDirection*0.05*maxT;
+    // Avoid self-intersection.
+    vec3 gridIntersect = rayStartPoint + RayDirection*0.125*maxT;
+    rayEndPoint = rayEndPoint - RayDirection*0.125*maxT;
     vec3 voxelExtension = 2.0*SceneBBExtension / dim;
 
     // Set up 3D DDA for ray.

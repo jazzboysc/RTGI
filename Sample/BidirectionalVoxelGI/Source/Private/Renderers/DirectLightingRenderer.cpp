@@ -8,6 +8,7 @@ DirectLightingScreenQuad::DirectLightingScreenQuad(Material* material)
     ScreenQuad(material, 0)
 {
     LightColor = vec3(0.9686f, 0.9333f, 0.8392f)*0.8f;
+    ShowShadow = true;
 }
 //----------------------------------------------------------------------------
 DirectLightingScreenQuad::~DirectLightingScreenQuad()
@@ -35,6 +36,7 @@ void DirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
         mLightProjectorNearFarLoc.SetValue(nearFarPlane);
     }
     mLightColorLoc.SetValue(LightColor);
+    mShowShadow.SetValue(ShowShadow);
 }
 //----------------------------------------------------------------------------
 void DirectLightingScreenQuad::OnGetShaderConstants()
@@ -49,6 +51,7 @@ void DirectLightingScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
     program->GetUniformLocation(&mLightColorLoc, "LightColor");
     program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
+    program->GetUniformLocation(&mShowShadow, "ShowShadow");
 }
 //----------------------------------------------------------------------------
 
@@ -129,5 +132,10 @@ void DirectLightingRenderer::Render()
 {
     SubRenderer::RenderSingle(mDirectLightingScreenQuad, 0, 0, 
         SRO_FrameBuffer, mPSB, 0);
+}
+//----------------------------------------------------------------------------
+void DirectLightingRenderer::ShowShadow(bool value)
+{
+    mDirectLightingScreenQuad->ShowShadow = value;
 }
 //----------------------------------------------------------------------------

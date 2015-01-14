@@ -13,6 +13,7 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	Title = "Bidirectional Voxel GI";
     mIsRotatingModel = false;
     mIsWireframe = false;
+    mShowShadow = true;
 }
 //----------------------------------------------------------------------------
 BidirectionalVoxelGIApp::~BidirectionalVoxelGIApp()
@@ -391,6 +392,11 @@ void BidirectionalVoxelGIApp::ProcessInput()
 	{
 		mIsWireframe = !mIsWireframe;
 	}
+    if( glfwGetKey(Window, GLFW_KEY_Y) == GLFW_PRESS )
+    {
+        mShowShadow = !mShowShadow;
+        mDirectLightingRenderer->ShowShadow(mShowShadow);
+    }
 }
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e)
