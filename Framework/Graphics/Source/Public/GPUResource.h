@@ -45,6 +45,10 @@ struct ShaderUniformHandle : public GPUResource
 {
 };
 
+struct TextureHandle : public GPUResource
+{
+};
+
 }
 
 #endif

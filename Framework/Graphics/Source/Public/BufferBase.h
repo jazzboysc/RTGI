@@ -6,8 +6,8 @@
 #ifndef RTGI_BufferBase_H
 #define RTGI_BufferBase_H
 
-
 #include "RefObject.h"
+#include "GPUResource.h"
 
 namespace RTGI
 {
@@ -50,12 +50,16 @@ enum FilterType
 {
     FT_Nearest = 0,
     FT_Linear,
+    FT_Nearest_Nearest,
+    FT_Linear_Nearest,
+    FT_Nearest_Linear,
+    FT_Linear_Linear,
     FT_Max
 };
 
 enum WrapType
 {
-    WT_Clamp =  0,
+    WT_Clamp = 0,
     WT_Repeat,
     WT_Max
 };
@@ -64,6 +68,7 @@ struct SamplerDesc
 {
     FilterType MinFilter;
     FilterType MagFilter;
+    FilterType MipMap;
     WrapType WrapS;
     WrapType WrapT;
 };
