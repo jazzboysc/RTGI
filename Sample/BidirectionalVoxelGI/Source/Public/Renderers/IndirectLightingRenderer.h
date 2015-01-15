@@ -32,6 +32,7 @@ public:
     float BounceSingularity;
     AABB* SceneBB;
     int VoxelGridDim;
+    bool VPLVisibilityTest;
 
 private:
     ShaderUniform mVPLCountLoc;
@@ -43,6 +44,7 @@ private:
     ShaderUniform mSceneBBCenterLoc;
     ShaderUniform mSceneBBExtensionLoc;
     ShaderUniform mDimLoc;
+    ShaderUniform mVPLVisibilityTestLoc;
 };
 
 typedef RefPointer<IndirectLightingScreenQuad> IndirectLightingScreenQuadPtr;
@@ -63,6 +65,8 @@ public:
     void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer, 
         Voxelizer* voxelBuffer);
     void Render();
+
+    void VPLVisibilityTest(bool value);
 
 private:
     PipelineStateBlockPtr mPSB;

@@ -18,11 +18,9 @@ layout(std430, binding = 0)  buffer _voxelBuffer
 
 uniform int ShowMode;
 uniform int TextureArrayIndex;
-
 uniform vec3 SceneBBMin;
 uniform vec3 SceneBBExtension;
 uniform int dim;
-
 uniform float positionThreshold;
 uniform float normalThreshold;
 uniform float maxRadiance;

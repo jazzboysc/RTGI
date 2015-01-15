@@ -68,6 +68,23 @@ namespace RTGI {
                 groupBoxUserInputs->Controls->Add(radioButton);
             }
 
+            void AddCheckBox(String^ checkBoxName, int x, int y, int width, int height, bool checked)
+            {
+                CheckBox^ checkBox = gcnew CheckBox();
+
+                checkBox->AutoSize = true;
+                checkBox->Location = System::Drawing::Point(x, y);
+                checkBox->Name = checkBoxName;
+                checkBox->Size = System::Drawing::Size(width, height);
+                checkBox->TabIndex = 0;
+                checkBox->Text = checkBoxName;
+                checkBox->UseVisualStyleBackColor = true;
+                checkBox->Checked = checked;
+                checkBox->Click += gcnew System::EventHandler(this, &InformationPanel::checkBox_Click);
+
+                groupBoxUserInputs->Controls->Add(checkBox);
+            }
+
             void AddTimingLabel(String^ labelName, int x, int y)
             {
                 Label^ label = gcnew Label();
@@ -191,6 +208,7 @@ namespace RTGI {
         private: System::Windows::Forms::GroupBox^  groupBoxWorkloadTiming;
         private: System::Windows::Forms::GroupBox^  groupBoxUserInputs;
 private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
+private: System::Windows::Forms::CheckBox^  checkBox1;
 
 
 
@@ -218,44 +236,59 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
                 this->groupBoxWorkloadTiming = (gcnew System::Windows::Forms::GroupBox());
                 this->groupBoxUserInputs = (gcnew System::Windows::Forms::GroupBox());
                 this->groupBoxDebugOutputs = (gcnew System::Windows::Forms::GroupBox());
+                this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+                this->groupBoxUserInputs->SuspendLayout();
                 this->SuspendLayout();
                 // 
                 // groupBoxWorkloadTiming
                 // 
-                this->groupBoxWorkloadTiming->Location = System::Drawing::Point(12, 12);
+                this->groupBoxWorkloadTiming->Location = System::Drawing::Point(12, 11);
                 this->groupBoxWorkloadTiming->Name = L"groupBoxWorkloadTiming";
-                this->groupBoxWorkloadTiming->Size = System::Drawing::Size(214, 339);
+                this->groupBoxWorkloadTiming->Size = System::Drawing::Size(214, 313);
                 this->groupBoxWorkloadTiming->TabIndex = 0;
                 this->groupBoxWorkloadTiming->TabStop = false;
                 this->groupBoxWorkloadTiming->Text = L"Workload Timing (ms):";
                 // 
                 // groupBoxUserInputs
                 // 
-                this->groupBoxUserInputs->Location = System::Drawing::Point(12, 357);
+                this->groupBoxUserInputs->Controls->Add(this->checkBox1);
+                this->groupBoxUserInputs->Location = System::Drawing::Point(12, 330);
                 this->groupBoxUserInputs->Name = L"groupBoxUserInputs";
-                this->groupBoxUserInputs->Size = System::Drawing::Size(214, 392);
+                this->groupBoxUserInputs->Size = System::Drawing::Size(214, 420);
                 this->groupBoxUserInputs->TabIndex = 1;
                 this->groupBoxUserInputs->TabStop = false;
                 this->groupBoxUserInputs->Text = L"User Inputs :";
                 // 
                 // groupBoxDebugOutputs
                 // 
-                this->groupBoxDebugOutputs->Location = System::Drawing::Point(232, 12);
+                this->groupBoxDebugOutputs->Location = System::Drawing::Point(232, 11);
                 this->groupBoxDebugOutputs->Name = L"groupBoxDebugOutputs";
-                this->groupBoxDebugOutputs->Size = System::Drawing::Size(214, 737);
+                this->groupBoxDebugOutputs->Size = System::Drawing::Size(214, 739);
                 this->groupBoxDebugOutputs->TabIndex = 2;
                 this->groupBoxDebugOutputs->TabStop = false;
                 this->groupBoxDebugOutputs->Text = L"Debug Outputs :";
                 // 
+                // checkBox1
+                // 
+                this->checkBox1->AutoSize = true;
+                this->checkBox1->Location = System::Drawing::Point(47, 76);
+                this->checkBox1->Name = L"checkBox1";
+                this->checkBox1->Size = System::Drawing::Size(78, 16);
+                this->checkBox1->TabIndex = 0;
+                this->checkBox1->Text = L"checkBox1";
+                this->checkBox1->UseVisualStyleBackColor = true;
+                // 
                 // InformationPanel
                 // 
-                this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+                this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
                 this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-                this->ClientSize = System::Drawing::Size(459, 761);
+                this->ClientSize = System::Drawing::Size(459, 762);
                 this->Controls->Add(this->groupBoxDebugOutputs);
                 this->Controls->Add(this->groupBoxUserInputs);
                 this->Controls->Add(this->groupBoxWorkloadTiming);
                 this->Name = L"InformationPanel";
+                this->groupBoxUserInputs->ResumeLayout(false);
+                this->groupBoxUserInputs->PerformLayout();
                 this->ResumeLayout(false);
 
             }
@@ -271,6 +304,12 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
             {
                 (*mListeners)[i]->OnRadioButtonClick(sender, e);
             }
+        }
+        private: System::Void checkBox_Click(System::Object^  sender, System::EventArgs^  e) {
+             for( int i = 0; i < (int)mListeners->size(); ++i )
+             {
+                 (*mListeners)[i]->OnCheckBoxClick(sender, e);
+             }
         }
 };
     }

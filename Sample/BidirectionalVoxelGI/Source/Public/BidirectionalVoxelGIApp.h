@@ -29,7 +29,8 @@ public:
 	void ProcessInput() override;
 	void FrameFunc() override;
 	void Terminate() override;
-    void OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e);
+    void OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e) override;
+    void OnCheckBoxClick(System::Object^  sender, System::EventArgs^  e) override;
 
 private:
     friend class SceneMesh;
@@ -48,7 +49,6 @@ private:
     GBufferRendererPtr mGBufferRenderer;
 
     // Scene shadow map.
-    bool mShowShadow;
     ShadowMapRendererPtr mShadowMapRenderer;
 
     // Direct lighting.

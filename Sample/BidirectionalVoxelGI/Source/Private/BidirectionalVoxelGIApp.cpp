@@ -13,7 +13,6 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	Title = "Bidirectional Voxel GI";
     mIsRotatingModel = false;
     mIsWireframe = false;
-    mShowShadow = true;
 }
 //----------------------------------------------------------------------------
 BidirectionalVoxelGIApp::~BidirectionalVoxelGIApp()
@@ -280,6 +279,10 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddRadioButton("Filtered Indirect Lighting", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("Final Result", 16, infoStartY, 60, 20, true);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddCheckBox("VPL Visibility Test", 16, infoStartY, 60, 20, true);
 }
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::FrameFunc()
@@ -392,14 +395,9 @@ void BidirectionalVoxelGIApp::ProcessInput()
 	{
 		mIsWireframe = !mIsWireframe;
 	}
-    if( glfwGetKey(Window, GLFW_KEY_Y) == GLFW_PRESS )
-    {
-        mShowShadow = !mShowShadow;
-        mDirectLightingRenderer->ShowShadow(mShowShadow);
-    }
 }
 //----------------------------------------------------------------------------
-void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e)
+void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^ sender, System::EventArgs^ e)
 {
     RadioButton^ radioButton = (RadioButton^)sender;
     if( !mVisualizer )
@@ -470,6 +468,31 @@ void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^  sender, System
     if( radioButton->Name == "Final Result" )
     {
         mVisualizer->SetShowMode(Visualizer::SM_Final);
+    }
+}
+//----------------------------------------------------------------------------
+void BidirectionalVoxelGIApp::OnCheckBoxClick(System::Object^ sender, System::EventArgs^ e)
+{
+    CheckBox^ checkBox = (CheckBox^)sender;
+
+    if( checkBox->Name == "Show Direct Shadow" )
+    {
+        if( !mDirectLightingRenderer )
+        {
+            return;
+        }
+
+        mDirectLightingRenderer->ShowShadow(checkBox->Checked);
+    }
+
+    if( checkBox->Name == "VPL Visibility Test" )
+    {
+        if( !mIndirectLightingRenderer )
+        {
+            return;
+        }
+
+        mIndirectLightingRenderer->VPLVisibilityTest(checkBox->Checked);
     }
 }
 //----------------------------------------------------------------------------

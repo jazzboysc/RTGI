@@ -13,6 +13,7 @@ uniform sampler2D GBufferAlbedoSampler;
 uniform vec3 SceneBBCenter;
 uniform vec3 SceneBBExtension;
 uniform int dim;
+uniform bool VPLVisibilityTest;
 
 struct VPL
 {
@@ -162,10 +163,14 @@ void main()
     for( int i = 0; i < sampleVPLCount; ++i )
     {
         VPL vpl = VPLBuffer.vpls[vplBufferIndex + i];
-        bool isInShadow = VoxelGridIntersectionTest(PositionWorld.xyz, vpl.WorldPosition.xyz);
-        if( isInShadow )
+
+        if( VPLVisibilityTest )
         {
-            continue;
+            bool isInShadow = VoxelGridIntersectionTest(PositionWorld.xyz, vpl.WorldPosition.xyz);
+            if( isInShadow )
+            {
+                continue;
+            }
         }
 
         vpl.WorldNormal = vpl.WorldNormal*2.0 - 1.0;

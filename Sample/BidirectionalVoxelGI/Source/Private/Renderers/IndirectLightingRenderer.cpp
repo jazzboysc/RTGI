@@ -8,6 +8,7 @@ IndirectLightingScreenQuad::IndirectLightingScreenQuad(Material* material)
     ScreenQuad(material, 0)
 {
     BounceSingularity = 60.0f;
+    VPLVisibilityTest = true;
 }
 //----------------------------------------------------------------------------
 IndirectLightingScreenQuad::~IndirectLightingScreenQuad()
@@ -28,6 +29,7 @@ void IndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
         mSceneBBCenterLoc.SetValue(SceneBB->GetBoxCenter());
         mSceneBBExtensionLoc.SetValue(SceneBB->GetExtension());
     }
+    mVPLVisibilityTestLoc.SetValue(VPLVisibilityTest);
 }
 //----------------------------------------------------------------------------
 void IndirectLightingScreenQuad::OnGetShaderConstants()
@@ -43,6 +45,7 @@ void IndirectLightingScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mSceneBBCenterLoc, "SceneBBCenter");
     program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
     program->GetUniformLocation(&mDimLoc, "dim");
+    program->GetUniformLocation(&mVPLVisibilityTestLoc, "VPLVisibilityTest");
 }
 //----------------------------------------------------------------------------
 
@@ -134,5 +137,10 @@ void IndirectLightingRenderer::Render()
 {
     SubRenderer::RenderSingle(mIndirectLightingScreenQuad, 0, 0,
         SRO_FrameBuffer, mPSB, 0);
+}
+//----------------------------------------------------------------------------
+void IndirectLightingRenderer::VPLVisibilityTest(bool value)
+{
+    mIndirectLightingScreenQuad->VPLVisibilityTest = value;
 }
 //----------------------------------------------------------------------------
