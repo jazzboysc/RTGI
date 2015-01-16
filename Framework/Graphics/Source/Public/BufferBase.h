@@ -27,7 +27,7 @@ enum RendererDataType
 
 enum BindingFlag
 {
-    BF_Bindless       = 0,
+    BF_Bindless = 0,
     BF_Bind,
     BF_BindIndex,
     BF_BindToIndirect,
@@ -37,13 +37,21 @@ enum BindingFlag
 
 enum BufferUsage
 {
-    BU_Static_Read     = 0,
+    BU_Static_Read = 0,
     BU_Static_Copy,
     BU_Static_Draw,
     BU_Dynamic_Read,
     BU_Dynamic_Copy,
     BU_Dynamic_Draw,
     BU_Max
+};
+
+enum BufferAccess
+{
+    BA_Read_Only = 0,
+    BA_Write_Only,
+    BA_Read_Write,
+    BA_Max
 };
 
 enum FilterType

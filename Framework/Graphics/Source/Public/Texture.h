@@ -13,6 +13,54 @@
 namespace RTGI
 {
 
+enum TextureFormat
+{
+    TF_Unknown = -1,
+    TF_RGB,
+    TF_RGBA,
+    TF_RGBF,
+    TF_RGBAF,
+    TF_R32UI,
+    TF_R32F,
+    TF_Depth,
+    TF_Max
+};
+
+enum TextureInternalFormat
+{
+    TIF_Unknown = -1,
+    TIF_RGB8,
+    TIF_RGBA8,
+    TIF_RGB32F,
+    TIF_RGBA32F,
+    TIF_RGB16F,
+    TIF_RGBA16F,
+    TIF_R32UI,
+    TIF_R32F,
+    TIF_Depth24,
+    TIF_Max
+};
+
+enum TextureComponentType
+{
+    TCT_Unknown = -1,
+    TCT_Unsigned_Byte,
+    TCT_Unsigned_Int,
+    TCT_Float,
+    TCT_Max
+};
+
+enum TextureType
+{
+    TT_Unknown = -1,
+    TT_Texture1D,
+    TT_Texture2D,
+    TT_Texture3D,
+    TT_TextureCube,
+    TT_Texture2DArray,
+    TT_Max
+};
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/07/2013
@@ -20,41 +68,25 @@ namespace RTGI
 class Texture : public BufferBase
 {
 public:
-    enum TextureFormat
-    {
-        TF_RGB,
-        TF_RGBA,
-        TF_RGBF,
-        TF_RGBAF,
-        TF_R32UI,
-        TF_R32F,
-        TF_Depth
-    };
-
-    enum TextureType
-    {
-        TT_Texture1D = 0,
-        TT_Texture2D,
-        TT_Texture3D,
-        TT_TextureCube,
-        TT_Texture2DArray,
-        TT_Max
-    };
-
-	Texture();
 	virtual ~Texture();
 
     bool IsRenderTarget;
     bool IsHDRTexture;
     bool IsTextureBuffer;
 
-    TextureFormat RTFormat;
-
-	GLuint GetTexture() const;
-    virtual TextureType GetType() = 0;
+    TextureHandle* GetTextureHandle() const;
+    TextureFormat GetFormat() const;
+    TextureInternalFormat GetInternalFormat() const;
+    TextureComponentType GetComponentType() const;
+    TextureType GetType() const;
 
 protected:
-	GLuint mTexture;
+    Texture();
+
+    TextureHandle* mTextureHandle;
+    TextureFormat mFormat;
+    TextureInternalFormat mInternalFormat;
+    TextureComponentType mComponentType;
     TextureType mType;
 };
 

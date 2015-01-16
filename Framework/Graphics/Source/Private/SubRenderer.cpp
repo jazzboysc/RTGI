@@ -96,8 +96,7 @@ RenderSet* SubRenderer::GetRenderSet() const
 }
 //----------------------------------------------------------------------------
 void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
-    int height, int depth, Texture::TextureType type, 
-    Texture::TextureFormat format)
+    int height, int depth, TextureType type, TextureFormat format)
 {
     assert(GetFrameBufferTargetByName(name) == 0);
     assert(GetGenericBufferTargetByName(name) == 0);
@@ -105,11 +104,11 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     BufferBase* texture = 0;
     switch( type )
     {
-    case Texture::TT_Texture2D:
+    case TT_Texture2D:
         texture = new Texture2D();
         ((Texture2D*)texture)->CreateRenderTarget(width, height, format);
         break;
-    case Texture::TT_Texture2DArray:
+    case TT_Texture2DArray:
         texture = new Texture2DArray();
         ((Texture2DArray*)texture)->CreateRenderTarget(width, height, depth, 
             format);

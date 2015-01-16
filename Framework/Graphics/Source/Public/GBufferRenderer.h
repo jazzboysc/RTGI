@@ -26,7 +26,7 @@ public:
     GBufferRenderer(RenderSet* renderSet = 0);
     virtual ~GBufferRenderer();
 
-    void CreateGBuffer(int width, int height, Texture::TextureFormat format);
+    void CreateGBuffer(int width, int height, TextureFormat format);
     void Render(int technique, int pass, Camera* camera);
 
 protected:

@@ -54,7 +54,7 @@ public:
 
     // FrameBuffer stuff.
     void AddFrameBufferTarget(const std::string& name, int width, int height, 
-        int depth, Texture::TextureType type, Texture::TextureFormat format);
+        int depth, TextureType type, TextureFormat format);
     int GetFrameBufferTargetCount() const;
     RendererOutput* GetFrameBufferTarget(int i) const;
     RendererOutput* GetFrameBufferTargetByName(const std::string& name) const;
@@ -64,7 +64,7 @@ public:
     Texture* GetDepthTexture() const;
 
     void CreateFrameBuffer(int depthWidth, int depthHeight, int depthCount,
-        Texture::TextureType depthType);
+        TextureType depthType);
 
     // GenericBuffer stuff.
     void AddGenericBufferTarget(const std::string& name, 

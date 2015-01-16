@@ -57,6 +57,12 @@ private:
     void __SetUniformValueFloat(ShaderUniform* uniform, float value);
     void __SetUniformValueFloat2(ShaderUniform* uniform, const float* value);
 
+    // Texture.
+    void __DeleteTexture(Texture* texture);
+    TextureHandle* __Texture1DLoadFromSystemMemory(Texture* texture,
+        TextureInternalFormat internalFormat, int width, TextureFormat format, 
+        TextureComponentType type, void* pixels);
+
 private:
     bool mEnable4xMsaa;
     UINT m4xMsaaQuality;

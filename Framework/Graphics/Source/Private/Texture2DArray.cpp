@@ -27,12 +27,12 @@ void Texture2DArray::CreateRenderTarget(int width, int height, int depth,
 	Height = height;
     Depth = depth;
 	IsRenderTarget = true;
-	RTFormat = format;
+	mFormat = format;
 
     glGenTextures(1, &mTexture);
     glBindTexture(GL_TEXTURE_2D_ARRAY, mTexture);
 
-	switch (RTFormat)
+	switch (mFormat)
 	{
 	case RTGI::Texture::TF_RGB:
 		// TODO:

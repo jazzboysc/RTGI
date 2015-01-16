@@ -208,12 +208,12 @@ void Texture2D::CreateRenderTarget(int width, int height,
 	Width = width;
 	Height = height;
 	IsRenderTarget = true;
-	RTFormat = format;
+	mFormat = format;
 
     glGenTextures(1, &mTexture);
     glBindTexture(GL_TEXTURE_2D, mTexture);	
 
-	switch (RTFormat)
+	switch (mFormat)
 	{
 	case RTGI::Texture2D::TF_RGB:
         mInternalFormat = GL_RGB8;

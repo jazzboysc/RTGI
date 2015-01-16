@@ -24,26 +24,20 @@ public:
 	Texture1D();
 	~Texture1D();
 
-	bool LoadFromSystemMemory(GLint internalFormat, GLsizei width, 
-		GLenum format, GLenum type, void* pixels);
+    bool LoadFromSystemMemory(GPUDevice* device, 
+        TextureInternalFormat internalFormat, int width, TextureFormat format, 
+        TextureComponentType type, void* pixels);
 
-		// Update a render target from pixel buffer.
+    // Update a render target from pixel buffer.
 	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
 
-	void BindToImageUnit(GLuint unit, GLenum access);
+	void BindToImageUnit(unsigned int unit, BufferAccess access);
 
     void CreateUniformRandomTexture(int sampleCount, int channelCount);
 
     void GetDataFromGPUMemory(void* dstData);
 
-    virtual TextureType GetType();
-
 	int Width;
-
-private:
-	GLint mInternalFormat;
-	GLenum mFormat;
-	GLenum mType;
 };
 
 typedef RefPointer<Texture1D> Texture1DPtr;

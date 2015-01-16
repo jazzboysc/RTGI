@@ -14,6 +14,37 @@ GLenum gsShaderProgramParams[SPP_Max] =
     GL_GEOMETRY_VERTICES_OUT_EXT
 };
 
+GLenum gsTextureFormat[TF_Max] =
+{
+    GL_RGB,
+    GL_RGBA,
+    GL_RGB,
+    GL_RGBA,
+    GL_RED_INTEGER,
+    GL_RED,
+    GL_DEPTH_COMPONENT
+};
+
+GLint gsTextureInternalFormat[TIF_Max] =
+{
+    GL_RGB8,
+    GL_RGBA8,
+    GL_RGB32F_ARB,
+    GL_RGBA32F_ARB,
+    GL_RGB16F_ARB,
+    GL_RGBA16F_ARB,
+    GL_R32UI,
+    GL_R32F,
+    GL_DEPTH_COMPONENT24
+};
+
+GLenum gsTextureComponentType[TCT_Max] =
+{
+    GL_UNSIGNED_BYTE,
+    GL_UNSIGNED_INT,
+    GL_FLOAT,
+};
+
 //----------------------------------------------------------------------------
 void OpenGLDevice::__Initialize(GPUDeviceDescription* deviceDesc)
 {
@@ -371,6 +402,40 @@ void OpenGLDevice::__SetUniformValueFloat2(ShaderUniform* uniform,
 #endif
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__DeleteTexture(Texture* texture)
+{
+    OpenGLTextureHandle* textureHandle = 
+        (OpenGLTextureHandle*)texture->GetTextureHandle();
+    if( textureHandle )
+    {
+        glDeleteTextures(1, &textureHandle->mTexture);
+    }
+}
+//----------------------------------------------------------------------------
+TextureHandle* OpenGLDevice::__Texture1DLoadFromSystemMemory(Texture* texture,
+    TextureInternalFormat internalFormat, int width, TextureFormat format, 
+    TextureComponentType type, void* pixels)
+{
+    OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
+    textureHandle->Device = this;
+
+    glGenTextures(1, &textureHandle->mTexture);
+    glBindTexture(GL_TEXTURE_1D, textureHandle->mTexture);
+    glTexImage1D(GL_TEXTURE_1D, 0, 
+        gsTextureInternalFormat[(int)internalFormat], width, 0, 
+        gsTextureFormat[(int)format], gsTextureComponentType[(int)type],
+        pixels);
+
+    glBindTexture(GL_TEXTURE_1D, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
+    return textureHandle;
+}
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 OpenGLDevice::OpenGLDevice()
@@ -390,6 +455,8 @@ OpenGLDevice::OpenGLDevice()
     SetUniformValueInt = (GPUDeviceSetUniformValueInt)&OpenGLDevice::__SetUniformValueInt;
     SetUniformValueFloat = (GPUDeviceSetUniformValueFloat)&OpenGLDevice::__SetUniformValueFloat;
     SetUniformValueFloat2 = (GPUDeviceSetUniformValueFloat2)&OpenGLDevice::__SetUniformValueFloat2;
+    DeleteTexture = (GPUDeviceDeleteTexture)&OpenGLDevice::__DeleteTexture;
+    Texture1DLoadFromSystemMemory = (GPUDeviceTexture1DLoadFromSystemMemory)&OpenGLDevice::__Texture1DLoadFromSystemMemory;
 
     mEnable4xMsaa = false;
     m4xMsaaQuality = 0;

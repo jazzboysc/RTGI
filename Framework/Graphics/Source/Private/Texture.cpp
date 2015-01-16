@@ -12,17 +12,42 @@ Texture::Texture()
     :
     IsRenderTarget(false),
     IsHDRTexture(false),
-    IsTextureBuffer(false)
+    IsTextureBuffer(false),
+    mTextureHandle(0),
+    mFormat(TF_Unknown),
+    mInternalFormat(TIF_Unknown),
+    mComponentType(TCT_Unknown)
 {
 }
 //----------------------------------------------------------------------------
 Texture::~Texture()
 {
-	glDeleteTextures(1, &mTexture);
+    GPU_DEVICE_FUNC(mTextureHandle->Device, DeleteTexture)(this);
+    delete mTextureHandle;
 }
 //----------------------------------------------------------------------------
-GLuint Texture::GetTexture() const
+TextureHandle* Texture::GetTextureHandle() const
 {
-	return mTexture;
+    return mTextureHandle;
+}
+//----------------------------------------------------------------------------
+TextureFormat Texture::GetFormat() const
+{
+    return mFormat;
+}
+//----------------------------------------------------------------------------
+TextureInternalFormat Texture::GetInternalFormat() const
+{
+    return mInternalFormat;
+}
+//----------------------------------------------------------------------------
+TextureComponentType Texture::GetComponentType() const
+{
+    return mComponentType;
+}
+//----------------------------------------------------------------------------
+TextureType Texture::GetType() const
+{
+    return mType;
 }
 //----------------------------------------------------------------------------

@@ -51,13 +51,18 @@ class Shader;
 class ShaderProgram;
 class PassInfo;
 class ShaderUniform;
+class Texture;
 
 struct ShaderHandle;
 struct ShaderProgramHandle;
 struct PassInfoHandle;
 struct ShaderUniformHandle;
+struct TextureHandle;
 
 enum ShaderProgramParameter;
+enum TextureInternalFormat;
+enum TextureFormat;
+enum TextureComponentType;
 
 typedef void (GPUDevice::*GPUDeviceInitialize)(GPUDeviceDescription* deviceDesc);
 typedef void (GPUDevice::*GPUDeviceTerminate)();
@@ -76,6 +81,10 @@ typedef void (GPUDevice::*GPUDeviceSetUniformValueInt)(ShaderUniform* uniform, i
 typedef void (GPUDevice::*GPUDeviceSetUniformValueFloat)(ShaderUniform* uniform, float value);
 typedef void (GPUDevice::*GPUDeviceSetUniformValueFloat2)(ShaderUniform* uniform, const float* value);
 typedef void (GPUDevice::*GPUDeviceSetProgramParameterInt)(ShaderProgram* program, ShaderProgramParameter pname, int value);
+typedef void (GPUDevice::*GPUDeviceDeleteTexture)(Texture* texture);
+typedef TextureHandle* (GPUDevice::*GPUDeviceTexture1DLoadFromSystemMemory)(
+    Texture* texture, TextureInternalFormat internalFormat, int width, 
+    TextureFormat format, TextureComponentType type, void* pixels);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -104,6 +113,8 @@ public:
     GPUDeviceSetUniformValueFloat    SetUniformValueFloat;
     GPUDeviceSetUniformValueFloat2   SetUniformValueFloat2;
     GPUDeviceSetProgramParameterInt  SetProgramParameterInt;
+    GPUDeviceDeleteTexture           DeleteTexture;
+    GPUDeviceTexture1DLoadFromSystemMemory Texture1DLoadFromSystemMemory;
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;

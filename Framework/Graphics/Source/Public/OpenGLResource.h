@@ -31,6 +31,11 @@ struct OpenGLShaderUniformHandle : public ShaderUniformHandle
     GLint mUniform;
 };
 
+struct OpenGLTextureHandle : public TextureHandle
+{
+    GLuint mTexture;
+};
+
 }
 
 #endif
