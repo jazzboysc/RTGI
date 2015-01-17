@@ -16,6 +16,8 @@ namespace RTGI
 enum TextureFormat
 {
     TF_Unknown = -1,
+    TF_R,
+    TF_RG,
     TF_RGB,
     TF_RGBA,
     TF_RGBF,
@@ -37,6 +39,7 @@ enum TextureInternalFormat
     TIF_RGBA16F,
     TIF_R32UI,
     TIF_R32F,
+    TIF_RG32F,
     TIF_Depth24,
     TIF_Max
 };

@@ -16,6 +16,8 @@ GLenum gsShaderProgramParams[SPP_Max] =
 
 GLenum gsTextureFormat[TF_Max] =
 {
+    GL_R,
+    GL_RG,
     GL_RGB,
     GL_RGBA,
     GL_RGB,
@@ -35,6 +37,7 @@ GLint gsTextureInternalFormat[TIF_Max] =
     GL_RGBA16F_ARB,
     GL_R32UI,
     GL_R32F,
+    GL_RG32F,
     GL_DEPTH_COMPONENT24
 };
 

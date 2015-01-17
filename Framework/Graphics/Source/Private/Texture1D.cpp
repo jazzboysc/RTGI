@@ -50,60 +50,52 @@ void Texture1D::BindToImageUnit(unsigned int unit, BufferAccess access)
         unit, access);
 }
 //--------------------------------------------------------------------------
-void Texture1D::CreateUniformRandomTexture(int sampleCount, int channelCount)
+void Texture1D::CreateUniformRandomTexture(GPUDevice* device, 
+    int sampleCount, int channelCount)
 {
-//    Width = sampleCount;
-//    mType = GL_FLOAT;
-//
-//    switch( channelCount )
-//    {
-//    case 1:
-//        mInternalFormat = GL_R32F;
-//        mFormat = GL_R;
-//        break;
-//
-//    case 2:
-//        mInternalFormat = GL_RG32F;
-//        mFormat = GL_RG;
-//        break;
-//
-//    case 3:
-//        mInternalFormat = GL_RGB32F;
-//        mFormat = GL_RGB;
-//        break;
-//
-//    case 4:
-//        mInternalFormat = GL_RGBA32F;
-//        mFormat = GL_RGBA;
-//        break;
-//
-//    default:
-//        assert(false);
-//        break;
-//    }
-//
-//    float* pixels = new float[sampleCount * channelCount];
-//    for( int i = 0; i < sampleCount; ++i )
-//    {
-//        for( int j = 0; j < channelCount; ++j )
-//        {
-//            pixels[channelCount * i + j] = (float)UniformRandom();
-//        }
-//    }
-//
-//    glGenTextures(1, &mTexture);
-//    glBindTexture(GL_TEXTURE_1D, mTexture);
-//    glTexImage1D(GL_TEXTURE_1D, 0, mInternalFormat, sampleCount, 0, mFormat, 
-//        mType, pixels);
-//
-//    delete[] pixels;
-//
-//    glBindTexture(GL_TEXTURE_1D, 0);
-//
-//#ifdef _DEBUG
-//    GLenum res = glGetError();
-//    assert(res == GL_NO_ERROR);
-//#endif
+    Width = sampleCount;
+    mComponentType = TCT_Float;
+
+    switch( channelCount )
+    {
+    case 1:
+        mInternalFormat = TIF_R32F;
+        mFormat = TF_R;
+        break;
+
+    case 2:
+        mInternalFormat = TIF_RG32F;
+        mFormat = TF_RG;
+        break;
+
+    case 3:
+        mInternalFormat = TIF_RGB32F;
+        mFormat = TF_RGB;
+        break;
+
+    case 4:
+        mInternalFormat = TIF_RGBA32F;
+        mFormat = TF_RGBA;
+        break;
+
+    default:
+        assert(false);
+        break;
+    }
+
+    float* pixels = new float[sampleCount * channelCount];
+    for( int i = 0; i < sampleCount; ++i )
+    {
+        for( int j = 0; j < channelCount; ++j )
+        {
+            pixels[channelCount * i + j] = (float)UniformRandom();
+        }
+    }
+
+    mTextureHandle = GPU_DEVICE_FUNC(device, Texture1DLoadFromSystemMemory)(
+        this, mInternalFormat, Width, mFormat, mComponentType, pixels);
+
+    delete[] pixels;
 }
 //--------------------------------------------------------------------------
 void Texture1D::GetDataFromGPUMemory(void* dstData)

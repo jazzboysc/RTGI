@@ -33,7 +33,8 @@ public:
 
 	void BindToImageUnit(unsigned int unit, BufferAccess access);
 
-    void CreateUniformRandomTexture(int sampleCount, int channelCount);
+    void CreateUniformRandomTexture(GPUDevice* device, int sampleCount, 
+        int channelCount);
 
     void GetDataFromGPUMemory(void* dstData);
 
