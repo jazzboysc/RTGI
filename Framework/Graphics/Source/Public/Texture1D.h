@@ -29,7 +29,7 @@ public:
         TextureComponentType type, void* pixels);
 
     // Update a render target from pixel buffer.
-	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
+    void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
 
 	void BindToImageUnit(unsigned int unit, BufferAccess access);
 

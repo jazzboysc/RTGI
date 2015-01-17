@@ -42,7 +42,14 @@ GLenum gsTextureComponentType[TCT_Max] =
 {
     GL_UNSIGNED_BYTE,
     GL_UNSIGNED_INT,
-    GL_FLOAT,
+    GL_FLOAT
+};
+
+GLenum gsBufferAccess[BA_Max] =
+{
+    GL_READ_ONLY,
+    GL_WRITE_ONLY,
+    GL_READ_WRITE
 };
 
 //----------------------------------------------------------------------------
@@ -436,6 +443,85 @@ TextureHandle* OpenGLDevice::__Texture1DLoadFromSystemMemory(Texture* texture,
     return textureHandle;
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__Texture1DUpdateFromPixelBuffer(Texture* texture, 
+    PixelBuffer* pixelBuffer)
+{
+    OpenGLTextureHandle* textureHandle = 
+        (OpenGLTextureHandle*)texture->GetTextureHandle();
+    if( !textureHandle )
+    {
+        assert(false);
+        return;
+    }
+
+    GLuint buffer = pixelBuffer->GetBuffer();
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
+    glBindTexture(GL_TEXTURE_1D, textureHandle->mTexture);
+    glTexImage1D(GL_TEXTURE_1D, 0, 
+        gsTextureInternalFormat[(int)texture->GetInternalFormat()], 
+        ((Texture1D*)texture)->Width, 0, 
+        gsTextureFormat[(int)texture->GetFormat()],
+        gsTextureComponentType[(int)texture->GetComponentType()],
+    	0);
+    glBindTexture(GL_TEXTURE_1D, 0);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__TextureBindToImageUnit(Texture* texture, 
+    unsigned int unit, BufferAccess access)
+{
+#if defined(__APPLE__)
+    assert( false );
+#else
+    OpenGLTextureHandle* textureHandle =
+        (OpenGLTextureHandle*)texture->GetTextureHandle();
+    if( !textureHandle )
+    {
+        assert(false);
+        return;
+    }
+
+    glBindImageTexture(unit, textureHandle->mTexture, 0, GL_FALSE, 0, 
+        gsBufferAccess[(int)access],
+        gsTextureInternalFormat[(int)texture->GetInternalFormat()]);
+    
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+    
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture, 
+    void* dstData)
+{
+    OpenGLTextureHandle* textureHandle =
+        (OpenGLTextureHandle*)texture->GetTextureHandle();
+    if( !textureHandle )
+    {
+        assert(false);
+        return;
+    }
+
+    glBindTexture(GL_TEXTURE_1D, textureHandle->mTexture);
+    glGetTexImage(GL_TEXTURE_1D, 0, 
+        gsTextureFormat[(int)texture->GetFormat()],
+        gsTextureComponentType[(int)texture->GetComponentType()],
+        dstData);
+    glBindTexture(GL_TEXTURE_1D, 0);
+    
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 OpenGLDevice::OpenGLDevice()
@@ -457,6 +543,9 @@ OpenGLDevice::OpenGLDevice()
     SetUniformValueFloat2 = (GPUDeviceSetUniformValueFloat2)&OpenGLDevice::__SetUniformValueFloat2;
     DeleteTexture = (GPUDeviceDeleteTexture)&OpenGLDevice::__DeleteTexture;
     Texture1DLoadFromSystemMemory = (GPUDeviceTexture1DLoadFromSystemMemory)&OpenGLDevice::__Texture1DLoadFromSystemMemory;
+    Texture1DUpdateFromPixelBuffer = (GPUDeviceTexture1DUpdateFromPixelBuffer)&OpenGLDevice::__Texture1DUpdateFromPixelBuffer;
+    TextureBindToImageUnit = (GPUDeviceTextureBindToImageUnit)&OpenGLDevice::__TextureBindToImageUnit;
+    Texture1DGetDataFromGPUMemory = (GPUDeviceTexture1DGetDataFromGPUMemory)&OpenGLDevice::__Texture1DGetDataFromGPUMemory;
 
     mEnable4xMsaa = false;
     m4xMsaaQuality = 0;

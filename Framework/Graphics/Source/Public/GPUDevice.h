@@ -52,6 +52,7 @@ class ShaderProgram;
 class PassInfo;
 class ShaderUniform;
 class Texture;
+class PixelBuffer;
 
 struct ShaderHandle;
 struct ShaderProgramHandle;
@@ -63,6 +64,7 @@ enum ShaderProgramParameter;
 enum TextureInternalFormat;
 enum TextureFormat;
 enum TextureComponentType;
+enum BufferAccess;
 
 typedef void (GPUDevice::*GPUDeviceInitialize)(GPUDeviceDescription* deviceDesc);
 typedef void (GPUDevice::*GPUDeviceTerminate)();
@@ -85,6 +87,9 @@ typedef void (GPUDevice::*GPUDeviceDeleteTexture)(Texture* texture);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture1DLoadFromSystemMemory)(
     Texture* texture, TextureInternalFormat internalFormat, int width, 
     TextureFormat format, TextureComponentType type, void* pixels);
+typedef void (GPUDevice::*GPUDeviceTexture1DUpdateFromPixelBuffer)(Texture* texture, PixelBuffer* pixelBuffer);
+typedef void (GPUDevice::*GPUDeviceTextureBindToImageUnit)(Texture* texture, unsigned int unit, BufferAccess access);
+typedef void (GPUDevice::*GPUDeviceTexture1DGetDataFromGPUMemory)(Texture* texture, void* dstData);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -96,25 +101,28 @@ public:
     GPUDevice();
     ~GPUDevice();
 
-    GPUDeviceInitialize              Initialize;
-    GPUDeviceTerminate               Terminate;
-    GPUDeviceCreateShader            CreateShader;
-    GPUDeviceDeleteShader            DeleteShader;
-    GPUDeviceCreateProgram           CreateProgram;
-    GPUDeviceDeleteProgram           DeleteProgram;
-    GPUDeviceEnableProgram           EnableProgram;
-    GPUDeviceDisableProgram          DisableProgram;
-    GPUDeviceCreatePassInfo          CreatePassInfo;
-    GPUDeviceDeletePassInfo          DeletePassInfo;
-    GPUDeviceGetUniformLocation      GetUniformLocation;
-    GPUDeviceSetUniformValueMat4     SetUniformValueMat4;
-    GPUDeviceSetUniformValueVec3     SetUniformValueVec3;
-    GPUDeviceSetUniformValueInt      SetUniformValueInt;
-    GPUDeviceSetUniformValueFloat    SetUniformValueFloat;
-    GPUDeviceSetUniformValueFloat2   SetUniformValueFloat2;
-    GPUDeviceSetProgramParameterInt  SetProgramParameterInt;
-    GPUDeviceDeleteTexture           DeleteTexture;
-    GPUDeviceTexture1DLoadFromSystemMemory Texture1DLoadFromSystemMemory;
+    GPUDeviceInitialize                        Initialize;
+    GPUDeviceTerminate                         Terminate;
+    GPUDeviceCreateShader                      CreateShader;
+    GPUDeviceDeleteShader                      DeleteShader;
+    GPUDeviceCreateProgram                     CreateProgram;
+    GPUDeviceDeleteProgram                     DeleteProgram;
+    GPUDeviceEnableProgram                     EnableProgram;
+    GPUDeviceDisableProgram                    DisableProgram;
+    GPUDeviceCreatePassInfo                    CreatePassInfo;
+    GPUDeviceDeletePassInfo                    DeletePassInfo;
+    GPUDeviceGetUniformLocation                GetUniformLocation;
+    GPUDeviceSetUniformValueMat4               SetUniformValueMat4;
+    GPUDeviceSetUniformValueVec3               SetUniformValueVec3;
+    GPUDeviceSetUniformValueInt                SetUniformValueInt;
+    GPUDeviceSetUniformValueFloat              SetUniformValueFloat;
+    GPUDeviceSetUniformValueFloat2             SetUniformValueFloat2;
+    GPUDeviceSetProgramParameterInt            SetProgramParameterInt;
+    GPUDeviceDeleteTexture                     DeleteTexture;
+    GPUDeviceTexture1DLoadFromSystemMemory     Texture1DLoadFromSystemMemory;
+    GPUDeviceTexture1DUpdateFromPixelBuffer    Texture1DUpdateFromPixelBuffer;
+    GPUDeviceTextureBindToImageUnit            TextureBindToImageUnit;
+    GPUDeviceTexture1DGetDataFromGPUMemory     Texture1DGetDataFromGPUMemory;
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;

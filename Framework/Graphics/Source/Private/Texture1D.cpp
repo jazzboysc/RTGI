@@ -40,34 +40,14 @@ bool Texture1D::LoadFromSystemMemory(GPUDevice* device,
 //----------------------------------------------------------------------------
 void Texture1D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 {
-//	GLuint buffer = pixelBuffer->GetBuffer();
-//	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
-//	glBindTexture(GL_TEXTURE_1D, mTexture);
-//	glTexImage1D(GL_TEXTURE_1D, 0, mInternalFormat, Width, 0, mFormat, mType, 
-//		0);
-//	glBindTexture(GL_TEXTURE_1D, 0);
-//	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-//
-//#ifdef _DEBUG
-//    GLenum res = glGetError();
-//    assert(res == GL_NO_ERROR);
-//#endif
+    GPU_DEVICE_FUNC(mTextureHandle->Device, Texture1DUpdateFromPixelBuffer)(
+        this, pixelBuffer);
 }
 //--------------------------------------------------------------------------
 void Texture1D::BindToImageUnit(unsigned int unit, BufferAccess access)
 {
-//#if defined(__APPLE__)
-//    assert( false );
-//#else
-//	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, 
-//		mInternalFormat);
-//
-//#ifdef _DEBUG
-//    GLenum res = glGetError();
-//    assert(res == GL_NO_ERROR);
-//#endif
-//
-//#endif
+    GPU_DEVICE_FUNC(mTextureHandle->Device, TextureBindToImageUnit)(this, 
+        unit, access);
 }
 //--------------------------------------------------------------------------
 void Texture1D::CreateUniformRandomTexture(int sampleCount, int channelCount)
@@ -128,13 +108,7 @@ void Texture1D::CreateUniformRandomTexture(int sampleCount, int channelCount)
 //--------------------------------------------------------------------------
 void Texture1D::GetDataFromGPUMemory(void* dstData)
 {
-//    glBindTexture(GL_TEXTURE_1D, mTexture);
-//    glGetTexImage(GL_TEXTURE_1D, 0, mFormat, mType, dstData);
-//    glBindTexture(GL_TEXTURE_1D, 0);
-//
-//#ifdef _DEBUG
-//    GLenum res = glGetError();
-//    assert(res == GL_NO_ERROR);
-//#endif
+    GPU_DEVICE_FUNC(mTextureHandle->Device, Texture1DGetDataFromGPUMemory)(
+        this, dstData);
 }
 //--------------------------------------------------------------------------
