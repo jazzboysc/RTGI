@@ -6,7 +6,6 @@
 #ifndef RTGI_Material_H
 #define RTGI_Material_H
 
-
 #include "RefObject.h"
 #include "MaterialTemplate.h"
 #include "TechniqueInfo.h"

@@ -6,7 +6,6 @@
 #ifndef RTGI_Buffer_H
 #define RTGI_Buffer_H
 
-
 #include "BufferBase.h"
 // Make a glbuffer class to replace this
 #include <GL/glew.h>

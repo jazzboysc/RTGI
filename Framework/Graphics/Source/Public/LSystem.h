@@ -6,7 +6,6 @@
 #ifndef RTGI_LSystem_H
 #define RTGI_LSystem_H
 
-
 #include "RefObject.h"
 #include "Expression.h"
 

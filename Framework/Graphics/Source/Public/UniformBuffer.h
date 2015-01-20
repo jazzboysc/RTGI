@@ -6,7 +6,6 @@
 #ifndef RTGI_UniformBuffer_H
 #define RTGI_UniformBuffer_H
 
-
 #include "Buffer.h"
 
 namespace RTGI

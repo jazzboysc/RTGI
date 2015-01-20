@@ -10,6 +10,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 Texture2DArray::Texture2DArray()
 {
+    mType = TT_Texture2DArray;
 	Width = 0;
 	Height = 0;
     Depth = 0;
@@ -20,8 +21,8 @@ Texture2DArray::~Texture2DArray()
 {
 }
 //----------------------------------------------------------------------------
-void Texture2DArray::CreateRenderTarget(int width, int height, int depth,
-	TextureFormat format)
+void Texture2DArray::CreateRenderTarget(GPUDevice* device, int width, 
+    int height, int depth, TextureFormat format)
 {
 	Width = width;
 	Height = height;
@@ -29,86 +30,48 @@ void Texture2DArray::CreateRenderTarget(int width, int height, int depth,
 	IsRenderTarget = true;
 	mFormat = format;
 
-    glGenTextures(1, &mTexture);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, mTexture);
-
 	switch (mFormat)
 	{
-	case RTGI::Texture::TF_RGB:
+	case TF_RGB:
 		// TODO:
 		assert( false );
 		break;
 
-	case RTGI::Texture::TF_RGBF:
-		mInternalFormat = GL_RGB32F_ARB;
-		mFormat = GL_RGB;
-		mType = GL_FLOAT;
+	case TF_RGBF:
+		mInternalFormat = TIF_RGB32F;
+		mComponentType = TCT_Float;
 		break;
 
-    case RTGI::Texture::TF_RGBAF:
-        mInternalFormat = GL_RGBA32F_ARB;
-        mFormat = GL_RGBA;
-        mType = GL_FLOAT;
+    case TF_RGBAF:
+        mInternalFormat = TIF_RGBA32F;
+        mComponentType = TCT_Float;
         break;
 
-	case RTGI::Texture::TF_R32UI:
+	case TF_R32UI:
 #ifndef __APPLE__
-		mInternalFormat = GL_R32UI;
-		mFormat = GL_RED_INTEGER;
-		mType = GL_UNSIGNED_INT;
+		mInternalFormat = TIF_R32UI;
+        mComponentType = TCT_Unsigned_Int;
 #else
         assert( false );
 #endif
 		break;
 
-    case RTGI::Texture::TF_R32F:
-        mInternalFormat = GL_R32F;
-        mFormat = GL_RED;
-        mType = GL_FLOAT;
+    case TF_R32F:
+        mInternalFormat = TIF_R32F;
+        mComponentType = TCT_Float;
         break;
 
-	case RTGI::Texture::TF_Depth:
-		mInternalFormat = GL_DEPTH_COMPONENT24;
-		mFormat = GL_DEPTH_COMPONENT;
-		mType = GL_UNSIGNED_BYTE;
+	case TF_Depth:
+		mInternalFormat = TIF_Depth24;
+        mComponentType = TCT_Unsigned_Byte;
 		break;
 
 	default:
 		break;
 	}
 
-	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, mInternalFormat, width, height, depth, 
-        0, mFormat, mType, 0);
-
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
-}
-//--------------------------------------------------------------------------
-void Texture2DArray::BindToImageUnit(GLuint unit, GLenum access)
-{
-#if defined(__APPLE__)
-    assert(false);
-#else
-    glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access,
-        mInternalFormat);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
-
-#endif
-}
-//--------------------------------------------------------------------------
-Texture::TextureType Texture2DArray::GetType()
-{
-    return Texture::TT_Texture2DArray;
+    mTextureHandle = GPU_DEVICE_FUNC(device,
+        Tex2DArrayLoadFromSystemMemory)(this, mInternalFormat, Width, 
+        Height, Depth, mFormat, mComponentType, 0);
 }
 //--------------------------------------------------------------------------

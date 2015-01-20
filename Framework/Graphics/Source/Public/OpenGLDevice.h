@@ -72,6 +72,9 @@ private:
         TextureBuffer* textureBuffer, TextureInternalFormat internalFormat);
     void __Texture2DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
     void __Texture2DGetImageData(Texture* texture, void* dstPixels);
+    TextureHandle* __Tex2DArrayLoadFromSystemMemory(Texture* texture, 
+        TextureInternalFormat internalFormat, int width, int height, int depth, 
+        TextureFormat format, TextureComponentType type, void* pixels);
 
 private:
     bool mEnable4xMsaa;

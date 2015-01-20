@@ -6,7 +6,6 @@
 #ifndef RTGI_RenderSet_H
 #define RTGI_RenderSet_H
 
-
 #include "RefObject.h"
 #include "RenderObject.h"
 #include <vector>

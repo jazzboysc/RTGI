@@ -6,7 +6,6 @@
 #ifndef RTGI_Fog_H
 #define RTGI_Fog_H
 
-
 #include "RefObject.h"
 
 namespace RTGI

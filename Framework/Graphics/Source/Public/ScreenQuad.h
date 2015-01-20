@@ -6,7 +6,6 @@
 #ifndef RTGI_ScreenQuad_H
 #define RTGI_ScreenQuad_H
 
-
 #include "TriangleMesh.h"
 
 namespace RTGI

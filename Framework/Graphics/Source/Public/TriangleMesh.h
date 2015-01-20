@@ -6,7 +6,6 @@
 #ifndef RTGI_TriangleMesh_H
 #define RTGI_TriangleMesh_H
 
-
 #include "RenderObject.h"
 #include "Camera.h"
 #include "AABB.h"

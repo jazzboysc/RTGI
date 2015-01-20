@@ -6,7 +6,6 @@
 #ifndef RTGI_PipelineStateBlock_H
 #define RTGI_PipelineStateBlock_H
 
-
 #include "RefObject.h"
 
 namespace RTGI

@@ -6,7 +6,6 @@
 #ifndef RTGI_RenderObject_H
 #define RTGI_RenderObject_H
 
-
 #include "RefObject.h"
 #include "Material.h"
 #include "Camera.h"

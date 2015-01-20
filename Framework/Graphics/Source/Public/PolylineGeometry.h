@@ -6,7 +6,6 @@
 #ifndef RTGI_PolylineGeometry_H
 #define RTGI_PolylineGeometry_H
 
-
 #include "RenderObject.h"
 #include "Camera.h"
 #include "GPUResource.h"

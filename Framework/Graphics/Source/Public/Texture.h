@@ -6,7 +6,6 @@
 #ifndef RTGI_Texture_H
 #define RTGI_Texture_H
 
-
 #include "BufferBase.h"
 #include <GL/glew.h>
 

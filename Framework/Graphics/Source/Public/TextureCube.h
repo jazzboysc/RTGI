@@ -6,7 +6,6 @@
 #ifndef RTGI_TextureCube_H
 #define RTGI_TextureCube_H
 
-
 #include "Texture.h"
 
 namespace RTGI

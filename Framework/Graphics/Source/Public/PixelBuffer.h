@@ -6,7 +6,6 @@
 #ifndef RTGI_PixelBuffer_H
 #define RTGI_PixelBuffer_H
 
-
 #include "Buffer.h"
 
 namespace RTGI

@@ -6,7 +6,6 @@
 #ifndef RTGI_GBufferRenderer_H
 #define RTGI_GBufferRenderer_H
 
-
 #include "SubRenderer.h"
 
 namespace RTGI

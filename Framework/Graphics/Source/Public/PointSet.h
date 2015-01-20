@@ -6,7 +6,6 @@
 #ifndef RTGI_PointSet_H
 #define RTGI_PointSet_H
 
-
 #include "RenderObject.h"
 
 namespace RTGI

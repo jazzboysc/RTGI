@@ -6,7 +6,6 @@
 #ifndef RTGI_Light_H
 #define RTGI_Light_H
 
-
 #include "RefObject.h"
 #include "Camera.h"
 

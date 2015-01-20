@@ -6,8 +6,6 @@
 #ifndef RTGI_Token_H
 #define RTGI_Token_H
 
-
-
 namespace RTGI
 {
 

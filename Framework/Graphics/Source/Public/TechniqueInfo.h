@@ -6,7 +6,6 @@
 #ifndef RTGI_TechniqueInfo_H
 #define RTGI_TechniqueInfo_H
 
-
 #include "Technique.h"
 #include "PassInfo.h"
 #include "GeometryAttributes.h"

@@ -6,7 +6,6 @@
 #ifndef RTGI_Texture3D_H
 #define RTGI_Texture3D_H
 
-
 #include "Texture.h"
 #include "PixelBuffer.h"
 #include "TextureBuffer.h"

@@ -5,27 +5,29 @@
 
 namespace RTGI
 {
-	class Timer : public RefObject
-	{
 
-	private:
-		double frequency;		  // time refresh frequency.
-		LARGE_INTEGER prevCounter;   // windows version of timespec
+class Timer : public RefObject
+{
 
-	public:
-		/// Sets prev_ts to current time.
-		Timer();
+private:
+	double frequency;		  // time refresh frequency.
+	LARGE_INTEGER prevCounter;   // windows version of timespec
 
-		/// Return time elapsed since delta() was called.
-		/// In microseconds.
-		/// Return -1 if error.
-		long int delta(void);
+public:
+	/// Sets prev_ts to current time.
+	Timer();
 
-		/// Return time elapsed since delta() was last called.
-		/// In microseconds.
-		/// Return -1 if error.
-		long int split(void) const;
+	/// Return time elapsed since delta() was called.
+	/// In microseconds.
+	/// Return -1 if error.
+	long int delta(void);
 
-		typedef RefPointer<Timer> TimerPtr;
-	};
+	/// Return time elapsed since delta() was last called.
+	/// In microseconds.
+	/// Return -1 if error.
+	long int split(void) const;
+
+	typedef RefPointer<Timer> TimerPtr;
+};
+
 }

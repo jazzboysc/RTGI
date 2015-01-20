@@ -6,7 +6,6 @@
 #ifndef RTGI_PassManager_H
 #define RTGI_PassManager_H
 
-
 #include "RefObject.h"
 #include "PassBase.h"
 

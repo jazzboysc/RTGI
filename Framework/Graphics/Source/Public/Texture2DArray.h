@@ -6,7 +6,6 @@
 #ifndef RTGI_Texture2DArray_H
 #define RTGI_Texture2DArray_H
 
-
 #include "Texture.h"
 
 namespace RTGI
@@ -22,20 +21,11 @@ public:
     Texture2DArray();
     ~Texture2DArray();
 
-	void CreateRenderTarget(int width, int height, int depth, 
-        TextureFormat format);
-
-    void BindToImageUnit(GLuint unit, GLenum access);
+	void CreateRenderTarget(GPUDevice* device, int width, int height, 
+        int depth, TextureFormat format);
 
 	int Width, Height, Depth;
 	bool IsRenderTarget;
-
-    virtual TextureType GetType();
-
-private:
-	GLint mInternalFormat;
-	GLenum mFormat;
-	GLenum mType;
 };
 
 typedef RefPointer<Texture2DArray> Texture2DArrayPtr;

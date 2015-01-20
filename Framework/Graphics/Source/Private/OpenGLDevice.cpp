@@ -611,6 +611,29 @@ void OpenGLDevice::__Texture2DGetImageData(Texture* texture, void* dstPixels)
 #endif
 }
 //----------------------------------------------------------------------------
+TextureHandle* OpenGLDevice::__Tex2DArrayLoadFromSystemMemory(
+    Texture* texture, TextureInternalFormat internalFormat, int width, 
+    int height, int depth, TextureFormat format, TextureComponentType type, 
+    void* pixels)
+{
+    OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
+    textureHandle->Device = this;
+
+    glGenTextures(1, &textureHandle->mTexture);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, textureHandle->mTexture);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, width, height, depth,
+        0, format, type, pixels);
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
+    return textureHandle;
+}
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 OpenGLDevice::OpenGLDevice()
@@ -639,6 +662,7 @@ OpenGLDevice::OpenGLDevice()
     Texture2DLoadFromTextureBuffer = (GPUDeviceTexture2DLoadFromTextureBuffer)&OpenGLDevice::__Texture2DLoadFromTextureBuffer;
     Texture2DUpdateFromPixelBuffer = (GPUDeviceTexture2DUpdateFromPixelBuffer)&OpenGLDevice::__Texture2DUpdateFromPixelBuffer;
     Texture2DGetImageData = (GPUDeviceTexture2DGetImageData)&OpenGLDevice::__Texture2DGetImageData;
+    Tex2DArrayLoadFromSystemMemory = (GPUDeviceTex2DArrayLoadFromSystemMemory)&OpenGLDevice::__Tex2DArrayLoadFromSystemMemory;
 
     mEnable4xMsaa = false;
     m4xMsaaQuality = 0;

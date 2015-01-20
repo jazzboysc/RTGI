@@ -6,7 +6,6 @@
 #ifndef RTGI_SubRenderer_H
 #define RTGI_SubRenderer_H
 
-
 #include "RefObject.h"
 #include "Texture.h"
 #include "RendererInput.h"

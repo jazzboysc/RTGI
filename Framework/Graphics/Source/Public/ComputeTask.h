@@ -6,7 +6,6 @@
 #ifndef RTGI_ComputeTask_H
 #define RTGI_ComputeTask_H
 
-
 #include "PassManager.h"
 #include "ComputePass.h"
 

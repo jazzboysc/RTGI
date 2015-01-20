@@ -114,6 +114,10 @@ typedef void (GPUDevice::*GPUDeviceTexture2DUpdateFromPixelBuffer)(
     Texture* texture, PixelBuffer* pixelBuffer);
 typedef void (GPUDevice::*GPUDeviceTexture2DGetImageData)(Texture* texture, 
     void* dstPixels);
+typedef TextureHandle* (GPUDevice::*GPUDeviceTex2DArrayLoadFromSystemMemory)(
+    Texture* texture, TextureInternalFormat internalFormat, int width,
+    int height, int depth, TextureFormat format, TextureComponentType type,
+    void* pixels);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -151,6 +155,7 @@ public:
     GPUDeviceTexture2DLoadFromTextureBuffer    Texture2DLoadFromTextureBuffer;
     GPUDeviceTexture2DUpdateFromPixelBuffer    Texture2DUpdateFromPixelBuffer;
     GPUDeviceTexture2DGetImageData             Texture2DGetImageData;
+    GPUDeviceTex2DArrayLoadFromSystemMemory    Tex2DArrayLoadFromSystemMemory;
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;

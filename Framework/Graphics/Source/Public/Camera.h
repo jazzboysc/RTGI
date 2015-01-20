@@ -6,8 +6,6 @@
 #ifndef RTGI_Camera_H
 #define RTGI_Camera_H
 
-
-
 namespace RTGI
 {
 

@@ -6,7 +6,6 @@
 #ifndef RTGI_Expression_H
 #define RTGI_Expression_H
 
-
 #include "Token.h"
 
 namespace RTGI

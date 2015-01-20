@@ -6,7 +6,6 @@
 #ifndef RTGI_RendererInput_H
 #define RTGI_RendererInput_H
 
-
 #include "RefObject.h"
 #include "BufferBase.h"
 #include <string>

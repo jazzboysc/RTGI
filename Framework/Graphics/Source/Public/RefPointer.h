@@ -6,8 +6,6 @@
 #ifndef RTGI_RefPointer_H
 #define RTGI_RefPointer_H
 
-
-
 namespace RTGI
 {
 

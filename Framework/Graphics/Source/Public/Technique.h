@@ -6,7 +6,6 @@
 #ifndef RTGI_Technique_H
 #define RTGI_Technique_H
 
-
 #include "PassManager.h"
 
 namespace RTGI

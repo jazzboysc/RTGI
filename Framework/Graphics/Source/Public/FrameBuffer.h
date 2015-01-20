@@ -6,7 +6,6 @@
 #ifndef RTGI_FrameBuffer_H
 #define RTGI_FrameBuffer_H
 
-
 #include "RefObject.h"
 #include "Texture1D.h"
 #include "Texture2D.h"

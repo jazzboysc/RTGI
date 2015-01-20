@@ -6,7 +6,6 @@
 #ifndef RTGI_PassBase_H
 #define RTGI_PassBase_H
 
-
 #include "RefObject.h"
 #include "ShaderProgram.h"
 #include "PipelineStateBlock.h"

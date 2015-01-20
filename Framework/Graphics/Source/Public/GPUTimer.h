@@ -6,7 +6,6 @@
 #ifndef RTGI_GPUTimer_H
 #define RTGI_GPUTimer_H
 
-
 #include "RefObject.h"
 
 namespace RTGI

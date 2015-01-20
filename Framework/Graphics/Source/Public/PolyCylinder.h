@@ -6,7 +6,6 @@
 #ifndef RTGI_PolyCylinder_H
 #define RTGI_PolyCylinder_H
 
-
 #include "RenderObject.h"
 #include "Camera.h"
 #include "Expression.h"

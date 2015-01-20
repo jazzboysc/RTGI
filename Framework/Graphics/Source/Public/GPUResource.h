@@ -6,7 +6,6 @@
 #ifndef RTGI_GPUResource_H
 #define RTGI_GPUResource_H
 
-
 #include "RefObject.h"
 
 namespace RTGI

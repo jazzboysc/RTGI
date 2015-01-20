@@ -8,7 +8,6 @@
 
 #ifndef __APPLE__
 
-
 #include "Buffer.h"
 
 namespace RTGI

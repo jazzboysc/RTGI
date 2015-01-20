@@ -6,8 +6,6 @@
 #ifndef RTGI_GeometryAttributes_H
 #define RTGI_GeometryAttributes_H
 
-
-
 namespace RTGI
 {
 

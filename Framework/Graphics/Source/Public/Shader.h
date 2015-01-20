@@ -6,7 +6,6 @@
 #ifndef RTGI_Shader_H
 #define RTGI_Shader_H
 
-
 #include "RefObject.h"
 #include "GPUDevice.h"
 

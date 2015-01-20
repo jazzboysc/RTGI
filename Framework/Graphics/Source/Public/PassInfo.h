@@ -6,8 +6,6 @@
 #ifndef RTGI_PassInfo_H
 #define RTGI_PassInfo_H
 
-
-
 namespace RTGI
 {
 

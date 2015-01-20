@@ -6,7 +6,6 @@
 #ifndef RTGI_Pass_H
 #define RTGI_Pass_H
 
-
 #include "PassBase.h"
 
 namespace RTGI

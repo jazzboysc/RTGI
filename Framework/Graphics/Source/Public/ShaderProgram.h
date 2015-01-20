@@ -6,7 +6,6 @@
 #ifndef RTGI_ShaderProgram_H
 #define RTGI_ShaderProgram_H
 
-
 #include "RefObject.h"
 #include "VertexShader.h"
 #include "FragmentShader.h"
