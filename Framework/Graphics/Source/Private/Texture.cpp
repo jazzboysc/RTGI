@@ -51,3 +51,9 @@ TextureType Texture::GetType() const
     return mType;
 }
 //----------------------------------------------------------------------------
+void Texture::BindToImageUnit(unsigned int unit, BufferAccess access)
+{
+    GPU_DEVICE_FUNC(mTextureHandle->Device, TextureBindToImageUnit)(this,
+        unit, access);
+}
+//--------------------------------------------------------------------------

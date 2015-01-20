@@ -525,6 +525,92 @@ void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture,
 #endif
 }
 //----------------------------------------------------------------------------
+TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
+    TextureInternalFormat internalFormat, int width, int height,
+    TextureFormat format, TextureComponentType type, void* pixels)
+{
+    OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
+    textureHandle->Device = this;
+
+    glGenTextures(1, &textureHandle->mTexture);
+    glBindTexture(GL_TEXTURE_2D, textureHandle->mTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0,
+        gsTextureInternalFormat[(int)internalFormat], width, height, 0,
+        gsTextureFormat[(int)format], gsTextureComponentType[(int)type],
+        pixels);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
+    return textureHandle;
+}
+//----------------------------------------------------------------------------
+TextureHandle* OpenGLDevice::__Texture2DLoadFromTextureBuffer(
+    Texture* texture, TextureBuffer* textureBuffer, 
+    TextureInternalFormat internalFormat)
+{
+    OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
+    textureHandle->Device = this;
+
+    GLuint buffer = textureBuffer->GetBuffer();
+    glGenTextures(1, &textureHandle->mTexture);
+    glBindTexture(GL_TEXTURE_BUFFER, textureHandle->mTexture);
+    glTexBuffer(GL_TEXTURE_BUFFER, internalFormat, buffer);
+    glBindTexture(GL_TEXTURE_BUFFER, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
+    return textureHandle;
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__Texture2DUpdateFromPixelBuffer(Texture* texture, 
+    PixelBuffer* pixelBuffer)
+{
+    OpenGLTextureHandle* textureHandle = 
+        (OpenGLTextureHandle*)texture->GetTextureHandle();
+    assert(textureHandle);
+
+    GLuint buffer = pixelBuffer->GetBuffer();
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
+    glBindTexture(GL_TEXTURE_2D, textureHandle->mTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0,
+        gsTextureInternalFormat[(int)texture->GetInternalFormat()], 
+        ((Texture2D*)texture)->Width, ((Texture2D*)texture)->Height, 0,
+        gsTextureFormat[(int)texture->GetFormat()],
+        gsTextureComponentType[(int)texture->GetComponentType()], 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__Texture2DGetImageData(Texture* texture, void* dstPixels)
+{
+    OpenGLTextureHandle* textureHandle =
+        (OpenGLTextureHandle*)texture->GetTextureHandle();
+    assert(textureHandle);
+
+    glBindTexture(GL_TEXTURE_2D, textureHandle->mTexture);
+    glGetTexImage(GL_TEXTURE_2D, 0, texture->GetFormat(), 
+        texture->GetComponentType(), dstPixels);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 OpenGLDevice::OpenGLDevice()
@@ -549,6 +635,10 @@ OpenGLDevice::OpenGLDevice()
     Texture1DUpdateFromPixelBuffer = (GPUDeviceTexture1DUpdateFromPixelBuffer)&OpenGLDevice::__Texture1DUpdateFromPixelBuffer;
     TextureBindToImageUnit = (GPUDeviceTextureBindToImageUnit)&OpenGLDevice::__TextureBindToImageUnit;
     Texture1DGetDataFromGPUMemory = (GPUDeviceTexture1DGetDataFromGPUMemory)&OpenGLDevice::__Texture1DGetDataFromGPUMemory;
+    Texture2DLoadFromSystemMemory = (GPUDeviceTexture2DLoadFromSystemMemory)&OpenGLDevice::__Texture2DLoadFromSystemMemory;
+    Texture2DLoadFromTextureBuffer = (GPUDeviceTexture2DLoadFromTextureBuffer)&OpenGLDevice::__Texture2DLoadFromTextureBuffer;
+    Texture2DUpdateFromPixelBuffer = (GPUDeviceTexture2DUpdateFromPixelBuffer)&OpenGLDevice::__Texture2DUpdateFromPixelBuffer;
+    Texture2DGetImageData = (GPUDeviceTexture2DGetImageData)&OpenGLDevice::__Texture2DGetImageData;
 
     mEnable4xMsaa = false;
     m4xMsaaQuality = 0;

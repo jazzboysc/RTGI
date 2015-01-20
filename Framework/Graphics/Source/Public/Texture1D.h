@@ -31,8 +31,6 @@ public:
     // Update a render target from pixel buffer.
     void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
 
-	void BindToImageUnit(unsigned int unit, BufferAccess access);
-
     void CreateUniformRandomTexture(GPUDevice* device, int sampleCount, 
         int channelCount);
 

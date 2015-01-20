@@ -12,6 +12,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 Texture2D::Texture2D()
 {
+    mType = TT_Texture2D;
 	Width = 0;
 	Height = 0;
 	LMax = 0.0f;
@@ -22,8 +23,14 @@ Texture2D::~Texture2D()
 {
 }
 //----------------------------------------------------------------------------
-bool Texture2D::LoadBMPFromFile(const std::string& fileName)
+bool Texture2D::LoadBMPFromFile(GPUDevice* device, const std::string& fileName)
 {
+    if( mTextureHandle )
+    {
+        assert(false);
+        return false;
+    }
+
 	IsRenderTarget = false;
 
 	bmpread_t bitmap;
@@ -38,20 +45,17 @@ bool Texture2D::LoadBMPFromFile(const std::string& fileName)
 	Width = bitmap.width;
 	Height = bitmap.height;
 
-    glGenTextures(1, &mTexture);
-    glBindTexture(GL_TEXTURE_2D, mTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bitmap.width, bitmap.height, 0, 
-		GL_RGB, GL_UNSIGNED_BYTE, bitmap.rgb_data);
-	bmpread_free(&bitmap);
+    // TODO:
+    // Check this later.
+    mInternalFormat = TIF_RGB8;
+    mFormat = TF_RGB;
+    mComponentType = TCT_Unsigned_Byte;
 
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+        this, mInternalFormat, bitmap.width, bitmap.height, mFormat, 
+        mComponentType, bitmap.rgb_data);
 
-	mInternalFormat = GL_RGB;
-	mFormat = GL_RGB;
-	mType = GL_UNSIGNED_BYTE;
+    bmpread_free(&bitmap);
     
 #ifdef RTGI_OUTPUT_TEXTURE_RESOURCE_LOADING
     Terminal::Output(Terminal::OC_Success, "Loading texture %s finished\n", 
@@ -61,10 +65,16 @@ bool Texture2D::LoadBMPFromFile(const std::string& fileName)
 	return true;
 }
 //----------------------------------------------------------------------------
-bool Texture2D::LoadPFMFromFile(const std::string& fileName)
+bool Texture2D::LoadPFMFromFile(GPUDevice* device, const std::string& fileName)
 {
 	// This function is based on the PFM loader of Thorsten Grosch and Tobias 
 	// Ritschel's demo.
+
+    if( mTextureHandle )
+    {
+        assert(false);
+        return false;
+    }
 
 	IsRenderTarget = false;
 	IsHDRTexture = true;
@@ -127,19 +137,13 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 		} 
     }
 
-    glGenTextures(1, &mTexture);
-    glBindTexture(GL_TEXTURE_2D, mTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F_ARB, Width, Height, 0, GL_RGB,
-		GL_FLOAT, pixels);
+    mInternalFormat = TIF_RGB32F;
+    mFormat = TF_RGB;
+    mComponentType = TCT_Float;
 
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
-
-	mInternalFormat = GL_RGB32F_ARB;
-	mFormat = GL_RGB;
-	mType = GL_FLOAT;
+    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+        this, mInternalFormat, Width, Height, mFormat, mComponentType, 
+        pixels);
 
 	free(pixels);
 
@@ -154,168 +158,128 @@ bool Texture2D::LoadPFMFromFile(const std::string& fileName)
 	return true;
 }
 //----------------------------------------------------------------------------
-bool Texture2D::LoadFromSystemMemory(GLint internalFormat, GLsizei width, 
-	GLsizei height, GLenum format, GLenum type, void* pixels)
+bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
+    TextureInternalFormat internalFormat, int width, int height,
+    TextureFormat format, TextureComponentType type, void* pixels)
 {
-    glGenTextures(1, &mTexture);
-    glBindTexture(GL_TEXTURE_2D, mTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, 
-		type, pixels);
+    if( mTextureHandle )
+    {
+        return false;
+    }
 
-	Width = width;
-	Height = height;
-	mInternalFormat = internalFormat;
-	mFormat = format;
-	mType = type;
+    Width = width;
+    Height = height;
+    mInternalFormat = internalFormat;
+    mFormat = format;
+    mComponentType = type;
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+        this, mInternalFormat, Width, Height, mFormat, mComponentType,
+        pixels);
 
 	return true;
 }
 //----------------------------------------------------------------------------
 #ifndef __APPLE__
-bool Texture2D::LoadFromTextureBuffer(TextureBuffer* textureBuffer, 
-	GLenum internalFormat)
+bool Texture2D::LoadFromTextureBuffer(GPUDevice* device, 
+    TextureBuffer* textureBuffer, TextureInternalFormat internalFormat)
 {
+    if( mTextureHandle )
+    {
+        return false;
+    }
+
 	IsTextureBuffer = true;
 	mInternalFormat = internalFormat;
 
-	GLuint buffer = textureBuffer->GetBuffer();
-    glGenTextures(1, &mTexture);
-    glBindTexture(GL_TEXTURE_BUFFER, mTexture);
-    glTexBuffer(GL_TEXTURE_BUFFER, internalFormat, buffer);
-    glBindTexture(GL_TEXTURE_BUFFER, 0);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromTextureBuffer)(
+        this, textureBuffer, internalFormat);
 
 	return true;
 }
 #endif
 //----------------------------------------------------------------------------
-void Texture2D::CreateRenderTarget(int width, int height, 
+void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 	TextureFormat format)
 {
+    if( mTextureHandle )
+    {
+        assert(false);
+        return;
+    }
+
 	Width = width;
 	Height = height;
 	IsRenderTarget = true;
 	mFormat = format;
 
-    glGenTextures(1, &mTexture);
-    glBindTexture(GL_TEXTURE_2D, mTexture);	
-
 	switch (mFormat)
 	{
-	case RTGI::Texture2D::TF_RGB:
-        mInternalFormat = GL_RGB8;
-        mFormat = GL_RGB;
-        mType = GL_UNSIGNED_BYTE;
+	case TF_RGB:
+        mInternalFormat = TIF_RGB8;
+        mComponentType = TCT_Unsigned_Byte;
 		break;
 
-    case RTGI::Texture2D::TF_RGBA:
-        mInternalFormat = GL_RGBA8;
-        mFormat = GL_RGBA;
-        mType = GL_UNSIGNED_BYTE;
+    case TF_RGBA:
+        mInternalFormat = TIF_RGBA8;
+        mComponentType = TCT_Unsigned_Byte;
         break;
 
-	case RTGI::Texture2D::TF_RGBF:
-		mInternalFormat = GL_RGB32F_ARB;
-		mFormat = GL_RGB;
-		mType = GL_FLOAT;
+	case TF_RGBF:
+		mInternalFormat = TIF_RGB32F;
+        mComponentType = TCT_Float;
 		break;
 
-    case RTGI::Texture2D::TF_RGBAF:
-        mInternalFormat = GL_RGBA32F_ARB;
-        mFormat = GL_RGBA;
-        mType = GL_FLOAT;
+    case TF_RGBAF:
+        mInternalFormat = TIF_RGBA32F;
+        mComponentType = TCT_Float;
         break;
 
-	case RTGI::Texture2D::TF_R32UI:
+	case TF_R32UI:
 #ifndef __APPLE__
-		mInternalFormat = GL_R32UI;
-		mFormat = GL_RED_INTEGER;
-		mType = GL_UNSIGNED_INT;
+		mInternalFormat = TIF_R32UI;
+        mComponentType = TCT_Unsigned_Int;
 #else
         assert( false );
 #endif
 		break;
 
-    case RTGI::Texture2D::TF_R32F:
-        mInternalFormat = GL_R32F;
-        mFormat = GL_RED;
-        mType = GL_FLOAT;
+    case TF_R32F:
+        mInternalFormat = TIF_R32F;
+        mComponentType = TCT_Float;
         break;
 
-	case RTGI::Texture2D::TF_Depth:
-		mInternalFormat = GL_DEPTH_COMPONENT24;
-		mFormat = GL_DEPTH_COMPONENT;
-		mType = GL_UNSIGNED_BYTE;
+	case TF_Depth:
+        mInternalFormat = TIF_Depth24;
+        mComponentType = TCT_Unsigned_Byte;
 		break;
 
 	default:
 		break;
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, mInternalFormat, width, height, 0, 
-		mFormat, mType, 0);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+        this, mInternalFormat, Width, Height, mFormat, mComponentType, 0);
 }
 //--------------------------------------------------------------------------
 void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 {
-	GLuint buffer = pixelBuffer->GetBuffer();
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
-	glBindTexture(GL_TEXTURE_2D, mTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, mInternalFormat, Width, Height, 0, 
-		mFormat, mType, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    assert(mTextureHandle);
+    GPU_DEVICE_FUNC(mTextureHandle->Device, 
+        Texture2DUpdateFromPixelBuffer)(this, pixelBuffer);
 }
 //--------------------------------------------------------------------------
-void Texture2D::BindToImageUnit(GLuint unit, GLenum access)
-{
-#if defined(__APPLE__)
-    assert( false );
-#else
-	glBindImageTexture(unit, mTexture, 0, GL_FALSE, 0, access, 
-		mInternalFormat);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
-
-#endif
-}
-//--------------------------------------------------------------------------
-void Texture2D::CreateLDRandomTextureRGBF(int maxSampleCount, 
-    int patternSize)
+void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device, 
+    int maxSampleCount, int patternSize)
 {
 	// This function is based on the PFM loader of Thorsten Grosch and 
 	// Tobias Ritschel's demo.
+
+    if( mTextureHandle )
+    {
+        assert(false);
+        return;
+    }
 
 	int patternSizeSquared = patternSize * patternSize;
 
@@ -344,37 +308,23 @@ void Texture2D::CreateLDRandomTextureRGBF(int maxSampleCount,
 		}
 	}
 
-    mInternalFormat = GL_RGB32F_ARB;
-    mFormat = GL_RGB;
-    mType = GL_FLOAT;
+    Width = maxSampleCount;
+    Height = patternSizeSquared;
+    mInternalFormat = TIF_RGB32F;
+    mFormat = TF_RGB;
+    mComponentType = TCT_Float;
 	
-	glGenTextures(1, &mTexture);
-	glBindTexture(GL_TEXTURE_2D, mTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F_ARB, maxSampleCount, 
-		patternSizeSquared, 0, GL_RGB, GL_FLOAT, pixels);
+    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+        this, mInternalFormat, Width, Height, mFormat, mComponentType,
+        pixels);
 
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
-			
 	delete[] pixels;
 }
 //--------------------------------------------------------------------------
 void Texture2D::GetImageData(void* dstPixels)
 {
-    glBindTexture(GL_TEXTURE_2D, mTexture);
-    glGetTexImage(GL_TEXTURE_2D, 0, mFormat, mType, dstPixels);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
-}
-//--------------------------------------------------------------------------
-Texture::TextureType Texture2D::GetType()
-{
-    return Texture::TT_Texture2D;
+    assert(mTextureHandle);
+    GPU_DEVICE_FUNC(mTextureHandle->Device, Texture2DGetImageData)(this, 
+        dstPixels);
 }
 //--------------------------------------------------------------------------

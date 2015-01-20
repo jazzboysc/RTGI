@@ -83,6 +83,8 @@ public:
     TextureComponentType GetComponentType() const;
     TextureType GetType() const;
 
+    void BindToImageUnit(unsigned int unit, BufferAccess access);
+
 protected:
     Texture();
 

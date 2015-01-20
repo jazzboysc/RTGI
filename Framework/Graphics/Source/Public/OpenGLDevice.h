@@ -65,6 +65,13 @@ private:
     void __Texture1DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
     void __TextureBindToImageUnit(Texture* texture, unsigned int unit, BufferAccess access);
     void __Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData);
+    TextureHandle* __Texture2DLoadFromSystemMemory(Texture* texture, 
+        TextureInternalFormat internalFormat, int width, int height, 
+        TextureFormat format, TextureComponentType type, void* pixels);
+    TextureHandle* __Texture2DLoadFromTextureBuffer(Texture* texture, 
+        TextureBuffer* textureBuffer, TextureInternalFormat internalFormat);
+    void __Texture2DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
+    void __Texture2DGetImageData(Texture* texture, void* dstPixels);
 
 private:
     bool mEnable4xMsaa;

@@ -44,12 +44,6 @@ void Texture1D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
         this, pixelBuffer);
 }
 //--------------------------------------------------------------------------
-void Texture1D::BindToImageUnit(unsigned int unit, BufferAccess access)
-{
-    GPU_DEVICE_FUNC(mTextureHandle->Device, TextureBindToImageUnit)(this, 
-        unit, access);
-}
-//--------------------------------------------------------------------------
 void Texture1D::CreateUniformRandomTexture(GPUDevice* device, 
     int sampleCount, int channelCount)
 {
