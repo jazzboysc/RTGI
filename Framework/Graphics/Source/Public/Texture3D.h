@@ -23,26 +23,17 @@ public:
 	Texture3D();
 	~Texture3D();
 
-	bool LoadFromSystemMemory(GLint internalFormat, GLsizei width, 
-		GLsizei height, GLsizei depth, GLenum format, GLenum type, 
-		void* pixels);
+    bool LoadFromSystemMemory(GPUDevice* device, 
+        TextureInternalFormat internalFormat, int width, int height, int depth, 
+        TextureFormat format, TextureComponentType type, void* pixels);
 
-    void CreateRenderTarget(int width, int height, int depth, 
-        TextureFormat format);
+    void CreateRenderTarget(GPUDevice* device, int width, int height, 
+        int depth, TextureFormat format);
 
 		// Update a render target from pixel buffer.
 	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
 
-	void BindToImageUnit(GLuint unit, GLenum access);
-
-    virtual TextureType GetType();
-
 	int Width, Height, Depth;
-
-private:
-	GLint mInternalFormat;
-	GLenum mFormat;
-	GLenum mType;
 };
 
 typedef RefPointer<Texture3D> Texture3DPtr;

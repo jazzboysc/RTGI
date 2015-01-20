@@ -22,11 +22,11 @@ public:
 	~TextureCube();
 
 	// Load six ".bmp" files and create a cube-map resource.
-	bool LoadFromFile(const std::string& pX, const std::string& nX, 
-		const std::string& pY, const std::string& nY, const std::string& pZ, 
-		const std::string& nZ);
+	bool LoadFromFile(GPUDevice* device, const std::string& pX, 
+        const std::string& nX, const std::string& pY, const std::string& nY, 
+        const std::string& pZ, const std::string& nZ);
 
-    virtual TextureType GetType();
+    int Width, Height;
 };
 
 typedef RefPointer<TextureCube> TextureCubePtr;

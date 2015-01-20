@@ -11,16 +11,25 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 TextureCube::TextureCube()
 {
+    mType = TT_TextureCube;
+    Width = 0;
+    Height = 0;
 }
 //----------------------------------------------------------------------------
 TextureCube::~TextureCube()
 {
 }
 //----------------------------------------------------------------------------
-bool TextureCube::LoadFromFile(const std::string& pX, const std::string& nX, 
-	const std::string& pY, const std::string& nY, const std::string& pZ, 
-	const std::string& nZ)
+bool TextureCube::LoadFromFile(GPUDevice* device, const std::string& pX, 
+    const std::string& nX, const std::string& pY, const std::string& nY, 
+    const std::string& pZ, const std::string& nZ)
 {
+    if( mTextureHandle )
+    {
+        assert(false);
+        return false;
+    }
+
 	bmpread_t pXBitmap, nXBitmap, pYBitmap, nYBitmap, pZBitmap, nZBitmap;
 	int resPX = bmpread(pX.c_str(), 0, &pXBitmap);
 	int resNX = bmpread(nX.c_str(), 0, &nXBitmap);
@@ -34,31 +43,16 @@ bool TextureCube::LoadFromFile(const std::string& pX, const std::string& nX,
 		return false;
 	}
 
-    glGenTextures(1, &mTexture);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
+    Width = pXBitmap.width;
+    Height = pXBitmap.height;
+    mFormat = TF_RGB;
+    mInternalFormat = TIF_RGB8;
+    mComponentType = TCT_Unsigned_Byte;
 
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, pXBitmap.width, 
-		pXBitmap.height, 0, GL_RGB, GL_UNSIGNED_BYTE, pXBitmap.rgb_data);
-
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB, nXBitmap.width, 
-		nXBitmap.height, 0, GL_RGB, GL_UNSIGNED_BYTE, nXBitmap.rgb_data);
-
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, pYBitmap.width, 
-		pYBitmap.height, 0, GL_RGB, GL_UNSIGNED_BYTE, pYBitmap.rgb_data);
-
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, nYBitmap.width, 
-		nYBitmap.height, 0, GL_RGB, GL_UNSIGNED_BYTE, nYBitmap.rgb_data);
-
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, pZBitmap.width, 
-		pZBitmap.height, 0, GL_RGB, GL_UNSIGNED_BYTE, pZBitmap.rgb_data);
-
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, nZBitmap.width, 
-		nZBitmap.height, 0, GL_RGB, GL_UNSIGNED_BYTE, nZBitmap.rgb_data);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    mTextureHandle = GPU_DEVICE_FUNC(device, TextureCubeLoadFromSystemMemory)(
+        this, mInternalFormat, Width, Height, mFormat, mComponentType,
+        pXBitmap.rgb_data, nXBitmap.rgb_data, pYBitmap.rgb_data,
+        nYBitmap.rgb_data, pZBitmap.rgb_data, nZBitmap.rgb_data);
 
 	bmpread_free(&pXBitmap);
 	bmpread_free(&nXBitmap);
@@ -70,8 +64,3 @@ bool TextureCube::LoadFromFile(const std::string& pX, const std::string& nX,
 	return true;
 }
 //----------------------------------------------------------------------------
-Texture::TextureType TextureCube::GetType()
-{
-    return Texture::TT_TextureCube;
-}
-//--------------------------------------------------------------------------

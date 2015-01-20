@@ -75,6 +75,15 @@ private:
     TextureHandle* __Tex2DArrayLoadFromSystemMemory(Texture* texture, 
         TextureInternalFormat internalFormat, int width, int height, int depth, 
         TextureFormat format, TextureComponentType type, void* pixels);
+    TextureHandle* __Texture3DLoadFromSystemMemory(Texture* texture, 
+        TextureInternalFormat internalFormat, int width, int height, int depth, 
+        TextureFormat format, TextureComponentType type, void* pixels);
+    void __Texture3DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
+    TextureHandle* __TextureCubeLoadFromSystemMemory(Texture* texture,
+        TextureInternalFormat internalFormat, int width, int height, 
+        TextureFormat format, TextureComponentType type,
+        void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY,
+        void* pixelsPZ, void* pixelsNZ);
 
 private:
     bool mEnable4xMsaa;

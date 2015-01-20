@@ -118,6 +118,17 @@ typedef TextureHandle* (GPUDevice::*GPUDeviceTex2DArrayLoadFromSystemMemory)(
     Texture* texture, TextureInternalFormat internalFormat, int width,
     int height, int depth, TextureFormat format, TextureComponentType type,
     void* pixels);
+typedef TextureHandle* (GPUDevice::*GPUDeviceTexture3DLoadFromSystemMemory)(
+    Texture* texture, TextureInternalFormat internalFormat, int width, 
+    int height, int depth, TextureFormat format, TextureComponentType type, 
+    void* pixels);
+typedef void (GPUDevice::*GPUDeviceTexture3DUpdateFromPixelBuffer)(
+    Texture* texture, PixelBuffer* pixelBuffer);
+typedef TextureHandle* (GPUDevice::*GPUDeviceTextureCubeLoadFromSystemMemory)(
+    Texture* texture, TextureInternalFormat internalFormat, int width,
+    int height, TextureFormat format, TextureComponentType type, 
+    void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY, 
+    void* pixelsPZ, void* pixelsNZ);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -156,6 +167,9 @@ public:
     GPUDeviceTexture2DUpdateFromPixelBuffer    Texture2DUpdateFromPixelBuffer;
     GPUDeviceTexture2DGetImageData             Texture2DGetImageData;
     GPUDeviceTex2DArrayLoadFromSystemMemory    Tex2DArrayLoadFromSystemMemory;
+    GPUDeviceTexture3DLoadFromSystemMemory     Texture3DLoadFromSystemMemory;
+    GPUDeviceTexture3DUpdateFromPixelBuffer    Texture3DUpdateFromPixelBuffer;
+    GPUDeviceTextureCubeLoadFromSystemMemory   TextureCubeLoadFromSystemMemory;
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;

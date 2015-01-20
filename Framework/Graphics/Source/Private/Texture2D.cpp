@@ -164,6 +164,7 @@ bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
 {
     if( mTextureHandle )
     {
+        assert(false);
         return false;
     }
 
