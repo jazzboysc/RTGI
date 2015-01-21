@@ -62,9 +62,15 @@ SubRendererCreateRendererData SubRenderer::msFactoryFunctions[6] =
 };
 
 //----------------------------------------------------------------------------
-SubRenderer::SubRenderer(RenderSet* renderSet)
+SubRenderer::SubRenderer()
 {
-    mFrameBuffer = new FrameBuffer();
+}
+//----------------------------------------------------------------------------
+SubRenderer::SubRenderer(GPUDevice* device, RenderSet* renderSet)
+    :
+    mDevice(device)
+{
+    mFrameBuffer = new FrameBuffer(device);
     mRenderSet = renderSet;
 }
 //----------------------------------------------------------------------------
@@ -106,12 +112,12 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     {
     case TT_Texture2D:
         texture = new Texture2D();
-        ((Texture2D*)texture)->CreateRenderTarget(width, height, format);
+        ((Texture2D*)texture)->CreateRenderTarget(mDevice, width, height, format);
         break;
     case TT_Texture2DArray:
         texture = new Texture2DArray();
-        ((Texture2DArray*)texture)->CreateRenderTarget(width, height, depth, 
-            format);
+        ((Texture2DArray*)texture)->CreateRenderTarget(mDevice, width, height, 
+            depth, format);
         break;
     default:
         assert(false);
@@ -213,7 +219,7 @@ void SubRenderer::ClearInputDependency()
 }
 //----------------------------------------------------------------------------
 void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight, 
-    int depthCount, Texture::TextureType depthType)
+    int depthCount, TextureType depthType)
 {
     int rtCount = (int)mFrameBufferTargets.size();
     assert(rtCount > 0);
@@ -227,16 +233,16 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight,
     BufferBase* depthTexture = 0;
     switch( depthType )
     {
-    case Texture::TT_Texture2D:
+    case TT_Texture2D:
         depthTexture = new Texture2D();
-        ((Texture2D*)depthTexture)->CreateRenderTarget(depthWidth, depthHeight,
-            Texture::TF_Depth);
+        ((Texture2D*)depthTexture)->CreateRenderTarget(mDevice, depthWidth, 
+            depthHeight, TF_Depth);
         break;
 
-    case Texture::TT_Texture2DArray:
+    case TT_Texture2DArray:
         depthTexture = new Texture2DArray();
-        ((Texture2DArray*)depthTexture)->CreateRenderTarget(depthWidth, 
-            depthHeight, depthCount, Texture::TF_Depth);
+        ((Texture2DArray*)depthTexture)->CreateRenderTarget(mDevice, 
+            depthWidth, depthHeight, depthCount, TF_Depth);
         break;
 
     default:

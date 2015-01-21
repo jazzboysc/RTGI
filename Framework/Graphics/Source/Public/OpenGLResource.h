@@ -36,6 +36,11 @@ struct OpenGLTextureHandle : public TextureHandle
     GLuint mTexture;
 };
 
+struct OpenGLFBOHandle : public FBOHandle
+{
+    GLuint mFBO;
+};
+
 }
 
 #endif

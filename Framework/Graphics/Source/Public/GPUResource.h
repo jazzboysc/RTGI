@@ -48,6 +48,10 @@ struct TextureHandle : public GPUResource
 {
 };
 
+struct FBOHandle : public GPUResource
+{
+};
+
 }
 
 #endif

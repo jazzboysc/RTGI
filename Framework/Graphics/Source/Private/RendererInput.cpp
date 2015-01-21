@@ -7,49 +7,11 @@
 
 using namespace RTGI;
 
-GLenum gsTextureTargets[Texture::TT_Max] =
-{
-    GL_TEXTURE_1D,
-    GL_TEXTURE_2D,
-    GL_TEXTURE_3D,
-    GL_TEXTURE_CUBE_MAP,
-    GL_TEXTURE_2D_ARRAY
-};
-
-GLenum gsFilterType[FT_Max] =
-{
-    GL_NEAREST,
-    GL_LINEAR
-};
-
-GLenum gsWrapType[WT_Max] =
-{
-    GL_CLAMP,
-    GL_REPEAT
-};
-
 //----------------------------------------------------------------------------
 void EnableTexture(RendererInput* input)
 {
     Texture* texture = (Texture*)(BufferBase*)input->InputBuffer;
-    GLuint t = texture->GetTexture();
-    Texture::TextureType type = texture->GetType();
-    GLenum target = gsTextureTargets[(int)type];
-    glActiveTexture(GL_TEXTURE0 + input->View.BindingSlot);
-    glBindTexture(target, t);
-    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, 
-        gsFilterType[(int)input->View.Sampler.MinFilter]);
-    glTexParameteri(target, GL_TEXTURE_MAG_FILTER,
-        gsFilterType[(int)input->View.Sampler.MagFilter]);
-    glTexParameteri(target, GL_TEXTURE_WRAP_S,
-        gsWrapType[(int)input->View.Sampler.WrapS]);
-    glTexParameteri(target, GL_TEXTURE_WRAP_T,
-        gsWrapType[(int)input->View.Sampler.WrapT]);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    texture->BindToSampler(input->View.BindingSlot, &input->View.Sampler);
 }
 //----------------------------------------------------------------------------
 void EnableBuffer(RendererInput* input)

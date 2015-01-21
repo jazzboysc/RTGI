@@ -57,3 +57,9 @@ void Texture::BindToImageUnit(unsigned int unit, BufferAccess access)
         unit, access);
 }
 //--------------------------------------------------------------------------
+void Texture::BindToSampler(unsigned int index, SamplerDesc* sampler)
+{
+    GPU_DEVICE_FUNC(mTextureHandle->Device, TextureBindToSampler)(this, 
+        index, sampler);
+}
+//--------------------------------------------------------------------------

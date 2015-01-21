@@ -54,12 +54,15 @@ class ShaderUniform;
 class Texture;
 class PixelBuffer;
 class TextureBuffer;
+class FrameBuffer;
 
 struct ShaderHandle;
 struct ShaderProgramHandle;
 struct PassInfoHandle;
 struct ShaderUniformHandle;
 struct TextureHandle;
+struct FBOHandle;
+struct SamplerDesc;
 
 enum ShaderProgramParameter;
 enum TextureInternalFormat;
@@ -101,6 +104,8 @@ typedef void (GPUDevice::*GPUDeviceTexture1DUpdateFromPixelBuffer)(
     Texture* texture, PixelBuffer* pixelBuffer);
 typedef void (GPUDevice::*GPUDeviceTextureBindToImageUnit)(Texture* texture, 
     unsigned int unit, BufferAccess access);
+typedef void (GPUDevice::*GPUDeviceTextureBindToSampler)(Texture* texture, 
+    unsigned int index, SamplerDesc* sampler);
 typedef void (GPUDevice::*GPUDeviceTexture1DGetDataFromGPUMemory)(
     Texture* texture, void* dstData);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture2DLoadFromSystemMemory)(
@@ -129,6 +134,17 @@ typedef TextureHandle* (GPUDevice::*GPUDeviceTextureCubeLoadFromSystemMemory)(
     int height, TextureFormat format, TextureComponentType type, 
     void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY, 
     void* pixelsPZ, void* pixelsNZ);
+typedef FBOHandle* (GPUDevice::*GPUDeviceCreateFrameBuffer)(
+    FrameBuffer* frameBuffer);
+typedef void (GPUDevice::*GPUDeviceDeleteFrameBuffer)(
+    FrameBuffer* frameBuffer);
+typedef void (GPUDevice::*GPUDeviceFrameBufferSetRenderTargets)(
+    FrameBuffer* frameBuffer, unsigned int colorTextureCount, 
+    Texture** colorTextures, Texture* depthTexture, Texture* stencilTexture);
+typedef void (GPUDevice::*GPUDeviceFrameBufferEnable)(
+    FrameBuffer* frameBuffer);
+typedef void (GPUDevice::*GPUDeviceFrameBufferDisable)(
+    FrameBuffer* frameBuffer);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -161,6 +177,7 @@ public:
     GPUDeviceTexture1DLoadFromSystemMemory     Texture1DLoadFromSystemMemory;
     GPUDeviceTexture1DUpdateFromPixelBuffer    Texture1DUpdateFromPixelBuffer;
     GPUDeviceTextureBindToImageUnit            TextureBindToImageUnit;
+    GPUDeviceTextureBindToSampler              TextureBindToSampler;
     GPUDeviceTexture1DGetDataFromGPUMemory     Texture1DGetDataFromGPUMemory;
     GPUDeviceTexture2DLoadFromSystemMemory     Texture2DLoadFromSystemMemory;
     GPUDeviceTexture2DLoadFromTextureBuffer    Texture2DLoadFromTextureBuffer;
@@ -170,6 +187,11 @@ public:
     GPUDeviceTexture3DLoadFromSystemMemory     Texture3DLoadFromSystemMemory;
     GPUDeviceTexture3DUpdateFromPixelBuffer    Texture3DUpdateFromPixelBuffer;
     GPUDeviceTextureCubeLoadFromSystemMemory   TextureCubeLoadFromSystemMemory;
+    GPUDeviceCreateFrameBuffer                 CreateFrameBuffer;
+    GPUDeviceDeleteFrameBuffer                 DeleteFrameBuffer;
+    GPUDeviceFrameBufferSetRenderTargets       FrameBufferSetRenderTargets;
+    GPUDeviceFrameBufferEnable                 FrameBufferEnable;
+    GPUDeviceFrameBufferDisable                FrameBufferDisable;
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;

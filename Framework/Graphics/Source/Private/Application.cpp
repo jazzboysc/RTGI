@@ -79,7 +79,7 @@ void Application::UpdateMainCamera()
 {
 	static auto lastFrame = 0.0;
 	auto currentFrame = glfwGetTime();
-	float deltaTime = currentFrame - lastFrame;
+	float deltaTime = float(currentFrame - lastFrame);
 	lastFrame = currentFrame;
 
 	static auto lastMousePos = glm::vec2(-1, -1);

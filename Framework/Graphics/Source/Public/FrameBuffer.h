@@ -7,6 +7,7 @@
 #define RTGI_FrameBuffer_H
 
 #include "RefObject.h"
+#include "GPUResource.h"
 #include "Texture1D.h"
 #include "Texture2D.h"
 #include "Texture3D.h"
@@ -23,25 +24,29 @@ namespace RTGI
 class FrameBuffer : public RefObject
 {
 public:
-	FrameBuffer();
+    FrameBuffer(GPUDevice* device);
 	~FrameBuffer();
 
-	GLuint GetFBO();
+    FBOHandle* GetFBOHandle();
 
-	void SetRenderTargets(unsigned int colorTextureCount, 
+    void SetRenderTargets(unsigned int colorTextureCount,
 		Texture** colorTextures, Texture* depthTexture = 0, 
 		Texture* stencilTexture = 0);
 
 	void Enable();
 	void Disable();
 
-private:
-	GLuint mFBO;
+    enum { FBO_MAX_COLOR_TARGETS = 16 };
 
-    GLsizei mWidth, mHeight, mDepth;
+private:
+    FBOHandle* mFBO;
+
+// Internal.
+public:
+    int mWidth, mHeight, mDepth;
 	unsigned int mColorTextureCount;
 	std::vector<Texture*> mColorTextures;
-	GLenum* mColorBuffers;
+	unsigned int* mColorBuffers;
 	Texture* mDepthTexture;
 	Texture* mStencilTexture;
 };

@@ -55,6 +55,31 @@ GLenum gsBufferAccess[BA_Max] =
     GL_READ_WRITE
 };
 
+GLenum gsTextureTargets[TT_Max] =
+{
+    GL_TEXTURE_1D,
+    GL_TEXTURE_2D,
+    GL_TEXTURE_3D,
+    GL_TEXTURE_CUBE_MAP,
+    GL_TEXTURE_2D_ARRAY
+};
+
+GLenum gsFilterType[FT_Max] =
+{
+    GL_NEAREST,
+    GL_LINEAR,
+    GL_NEAREST_MIPMAP_NEAREST,
+    GL_LINEAR_MIPMAP_NEAREST,
+    GL_NEAREST_MIPMAP_LINEAR,
+    GL_LINEAR_MIPMAP_LINEAR
+};
+
+GLenum gsWrapType[WT_Max] =
+{
+    GL_CLAMP,
+    GL_REPEAT
+};
+
 //----------------------------------------------------------------------------
 void OpenGLDevice::__Initialize(GPUDeviceDescription* deviceDesc)
 {
@@ -501,6 +526,33 @@ void OpenGLDevice::__TextureBindToImageUnit(Texture* texture,
 #endif
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__TextureBindToSampler(Texture* texture, 
+    unsigned int index, SamplerDesc* sampler)
+{
+    OpenGLTextureHandle* textureHandle = 
+        (OpenGLTextureHandle*)texture->GetTextureHandle();
+    if( !textureHandle )
+    {
+        assert(false);
+        return;
+    }
+
+    GLuint t = textureHandle->mTexture;
+    TextureType type = texture->GetType();
+    GLenum target = gsTextureTargets[(int)type];
+    glActiveTexture(GL_TEXTURE0 + index);
+    glBindTexture(target, t);
+
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, 
+        gsFilterType[(int)sampler->MinFilter]);
+    glTexParameteri(target, GL_TEXTURE_MAG_FILTER,
+        gsFilterType[(int)sampler->MagFilter]);
+    glTexParameteri(target, GL_TEXTURE_WRAP_S,
+        gsWrapType[(int)sampler->WrapS]);
+    glTexParameteri(target, GL_TEXTURE_WRAP_T,
+        gsWrapType[(int)sampler->WrapT]);
+}
+//----------------------------------------------------------------------------
 void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture, 
     void* dstData)
 {
@@ -727,6 +779,107 @@ TextureHandle* OpenGLDevice::__TextureCubeLoadFromSystemMemory(
     return textureHandle;
 }
 //----------------------------------------------------------------------------
+FBOHandle* OpenGLDevice::__CreateFrameBuffer(FrameBuffer* frameBuffer)
+{
+    OpenGLFBOHandle* fboHandle = new OpenGLFBOHandle();
+    fboHandle->Device = this;
+
+    glGenFramebuffersEXT(1, &fboHandle->mFBO);
+
+    return fboHandle;
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__DeleteFrameBuffer(FrameBuffer* frameBuffer)
+{
+    OpenGLFBOHandle* fboHandle = 
+        (OpenGLFBOHandle*)frameBuffer->GetFBOHandle();
+    assert(fboHandle);
+
+    glDeleteFramebuffersEXT(1, &fboHandle->mFBO);
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__FrameBufferSetRenderTargets(FrameBuffer* frameBuffer,
+    unsigned int colorTextureCount, Texture** colorTextures, 
+    Texture* depthTexture, Texture* stencilTexture)
+{
+    OpenGLFBOHandle* fboHandle =
+        (OpenGLFBOHandle*)frameBuffer->GetFBOHandle();
+    assert(fboHandle);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fboHandle->mFBO);
+
+    for( unsigned int i = 0; i < colorTextureCount; ++i )
+    {
+        OpenGLTextureHandle* textureHandle = 
+            (OpenGLTextureHandle*)colorTextures[i]->GetTextureHandle();
+        assert(textureHandle);
+
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i,
+            textureHandle->mTexture, 0);
+        frameBuffer->mColorBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+        frameBuffer->mColorTextures.push_back(colorTextures[i]);
+    }
+
+    if( depthTexture )
+    {
+        OpenGLTextureHandle* textureHandle = 
+            (OpenGLTextureHandle*)depthTexture->GetTextureHandle();
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 
+            textureHandle->mTexture, 0);
+    }
+    frameBuffer->mDepthTexture = depthTexture;
+
+    if( stencilTexture )
+    {
+        OpenGLTextureHandle* textureHandle = 
+            (OpenGLTextureHandle*)stencilTexture->GetTextureHandle();
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, 
+            textureHandle->mTexture, 0);
+    }
+    frameBuffer->mStencilTexture = stencilTexture;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+static GLint oldViewport[4];
+//----------------------------------------------------------------------------
+void OpenGLDevice::__FrameBufferEnable(FrameBuffer* frameBuffer)
+{
+    // Cache old viewport values and set new values.
+    glGetIntegerv(GL_VIEWPORT, oldViewport);
+    glViewport(0, 0, frameBuffer->mWidth, frameBuffer->mHeight);
+
+    OpenGLFBOHandle* fboHandle =
+        (OpenGLFBOHandle*)frameBuffer->GetFBOHandle();
+    assert(fboHandle);
+    glBindFramebuffer(GL_FRAMEBUFFER, fboHandle->mFBO);
+    glDrawBuffers(frameBuffer->mColorTextureCount, frameBuffer->mColorBuffers);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__FrameBufferDisable(FrameBuffer* frameBuffer)
+{
+    glViewport(oldViewport[0], oldViewport[1], oldViewport[2], 
+        oldViewport[3]);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+
 
 //----------------------------------------------------------------------------
 OpenGLDevice::OpenGLDevice()
@@ -750,6 +903,7 @@ OpenGLDevice::OpenGLDevice()
     Texture1DLoadFromSystemMemory = (GPUDeviceTexture1DLoadFromSystemMemory)&OpenGLDevice::__Texture1DLoadFromSystemMemory;
     Texture1DUpdateFromPixelBuffer = (GPUDeviceTexture1DUpdateFromPixelBuffer)&OpenGLDevice::__Texture1DUpdateFromPixelBuffer;
     TextureBindToImageUnit = (GPUDeviceTextureBindToImageUnit)&OpenGLDevice::__TextureBindToImageUnit;
+    TextureBindToSampler = (GPUDeviceTextureBindToSampler)&OpenGLDevice::__TextureBindToSampler;
     Texture1DGetDataFromGPUMemory = (GPUDeviceTexture1DGetDataFromGPUMemory)&OpenGLDevice::__Texture1DGetDataFromGPUMemory;
     Texture2DLoadFromSystemMemory = (GPUDeviceTexture2DLoadFromSystemMemory)&OpenGLDevice::__Texture2DLoadFromSystemMemory;
     Texture2DLoadFromTextureBuffer = (GPUDeviceTexture2DLoadFromTextureBuffer)&OpenGLDevice::__Texture2DLoadFromTextureBuffer;
@@ -759,6 +913,11 @@ OpenGLDevice::OpenGLDevice()
     Texture3DLoadFromSystemMemory = (GPUDeviceTexture3DLoadFromSystemMemory)&OpenGLDevice::__Texture3DLoadFromSystemMemory;
     Texture3DUpdateFromPixelBuffer = (GPUDeviceTexture3DUpdateFromPixelBuffer)&OpenGLDevice::__Texture3DUpdateFromPixelBuffer;
     TextureCubeLoadFromSystemMemory = (GPUDeviceTextureCubeLoadFromSystemMemory)&OpenGLDevice::__TextureCubeLoadFromSystemMemory;
+    CreateFrameBuffer = (GPUDeviceCreateFrameBuffer)&OpenGLDevice::__CreateFrameBuffer;
+    DeleteFrameBuffer = (GPUDeviceDeleteFrameBuffer)&OpenGLDevice::__DeleteFrameBuffer;
+    FrameBufferSetRenderTargets = (GPUDeviceFrameBufferSetRenderTargets)&OpenGLDevice::__FrameBufferSetRenderTargets;
+    FrameBufferEnable = (GPUDeviceFrameBufferEnable)&OpenGLDevice::__FrameBufferEnable;
+    FrameBufferDisable = (GPUDeviceFrameBufferDisable)&OpenGLDevice::__FrameBufferDisable;
 
     mEnable4xMsaa = false;
     m4xMsaaQuality = 0;

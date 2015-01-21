@@ -22,7 +22,7 @@ namespace RTGI
 class GBufferRenderer : public SubRenderer
 {
 public:
-    GBufferRenderer(RenderSet* renderSet = 0);
+    GBufferRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~GBufferRenderer();
 
     void CreateGBuffer(int width, int height, TextureFormat format);

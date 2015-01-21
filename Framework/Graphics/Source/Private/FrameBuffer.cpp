@@ -8,9 +8,9 @@
 using namespace RTGI;
 
 //--------------------------------------------------------------------------
-FrameBuffer::FrameBuffer()
+FrameBuffer::FrameBuffer(GPUDevice* device)
 {
-	glGenFramebuffersEXT(1, &mFBO);
+    mFBO = GPU_DEVICE_FUNC(device, CreateFrameBuffer)(this);
     mWidth = 0;
     mHeight = 0;
     mDepth = 0;
@@ -22,20 +22,21 @@ FrameBuffer::FrameBuffer()
 //--------------------------------------------------------------------------
 FrameBuffer::~FrameBuffer()
 {
-	glDeleteFramebuffersEXT(1, &mFBO);
+    GPU_DEVICE_FUNC(mFBO->Device, DeleteFrameBuffer)(this);
 	delete[] mColorBuffers;
 }
 //--------------------------------------------------------------------------
-GLuint FrameBuffer::GetFBO()
+FBOHandle* FrameBuffer::GetFBOHandle()
 {
 	return mFBO;
 }
 //--------------------------------------------------------------------------
 void FrameBuffer::SetRenderTargets(unsigned int colorTextureCount, 
-	Texture** colorTextures, Texture* depthTexture, Texture* stencilTexture)
+    Texture** colorTextures, Texture* depthTexture, Texture* stencilTexture)
 {
-	assert( colorTextureCount > 0 && colorTextureCount <= 16 && 
-		colorTextures );
+    assert(colorTextureCount > 0 && 
+        colorTextureCount <= FBO_MAX_COLOR_TARGETS && colorTextures );
+
 
 	mColorTextures.clear();
 	if( mColorBuffers )
@@ -43,27 +44,24 @@ void FrameBuffer::SetRenderTargets(unsigned int colorTextureCount,
 		delete[] mColorBuffers;
 	}
 
-	GLuint texture;
 	mColorTextureCount = colorTextureCount;
-	mColorBuffers = new GLenum[colorTextureCount];
-
-	glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+	mColorBuffers = new unsigned int[colorTextureCount];
 
     // TODO:
     // Only support uniform size targets for now.
-    Texture::TextureType textureType = colorTextures[0]->GetType();
+    TextureType textureType = colorTextures[0]->GetType();
     switch( textureType )
     {
-    case Texture::TT_Texture1D:
+    case TT_Texture1D:
         mWidth = ((Texture1D*)colorTextures[0])->Width;
         break;
 
-    case Texture::TT_Texture2D:
+    case TT_Texture2D:
         mWidth = ((Texture2D*)colorTextures[0])->Width;
         mHeight = ((Texture2D*)colorTextures[0])->Height;
         break;
 
-    case Texture::TT_Texture2DArray:
+    case TT_Texture2DArray:
         mWidth = ((Texture2DArray*)colorTextures[0])->Width;
         mHeight = ((Texture2DArray*)colorTextures[0])->Height;
         mDepth = ((Texture2DArray*)colorTextures[0])->Depth;
@@ -74,51 +72,17 @@ void FrameBuffer::SetRenderTargets(unsigned int colorTextureCount,
         break;
     }
 
-	for( unsigned int i = 0; i < colorTextureCount; ++i )
-	{
-		texture = colorTextures[i]->GetTexture();
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, 
-            texture, 0);
-		mColorBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
-		mColorTextures.push_back(colorTextures[i]);
-	}
-
-	if( depthTexture )
-	{
-		texture = depthTexture->GetTexture();
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 
-            0);
-	}
-	mDepthTexture = depthTexture;
-
-	if( stencilTexture )
-	{
-		texture = stencilTexture->GetTexture();
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, texture, 
-            0);
-	}
-	mStencilTexture = stencilTexture;
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    GPU_DEVICE_FUNC(mFBO->Device, FrameBufferSetRenderTargets)(this, 
+        colorTextureCount, colorTextures, depthTexture, stencilTexture);
 }
-//--------------------------------------------------------------------------
-static GLint oldViewport[4];
 //--------------------------------------------------------------------------
 void FrameBuffer::Enable()
 {
-    // Cache old viewport values and set new values.
-    glGetIntegerv(GL_VIEWPORT, oldViewport);
-    glViewport(0, 0, mWidth, mHeight);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-	glDrawBuffers(mColorTextureCount, mColorBuffers);
+    GPU_DEVICE_FUNC(mFBO->Device, FrameBufferEnable)(this);
 }
 //--------------------------------------------------------------------------
 void FrameBuffer::Disable()
 {
-    glViewport(oldViewport[0], oldViewport[1], oldViewport[2], 
-        oldViewport[3]);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    GPU_DEVICE_FUNC(mFBO->Device, FrameBufferDisable)(this);
 }
 //--------------------------------------------------------------------------

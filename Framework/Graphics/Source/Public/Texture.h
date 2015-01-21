@@ -83,6 +83,7 @@ public:
     TextureType GetType() const;
 
     void BindToImageUnit(unsigned int unit, BufferAccess access);
+    void BindToSampler(unsigned int index, SamplerDesc* sampler);
 
 protected:
     Texture();

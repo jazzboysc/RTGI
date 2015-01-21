@@ -64,6 +64,7 @@ private:
         TextureComponentType type, void* pixels);
     void __Texture1DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
     void __TextureBindToImageUnit(Texture* texture, unsigned int unit, BufferAccess access);
+    void __TextureBindToSampler(Texture* texture, unsigned int index, SamplerDesc* sampler);
     void __Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData);
     TextureHandle* __Texture2DLoadFromSystemMemory(Texture* texture, 
         TextureInternalFormat internalFormat, int width, int height, 
@@ -84,6 +85,15 @@ private:
         TextureFormat format, TextureComponentType type,
         void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY,
         void* pixelsPZ, void* pixelsNZ);
+
+    // FrameBuffer.
+    FBOHandle* __CreateFrameBuffer(FrameBuffer* frameBuffer);
+    void __DeleteFrameBuffer(FrameBuffer* frameBuffer);
+    void __FrameBufferSetRenderTargets(FrameBuffer* frameBuffer, 
+        unsigned int colorTextureCount, Texture** colorTextures, 
+        Texture* depthTexture, Texture* stencilTexture);
+    void __FrameBufferEnable(FrameBuffer* frameBuffer);
+    void __FrameBufferDisable(FrameBuffer* frameBuffer);
 
 private:
     bool mEnable4xMsaa;

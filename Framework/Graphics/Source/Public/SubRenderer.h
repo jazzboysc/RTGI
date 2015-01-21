@@ -7,6 +7,7 @@
 #define RTGI_SubRenderer_H
 
 #include "RefObject.h"
+#include "GPUDevice.h"
 #include "Texture.h"
 #include "RendererInput.h"
 #include "RendererOutput.h"
@@ -37,7 +38,7 @@ typedef BufferBase* (*SubRendererCreateRendererData)(int size,
 class SubRenderer : public RefObject
 {
 public:
-    SubRenderer(RenderSet* renderSet = 0);
+    SubRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~SubRenderer();
 
     // Scene rendered by this renderer.
@@ -93,6 +94,8 @@ protected:
     void PostRender(unsigned int outputFlag, PipelineStateBlock* psb);
     void ApplyPipelineStateBlock(PipelineStateBlock* psb);
 
+    GPUDevice* mDevice;
+
     // Buffer inputs.
     std::vector<RendererInputPtr> mInputs;
 
@@ -108,6 +111,7 @@ protected:
     GPUTimerPtr mTimer;
 
 private:
+    SubRenderer();
     static SubRendererCreateRendererData msFactoryFunctions[6];
 };
 
