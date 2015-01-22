@@ -75,16 +75,16 @@ void ISMApp::Initialize(GPUDevice* device)
     shadowMapWidth = 256;
     shadowMapHeight = 256;
     mShadowMapTexture = new Texture2D();
-    mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture2D::TF_RGBF);
+    mShadowMapTexture->CreateRenderTarget(mDevice, shadowMapWidth, 
+        shadowMapHeight, TF_RGBF);
 
     mShadowMapDepthTexture = new Texture2D();
-    mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture2D::TF_Depth);
+    mShadowMapDepthTexture->CreateRenderTarget(mDevice, shadowMapWidth, 
+        shadowMapHeight, TF_Depth);
 
     // Create shadow map frame buffer.
     Texture* renderTargets[] = { mShadowMapTexture };
-    mShadowMapFB = new FrameBuffer();
+    mShadowMapFB = new FrameBuffer(mDevice);
     mShadowMapFB->SetRenderTargets(1, renderTargets, mShadowMapDepthTexture);
 
 	// Create scene.

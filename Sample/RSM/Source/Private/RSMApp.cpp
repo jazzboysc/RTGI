@@ -70,34 +70,34 @@ void RSMApp::Initialize(GPUDevice* device)
 
 	// Create RSM-buffer MRT textures.
 	mRSMPositionTexture = new Texture2D();
-	mRSMPositionTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mRSMPositionTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 	mRSMNormalTexture = new Texture2D();
-	mRSMNormalTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mRSMNormalTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 	mRSMFluxTexture = new Texture2D();
-	mRSMFluxTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mRSMFluxTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 	mRSMDepthTexture = new Texture2D();
-	mRSMDepthTexture->CreateRenderTarget(Width, Height, Texture2D::TF_Depth);
+	mRSMDepthTexture->CreateRenderTarget(mDevice, Width, Height, TF_Depth);
 
 	// Create RSM-buffer.
 	Texture* rsmTextures[3] = {mRSMPositionTexture, mRSMNormalTexture, mRSMFluxTexture};
-	mRSMBuffer = new FrameBuffer();
+	mRSMBuffer = new FrameBuffer(mDevice);
 	mRSMBuffer->SetRenderTargets(3, rsmTextures, mRSMDepthTexture);
     
 	// Create G-buffer MRT textures.
 	mPositionTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mPositionTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 	mNormalTexture = new Texture2D();
-	mNormalTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mNormalTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 	mColorTexture = new Texture2D();
-	mColorTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mColorTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 	mDepthTexture = new Texture2D();
-	mDepthTexture->CreateRenderTarget(Width, Height, Texture2D::TF_Depth);
+	mDepthTexture->CreateRenderTarget(mDevice, Width, Height, TF_Depth);
 	mIndirectLightingTexture = new Texture2D();
-	mIndirectLightingTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mIndirectLightingTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
     
 	// Create G-buffer.
 	Texture* gbufferTextures[4] = {mPositionTexture, mNormalTexture, mColorTexture, mIndirectLightingTexture};
-	mGBuffer = new FrameBuffer();
+	mGBuffer = new FrameBuffer(mDevice);
 	mGBuffer->SetRenderTargets(4, gbufferTextures, mDepthTexture);
     
 	// Create RSM sampling pattern texture.
@@ -112,8 +112,8 @@ void RSMApp::Initialize(GPUDevice* device)
         randmoNumbers[3*i + 2] = e1 * e1;
 	}
 	mSamplingPatternTexture = new Texture2D();
-	mSamplingPatternTexture->LoadFromSystemMemory(GL_RGB32F_ARB,
-                                                  RSM_SAMPLE_COUNT, 1, GL_RGB, GL_FLOAT, (void*)randmoNumbers);
+	mSamplingPatternTexture->LoadFromSystemMemory(mDevice, TIF_RGB32F,
+        RSM_SAMPLE_COUNT, 1, TF_RGB, TCT_Float, (void*)randmoNumbers);
     
 	// Create RSM temp result screen quad.
 	material = new Material(mtRSMTemp);

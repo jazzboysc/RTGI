@@ -3,9 +3,9 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-RSMRenderer::RSMRenderer(RenderSet* renderSet)
+RSMRenderer::RSMRenderer(GPUDevice* device, RenderSet* renderSet)
     :
-    SubRenderer(renderSet)
+    SubRenderer(device, renderSet)
 {
     mPSB = new PipelineStateBlock();
     mPSB->Flag |= PB_OutputMerger;
@@ -19,15 +19,15 @@ RSMRenderer::~RSMRenderer()
 }
 //----------------------------------------------------------------------------
 void RSMRenderer::CreateRSM(int width, int height, int depth,
-    Texture::TextureFormat format)
+    TextureFormat format)
 {
     AddFrameBufferTarget(RTGI_RSMRenderer_RSMPosition_Name, width, height, 
-        depth, Texture::TT_Texture2DArray, format);
+        depth, TT_Texture2DArray, format);
     AddFrameBufferTarget(RTGI_RSMRenderer_RSMNormal_Name, width, height, depth,
-        Texture::TT_Texture2DArray, format);
+        TT_Texture2DArray, format);
     AddFrameBufferTarget(RTGI_RSMRenderer_RSMFlux_Name, width, height, depth,
-        Texture::TT_Texture2DArray, format);
-    CreateFrameBuffer(width, height, depth, Texture::TT_Texture2DArray);
+        TT_Texture2DArray, format);
+    CreateFrameBuffer(width, height, depth, TT_Texture2DArray);
 }
 //----------------------------------------------------------------------------
 void RSMRenderer::Render(int technique, int pass, Camera* camera)

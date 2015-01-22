@@ -25,8 +25,8 @@ void SampleRSM::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 void SampleRSM::OnPreDispatch(unsigned int pass)
 {
-    VPLSamplePattern->BindToImageUnit(0, GL_READ_ONLY);
-    VPLSampleTest->BindToImageUnit(1, GL_WRITE_ONLY);
+    VPLSamplePattern->BindToImageUnit(0, BA_Read_Only);
+    VPLSampleTest->BindToImageUnit(1, BA_Write_Only);
 
     mRSMPositionLoc.SetValue(0);
     mRSMNormalLoc.SetValue(1);
@@ -40,9 +40,9 @@ void SampleRSM::OnPostDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-VPLGenerator::VPLGenerator(RenderSet* renderSet)
+VPLGenerator::VPLGenerator(GPUDevice* device, RenderSet* renderSet)
     :
-    SubRenderer(renderSet)
+    SubRenderer(device, renderSet)
 {
 }
 //----------------------------------------------------------------------------
@@ -95,10 +95,10 @@ void VPLGenerator::Initialize(GPUDevice* device, int vplCount)
 
     // Create VPL sample pattern.
     mVPLSamplePattern = new Texture1D();
-    mVPLSamplePattern->CreateUniformRandomTexture(mVPLCount, 4);
+    mVPLSamplePattern->CreateUniformRandomTexture(device, mVPLCount, 4);
     mVPLSampleTest = new Texture1D();
-    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, mVPLCount, GL_RGBA,
-        GL_FLOAT, 0);
+    mVPLSampleTest->LoadFromSystemMemory(device, TIF_RGBA32F, mVPLCount, 
+        TF_RGBA, TCT_Float, 0);
 
     // Create VPL buffer.
     GLuint vplBufferSize = (sizeof(vec4) * 3 + sizeof(mat4)) * mVPLCount;

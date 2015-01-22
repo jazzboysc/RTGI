@@ -29,34 +29,23 @@ void VPLSampleRSM::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 void VPLSampleRSM::OnPreDispatch(unsigned int pass)
 {
-    VPLSamplePattern->BindToImageUnit(0, GL_READ_ONLY);
-    VPLSampleTest->BindToImageUnit(1, GL_WRITE_ONLY);
+    VPLSamplePattern->BindToImageUnit(0, BA_Read_Only);
+    VPLSampleTest->BindToImageUnit(1, BA_Write_Only);
     VPLBuffer->Bind(0);
 
     mRSMPositionLoc.SetValue(0);
     mRSMNormalLoc.SetValue(1);
     mRSMFluxLoc.SetValue(2);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, RSMPosition->GetTexture());
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    SamplerDesc sampler;
+    sampler.MinFilter = FT_Nearest;
+    sampler.MagFilter = FT_Nearest;
+    sampler.WrapS = WT_Clamp;
+    sampler.WrapT = WT_Clamp;
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, RSMNormal->GetTexture());
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, RSMFlux->GetTexture());
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    RSMPosition->BindToSampler(0, &sampler);
+    RSMNormal->BindToSampler(1, &sampler);
+    RSMFlux->BindToSampler(2, &sampler);
 }
 //----------------------------------------------------------------------------
 void VPLSampleRSM::OnPostDispatch(unsigned int pass)

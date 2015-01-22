@@ -15,7 +15,7 @@ namespace RTGI
 class OITApp : public Application
 {
 public:
-	OITApp(int width = 1024, int height = 768);
+	OITApp(int width = 768, int height = 768);
 	~OITApp();
 
 	void Initialize(GPUDevice* device) override;

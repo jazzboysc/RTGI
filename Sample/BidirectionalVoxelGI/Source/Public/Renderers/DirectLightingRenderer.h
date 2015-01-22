@@ -48,11 +48,11 @@ typedef RefPointer<DirectLightingScreenQuad> DirectLightingScreenQuadPtr;
 class DirectLightingRenderer : public SubRenderer
 {
 public:
-    DirectLightingRenderer(RenderSet* renderSet = 0);
+    DirectLightingRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~DirectLightingRenderer();
 
-    void Initialize(GPUDevice* device, int width, int height, Texture::TextureFormat format, 
-        Camera* LightProjector);
+    void Initialize(GPUDevice* device, int width, int height, 
+        TextureFormat format, Camera* LightProjector);
     void SetInputs(GBufferRenderer* gbuffer, ShadowMapRenderer* shadowMap);
     void Render();
 

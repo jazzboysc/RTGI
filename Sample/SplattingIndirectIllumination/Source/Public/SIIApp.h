@@ -15,7 +15,7 @@ namespace RTGI
 class SIIApp : public Application
 {
 public:
-	SIIApp(int width = 1024, int height = 768);
+	SIIApp(int width = 768, int height = 768);
 	~SIIApp();
 
 	void Initialize(GPUDevice* device) override;

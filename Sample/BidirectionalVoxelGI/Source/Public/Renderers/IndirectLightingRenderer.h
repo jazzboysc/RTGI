@@ -56,11 +56,11 @@ typedef RefPointer<IndirectLightingScreenQuad> IndirectLightingScreenQuadPtr;
 class IndirectLightingRenderer : public SubRenderer
 {
 public:
-    IndirectLightingRenderer(RenderSet* renderSet = 0);
+    IndirectLightingRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~IndirectLightingRenderer();
 
     void Initialize(GPUDevice* device, int width, int height, 
-        Texture::TextureFormat format, int vplCount, int patternSize, 
+        TextureFormat format, int vplCount, int patternSize, 
         AABB* sceneBB, int voxelGridDim);
     void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer, 
         Voxelizer* voxelBuffer);

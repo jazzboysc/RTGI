@@ -129,7 +129,7 @@ public:
         SM_Final
     };
 
-    Visualizer(RenderSet* renderSet = 0);
+    Visualizer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~Visualizer();
 
     void Initialize(GPUDevice* device, Voxelizer* voxelizer, 

@@ -103,38 +103,42 @@ void SIIApp::Initialize(GPUDevice* device)
     shadowMapWidth = 1024;
     shadowMapHeight = 1024;
     mShadowMapTexture = new Texture2D();
-    mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture2D::TF_RGBF);
+    mShadowMapTexture->CreateRenderTarget(mDevice, shadowMapWidth, 
+        shadowMapHeight, TF_RGBF);
 
     mShadowMapDepthTexture = new Texture2D();
-    mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture2D::TF_Depth);
+    mShadowMapDepthTexture->CreateRenderTarget(mDevice, shadowMapWidth, 
+        shadowMapHeight, TF_Depth);
 
     // Create shadow map frame buffer.
     Texture* renderTargets[] = { mShadowMapTexture };
-    mShadowMapFB = new FrameBuffer();
+    mShadowMapFB = new FrameBuffer(mDevice);
     mShadowMapFB->SetRenderTargets(1, renderTargets, mShadowMapDepthTexture);
 
     // Create RSM-buffer MRT textures.
     int RSMWidth = 1024;
     int RSMHeight = 1024;
     mRSMPositionTexturePX = new Texture2D();
-    mRSMPositionTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::TF_RGBF);
+    mRSMPositionTexturePX->CreateRenderTarget(mDevice, RSMWidth, RSMHeight, 
+        TF_RGBF);
     mRSMNormalTexturePX = new Texture2D();
-    mRSMNormalTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::TF_RGBF);
+    mRSMNormalTexturePX->CreateRenderTarget(mDevice, RSMWidth, RSMHeight, 
+        TF_RGBF);
     mRSMFluxTexturePX = new Texture2D();
-    mRSMFluxTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::TF_RGBF);
+    mRSMFluxTexturePX->CreateRenderTarget(mDevice, RSMWidth, RSMHeight, 
+        TF_RGBF);
     mRSMDepthTexturePX = new Texture2D();
-    mRSMDepthTexturePX->CreateRenderTarget(RSMWidth, RSMHeight, Texture2D::TF_Depth);
+    mRSMDepthTexturePX->CreateRenderTarget(mDevice, RSMWidth, RSMHeight, 
+        TF_Depth);
 
     // Create RSM-buffer.
     Texture* rsmTextures[3] = { mRSMPositionTexturePX, mRSMNormalTexturePX, mRSMFluxTexturePX };
-    mRSMBufferPX = new FrameBuffer();
+    mRSMBufferPX = new FrameBuffer(mDevice);
     mRSMBufferPX->SetRenderTargets(3, rsmTextures, mRSMDepthTexturePX);
 
     // Create RSM sample texture.
     mRSMSampleTexture = new Texture1D();
-    mRSMSampleTexture->CreateUniformRandomTexture(128, 2);
+    mRSMSampleTexture->CreateUniformRandomTexture(mDevice, 128, 2);
 
     // Create VPL quad.
     material = new Material(mtVPLQuad);

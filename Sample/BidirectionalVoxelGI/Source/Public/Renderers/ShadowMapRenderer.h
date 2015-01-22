@@ -15,10 +15,10 @@ namespace RTGI
 class ShadowMapRenderer : public SubRenderer
 {
 public:
-    ShadowMapRenderer(RenderSet* renderSet = 0);
+    ShadowMapRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~ShadowMapRenderer();
 
-    void CreateShadowMap(int width, int height, Texture::TextureFormat format);
+    void CreateShadowMap(int width, int height, TextureFormat format);
     void Render(int technique, int pass, Camera* camera);
 
 protected:

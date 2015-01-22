@@ -27,26 +27,15 @@ void VPLIndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
     mGBufferNormalSamplerLoc.SetValue(1);
     mGBufferAlbedoSamplerLoc.SetValue(2);
 
-	glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, GBufferPositionTexture->GetTexture());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    SamplerDesc sampler;
+    sampler.MinFilter = FT_Nearest;
+    sampler.MagFilter = FT_Nearest;
+    sampler.WrapS = WT_Clamp;
+    sampler.WrapT = WT_Clamp;
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, GBufferNormalTexture->GetTexture());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, GBufferAlbedoTexture->GetTexture());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    GBufferPositionTexture->BindToSampler(0, &sampler);
+    GBufferNormalTexture->BindToSampler(1, &sampler);
+    GBufferAlbedoTexture->BindToSampler(2, &sampler);
 
     VPLBuffer->Bind(0);
 }

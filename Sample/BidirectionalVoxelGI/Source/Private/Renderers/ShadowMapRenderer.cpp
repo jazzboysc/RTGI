@@ -3,9 +3,9 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-ShadowMapRenderer::ShadowMapRenderer(RenderSet* renderSet)
+ShadowMapRenderer::ShadowMapRenderer(GPUDevice* device, RenderSet* renderSet)
     :
-    SubRenderer(renderSet)
+    SubRenderer(device, renderSet)
 {
     mPSB = new PipelineStateBlock();
     mPSB->Flag |= PB_OutputMerger;
@@ -19,11 +19,11 @@ ShadowMapRenderer::~ShadowMapRenderer()
 }
 //----------------------------------------------------------------------------
 void ShadowMapRenderer::CreateShadowMap(int width, int height,
-    Texture::TextureFormat format)
+    TextureFormat format)
 {
     AddFrameBufferTarget(RTGI_ShadowMapRenderer_ShadowMap_Name, width, height,
-        0, Texture::TT_Texture2D, format);
-    CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
+        0, TT_Texture2D, format);
+    CreateFrameBuffer(width, height, 0, TT_Texture2D);
 }
 //----------------------------------------------------------------------------
 void ShadowMapRenderer::Render(int technique, int pass, Camera* camera)

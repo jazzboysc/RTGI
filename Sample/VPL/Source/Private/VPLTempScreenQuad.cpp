@@ -23,40 +23,28 @@ void VPLTempScreenQuad::OnUpdateShaderConstants(int, int)
     mShowModeLoc.SetValue(ShowMode);
     mTextureArrayIndexLoc.SetValue(TextureArrayIndex);
 
+    SamplerDesc sampler;
+    sampler.MinFilter = FT_Nearest;
+    sampler.MagFilter = FT_Nearest;
+    sampler.WrapS = WT_Clamp;
+    sampler.WrapT = WT_Clamp;
+
     if( TempTexture )
     {
         mTempSamplerLoc.SetValue(0);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, TempTexture->GetTexture());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        TempTexture->BindToSampler(0, &sampler);
     }
 
     if( TempTexture2 )
     {
         mTempSampler2Loc.SetValue(1);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, TempTexture2->GetTexture());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        TempTexture2->BindToSampler(1, &sampler);
     }
 
     if( TempTextureArray )
     {
         mTempSamplerArrayLoc.SetValue(2);
-
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, TempTextureArray->GetTexture());
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        TempTextureArray->BindToSampler(2, &sampler);
     }
 }
 //----------------------------------------------------------------------------

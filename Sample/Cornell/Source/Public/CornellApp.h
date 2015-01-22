@@ -13,7 +13,7 @@ namespace RTGI
 class CornellApp : public Application
 {
 public:
-	CornellApp(int width = 1024, int height = 768);
+	CornellApp(int width = 768, int height = 768);
 	~CornellApp();
 
 	void Initialize(GPUDevice* device) override;

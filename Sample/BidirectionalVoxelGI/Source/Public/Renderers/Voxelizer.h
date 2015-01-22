@@ -33,7 +33,7 @@ typedef RefPointer<ResetVoxelBuffer> ResetVoxelBufferPtr;
 class Voxelizer : public SubRenderer
 {
 public:
-    Voxelizer(RenderSet* renderSet = 0);
+    Voxelizer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~Voxelizer();
 
     void Initialize(GPUDevice* device, int voxelGridDim, 

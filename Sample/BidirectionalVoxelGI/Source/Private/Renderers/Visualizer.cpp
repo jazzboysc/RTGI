@@ -60,59 +60,40 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
     mTextureArrayIndexLoc.SetValue(TextureArrayIndex);
     mDimLoc.SetValue(VoxelGridDim);
 
+    SamplerDesc sampler;
+    sampler.MinFilter = FT_Nearest;
+    sampler.MagFilter = FT_Nearest;
+    sampler.WrapS = WT_Clamp;
+    sampler.WrapT = WT_Clamp;
+
     mTempSamplerLoc.SetValue(0);
     if( TempTexture )
     {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, TempTexture->GetTexture());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        TempTexture->BindToSampler(0, &sampler);
     }
 
     mTempSampler2Loc.SetValue(1);
     if( TempTexture2 )
     {
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, TempTexture2->GetTexture());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        TempTexture2->BindToSampler(1, &sampler);
     }
 
     mTempSamplerArrayLoc.SetValue(2);
     if( TempTextureArray )
     {
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, TempTextureArray->GetTexture());
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        TempTextureArray->BindToSampler(2, &sampler);
     }
 
     mPositionSamplerLoc.SetValue(3);
     if( GBufferPositionTexture )
     {
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, GBufferPositionTexture->GetTexture());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        GBufferPositionTexture->BindToSampler(3, &sampler);
     }
 
     mNormalSamplerLoc.SetValue(4);
     if( GBufferNormalTexture )
     {
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, GBufferNormalTexture->GetTexture());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        GBufferNormalTexture->BindToSampler(4, &sampler);
     }
 
     mPositionThresholdLoc.SetValue(PositionThreshold);
@@ -176,9 +157,9 @@ void VoxelCubeTriMesh::OnUpdateShaderConstants(int technique, int pass)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-Visualizer::Visualizer(RenderSet* renderSet)
+Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
     :
-    SubRenderer(renderSet)
+    SubRenderer(device, renderSet)
 {
 }
 //----------------------------------------------------------------------------

@@ -34,6 +34,7 @@ enum TextureInternalFormat
     TIF_RGBA8,
     TIF_RGB32F,
     TIF_RGBA32F,
+    TIF_RGBA32UI,
     TIF_RGB16F,
     TIF_RGBA16F,
     TIF_R32UI,

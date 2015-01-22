@@ -46,7 +46,7 @@ typedef RefPointer<SampleRSM> SampleRSMPtr;
 class VPLGenerator : public SubRenderer
 {
 public:
-    VPLGenerator(RenderSet* renderSet = 0);
+    VPLGenerator(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~VPLGenerator();
 
     void SetRSMRenderer(RSMRenderer* rsm);

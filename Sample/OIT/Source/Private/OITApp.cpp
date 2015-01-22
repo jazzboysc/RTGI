@@ -81,8 +81,8 @@ void OITApp::Initialize(GPUDevice* device)
 
 	// Create head pointer texture.
 	mHeadPointerTexture = new Texture2D();
-	mHeadPointerTexture->CreateRenderTarget(Width, Height, 
-		Texture2D::TF_R32UI);
+	mHeadPointerTexture->CreateRenderTarget(mDevice, Width, Height, 
+		TF_R32UI);
 
 	// Create head pointer texture init data.
 	int pixelCount = Width * Height;
@@ -112,7 +112,8 @@ void OITApp::Initialize(GPUDevice* device)
 
 	// Create GPU memory pool texture.
 	mGPUMemPoolTexture = new Texture2D();
-	mGPUMemPoolTexture->LoadFromTextureBuffer(mGPUMemPool, GL_RGBA32UI);
+	mGPUMemPoolTexture->LoadFromTextureBuffer(mDevice, mGPUMemPool, 
+        TIF_RGBA32UI);
 }
 //----------------------------------------------------------------------------
 void OITApp::FrameFunc()
@@ -130,8 +131,8 @@ void OITApp::FrameFunc()
 	mHeadPointerTexture->UpdateFromPixelBuffer(mHeadPointerTextureInitData);
 
 	// Bind textures to image units.
-	mHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
-	mGPUMemPoolTexture->BindToImageUnit(1, GL_READ_WRITE);
+	mHeadPointerTexture->BindToImageUnit(0, BA_Read_Write);
+    mGPUMemPoolTexture->BindToImageUnit(1, BA_Read_Write);
 
 	// Bind structured buffer.
 	mGPUMemPool2->Bind(0);

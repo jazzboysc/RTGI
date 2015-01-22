@@ -14,7 +14,7 @@ namespace RTGI
 class SSSviaPSMApp : public Application
 {
 public:
-	SSSviaPSMApp(int width = 1024, int height = 768);
+	SSSviaPSMApp(int width = 768, int height = 768);
 	~SSSviaPSMApp();
 
 	void Initialize(GPUDevice* device) override;

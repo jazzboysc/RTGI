@@ -130,17 +130,17 @@ void VPLApp::Initialize(GPUDevice* device)
 
     // Create G-buffer textures.
     mGBufferPositionTexture = new Texture2D();
-    mGBufferPositionTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
+    mGBufferPositionTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBAF);
     mGBufferNormalTexture = new Texture2D();
-    mGBufferNormalTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
+    mGBufferNormalTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBAF);
     mGBufferAlbedoTexture = new Texture2D();
-    mGBufferAlbedoTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
+    mGBufferAlbedoTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBAF);
     mGBufferDepthTexture = new Texture2D();
-    mGBufferDepthTexture->CreateRenderTarget(Width, Height, Texture::TF_Depth);
+    mGBufferDepthTexture->CreateRenderTarget(mDevice, Width, Height, TF_Depth);
 
     // Create G-buffer.
     Texture* gbufferTextures[3] = { mGBufferPositionTexture, mGBufferNormalTexture, mGBufferAlbedoTexture };
-    mGBufferFB = new FrameBuffer();
+    mGBufferFB = new FrameBuffer(mDevice);
     mGBufferFB->SetRenderTargets(3, gbufferTextures, mGBufferDepthTexture);
 
     // Create shadow map render target.
@@ -148,40 +148,40 @@ void VPLApp::Initialize(GPUDevice* device)
     shadowMapWidth = 512;
     shadowMapHeight = 512;
     mShadowMapTexture = new Texture2D();
-    mShadowMapTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture::TF_RGBAF);
+    mShadowMapTexture->CreateRenderTarget(mDevice, shadowMapWidth, shadowMapHeight, 
+        TF_RGBAF);
 
     mShadowMapDepthTexture = new Texture2D();
-    mShadowMapDepthTexture->CreateRenderTarget(shadowMapWidth, shadowMapHeight, 
-        Texture::TF_Depth);
+    mShadowMapDepthTexture->CreateRenderTarget(mDevice, shadowMapWidth, shadowMapHeight, 
+        TF_Depth);
 
     // Create shadow map frame buffer.
     Texture* renderTargets[] = { mShadowMapTexture };
-    mShadowMapFB = new FrameBuffer();
+    mShadowMapFB = new FrameBuffer(mDevice);
     mShadowMapFB->SetRenderTargets(1, renderTargets, mShadowMapDepthTexture);
 
     // Create direct lighting render target.
     mDirectLightingTexture = new Texture2D();
-    mDirectLightingTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
+    mDirectLightingTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBAF);
 
     mDirectLightingDepthTexture = new Texture2D();
-    mDirectLightingDepthTexture->CreateRenderTarget(Width, Height, Texture::TF_Depth);
+    mDirectLightingDepthTexture->CreateRenderTarget(mDevice, Width, Height, TF_Depth);
 
     // Create direct lighting frame buffer.
     Texture* dlRenderTargets[] = { mDirectLightingTexture };
-    mDirectLightingFB = new FrameBuffer();
+    mDirectLightingFB = new FrameBuffer(mDevice);
     mDirectLightingFB->SetRenderTargets(1, dlRenderTargets, mDirectLightingDepthTexture);
 
     // Create indirect lighting render target.
     mIndirectLightingTexture = new Texture2D();
-    mIndirectLightingTexture->CreateRenderTarget(Width, Height, Texture::TF_RGBAF);
+    mIndirectLightingTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBAF);
 
     mIndirectLightingDepthTexture = new Texture2D();
-    mIndirectLightingDepthTexture->CreateRenderTarget(Width, Height, Texture::TF_Depth);
+    mIndirectLightingDepthTexture->CreateRenderTarget(mDevice, Width, Height, TF_Depth);
 
     // Create indirect lighting frame buffer.
     Texture* indlRenderTargets[] = { mIndirectLightingTexture };
-    mIndirectLightingFB = new FrameBuffer();
+    mIndirectLightingFB = new FrameBuffer(mDevice);
     mIndirectLightingFB->SetRenderTargets(1, indlRenderTargets, mIndirectLightingDepthTexture);
 
     // Create RSM render targets.
@@ -189,17 +189,17 @@ void VPLApp::Initialize(GPUDevice* device)
     rsmWidth = 256;
     rsmHeight = 256;
     mRSMPositionTextureArray = new Texture2DArray();
-    mRSMPositionTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
+    mRSMPositionTextureArray->CreateRenderTarget(mDevice, rsmWidth, rsmHeight, 5, TF_RGBAF);
     mRSMNormalTextureArray = new Texture2DArray();
-    mRSMNormalTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
+    mRSMNormalTextureArray->CreateRenderTarget(mDevice, rsmWidth, rsmHeight, 5, TF_RGBAF);
     mRSMFluxTextureArray = new Texture2DArray();
-    mRSMFluxTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_RGBAF);
+    mRSMFluxTextureArray->CreateRenderTarget(mDevice, rsmWidth, rsmHeight, 5, TF_RGBAF);
     mRSMDepthTextureArray = new Texture2DArray();
-    mRSMDepthTextureArray->CreateRenderTarget(rsmWidth, rsmHeight, 5, Texture::TF_Depth);
+    mRSMDepthTextureArray->CreateRenderTarget(mDevice, rsmWidth, rsmHeight, 5, TF_Depth);
 
     // Create RSM frame buffer.
     Texture* rsmRenderTargets[] = { mRSMPositionTextureArray, mRSMNormalTextureArray, mRSMFluxTextureArray };
-    mRSMFB = new FrameBuffer();
+    mRSMFB = new FrameBuffer(mDevice);
     mRSMFB->SetRenderTargets(3, rsmRenderTargets, mRSMDepthTextureArray);
 
     // Create VPL shadow maps render target.
@@ -207,20 +207,20 @@ void VPLApp::Initialize(GPUDevice* device)
     vplSMWidth = 256;
     vplSMHeight = 256;
     mVPLShadowMapTextureArray = new Texture2DArray();
-    mVPLShadowMapTextureArray->CreateRenderTarget(vplSMWidth, vplSMHeight, VPL_SAMPLE_COUNT, Texture::TF_RGBAF);
+    mVPLShadowMapTextureArray->CreateRenderTarget(mDevice, vplSMWidth, vplSMHeight, VPL_SAMPLE_COUNT, TF_RGBAF);
     mVPLShadowMapDepthTextureArray = new Texture2DArray();
-    mVPLShadowMapDepthTextureArray->CreateRenderTarget(vplSMWidth, vplSMHeight, VPL_SAMPLE_COUNT, Texture::TF_Depth);
+    mVPLShadowMapDepthTextureArray->CreateRenderTarget(mDevice, vplSMWidth, vplSMHeight, VPL_SAMPLE_COUNT, TF_Depth);
 
     // Create VPL shaodw maps frame buffer.
     Texture* vplSMRenderTargets[] = { mVPLShadowMapTextureArray };
-    mVPLShadowMapFB = new FrameBuffer();
+    mVPLShadowMapFB = new FrameBuffer(mDevice);
     mVPLShadowMapFB->SetRenderTargets(1, vplSMRenderTargets, mVPLShadowMapDepthTextureArray);
 
     // Create VPL sample pattern.
     mVPLSamplePattern = new Texture1D();
-    mVPLSamplePattern->CreateUniformRandomTexture(VPL_SAMPLE_COUNT, 4);
+    mVPLSamplePattern->CreateUniformRandomTexture(mDevice, VPL_SAMPLE_COUNT, 4);
     mVPLSampleTest = new Texture1D();
-    mVPLSampleTest->LoadFromSystemMemory(GL_RGBA32F, VPL_SAMPLE_COUNT, GL_RGBA, GL_FLOAT, 0);
+    mVPLSampleTest->LoadFromSystemMemory(mDevice, TIF_RGBA32F, VPL_SAMPLE_COUNT, TF_RGBA, TCT_Float, 0);
 
     // Create VPL buffer.
     GLuint vplBufferSize = (sizeof(vec4)* 3 + sizeof(mat4)) * VPL_SAMPLE_COUNT;

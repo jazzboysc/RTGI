@@ -50,9 +50,10 @@ void IndirectLightingScreenQuad::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-IndirectLightingRenderer::IndirectLightingRenderer(RenderSet* renderSet)
+IndirectLightingRenderer::IndirectLightingRenderer(GPUDevice* device, 
+    RenderSet* renderSet)
     :
-    SubRenderer(renderSet)
+    SubRenderer(device, renderSet)
 {
     mPSB = new PipelineStateBlock();
     mPSB->Flag |= PB_OutputMerger;
@@ -99,7 +100,7 @@ void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, 
-    int height, Texture::TextureFormat format, int vplCount, int patternSize, 
+    int height, TextureFormat format, int vplCount, int patternSize, 
     AABB* sceneBB, int voxelGridDim)
 {
     ShaderProgramInfo indirectLightingProgramInfo;
@@ -129,8 +130,8 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
 
     // Create output.
     AddFrameBufferTarget(RTGI_IndirectLightingRenderer_IndirectLighting_Name,
-        width, height, 0, Texture::TT_Texture2D, format);
-    CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
+        width, height, 0, TT_Texture2D, format);
+    CreateFrameBuffer(width, height, 0, TT_Texture2D);
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Render()

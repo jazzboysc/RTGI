@@ -33,6 +33,7 @@ GLint gsTextureInternalFormat[TIF_Max] =
     GL_RGBA8,
     GL_RGB32F_ARB,
     GL_RGBA32F_ARB,
+    GL_RGBA32UI,
     GL_RGB16F_ARB,
     GL_RGBA16F_ARB,
     GL_R32UI,
@@ -611,7 +612,8 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromTextureBuffer(
     GLuint buffer = textureBuffer->GetBuffer();
     glGenTextures(1, &textureHandle->mTexture);
     glBindTexture(GL_TEXTURE_BUFFER, textureHandle->mTexture);
-    glTexBuffer(GL_TEXTURE_BUFFER, internalFormat, buffer);
+    glTexBuffer(GL_TEXTURE_BUFFER, 
+        gsTextureInternalFormat[(int)internalFormat], buffer);
     glBindTexture(GL_TEXTURE_BUFFER, 0);
 
 #ifdef _DEBUG
@@ -653,8 +655,8 @@ void OpenGLDevice::__Texture2DGetImageData(Texture* texture, void* dstPixels)
     assert(textureHandle);
 
     glBindTexture(GL_TEXTURE_2D, textureHandle->mTexture);
-    glGetTexImage(GL_TEXTURE_2D, 0, texture->GetFormat(), 
-        texture->GetComponentType(), dstPixels);
+    glGetTexImage(GL_TEXTURE_2D, 0, gsTextureFormat[(int)texture->GetFormat()],
+        gsTextureComponentType[(int)texture->GetComponentType()], dstPixels);
     glBindTexture(GL_TEXTURE_2D, 0);
     
 #ifdef _DEBUG
@@ -673,8 +675,10 @@ TextureHandle* OpenGLDevice::__Tex2DArrayLoadFromSystemMemory(
 
     glGenTextures(1, &textureHandle->mTexture);
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureHandle->mTexture);
-    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, width, height, depth,
-        0, format, type, pixels);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, 
+        gsTextureInternalFormat[(int)internalFormat], width, height, depth,
+        0, gsTextureFormat[(int)format], gsTextureComponentType[(int)type], 
+        pixels);
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
@@ -696,8 +700,10 @@ TextureHandle* OpenGLDevice::__Texture3DLoadFromSystemMemory(
 
     glGenTextures(1, &textureHandle->mTexture);
     glBindTexture(GL_TEXTURE_3D, textureHandle->mTexture);
-    glTexImage3D(GL_TEXTURE_3D, 0, internalFormat, width, height, depth, 0,
-        format, type, pixels);
+    glTexImage3D(GL_TEXTURE_3D, 0, 
+        gsTextureInternalFormat[(int)internalFormat], width, height, depth, 0,
+        gsTextureFormat[(int)format], gsTextureComponentType[(int)type], 
+        pixels);
 
     glBindTexture(GL_TEXTURE_3D, 0);
 

@@ -17,11 +17,10 @@ namespace RTGI
 class RSMRenderer : public SubRenderer
 {
 public:
-    RSMRenderer(RenderSet* renderSet = 0);
+    RSMRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~RSMRenderer();
 
-    void CreateRSM(int width, int height, int depth, 
-        Texture::TextureFormat format);
+    void CreateRSM(int width, int height, int depth, TextureFormat format);
     void Render(int technique, int pass, Camera* camera);
 
 protected:

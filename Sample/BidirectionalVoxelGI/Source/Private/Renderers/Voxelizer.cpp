@@ -26,9 +26,9 @@ void ResetVoxelBuffer::OnPostDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-Voxelizer::Voxelizer(RenderSet* renderSet)
+Voxelizer::Voxelizer(GPUDevice* device, RenderSet* renderSet)
     :
-    SubRenderer(renderSet)
+    SubRenderer(device, renderSet)
 {
     mSceneBBMaxLength = 0.0f;
     RasterizerDimBias = 0;

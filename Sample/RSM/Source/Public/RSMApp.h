@@ -15,7 +15,7 @@ namespace RTGI
 class RSMApp : public Application
 {
 public:
-	RSMApp(int width = 1024, int height = 768);
+	RSMApp(int width = 768, int height = 768);
 	~RSMApp();
 
 	void Initialize(GPUDevice* device) override;

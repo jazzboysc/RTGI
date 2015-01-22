@@ -56,9 +56,10 @@ void DirectLightingScreenQuad::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-DirectLightingRenderer::DirectLightingRenderer(RenderSet* renderSet)
+DirectLightingRenderer::DirectLightingRenderer(GPUDevice* device, 
+    RenderSet* renderSet)
     :
-    SubRenderer(renderSet)
+    SubRenderer(device, renderSet)
 {
     mPSB = new PipelineStateBlock();
     mPSB->Flag |= PB_OutputMerger;
@@ -71,8 +72,8 @@ DirectLightingRenderer::~DirectLightingRenderer()
     mPSB = 0;
 }
 //----------------------------------------------------------------------------
-void DirectLightingRenderer::Initialize(GPUDevice* device, int width, int height,
-    Texture::TextureFormat format, Camera* lightProjector)
+void DirectLightingRenderer::Initialize(GPUDevice* device, int width, 
+    int height, TextureFormat format, Camera* lightProjector)
 {
     ShaderProgramInfo directLightingProgramInfo;
     directLightingProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vDirectLighting.glsl";
@@ -98,8 +99,8 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width, int height
 
     // Create output.
     AddFrameBufferTarget(RTGI_DirectLightingRenderer_DirectLighting_Name, 
-        width, height, 0, Texture::TT_Texture2D, format);
-    CreateFrameBuffer(width, height, 0, Texture::TT_Texture2D);
+        width, height, 0, TT_Texture2D, format);
+    CreateFrameBuffer(width, height, 0, TT_Texture2D);
 }
 //----------------------------------------------------------------------------
 void DirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer, 

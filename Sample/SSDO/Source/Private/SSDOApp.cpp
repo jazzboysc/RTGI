@@ -85,43 +85,43 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create environment map texture.
 	mEnvTexture = new Texture2D();
-	mEnvTexture->LoadPFMFromFile("KitchenMediumBlurred.pfm");
+	mEnvTexture->LoadPFMFromFile(mDevice, "KitchenMediumBlurred.pfm");
 
 	// Create LD random texture.
 	mRandomTexture = new Texture2D();
-	mRandomTexture->CreateLDRandomTextureRGBF(16, 2);
+	mRandomTexture->CreateLDRandomTextureRGBF(mDevice, 16, 2);
 
 	// Create MRT textures.
 	mPositionTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mPositionTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 	mNormalTexture = new Texture2D();
-	mNormalTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mNormalTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 	mColorTexture = new Texture2D();
-	mColorTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mColorTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 	mDepthTexture = new Texture2D();
-	mDepthTexture->CreateRenderTarget(Width, Height, Texture2D::TF_Depth);
+	mDepthTexture->CreateRenderTarget(mDevice, Width, Height, TF_Depth);
 
 	// Create G-buffer.
 	Texture* colorTextures[3] = {mPositionTexture, mNormalTexture, mColorTexture};
-	mGBuffer = new FrameBuffer();
+	mGBuffer = new FrameBuffer(mDevice);
 	mGBuffer->SetRenderTargets(3, colorTextures, mDepthTexture);
 
 	// Create direct lighting render target.
 	mDirectLightingTexture = new Texture2D();
-	mDirectLightingTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mDirectLightingTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 
 	// Create direct lighting framebuffer.
 	Texture* directLightingTexture[1] = {mDirectLightingTexture};
-	mDirectLightingBuffer = new FrameBuffer();
+	mDirectLightingBuffer = new FrameBuffer(mDevice);
 	mDirectLightingBuffer->SetRenderTargets(1, directLightingTexture, mDepthTexture);
 
 	// Create SSDO render target.
 	mSSDOTexture = new Texture2D();
-	mSSDOTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
+	mSSDOTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
 
 	// Create SSDO framebuffer.
 	Texture* ssdoTexture[1] = {mSSDOTexture};
-	mSSDOBuffer = new FrameBuffer();
+	mSSDOBuffer = new FrameBuffer(mDevice);
 	mSSDOBuffer->SetRenderTargets(1, ssdoTexture, mDepthTexture);
 
     vec2 tcoord00(0.0f, 0.0f);

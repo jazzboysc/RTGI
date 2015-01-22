@@ -14,7 +14,7 @@ namespace RTGI
 class ISMApp : public Application
 {
 public:
-	ISMApp(int width = 1024, int height = 768);
+	ISMApp(int width = 768, int height = 768);
 	~ISMApp();
 
 	void Initialize(GPUDevice* device) override;
