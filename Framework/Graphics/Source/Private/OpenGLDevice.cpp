@@ -6,6 +6,7 @@
 #include "OpenGLDevice.h"
 #include "Terminal.h"
 #include "ShaderProgram.h"
+#include <GL/glew.h>
 
 using namespace RTGI;
 
