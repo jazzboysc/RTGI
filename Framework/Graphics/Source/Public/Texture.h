@@ -76,12 +76,13 @@ public:
     bool IsRenderTarget;
     bool IsHDRTexture;
     bool IsTextureBuffer;
+    bool HasMipMap;
 
-    TextureHandle* GetTextureHandle() const;
-    TextureFormat GetFormat() const;
-    TextureInternalFormat GetInternalFormat() const;
-    TextureComponentType GetComponentType() const;
-    TextureType GetType() const;
+    inline TextureHandle* GetTextureHandle() const { return mTextureHandle; }
+    inline TextureFormat GetFormat() const { return mFormat; }
+    inline TextureInternalFormat GetInternalFormat() const { return mInternalFormat; }
+    inline TextureComponentType GetComponentType() const { return mComponentType; }
+    inline TextureType GetType() const { return mType; }
 
     void BindToImageUnit(unsigned int unit, BufferAccess access);
     void BindToSampler(unsigned int index, SamplerDesc* sampler);

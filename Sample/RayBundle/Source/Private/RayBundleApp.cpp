@@ -194,8 +194,8 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	// Create ray head pointer texture.
 	mRayHeadPointerTexture = new Texture2D();
-	mRayHeadPointerTexture->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, 
-		Texture2D::TF_R32UI);
+	mRayHeadPointerTexture->CreateRenderTarget(mDevice, mRayBundleRTWidth, 
+        mRayBundleRTHeight, TF_R32UI);
 
 	// Create ray head pointer texture init data.
 	pixelCount = mRayBundleRTWidth * mRayBundleRTHeight;
@@ -211,7 +211,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	// Create per-voxel mutex texture.
 	int voxelMutexCount = mVoxelCount;
 	mPerVoxelMutexTexture = new Texture1D();
-	mPerVoxelMutexTexture->LoadFromSystemMemory(GL_R32UI, voxelMutexCount, GL_RED_INTEGER, GL_UNSIGNED_BYTE, 0);
+	mPerVoxelMutexTexture->LoadFromSystemMemory(mDevice, TIF_R32UI, voxelMutexCount, TF_R32UI, TCT_Unsigned_Byte, 0);
 
 	// Create per-voxel mutex texture init data.
 	mPerVoxelMutexTextureInitData = new PixelBuffer();
@@ -240,12 +240,12 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	// Create ray-bundle render target.
 	mRayBundleRT = new Texture2D();
-	mRayBundleRT->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, Texture2D::TF_RGBF);
+	mRayBundleRT->CreateRenderTarget(mDevice, mRayBundleRTWidth, mRayBundleRTHeight, TF_RGBF);
 	mRayBundleDepth = new Texture2D();
-	mRayBundleDepth->CreateRenderTarget(mRayBundleRTWidth, mRayBundleRTHeight, Texture2D::TF_Depth);
+	mRayBundleDepth->CreateRenderTarget(mDevice, mRayBundleRTWidth, mRayBundleRTHeight, TF_Depth);
 
 	Texture* rayBundleRT[1] = {mRayBundleRT};
-	mRayBundleFB = new FrameBuffer();
+	mRayBundleFB = new FrameBuffer(mDevice);
 	mRayBundleFB->SetRenderTargets(1, rayBundleRT, mRayBundleDepth);
 
 	// Create update accumulation screen quad.
@@ -357,14 +357,14 @@ void RayBundleApp::FrameFunc()
 			mRayHeadPointerTextureInitData);
 
 		// Bind ray bundle texture to image unit.
-		mRayHeadPointerTexture->BindToImageUnit(0, GL_READ_WRITE);
+		mRayHeadPointerTexture->BindToImageUnit(0, BA_Read_Write);
 
 		// Bind ray bundle buffer.
 		mRayBundleNodeBuffer->Bind(0);
 
 		// Reset per-voxel mutex texture.
 		mPerVoxelMutexTexture->UpdateFromPixelBuffer(mPerVoxelMutexTextureInitData);
-		mPerVoxelMutexTexture->BindToImageUnit(1, GL_READ_WRITE);
+        mPerVoxelMutexTexture->BindToImageUnit(1, BA_Read_Write);
 
 		mRayBundleFB->Enable();
 

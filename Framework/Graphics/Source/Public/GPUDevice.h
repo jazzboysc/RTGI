@@ -110,7 +110,7 @@ typedef void (GPUDevice::*GPUDeviceTexture1DGetDataFromGPUMemory)(
     Texture* texture, void* dstData);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture2DLoadFromSystemMemory)(
     Texture* texture, TextureInternalFormat internalFormat, int width, 
-    int height, TextureFormat format, TextureComponentType type, 
+    int height, TextureFormat format, TextureComponentType type, bool mipMap,
     void* pixels);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture2DLoadFromTextureBuffer)(
     Texture* texture, TextureBuffer* textureBuffer, 
@@ -131,7 +131,7 @@ typedef void (GPUDevice::*GPUDeviceTexture3DUpdateFromPixelBuffer)(
     Texture* texture, PixelBuffer* pixelBuffer);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTextureCubeLoadFromSystemMemory)(
     Texture* texture, TextureInternalFormat internalFormat, int width,
-    int height, TextureFormat format, TextureComponentType type, 
+    int height, TextureFormat format, TextureComponentType type, bool mipMap,
     void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY, 
     void* pixelsPZ, void* pixelsNZ);
 typedef FBOHandle* (GPUDevice::*GPUDeviceCreateFrameBuffer)(

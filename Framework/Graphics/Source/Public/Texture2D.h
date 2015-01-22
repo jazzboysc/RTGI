@@ -24,16 +24,19 @@ public:
 	~Texture2D();
 
 	// Load a ".bmp" file and create its resource.
-    bool LoadBMPFromFile(GPUDevice* device, const std::string& fileName);
+    bool LoadBMPFromFile(GPUDevice* device, const std::string& fileName, 
+        bool generateMipMap = true);
 
 	// Load a ".pfm" file and create its resource.
-    bool LoadPFMFromFile(GPUDevice* device, const std::string& fileName);
+    bool LoadPFMFromFile(GPUDevice* device, const std::string& fileName,
+        bool generateMipMap = true);
 
 	// Load texture data from system memory. User is responsible for deleting
 	// the system memory data.
     bool LoadFromSystemMemory(GPUDevice* device, 
         TextureInternalFormat internalFormat, int width, int height, 
-        TextureFormat format, TextureComponentType type, void* pixels);
+        TextureFormat format, TextureComponentType type, void* pixels,
+        bool generateMipMap = true);
 
 #ifndef __APPLE__
 	// Load and create from texture buffer object.

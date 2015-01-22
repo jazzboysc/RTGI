@@ -22,7 +22,7 @@ TextureCube::~TextureCube()
 //----------------------------------------------------------------------------
 bool TextureCube::LoadFromFile(GPUDevice* device, const std::string& pX, 
     const std::string& nX, const std::string& pY, const std::string& nY, 
-    const std::string& pZ, const std::string& nZ)
+    const std::string& pZ, const std::string& nZ, bool generateMipMap)
 {
     if( mTextureHandle )
     {
@@ -37,9 +37,17 @@ bool TextureCube::LoadFromFile(GPUDevice* device, const std::string& pX,
 	int resNY = bmpread(nY.c_str(), 0, &nYBitmap);
 	int resPZ = bmpread(pZ.c_str(), 0, &pZBitmap);
 	int resNZ = bmpread(nZ.c_str(), 0, &nZBitmap);
-	if( !resPX || !resNX || !resPY || !resNY || !resPZ || !resNZ  )
+    if( !resPX || !resNX || !resPY || !resNY || !resPZ || !resNZ || 
+        (pXBitmap.width != pXBitmap.height) )
 	{
-		assert( false );
+        bmpread_free(&pXBitmap);
+        bmpread_free(&nXBitmap);
+        bmpread_free(&pYBitmap);
+        bmpread_free(&nYBitmap);
+        bmpread_free(&pZBitmap);
+        bmpread_free(&nZBitmap);
+
+        assert(false);
 		return false;
 	}
 
@@ -50,9 +58,11 @@ bool TextureCube::LoadFromFile(GPUDevice* device, const std::string& pX,
     mComponentType = TCT_Unsigned_Byte;
 
     mTextureHandle = GPU_DEVICE_FUNC(device, TextureCubeLoadFromSystemMemory)(
-        this, mInternalFormat, Width, Height, mFormat, mComponentType,
-        pXBitmap.rgb_data, nXBitmap.rgb_data, pYBitmap.rgb_data,
-        nYBitmap.rgb_data, pZBitmap.rgb_data, nZBitmap.rgb_data);
+        this, mInternalFormat, Width, Height, mFormat, mComponentType, 
+        generateMipMap, pXBitmap.rgb_data, nXBitmap.rgb_data, 
+        pYBitmap.rgb_data, nYBitmap.rgb_data, pZBitmap.rgb_data, 
+        nZBitmap.rgb_data);
+    HasMipMap = generateMipMap;
 
 	bmpread_free(&pXBitmap);
 	bmpread_free(&nXBitmap);

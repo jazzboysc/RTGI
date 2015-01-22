@@ -23,7 +23,8 @@ Texture2D::~Texture2D()
 {
 }
 //----------------------------------------------------------------------------
-bool Texture2D::LoadBMPFromFile(GPUDevice* device, const std::string& fileName)
+bool Texture2D::LoadBMPFromFile(GPUDevice* device, 
+    const std::string& fileName, bool generateMipMap)
 {
     if( mTextureHandle )
     {
@@ -53,7 +54,8 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device, const std::string& fileName)
 
     mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
         this, mInternalFormat, bitmap.width, bitmap.height, mFormat, 
-        mComponentType, bitmap.rgb_data);
+        mComponentType, generateMipMap, bitmap.rgb_data);
+    HasMipMap = generateMipMap;
 
     bmpread_free(&bitmap);
     
@@ -65,7 +67,8 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device, const std::string& fileName)
 	return true;
 }
 //----------------------------------------------------------------------------
-bool Texture2D::LoadPFMFromFile(GPUDevice* device, const std::string& fileName)
+bool Texture2D::LoadPFMFromFile(GPUDevice* device, 
+    const std::string& fileName, bool generateMipMap)
 {
 	// This function is based on the PFM loader of Thorsten Grosch and Tobias 
 	// Ritschel's demo.
@@ -143,7 +146,8 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device, const std::string& fileName)
 
     mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
-        pixels);
+        generateMipMap, pixels);
+    HasMipMap = generateMipMap;
 
 	free(pixels);
 
@@ -160,7 +164,8 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device, const std::string& fileName)
 //----------------------------------------------------------------------------
 bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
     TextureInternalFormat internalFormat, int width, int height,
-    TextureFormat format, TextureComponentType type, void* pixels)
+    TextureFormat format, TextureComponentType type, void* pixels, 
+    bool generateMipMap)
 {
     if( mTextureHandle )
     {
@@ -175,8 +180,9 @@ bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
     mComponentType = type;
 
     mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
-        this, mInternalFormat, Width, Height, mFormat, mComponentType,
-        pixels);
+        this, mInternalFormat, Width, Height, mFormat, mComponentType, 
+        generateMipMap, pixels);
+    HasMipMap = generateMipMap;
 
 	return true;
 }
@@ -260,7 +266,8 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 	}
 
     mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
-        this, mInternalFormat, Width, Height, mFormat, mComponentType, 0);
+        this, mInternalFormat, Width, Height, mFormat, mComponentType, 
+        false, 0);
 }
 //--------------------------------------------------------------------------
 void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
@@ -317,7 +324,7 @@ void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device,
 	
     mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
         this, mInternalFormat, Width, Height, mFormat, mComponentType,
-        pixels);
+        false, pixels);
 
 	delete[] pixels;
 }

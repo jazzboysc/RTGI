@@ -13,6 +13,7 @@ Texture::Texture()
     IsRenderTarget(false),
     IsHDRTexture(false),
     IsTextureBuffer(false),
+    HasMipMap(false),
     mTextureHandle(0),
     mFormat(TF_Unknown),
     mInternalFormat(TIF_Unknown),
@@ -26,31 +27,6 @@ Texture::~Texture()
     delete mTextureHandle;
 }
 //----------------------------------------------------------------------------
-TextureHandle* Texture::GetTextureHandle() const
-{
-    return mTextureHandle;
-}
-//----------------------------------------------------------------------------
-TextureFormat Texture::GetFormat() const
-{
-    return mFormat;
-}
-//----------------------------------------------------------------------------
-TextureInternalFormat Texture::GetInternalFormat() const
-{
-    return mInternalFormat;
-}
-//----------------------------------------------------------------------------
-TextureComponentType Texture::GetComponentType() const
-{
-    return mComponentType;
-}
-//----------------------------------------------------------------------------
-TextureType Texture::GetType() const
-{
-    return mType;
-}
-//----------------------------------------------------------------------------
 void Texture::BindToImageUnit(unsigned int unit, BufferAccess access)
 {
     GPU_DEVICE_FUNC(mTextureHandle->Device, TextureBindToImageUnit)(this,
@@ -59,6 +35,11 @@ void Texture::BindToImageUnit(unsigned int unit, BufferAccess access)
 //--------------------------------------------------------------------------
 void Texture::BindToSampler(unsigned int index, SamplerDesc* sampler)
 {
+    if( !HasMipMap && sampler->MinFilter == FT_Linear_Linear )
+    {
+        sampler->MinFilter = FT_Linear;
+    }
+
     GPU_DEVICE_FUNC(mTextureHandle->Device, TextureBindToSampler)(this, 
         index, sampler);
 }

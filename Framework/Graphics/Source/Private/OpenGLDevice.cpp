@@ -88,6 +88,9 @@ void OpenGLDevice::__Initialize(GPUDeviceDescription* deviceDesc)
     // TODO:
     //  Should create OpenGL context here. Nothing to do now since we are
     // using GLFW.
+
+    // Default global states.
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 //----------------------------------------------------------------------------
 void OpenGLDevice::__Terminate()
@@ -398,6 +401,11 @@ void OpenGLDevice::__SetUniformValueVec3(ShaderUniform* uniform,
 //----------------------------------------------------------------------------
 void OpenGLDevice::__SetUniformValueInt(ShaderUniform* uniform, int value)
 {
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
     assert(uniformHandle);
@@ -405,7 +413,7 @@ void OpenGLDevice::__SetUniformValueInt(ShaderUniform* uniform, int value)
     glUniform1i(uniformHandle->mUniform, value);
 
 #ifdef _DEBUG
-    GLenum res = glGetError();
+    res = glGetError();
     assert(res == GL_NO_ERROR);
 #endif
 }
@@ -539,20 +547,65 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
         return;
     }
 
+    // Sampler binding.
     GLuint t = textureHandle->mTexture;
     TextureType type = texture->GetType();
     GLenum target = gsTextureTargets[(int)type];
     glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(target, t);
 
-    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, 
-        gsFilterType[(int)sampler->MinFilter]);
-    glTexParameteri(target, GL_TEXTURE_MAG_FILTER,
-        gsFilterType[(int)sampler->MagFilter]);
-    glTexParameteri(target, GL_TEXTURE_WRAP_S,
-        gsWrapType[(int)sampler->WrapS]);
-    glTexParameteri(target, GL_TEXTURE_WRAP_T,
-        gsWrapType[(int)sampler->WrapT]);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
+    if( sampler )
+    {
+        // Filtering.
+        glTexParameteri(target, GL_TEXTURE_MIN_FILTER,
+            gsFilterType[(int)sampler->MinFilter]);
+
+#ifdef _DEBUG
+        GLenum res = glGetError();
+        assert(res == GL_NO_ERROR);
+#endif
+
+        glTexParameteri(target, GL_TEXTURE_MAG_FILTER,
+            gsFilterType[(int)sampler->MagFilter]);
+
+#ifdef _DEBUG
+        res = glGetError();
+        assert(res == GL_NO_ERROR);
+#endif
+
+        // Texture coordinates wrapping.
+        glTexParameteri(target, GL_TEXTURE_WRAP_S,
+            gsWrapType[(int)sampler->WrapS]);
+
+#ifdef _DEBUG
+        res = glGetError();
+        assert(res == GL_NO_ERROR);
+#endif
+
+        glTexParameteri(target, GL_TEXTURE_WRAP_T,
+            gsWrapType[(int)sampler->WrapT]);
+
+#ifdef _DEBUG
+        res = glGetError();
+        assert(res == GL_NO_ERROR);
+#endif
+
+        if( target == GL_TEXTURE_CUBE_MAP )
+        {
+            glTexParameteri(target, GL_TEXTURE_WRAP_R,
+                gsWrapType[(int)sampler->WrapR]);
+
+#ifdef _DEBUG
+            res = glGetError();
+            assert(res == GL_NO_ERROR);
+#endif
+        }
+    }
 }
 //----------------------------------------------------------------------------
 void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture, 
@@ -581,7 +634,8 @@ void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture,
 //----------------------------------------------------------------------------
 TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
     TextureInternalFormat internalFormat, int width, int height,
-    TextureFormat format, TextureComponentType type, void* pixels)
+    TextureFormat format, TextureComponentType type, bool mipMap, 
+    void* pixels)
 {
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
     textureHandle->Device = this;
@@ -592,6 +646,11 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
         gsTextureInternalFormat[(int)internalFormat], width, height, 0,
         gsTextureFormat[(int)format], gsTextureComponentType[(int)type],
         pixels);
+
+    if( mipMap )
+    {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -744,7 +803,7 @@ void OpenGLDevice::__Texture3DUpdateFromPixelBuffer(Texture* texture,
 //----------------------------------------------------------------------------
 TextureHandle* OpenGLDevice::__TextureCubeLoadFromSystemMemory(
     Texture* texture, TextureInternalFormat internalFormat, int width, 
-    int height, TextureFormat format, TextureComponentType type, 
+    int height, TextureFormat format, TextureComponentType type, bool mipMap, 
     void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY, 
     void* pixelsPZ, void* pixelsNZ)
 {
@@ -760,21 +819,26 @@ TextureHandle* OpenGLDevice::__TextureCubeLoadFromSystemMemory(
     
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, tempInternalFormat, width,
         height, 0, tempFormat, tempType, pixelsPX);
-    
+
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, tempInternalFormat, width,
         height, 0, tempFormat, tempType, pixelsNX);
-    
+
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, tempInternalFormat, width,
         height, 0, tempFormat, tempType, pixelsPY);
-    
+
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, tempInternalFormat, width,
         height, 0, tempFormat, tempType, pixelsNY);
-    
+
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, tempInternalFormat, width,
         height, 0, tempFormat, tempType, pixelsPZ);
-    
+
     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, tempInternalFormat, width,
         height, 0, tempFormat, tempType, pixelsNZ);
+
+    if( mipMap )
+    {
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    }
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     
@@ -792,6 +856,11 @@ FBOHandle* OpenGLDevice::__CreateFrameBuffer(FrameBuffer* frameBuffer)
     fboHandle->Device = this;
 
     glGenFramebuffersEXT(1, &fboHandle->mFBO);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 
     return fboHandle;
 }

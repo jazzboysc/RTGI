@@ -39,13 +39,13 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mNormalTexture = new Texture2D();
 	mColorTexture = new Texture2D();
 	mDepthTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
-	mNormalTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
-	mColorTexture->CreateRenderTarget(Width, Height, Texture2D::TF_RGBF);
-	mDepthTexture->CreateRenderTarget(Width, Height, Texture2D::TF_Depth);
+	mPositionTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
+	mNormalTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
+	mColorTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
+	mDepthTexture->CreateRenderTarget(mDevice, Width, Height, TF_Depth);
 
 	// Create G-buffer.
-	mGBuffer = new FrameBuffer();
+	mGBuffer = new FrameBuffer(mDevice);
 	Texture* colorTextures[3] = { mPositionTexture, mNormalTexture, mColorTexture };
 	mGBuffer->SetRenderTargets(3, colorTextures, mDepthTexture);
 
@@ -88,7 +88,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mCausticsScreenQuad->Light = mLight;
 
 	auto mCubeMap = new TextureCube();
-	mCubeMap->LoadFromFile(
+	mCubeMap->LoadFromFile(mDevice, 
 		"Textures/pool.bmp",
 		"Textures/pool.bmp",
 		"Textures/pool.bmp",

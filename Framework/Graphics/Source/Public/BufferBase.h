@@ -79,6 +79,7 @@ struct SamplerDesc
     FilterType MipMap;
     WrapType WrapS;
     WrapType WrapT;
+    WrapType WrapR;
 };
 
 struct RendererInputDataView

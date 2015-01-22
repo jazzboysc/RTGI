@@ -25,6 +25,7 @@ Application::Application()
 //----------------------------------------------------------------------------
 Application::~Application()
 {
+    GPU_DEVICE_FUNC(mDevice, Terminate)();
     mDevice = 0;
 }
 //----------------------------------------------------------------------------
@@ -65,6 +66,7 @@ void Application::Initialize(GPUDevice* device)
 	}
 
 	// default GL settings
+    GPU_DEVICE_FUNC(mDevice, Initialize)(0);
 	float color = 0.5f;
 	glClearColor(color, color, color, 0.0f);
 	glEnable(GL_DEPTH_TEST);

@@ -59,7 +59,7 @@ private:
     void __Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData);
     TextureHandle* __Texture2DLoadFromSystemMemory(Texture* texture, 
         TextureInternalFormat internalFormat, int width, int height, 
-        TextureFormat format, TextureComponentType type, void* pixels);
+        TextureFormat format, TextureComponentType type, bool mipMap, void* pixels);
     TextureHandle* __Texture2DLoadFromTextureBuffer(Texture* texture, 
         TextureBuffer* textureBuffer, TextureInternalFormat internalFormat);
     void __Texture2DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
@@ -73,7 +73,7 @@ private:
     void __Texture3DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
     TextureHandle* __TextureCubeLoadFromSystemMemory(Texture* texture,
         TextureInternalFormat internalFormat, int width, int height, 
-        TextureFormat format, TextureComponentType type,
+        TextureFormat format, TextureComponentType type, bool mipMap, 
         void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY,
         void* pixelsPZ, void* pixelsNZ);
 
