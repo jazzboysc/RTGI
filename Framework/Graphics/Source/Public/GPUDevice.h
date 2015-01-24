@@ -145,6 +145,9 @@ typedef void (GPUDevice::*GPUDeviceFrameBufferEnable)(
     FrameBuffer* frameBuffer);
 typedef void (GPUDevice::*GPUDeviceFrameBufferDisable)(
     FrameBuffer* frameBuffer);
+typedef void (GPUDevice::*GPUDeviceComputeShaderDispatch)(
+    ShaderProgram* program, unsigned int globalX, unsigned int globalY, 
+    unsigned int globalZ);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -192,6 +195,7 @@ public:
     GPUDeviceFrameBufferSetRenderTargets       FrameBufferSetRenderTargets;
     GPUDeviceFrameBufferEnable                 FrameBufferEnable;
     GPUDeviceFrameBufferDisable                FrameBufferDisable;
+    GPUDeviceComputeShaderDispatch             ComputeShaderDispatch;
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;

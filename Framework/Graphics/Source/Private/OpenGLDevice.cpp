@@ -955,6 +955,17 @@ void OpenGLDevice::__FrameBufferDisable(FrameBuffer* frameBuffer)
 #endif
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__ComputeShaderDispatch(ShaderProgram* program, 
+    unsigned int globalX, unsigned int globalY, unsigned int globalZ)
+{
+    glDispatchCompute(globalX, globalY, globalZ);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------
@@ -994,6 +1005,7 @@ OpenGLDevice::OpenGLDevice()
     FrameBufferSetRenderTargets = (GPUDeviceFrameBufferSetRenderTargets)&OpenGLDevice::__FrameBufferSetRenderTargets;
     FrameBufferEnable = (GPUDeviceFrameBufferEnable)&OpenGLDevice::__FrameBufferEnable;
     FrameBufferDisable = (GPUDeviceFrameBufferDisable)&OpenGLDevice::__FrameBufferDisable;
+    ComputeShaderDispatch = (GPUDeviceComputeShaderDispatch)&OpenGLDevice::__ComputeShaderDispatch;
 
     mEnable4xMsaa = false;
     m4xMsaaQuality = 0;

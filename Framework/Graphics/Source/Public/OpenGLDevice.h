@@ -86,6 +86,10 @@ private:
     void __FrameBufferEnable(FrameBuffer* frameBuffer);
     void __FrameBufferDisable(FrameBuffer* frameBuffer);
 
+    // Compute.
+    void __ComputeShaderDispatch(ShaderProgram* program, unsigned int globalX, 
+        unsigned int globalY, unsigned int globalZ);
+
 private:
     bool mEnable4xMsaa;
     unsigned int m4xMsaaQuality;

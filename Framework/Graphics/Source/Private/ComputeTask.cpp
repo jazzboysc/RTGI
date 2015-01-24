@@ -29,16 +29,14 @@ void ComputeTask::Dispatch(unsigned int pass, unsigned int globalX,
     ComputePass* p = (ComputePass*)GetPass(pass);
     assert(p);
 
-    p->GetShaderProgram()->Enable();
+    ShaderProgram* program = p->GetShaderProgram();
+    program->Enable();
     OnPreDispatch(pass);
 
-    glDispatchCompute(globalX, globalY, globalZ);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    GPU_DEVICE_FUNC(program->GetProgramHandle()->Device, 
+        ComputeShaderDispatch)(program, globalX, globalY, globalZ);
 
     OnPostDispatch(pass);
-    p->GetShaderProgram()->Disable();
+    program->Disable();
 }
 //----------------------------------------------------------------------------
