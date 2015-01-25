@@ -31,7 +31,7 @@ public:
     void OnButtonClick(System::Object^  sender, System::EventArgs^  e);
 
 public:
-    enum { VOXEL_DIMENSION = 64 };
+    enum { VOXEL_DIMENSION = 128 };
     enum { LOCAL_GROUP_DIM = 8 };
     static float RaySegment[6];
 
@@ -50,9 +50,7 @@ private:
     ShowMode mShowMode;
     bool mIsRotatingModel;
 
-	Camera* mVoxelizationProjector;
-
-    AtomicCounterBufferPtr mGatheredVoxelAllocCounter;
+    AtomicCounterBufferPtr mAtomicCounterBuffer;
     ResetVoxelBufferPtr mResetVoxelBufferTask;
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
     VoxelGridIntersectionPtr mVoxelGridIntersectionTask;

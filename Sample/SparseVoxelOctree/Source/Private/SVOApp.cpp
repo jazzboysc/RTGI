@@ -42,10 +42,6 @@ void SVOApp::Initialize(GPUDevice* device)
     mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
-    // Create voxelization projector.
-	mVoxelizationProjector = new Camera(false);
-    mVoxelizationProjector->SetOrthogonalFrustum(10.5f, 1.0f, 0.01f, 20.5f);
-
 	// Create material templates.
 	Material* material = 0;
     ShaderProgramInfo voxelizationProgramInfo;
@@ -127,13 +123,13 @@ void SVOApp::Initialize(GPUDevice* device)
     mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, BU_Dynamic_Copy);
 
     // Create gathered voxel GPU memory allocator counter.
-    mGatheredVoxelAllocCounter = new AtomicCounterBuffer();
-    mGatheredVoxelAllocCounter->ReserveDeviceResource(sizeof(GLuint), BU_Dynamic_Copy);
+    mAtomicCounterBuffer = new AtomicCounterBuffer();
+    mAtomicCounterBuffer->ReserveDeviceResource(sizeof(GLuint), BU_Dynamic_Copy);
 
 	// Create scene.
 	mat4 rotM;
     material = new Material(mtVoxelization);
-	mModel = new SVOTriMesh(material, mVoxelizationProjector);
+	mModel = new SVOTriMesh(material, mMainCamera);
 	mModel->LoadFromFile("dragon_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(60.0f));
     mModel->UpdateModelSpaceVertices(scale);
@@ -145,7 +141,7 @@ void SVOApp::Initialize(GPUDevice* device)
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
     material = new Material(mtVoxelization);
-	mGround = new SVOTriMesh(material, mVoxelizationProjector);
+    mGround = new SVOTriMesh(material, mMainCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
@@ -154,7 +150,7 @@ void SVOApp::Initialize(GPUDevice* device)
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
     material = new Material(mtVoxelization);
-	mCeiling = new SVOTriMesh(material, mVoxelizationProjector);
+    mCeiling = new SVOTriMesh(material, mMainCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
@@ -166,7 +162,7 @@ void SVOApp::Initialize(GPUDevice* device)
     mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
     material = new Material(mtVoxelization);
-	mBackWall = new SVOTriMesh(material, mVoxelizationProjector);
+    mBackWall = new SVOTriMesh(material, mMainCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
@@ -178,7 +174,7 @@ void SVOApp::Initialize(GPUDevice* device)
     mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
     material = new Material(mtVoxelization);
-	mLeftWall = new SVOTriMesh(material, mVoxelizationProjector);
+    mLeftWall = new SVOTriMesh(material, mMainCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
@@ -190,7 +186,7 @@ void SVOApp::Initialize(GPUDevice* device)
     mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
     material = new Material(mtVoxelization);
-	mRightWall = new SVOTriMesh(material, mVoxelizationProjector);
+    mRightWall = new SVOTriMesh(material, mMainCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
@@ -257,13 +253,6 @@ void SVOApp::Initialize(GPUDevice* device)
 //----------------------------------------------------------------------------
 void SVOApp::VoxelizeScene()
 {
-    mGround->SetCamera(mVoxelizationProjector);
-    mCeiling->SetCamera(mVoxelizationProjector);
-    mBackWall->SetCamera(mVoxelizationProjector);
-    mLeftWall->SetCamera(mVoxelizationProjector);
-    mRightWall->SetCamera(mVoxelizationProjector);
-    mModel->SetCamera(mVoxelizationProjector);
-
     glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
 	mGround->Render(0, 0);
 	mCeiling->Render(0, 0);
@@ -277,13 +266,6 @@ void SVOApp::VoxelizeScene()
 //----------------------------------------------------------------------------
 void SVOApp::ShowVoxelization()
 {
-    mGround->SetCamera(mMainCamera);
-    mCeiling->SetCamera(mMainCamera);
-    mBackWall->SetCamera(mMainCamera);
-    mLeftWall->SetCamera(mMainCamera);
-    mRightWall->SetCamera(mMainCamera);
-    mModel->SetCamera(mMainCamera);
-
     mGround->Render(0, 1);
     mCeiling->Render(0, 1);
     mBackWall->Render(0, 1);
@@ -313,12 +295,12 @@ void SVOApp::FrameFunc()
     mIndirectCommandBuffer->BindToIndirect();
 
     // Reset counter.
-    mGatheredVoxelAllocCounter->Bind(0);
+    mAtomicCounterBuffer->Bind(0);
     mTimer->Start();
-    GLuint* counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(GL_WRITE_ONLY);
+    GLuint* counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
     assert(counterData);
     counterData[0] = 0;
-    mGatheredVoxelAllocCounter->Unmap();
+    mAtomicCounterBuffer->Unmap();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Reset Counter Time", workLoad);
@@ -365,9 +347,9 @@ void SVOApp::FrameFunc()
     mIndirectCommandBuffer->Unmap();
 #endif
 
-    counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(GL_WRITE_ONLY);
+    counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
     infoPanel->SetTimingLabelValue("Counter", (double)counterData[0]);
-    mGatheredVoxelAllocCounter->Unmap();
+    mAtomicCounterBuffer->Unmap();
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);
@@ -431,8 +413,8 @@ void SVOApp::FrameFunc()
 void SVOApp::Terminate()
 {
 	// Release all resources.
-	delete mVoxelizationProjector;
 
+    mAtomicCounterBuffer = 0;
     mResetVoxelBufferTask = 0;
     mGatherVoxelBufferTask = 0;
     mVoxelGridIntersectionTask = 0;
