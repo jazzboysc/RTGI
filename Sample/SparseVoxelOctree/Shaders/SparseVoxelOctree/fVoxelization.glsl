@@ -3,6 +3,8 @@
 in vec4 gPositionWorld;
 in vec4 gNormalWorld;
 
+layout(binding = 0, offset = 0) uniform atomic_uint voxelFragmentCounter;
+
 struct Voxel
 {
     uint value1;
@@ -53,6 +55,8 @@ uint Vec4ToUint(vec4 value)
 
 void main()
 {
+    atomicCounterIncrement(voxelFragmentCounter);
+
     int index = GetIndex(gPositionWorld.xyz);
 
     float contrast = length(MaterialColor.rrg - MaterialColor.gbb) / 
@@ -62,7 +66,7 @@ void main()
 
     uint newValue = Vec4ToUint(value);
     atomicMax(voxelBuffer.data[index].value1, newValue);
-    atomicMax(voxelBuffer.data[index].value2, 1);
+    voxelBuffer.data[index].value2 = 1;
     //atomicMax(voxelBuffer.data[index].value3, newValue + 3);
     //atomicMax(voxelBuffer.data[index].value4, newValue + 4);
 }

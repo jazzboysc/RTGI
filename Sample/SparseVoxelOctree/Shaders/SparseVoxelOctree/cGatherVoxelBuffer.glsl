@@ -68,7 +68,7 @@ layout(std430, binding = 1)  buffer _indirectCommandBuffer
     GatheredVoxel data[];
 } indirectCommandBuffer;
 
-layout(binding = 0, offset = 0) uniform atomic_uint gpuMemoryAllocator;
+layout(binding = 0, offset = 4) uniform atomic_uint gpuMemoryAllocator;
 
 uniform vec3 SceneBBMin;
 uniform vec3 SceneBBExtension;

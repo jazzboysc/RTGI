@@ -200,7 +200,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	// Create ray head pointer texture init data.
 	pixelCount = mRayBundleRTWidth * mRayBundleRTHeight;
 	mRayHeadPointerTextureInitData = new PixelBuffer();
-	mRayHeadPointerTextureInitData->ReserveDeviceResource(
+	mRayHeadPointerTextureInitData->ReserveMutableDeviceResource(
 		pixelCount*sizeof(GLuint), BU_Static_Draw);
 	mRayHeadPointerTextureInitData->Bind();
 	pixelBufferData = mRayHeadPointerTextureInitData->Map(GL_WRITE_ONLY);
@@ -215,7 +215,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	// Create per-voxel mutex texture init data.
 	mPerVoxelMutexTextureInitData = new PixelBuffer();
-	mPerVoxelMutexTextureInitData->ReserveDeviceResource(voxelMutexCount*sizeof(GLuint), BU_Static_Draw);
+	mPerVoxelMutexTextureInitData->ReserveMutableDeviceResource(voxelMutexCount*sizeof(GLuint), BU_Static_Draw);
 	mPerVoxelMutexTextureInitData->Bind();
 	pixelBufferData = mPerVoxelMutexTextureInitData->Map(GL_WRITE_ONLY);
 	assert( pixelBufferData );
@@ -224,19 +224,19 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	// Create ray GPU memory allocator counter.
 	mRayAllocCounter = new AtomicCounterBuffer();
-	mRayAllocCounter->ReserveDeviceResource(sizeof(GLuint),
+	mRayAllocCounter->ReserveMutableDeviceResource(sizeof(GLuint),
         BU_Dynamic_Copy);
 
 	// Create ray GPU memory pool for concurrent linked lists.
 	gpuMemPoolSize = 8 * pixelCount * (4*sizeof(vec4) + sizeof(GLuint) + 
 		sizeof(GLfloat) + sizeof(GLboolean));
 	mRayBundleNodeBuffer = new StructuredBuffer();
-    mRayBundleNodeBuffer->ReserveDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
+    mRayBundleNodeBuffer->ReserveMutableDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
 
 	// Create accumulation buffer.
 	size_t bufferSize = mVoxelCount * sizeof(vec4);
 	mAccumulationBuffer = new StructuredBuffer();
-    mAccumulationBuffer->ReserveDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mAccumulationBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
 
 	// Create ray-bundle render target.
 	mRayBundleRT = new Texture2D();

@@ -34,7 +34,7 @@ public:
 	// the system memory data.
     bool LoadFromSystemMemory(size_t size, void* data, BufferUsage usage);
 
-    void ReserveDeviceResource(size_t size, BufferUsage usage);
+    void ReserveMutableDeviceResource(size_t size, BufferUsage usage);
 
 	GLuint GetBuffer() const;
 	GLuint GetSize() const;

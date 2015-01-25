@@ -114,17 +114,17 @@ void SVOApp::Initialize(GPUDevice* device)
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
-    mVoxelBuffer->ReserveDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mVoxelBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
     memset(mZeroBuffer, 0x00, bufferSize);
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
     bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*35 + voxelCount*sizeof(GLfloat)*4;
-    mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mIndirectCommandBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
 
-    // Create gathered voxel GPU memory allocator counter.
+    // Create atomic counter buffer.
     mAtomicCounterBuffer = new AtomicCounterBuffer();
-    mAtomicCounterBuffer->ReserveDeviceResource(sizeof(GLuint), BU_Dynamic_Copy);
+    mAtomicCounterBuffer->ReserveMutableDeviceResource(sizeof(GLuint)*2, BU_Dynamic_Copy);
 
 	// Create scene.
 	mat4 rotM;
@@ -222,6 +222,7 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Counter", 16, 100);
     InformationPanel::GetInstance()->AddTimingLabel("Visualization Pass", 16, 120);
     InformationPanel::GetInstance()->AddTimingLabel("Intersection Pass", 16, 140);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Count", 16, 160);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
@@ -260,7 +261,7 @@ void SVOApp::VoxelizeScene()
 	mLeftWall->Render(0, 0);
 	mRightWall->Render(0, 0);
 
-    glViewport(0, 0, (VOXEL_DIMENSION >> 4) + 4, (VOXEL_DIMENSION >> 4) + 4);
+    glViewport(0, 0, 8, 8);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
@@ -297,10 +298,11 @@ void SVOApp::FrameFunc()
     // Reset counter.
     mAtomicCounterBuffer->Bind(0);
     mTimer->Start();
-    GLuint* counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
-    assert(counterData);
-    counterData[0] = 0;
-    mAtomicCounterBuffer->Unmap();
+    //GLuint* counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
+    //assert(counterData);
+    //counterData[0] = 0;
+    //counterData[1] = 0;
+    //mAtomicCounterBuffer->Unmap();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Reset Counter Time", workLoad);
@@ -347,9 +349,10 @@ void SVOApp::FrameFunc()
     mIndirectCommandBuffer->Unmap();
 #endif
 
-    counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
-    infoPanel->SetTimingLabelValue("Counter", (double)counterData[0]);
-    mAtomicCounterBuffer->Unmap();
+    //counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
+    //infoPanel->SetTimingLabelValue("Voxel Fragment Count", (double)counterData[0]);
+    //infoPanel->SetTimingLabelValue("Counter", (double)counterData[1]);
+    //mAtomicCounterBuffer->Unmap();
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);

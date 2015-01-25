@@ -87,7 +87,7 @@ void OITApp::Initialize(GPUDevice* device)
 	// Create head pointer texture init data.
 	int pixelCount = Width * Height;
 	mHeadPointerTextureInitData = new PixelBuffer();
-	mHeadPointerTextureInitData->ReserveDeviceResource(
+	mHeadPointerTextureInitData->ReserveMutableDeviceResource(
 		pixelCount*sizeof(GLuint), BU_Static_Draw);
 	mHeadPointerTextureInitData->Bind();
 	void* pixelBufferData = mHeadPointerTextureInitData->Map(GL_WRITE_ONLY);
@@ -97,18 +97,18 @@ void OITApp::Initialize(GPUDevice* device)
 
 	// Create GPU memory allocator counter.
 	mGPUMemAllocCounter = new AtomicCounterBuffer();
-	mGPUMemAllocCounter->ReserveDeviceResource(sizeof(GLuint),
+	mGPUMemAllocCounter->ReserveMutableDeviceResource(sizeof(GLuint),
         BU_Dynamic_Copy);
 
 	// Create GPU memory pool for concurrent linked lists.
 	size_t gpuMemPoolSize = 2 * pixelCount * sizeof(vec4);
 	mGPUMemPool = new TextureBuffer();
-    mGPUMemPool->ReserveDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
+    mGPUMemPool->ReserveMutableDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
 
 	gpuMemPoolSize = 2 * pixelCount * (sizeof(vec4) + sizeof(GLuint) + 
 		sizeof(GLfloat));
 	mGPUMemPool2 = new StructuredBuffer();
-    mGPUMemPool2->ReserveDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
+    mGPUMemPool2->ReserveMutableDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
 
 	// Create GPU memory pool texture.
 	mGPUMemPoolTexture = new Texture2D();

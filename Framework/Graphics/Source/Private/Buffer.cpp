@@ -119,7 +119,7 @@ bool Buffer::LoadFromSystemMemory(size_t size, void* data, BufferUsage usage)
 	return true;
 }
 //----------------------------------------------------------------------------
-void Buffer::ReserveDeviceResource(size_t size, BufferUsage usage)
+void Buffer::ReserveMutableDeviceResource(size_t size, BufferUsage usage)
 {
 	mSize = size;
 	glGenBuffers(1, &mBuffer);

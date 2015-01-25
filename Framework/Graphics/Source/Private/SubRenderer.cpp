@@ -11,42 +11,42 @@ using namespace RTGI;
 BufferBase* CreateStructuredBuffer(int size, BufferUsage usage)
 {
     StructuredBuffer* buffer = new StructuredBuffer();
-    buffer->ReserveDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
 BufferBase* CreateAtomicCounterBuffer(int size, BufferUsage usage)
 {
     AtomicCounterBuffer* buffer = new AtomicCounterBuffer();
-    buffer->ReserveDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
 BufferBase* CreateUniformBuffer(int size, BufferUsage usage)
 {
     UniformBuffer* buffer = new UniformBuffer();
-    buffer->ReserveDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
 BufferBase* CreateDispatchIndirectBuffer(int size, BufferUsage usage)
 {
     DispatchIndirectBuffer* buffer = new DispatchIndirectBuffer();
-    buffer->ReserveDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
 BufferBase* CreatePixelBuffer(int size, BufferUsage usage)
 {
     PixelBuffer* buffer = new PixelBuffer();
-    buffer->ReserveDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
 BufferBase* CreateTextureBuffer(int size, BufferUsage usage)
 {
     TextureBuffer* buffer = new TextureBuffer();
-    buffer->ReserveDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------

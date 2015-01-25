@@ -117,17 +117,17 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
-    mVoxelBuffer->ReserveDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mVoxelBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
     memset(mZeroBuffer, 0x00, bufferSize);
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
     bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*35 + voxelCount*sizeof(GLfloat)*4;
-    mIndirectCommandBuffer->ReserveDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mIndirectCommandBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
 
     // Create gathered voxel GPU memory allocator counter.
     mGatheredVoxelAllocCounter = new AtomicCounterBuffer();
-    mGatheredVoxelAllocCounter->ReserveDeviceResource(sizeof(GLuint), BU_Dynamic_Copy);
+    mGatheredVoxelAllocCounter->ReserveMutableDeviceResource(sizeof(GLuint), BU_Dynamic_Copy);
 
 	// Create scene.
 	mat4 rotM;
