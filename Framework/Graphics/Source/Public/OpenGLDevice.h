@@ -51,29 +51,29 @@ private:
     // Texture.
     void __DeleteTexture(Texture* texture);
     TextureHandle* __Texture1DLoadFromSystemMemory(Texture* texture,
-        TextureInternalFormat internalFormat, int width, TextureFormat format, 
-        TextureComponentType type, void* pixels);
+        BufferInternalFormat internalFormat, int width, BufferFormat format, 
+        BufferComponentType type, void* pixels);
     void __Texture1DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
     void __TextureBindToImageUnit(Texture* texture, unsigned int unit, BufferAccess access);
     void __TextureBindToSampler(Texture* texture, unsigned int index, SamplerDesc* sampler);
     void __Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData);
     TextureHandle* __Texture2DLoadFromSystemMemory(Texture* texture, 
-        TextureInternalFormat internalFormat, int width, int height, 
-        TextureFormat format, TextureComponentType type, bool mipMap, void* pixels);
+        BufferInternalFormat internalFormat, int width, int height, 
+        BufferFormat format, BufferComponentType type, bool mipMap, void* pixels);
     TextureHandle* __Texture2DLoadFromTextureBuffer(Texture* texture, 
-        TextureBuffer* textureBuffer, TextureInternalFormat internalFormat);
+        TextureBuffer* textureBuffer, BufferInternalFormat internalFormat);
     void __Texture2DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
     void __Texture2DGetImageData(Texture* texture, void* dstPixels);
     TextureHandle* __Tex2DArrayLoadFromSystemMemory(Texture* texture, 
-        TextureInternalFormat internalFormat, int width, int height, int depth, 
-        TextureFormat format, TextureComponentType type, void* pixels);
+        BufferInternalFormat internalFormat, int width, int height, int depth, 
+        BufferFormat format, BufferComponentType type, void* pixels);
     TextureHandle* __Texture3DLoadFromSystemMemory(Texture* texture, 
-        TextureInternalFormat internalFormat, int width, int height, int depth, 
-        TextureFormat format, TextureComponentType type, void* pixels);
+        BufferInternalFormat internalFormat, int width, int height, int depth, 
+        BufferFormat format, BufferComponentType type, void* pixels);
     void __Texture3DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
     TextureHandle* __TextureCubeLoadFromSystemMemory(Texture* texture,
-        TextureInternalFormat internalFormat, int width, int height, 
-        TextureFormat format, TextureComponentType type, bool mipMap, 
+        BufferInternalFormat internalFormat, int width, int height, 
+        BufferFormat format, BufferComponentType type, bool mipMap, 
         void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY,
         void* pixelsPZ, void* pixelsNZ);
 

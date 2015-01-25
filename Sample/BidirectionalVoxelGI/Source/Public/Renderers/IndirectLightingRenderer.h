@@ -60,7 +60,7 @@ public:
     virtual ~IndirectLightingRenderer();
 
     void Initialize(GPUDevice* device, int width, int height, 
-        TextureFormat format, int vplCount, int patternSize, 
+        BufferFormat format, int vplCount, int patternSize, 
         AABB* sceneBB, int voxelGridDim);
     void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer, 
         Voxelizer* voxelBuffer);

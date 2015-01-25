@@ -19,7 +19,7 @@ RSMRenderer::~RSMRenderer()
 }
 //----------------------------------------------------------------------------
 void RSMRenderer::CreateRSM(int width, int height, int depth,
-    TextureFormat format)
+    BufferFormat format)
 {
     AddFrameBufferTarget(RTGI_RSMRenderer_RSMPosition_Name, width, height, 
         depth, TT_Texture2DArray, format);

@@ -20,7 +20,7 @@ public:
     RSMRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~RSMRenderer();
 
-    void CreateRSM(int width, int height, int depth, TextureFormat format);
+    void CreateRSM(int width, int height, int depth, BufferFormat format);
     void Render(int technique, int pass, Camera* camera);
 
 protected:

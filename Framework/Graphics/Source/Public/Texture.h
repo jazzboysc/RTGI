@@ -12,47 +12,6 @@
 namespace RTGI
 {
 
-enum TextureFormat
-{
-    TF_Unknown = -1,
-    TF_R,
-    TF_RG,
-    TF_RGB,
-    TF_RGBA,
-    TF_RGBF,
-    TF_RGBAF,
-    TF_R32UI,
-    TF_R32F,
-    TF_Depth,
-    TF_Max
-};
-
-enum TextureInternalFormat
-{
-    TIF_Unknown = -1,
-    TIF_RGB8,
-    TIF_RGBA8,
-    TIF_RGB32F,
-    TIF_RGBA32F,
-    TIF_RGBA32UI,
-    TIF_RGB16F,
-    TIF_RGBA16F,
-    TIF_R32UI,
-    TIF_R32F,
-    TIF_RG32F,
-    TIF_Depth24,
-    TIF_Max
-};
-
-enum TextureComponentType
-{
-    TCT_Unknown = -1,
-    TCT_Unsigned_Byte,
-    TCT_Unsigned_Int,
-    TCT_Float,
-    TCT_Max
-};
-
 enum TextureType
 {
     TT_Unknown = -1,
@@ -61,7 +20,7 @@ enum TextureType
     TT_Texture3D,
     TT_TextureCube,
     TT_Texture2DArray,
-    TT_Max
+    TextureType_Max
 };
 
 //----------------------------------------------------------------------------
@@ -79,9 +38,9 @@ public:
     bool HasMipMap;
 
     inline TextureHandle* GetTextureHandle() const { return mTextureHandle; }
-    inline TextureFormat GetFormat() const { return mFormat; }
-    inline TextureInternalFormat GetInternalFormat() const { return mInternalFormat; }
-    inline TextureComponentType GetComponentType() const { return mComponentType; }
+    inline BufferFormat GetFormat() const { return mFormat; }
+    inline BufferInternalFormat GetInternalFormat() const { return mInternalFormat; }
+    inline BufferComponentType GetComponentType() const { return mComponentType; }
     inline TextureType GetType() const { return mType; }
 
     void BindToImageUnit(unsigned int unit, BufferAccess access);
@@ -91,9 +50,9 @@ protected:
     Texture();
 
     TextureHandle* mTextureHandle;
-    TextureFormat mFormat;
-    TextureInternalFormat mInternalFormat;
-    TextureComponentType mComponentType;
+    BufferFormat mFormat;
+    BufferInternalFormat mInternalFormat;
+    BufferComponentType mComponentType;
     TextureType mType;
 };
 

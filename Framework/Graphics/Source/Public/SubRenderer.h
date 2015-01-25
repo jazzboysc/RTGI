@@ -54,7 +54,7 @@ public:
 
     // FrameBuffer stuff.
     void AddFrameBufferTarget(const std::string& name, int width, int height, 
-        int depth, TextureType type, TextureFormat format);
+        int depth, TextureType type, BufferFormat format);
     int GetFrameBufferTargetCount() const;
     RendererOutput* GetFrameBufferTarget(int i) const;
     RendererOutput* GetFrameBufferTargetByName(const std::string& name) const;

@@ -65,9 +65,9 @@ struct FBOHandle;
 struct SamplerDesc;
 
 enum ShaderProgramParameter;
-enum TextureInternalFormat;
-enum TextureFormat;
-enum TextureComponentType;
+enum BufferInternalFormat;
+enum BufferFormat;
+enum BufferComponentType;
 enum BufferAccess;
 
 typedef void (GPUDevice::*GPUDeviceInitialize)(
@@ -98,8 +98,8 @@ typedef void (GPUDevice::*GPUDeviceSetProgramParameterInt)(
     ShaderProgram* program, ShaderProgramParameter pname, int value);
 typedef void (GPUDevice::*GPUDeviceDeleteTexture)(Texture* texture);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture1DLoadFromSystemMemory)(
-    Texture* texture, TextureInternalFormat internalFormat, int width, 
-    TextureFormat format, TextureComponentType type, void* pixels);
+    Texture* texture, BufferInternalFormat internalFormat, int width, 
+    BufferFormat format, BufferComponentType type, void* pixels);
 typedef void (GPUDevice::*GPUDeviceTexture1DUpdateFromPixelBuffer)(
     Texture* texture, PixelBuffer* pixelBuffer);
 typedef void (GPUDevice::*GPUDeviceTextureBindToImageUnit)(Texture* texture, 
@@ -109,29 +109,29 @@ typedef void (GPUDevice::*GPUDeviceTextureBindToSampler)(Texture* texture,
 typedef void (GPUDevice::*GPUDeviceTexture1DGetDataFromGPUMemory)(
     Texture* texture, void* dstData);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture2DLoadFromSystemMemory)(
-    Texture* texture, TextureInternalFormat internalFormat, int width, 
-    int height, TextureFormat format, TextureComponentType type, bool mipMap,
+    Texture* texture, BufferInternalFormat internalFormat, int width, 
+    int height, BufferFormat format, BufferComponentType type, bool mipMap,
     void* pixels);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture2DLoadFromTextureBuffer)(
     Texture* texture, TextureBuffer* textureBuffer, 
-    TextureInternalFormat internalFormat);
+    BufferInternalFormat internalFormat);
 typedef void (GPUDevice::*GPUDeviceTexture2DUpdateFromPixelBuffer)(
     Texture* texture, PixelBuffer* pixelBuffer);
 typedef void (GPUDevice::*GPUDeviceTexture2DGetImageData)(Texture* texture, 
     void* dstPixels);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTex2DArrayLoadFromSystemMemory)(
-    Texture* texture, TextureInternalFormat internalFormat, int width,
-    int height, int depth, TextureFormat format, TextureComponentType type,
+    Texture* texture, BufferInternalFormat internalFormat, int width,
+    int height, int depth, BufferFormat format, BufferComponentType type,
     void* pixels);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture3DLoadFromSystemMemory)(
-    Texture* texture, TextureInternalFormat internalFormat, int width, 
-    int height, int depth, TextureFormat format, TextureComponentType type, 
+    Texture* texture, BufferInternalFormat internalFormat, int width, 
+    int height, int depth, BufferFormat format, BufferComponentType type, 
     void* pixels);
 typedef void (GPUDevice::*GPUDeviceTexture3DUpdateFromPixelBuffer)(
     Texture* texture, PixelBuffer* pixelBuffer);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTextureCubeLoadFromSystemMemory)(
-    Texture* texture, TextureInternalFormat internalFormat, int width,
-    int height, TextureFormat format, TextureComponentType type, bool mipMap,
+    Texture* texture, BufferInternalFormat internalFormat, int width,
+    int height, BufferFormat format, BufferComponentType type, bool mipMap,
     void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY, 
     void* pixelsPZ, void* pixelsNZ);
 typedef FBOHandle* (GPUDevice::*GPUDeviceCreateFrameBuffer)(

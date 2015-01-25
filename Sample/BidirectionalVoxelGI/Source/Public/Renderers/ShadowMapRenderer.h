@@ -18,7 +18,7 @@ public:
     ShadowMapRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~ShadowMapRenderer();
 
-    void CreateShadowMap(int width, int height, TextureFormat format);
+    void CreateShadowMap(int width, int height, BufferFormat format);
     void Render(int technique, int pass, Camera* camera);
 
 protected:

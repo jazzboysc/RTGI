@@ -34,18 +34,18 @@ public:
 	// Load texture data from system memory. User is responsible for deleting
 	// the system memory data.
     bool LoadFromSystemMemory(GPUDevice* device, 
-        TextureInternalFormat internalFormat, int width, int height, 
-        TextureFormat format, TextureComponentType type, void* pixels,
+        BufferInternalFormat internalFormat, int width, int height, 
+        BufferFormat format, BufferComponentType type, void* pixels,
         bool generateMipMap = true);
 
 #ifndef __APPLE__
 	// Load and create from texture buffer object.
     bool LoadFromTextureBuffer(GPUDevice* device, TextureBuffer* textureBuffer,
-        TextureInternalFormat internalFormat);
+        BufferInternalFormat internalFormat);
 #endif
 
     void CreateRenderTarget(GPUDevice* device, int width, int height, 
-        TextureFormat format);
+        BufferFormat format);
 
 	// Update a render target from pixel buffer.
 	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);

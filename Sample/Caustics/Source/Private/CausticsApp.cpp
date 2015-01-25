@@ -39,10 +39,10 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mNormalTexture = new Texture2D();
 	mColorTexture = new Texture2D();
 	mDepthTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
-	mNormalTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
-	mColorTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
-	mDepthTexture->CreateRenderTarget(mDevice, Width, Height, TF_Depth);
+	mPositionTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mNormalTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mColorTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
 
 	// Create G-buffer.
 	mGBuffer = new FrameBuffer(mDevice);

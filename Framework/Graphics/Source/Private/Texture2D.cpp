@@ -48,9 +48,9 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device,
 
     // TODO:
     // Check this later.
-    mInternalFormat = TIF_RGB8;
-    mFormat = TF_RGB;
-    mComponentType = TCT_Unsigned_Byte;
+    mInternalFormat = BIF_RGB8;
+    mFormat = BF_RGB;
+    mComponentType = BCT_Unsigned_Byte;
 
     mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
         this, mInternalFormat, bitmap.width, bitmap.height, mFormat, 
@@ -140,9 +140,9 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device,
 		} 
     }
 
-    mInternalFormat = TIF_RGB32F;
-    mFormat = TF_RGB;
-    mComponentType = TCT_Float;
+    mInternalFormat = BIF_RGB32F;
+    mFormat = BF_RGB;
+    mComponentType = BCT_Float;
 
     mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
@@ -163,8 +163,8 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device,
 }
 //----------------------------------------------------------------------------
 bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
-    TextureInternalFormat internalFormat, int width, int height,
-    TextureFormat format, TextureComponentType type, void* pixels, 
+    BufferInternalFormat internalFormat, int width, int height,
+    BufferFormat format, BufferComponentType type, void* pixels, 
     bool generateMipMap)
 {
     if( mTextureHandle )
@@ -189,7 +189,7 @@ bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
 //----------------------------------------------------------------------------
 #ifndef __APPLE__
 bool Texture2D::LoadFromTextureBuffer(GPUDevice* device, 
-    TextureBuffer* textureBuffer, TextureInternalFormat internalFormat)
+    TextureBuffer* textureBuffer, BufferInternalFormat internalFormat)
 {
     if( mTextureHandle )
     {
@@ -207,7 +207,7 @@ bool Texture2D::LoadFromTextureBuffer(GPUDevice* device,
 #endif
 //----------------------------------------------------------------------------
 void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
-	TextureFormat format)
+	BufferFormat format)
 {
     if( mTextureHandle )
     {
@@ -222,43 +222,43 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 
 	switch (mFormat)
 	{
-	case TF_RGB:
-        mInternalFormat = TIF_RGB8;
-        mComponentType = TCT_Unsigned_Byte;
+	case BF_RGB:
+        mInternalFormat = BIF_RGB8;
+        mComponentType = BCT_Unsigned_Byte;
 		break;
 
-    case TF_RGBA:
-        mInternalFormat = TIF_RGBA8;
-        mComponentType = TCT_Unsigned_Byte;
+    case BF_RGBA:
+        mInternalFormat = BIF_RGBA8;
+        mComponentType = BCT_Unsigned_Byte;
         break;
 
-	case TF_RGBF:
-		mInternalFormat = TIF_RGB32F;
-        mComponentType = TCT_Float;
+	case BF_RGBF:
+		mInternalFormat = BIF_RGB32F;
+        mComponentType = BCT_Float;
 		break;
 
-    case TF_RGBAF:
-        mInternalFormat = TIF_RGBA32F;
-        mComponentType = TCT_Float;
+    case BF_RGBAF:
+        mInternalFormat = BIF_RGBA32F;
+        mComponentType = BCT_Float;
         break;
 
-	case TF_R32UI:
+	case BF_R32UI:
 #ifndef __APPLE__
-		mInternalFormat = TIF_R32UI;
-        mComponentType = TCT_Unsigned_Int;
+		mInternalFormat = BIF_R32UI;
+        mComponentType = BCT_Unsigned_Int;
 #else
         assert( false );
 #endif
 		break;
 
-    case TF_R32F:
-        mInternalFormat = TIF_R32F;
-        mComponentType = TCT_Float;
+    case BF_R32F:
+        mInternalFormat = BIF_R32F;
+        mComponentType = BCT_Float;
         break;
 
-	case TF_Depth:
-        mInternalFormat = TIF_Depth24;
-        mComponentType = TCT_Unsigned_Byte;
+	case BF_Depth:
+        mInternalFormat = BIF_Depth24;
+        mComponentType = BCT_Unsigned_Byte;
 		break;
 
 	default:
@@ -318,9 +318,9 @@ void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device,
 
     Width = maxSampleCount;
     Height = patternSizeSquared;
-    mInternalFormat = TIF_RGB32F;
-    mFormat = TF_RGB;
-    mComponentType = TCT_Float;
+    mInternalFormat = BIF_RGB32F;
+    mFormat = BF_RGB;
+    mComponentType = BCT_Float;
 	
     mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
         this, mInternalFormat, Width, Height, mFormat, mComponentType,

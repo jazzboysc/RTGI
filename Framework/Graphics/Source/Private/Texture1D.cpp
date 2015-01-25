@@ -19,8 +19,8 @@ Texture1D::~Texture1D()
 }
 //----------------------------------------------------------------------------
 bool Texture1D::LoadFromSystemMemory(GPUDevice* device, 
-    TextureInternalFormat internalFormat, int width, TextureFormat format, 
-    TextureComponentType type, void* pixels)
+    BufferInternalFormat internalFormat, int width, BufferFormat format, 
+    BufferComponentType type, void* pixels)
 {
     if( mTextureHandle )
     {
@@ -48,28 +48,28 @@ void Texture1D::CreateUniformRandomTexture(GPUDevice* device,
     int sampleCount, int channelCount)
 {
     Width = sampleCount;
-    mComponentType = TCT_Float;
+    mComponentType = BCT_Float;
 
     switch( channelCount )
     {
     case 1:
-        mInternalFormat = TIF_R32F;
-        mFormat = TF_R;
+        mInternalFormat = BIF_R32F;
+        mFormat = BF_R;
         break;
 
     case 2:
-        mInternalFormat = TIF_RG32F;
-        mFormat = TF_RG;
+        mInternalFormat = BIF_RG32F;
+        mFormat = BF_RG;
         break;
 
     case 3:
-        mInternalFormat = TIF_RGB32F;
-        mFormat = TF_RGB;
+        mInternalFormat = BIF_RGB32F;
+        mFormat = BF_RGB;
         break;
 
     case 4:
-        mInternalFormat = TIF_RGBA32F;
-        mFormat = TF_RGBA;
+        mInternalFormat = BIF_RGBA32F;
+        mFormat = BF_RGBA;
         break;
 
     default:

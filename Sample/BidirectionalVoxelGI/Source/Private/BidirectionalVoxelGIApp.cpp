@@ -92,15 +92,15 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 
     // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer(mDevice);
-    mGBufferRenderer->CreateGBuffer(Width, Height, TF_RGBAF);
+    mGBufferRenderer->CreateGBuffer(Width, Height, BF_RGBAF);
 
     // Create shadow map renderer.
     mShadowMapRenderer = new ShadowMapRenderer(mDevice);
-    mShadowMapRenderer->CreateShadowMap(1024, 1024, TF_RGBAF);
+    mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBAF);
 
     // Create RSM renderer.
     mRSMRenderer = new RSMRenderer(mDevice);
-    mRSMRenderer->CreateRSM(256, 256, RSM_FACE_COUNT, TF_RGBAF);
+    mRSMRenderer->CreateRSM(256, 256, RSM_FACE_COUNT, BF_RGBAF);
 
     // Create VPL generator.
     mVPLGenerator = new VPLGenerator(mDevice);
@@ -110,13 +110,13 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     // Create direct lighting renderer.
     mDirectLightingRenderer = new DirectLightingRenderer(mDevice);
     mDirectLightingRenderer->SetInputs(mGBufferRenderer, mShadowMapRenderer);
-    mDirectLightingRenderer->Initialize(mDevice, Width, Height, TF_RGBAF, 
+    mDirectLightingRenderer->Initialize(mDevice, Width, Height, BF_RGBAF, 
         mLightProjector);
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer(mDevice);
     mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator, mVoxelizer);
-    mIndirectLightingRenderer->Initialize(mDevice, Width, Height, TF_RGBAF, 
+    mIndirectLightingRenderer->Initialize(mDevice, Width, Height, BF_RGBAF, 
         VPL_SAMPLE_COUNT, INTERLEAVED_PATTERN_SIZE, &mSceneBB, VOXEL_DIMENSION);
 
     // Create visualizer.

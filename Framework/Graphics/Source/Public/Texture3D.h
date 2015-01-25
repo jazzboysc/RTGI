@@ -24,11 +24,11 @@ public:
 	~Texture3D();
 
     bool LoadFromSystemMemory(GPUDevice* device, 
-        TextureInternalFormat internalFormat, int width, int height, int depth, 
-        TextureFormat format, TextureComponentType type, void* pixels);
+        BufferInternalFormat internalFormat, int width, int height, int depth, 
+        BufferFormat format, BufferComponentType type, void* pixels);
 
     void CreateRenderTarget(GPUDevice* device, int width, int height, 
-        int depth, TextureFormat format);
+        int depth, BufferFormat format);
 
 		// Update a render target from pixel buffer.
 	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);

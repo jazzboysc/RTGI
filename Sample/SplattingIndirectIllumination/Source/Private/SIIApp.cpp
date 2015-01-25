@@ -104,11 +104,11 @@ void SIIApp::Initialize(GPUDevice* device)
     shadowMapHeight = 1024;
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(mDevice, shadowMapWidth, 
-        shadowMapHeight, TF_RGBF);
+        shadowMapHeight, BF_RGBF);
 
     mShadowMapDepthTexture = new Texture2D();
     mShadowMapDepthTexture->CreateRenderTarget(mDevice, shadowMapWidth, 
-        shadowMapHeight, TF_Depth);
+        shadowMapHeight, BF_Depth);
 
     // Create shadow map frame buffer.
     Texture* renderTargets[] = { mShadowMapTexture };
@@ -120,16 +120,16 @@ void SIIApp::Initialize(GPUDevice* device)
     int RSMHeight = 1024;
     mRSMPositionTexturePX = new Texture2D();
     mRSMPositionTexturePX->CreateRenderTarget(mDevice, RSMWidth, RSMHeight, 
-        TF_RGBF);
+        BF_RGBF);
     mRSMNormalTexturePX = new Texture2D();
     mRSMNormalTexturePX->CreateRenderTarget(mDevice, RSMWidth, RSMHeight, 
-        TF_RGBF);
+        BF_RGBF);
     mRSMFluxTexturePX = new Texture2D();
     mRSMFluxTexturePX->CreateRenderTarget(mDevice, RSMWidth, RSMHeight, 
-        TF_RGBF);
+        BF_RGBF);
     mRSMDepthTexturePX = new Texture2D();
     mRSMDepthTexturePX->CreateRenderTarget(mDevice, RSMWidth, RSMHeight, 
-        TF_Depth);
+        BF_Depth);
 
     // Create RSM-buffer.
     Texture* rsmTextures[3] = { mRSMPositionTexturePX, mRSMNormalTexturePX, mRSMFluxTexturePX };

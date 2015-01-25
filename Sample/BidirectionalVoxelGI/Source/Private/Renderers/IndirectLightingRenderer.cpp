@@ -100,7 +100,7 @@ void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, 
-    int height, TextureFormat format, int vplCount, int patternSize, 
+    int height, BufferFormat format, int vplCount, int patternSize, 
     AABB* sceneBB, int voxelGridDim)
 {
     ShaderProgramInfo indirectLightingProgramInfo;

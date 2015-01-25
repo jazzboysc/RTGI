@@ -21,8 +21,8 @@ Texture3D::~Texture3D()
 }
 //----------------------------------------------------------------------------
 bool Texture3D::LoadFromSystemMemory(GPUDevice* device,
-    TextureInternalFormat internalFormat, int width, int height, int depth,
-    TextureFormat format, TextureComponentType type, void* pixels)
+    BufferInternalFormat internalFormat, int width, int height, int depth,
+    BufferFormat format, BufferComponentType type, void* pixels)
 {
     if( mTextureHandle )
     {
@@ -45,7 +45,7 @@ bool Texture3D::LoadFromSystemMemory(GPUDevice* device,
 }
 //----------------------------------------------------------------------------
 void Texture3D::CreateRenderTarget(GPUDevice* device, int width, int height, 
-    int depth, TextureFormat format)
+    int depth, BufferFormat format)
 {
     if( mTextureHandle )
     {
@@ -61,43 +61,43 @@ void Texture3D::CreateRenderTarget(GPUDevice* device, int width, int height,
 
     switch( mFormat )
     {
-    case TF_RGB:
-        mInternalFormat = TIF_RGB8;
-        mComponentType = TCT_Unsigned_Byte;
+    case BF_RGB:
+        mInternalFormat = BIF_RGB8;
+        mComponentType = BCT_Unsigned_Byte;
         break;
 
-    case TF_RGBA:
-        mInternalFormat = TIF_RGBA8;
-        mComponentType = TCT_Unsigned_Byte;
+    case BF_RGBA:
+        mInternalFormat = BIF_RGBA8;
+        mComponentType = BCT_Unsigned_Byte;
         break;
 
-    case TF_RGBF:
-        mInternalFormat = TIF_RGB32F;
-        mComponentType = TCT_Float;
+    case BF_RGBF:
+        mInternalFormat = BIF_RGB32F;
+        mComponentType = BCT_Float;
         break;
 
-    case TF_RGBAF:
-        mInternalFormat = TIF_RGBA32F;
-        mComponentType = TCT_Float;
+    case BF_RGBAF:
+        mInternalFormat = BIF_RGBA32F;
+        mComponentType = BCT_Float;
         break;
 
-    case TF_R32UI:
+    case BF_R32UI:
 #ifndef __APPLE__
-        mInternalFormat = TIF_R32UI;
-        mComponentType = TCT_Unsigned_Int;
+        mInternalFormat = BIF_R32UI;
+        mComponentType = BCT_Unsigned_Int;
 #else
         assert(false);
 #endif
         break;
 
-    case TF_R32F:
-        mInternalFormat = TIF_R32F;
-        mComponentType = TCT_Float;
+    case BF_R32F:
+        mInternalFormat = BIF_R32F;
+        mComponentType = BCT_Float;
         break;
 
-    case TF_Depth:
-        mInternalFormat = TIF_Depth24;
-        mComponentType = TCT_Unsigned_Byte;
+    case BF_Depth:
+        mInternalFormat = BIF_Depth24;
+        mComponentType = BCT_Unsigned_Byte;
         break;
 
     default:

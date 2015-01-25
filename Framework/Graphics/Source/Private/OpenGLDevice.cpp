@@ -15,7 +15,7 @@ GLenum gsShaderProgramParams[SPP_Max] =
     GL_GEOMETRY_VERTICES_OUT_EXT
 };
 
-GLenum gsTextureFormat[TF_Max] =
+GLenum gsTextureFormat[BufferFormat_Max] =
 {
     GL_R,
     GL_RG,
@@ -28,7 +28,7 @@ GLenum gsTextureFormat[TF_Max] =
     GL_DEPTH_COMPONENT
 };
 
-GLint gsTextureInternalFormat[TIF_Max] =
+GLint gsTextureInternalFormat[BufferInternalFormat_Max] =
 {
     GL_RGB8,
     GL_RGBA8,
@@ -43,21 +43,21 @@ GLint gsTextureInternalFormat[TIF_Max] =
     GL_DEPTH_COMPONENT24
 };
 
-GLenum gsTextureComponentType[TCT_Max] =
+GLenum gsTextureComponentType[BufferComponentType_Max] =
 {
     GL_UNSIGNED_BYTE,
     GL_UNSIGNED_INT,
     GL_FLOAT
 };
 
-GLenum gsBufferAccess[BA_Max] =
+GLenum gsBufferAccess[BufferAccess_Max] =
 {
     GL_READ_ONLY,
     GL_WRITE_ONLY,
     GL_READ_WRITE
 };
 
-GLenum gsTextureTargets[TT_Max] =
+GLenum gsTextureTargets[TextureType_Max] =
 {
     GL_TEXTURE_1D,
     GL_TEXTURE_2D,
@@ -66,7 +66,7 @@ GLenum gsTextureTargets[TT_Max] =
     GL_TEXTURE_2D_ARRAY
 };
 
-GLenum gsFilterType[FT_Max] =
+GLenum gsFilterType[FilterType_Max] =
 {
     GL_NEAREST,
     GL_LINEAR,
@@ -76,7 +76,7 @@ GLenum gsFilterType[FT_Max] =
     GL_LINEAR_MIPMAP_LINEAR
 };
 
-GLenum gsWrapType[WT_Max] =
+GLenum gsWrapType[WrapType_Max] =
 {
     GL_CLAMP,
     GL_REPEAT
@@ -458,8 +458,8 @@ void OpenGLDevice::__DeleteTexture(Texture* texture)
 }
 //----------------------------------------------------------------------------
 TextureHandle* OpenGLDevice::__Texture1DLoadFromSystemMemory(Texture* texture,
-    TextureInternalFormat internalFormat, int width, TextureFormat format, 
-    TextureComponentType type, void* pixels)
+    BufferInternalFormat internalFormat, int width, BufferFormat format, 
+    BufferComponentType type, void* pixels)
 {
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
     textureHandle->Device = this;
@@ -633,8 +633,8 @@ void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture,
 }
 //----------------------------------------------------------------------------
 TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
-    TextureInternalFormat internalFormat, int width, int height,
-    TextureFormat format, TextureComponentType type, bool mipMap, 
+    BufferInternalFormat internalFormat, int width, int height,
+    BufferFormat format, BufferComponentType type, bool mipMap, 
     void* pixels)
 {
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
@@ -664,7 +664,7 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
 //----------------------------------------------------------------------------
 TextureHandle* OpenGLDevice::__Texture2DLoadFromTextureBuffer(
     Texture* texture, TextureBuffer* textureBuffer, 
-    TextureInternalFormat internalFormat)
+    BufferInternalFormat internalFormat)
 {
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
     textureHandle->Device = this;
@@ -726,8 +726,8 @@ void OpenGLDevice::__Texture2DGetImageData(Texture* texture, void* dstPixels)
 }
 //----------------------------------------------------------------------------
 TextureHandle* OpenGLDevice::__Tex2DArrayLoadFromSystemMemory(
-    Texture* texture, TextureInternalFormat internalFormat, int width, 
-    int height, int depth, TextureFormat format, TextureComponentType type, 
+    Texture* texture, BufferInternalFormat internalFormat, int width, 
+    int height, int depth, BufferFormat format, BufferComponentType type, 
     void* pixels)
 {
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
@@ -751,8 +751,8 @@ TextureHandle* OpenGLDevice::__Tex2DArrayLoadFromSystemMemory(
 }
 //----------------------------------------------------------------------------
 TextureHandle* OpenGLDevice::__Texture3DLoadFromSystemMemory(
-    Texture* texture, TextureInternalFormat internalFormat, int width, 
-    int height, int depth, TextureFormat format, TextureComponentType type, 
+    Texture* texture, BufferInternalFormat internalFormat, int width, 
+    int height, int depth, BufferFormat format, BufferComponentType type, 
     void* pixels)
 {
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
@@ -802,8 +802,8 @@ void OpenGLDevice::__Texture3DUpdateFromPixelBuffer(Texture* texture,
 }
 //----------------------------------------------------------------------------
 TextureHandle* OpenGLDevice::__TextureCubeLoadFromSystemMemory(
-    Texture* texture, TextureInternalFormat internalFormat, int width, 
-    int height, TextureFormat format, TextureComponentType type, bool mipMap, 
+    Texture* texture, BufferInternalFormat internalFormat, int width, 
+    int height, BufferFormat format, BufferComponentType type, bool mipMap, 
     void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY, 
     void* pixelsPZ, void* pixelsNZ)
 {

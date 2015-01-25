@@ -12,6 +12,47 @@
 namespace RTGI
 {
 
+enum BufferFormat
+{
+    BF_Unknown = -1,
+    BF_R,
+    BF_RG,
+    BF_RGB,
+    BF_RGBA,
+    BF_RGBF,
+    BF_RGBAF,
+    BF_R32UI,
+    BF_R32F,
+    BF_Depth,
+    BufferFormat_Max
+};
+
+enum BufferInternalFormat
+{
+    BIF_Unknown = -1,
+    BIF_RGB8,
+    BIF_RGBA8,
+    BIF_RGB32F,
+    BIF_RGBA32F,
+    BIF_RGBA32UI,
+    BIF_RGB16F,
+    BIF_RGBA16F,
+    BIF_R32UI,
+    BIF_R32F,
+    BIF_RG32F,
+    BIF_Depth24,
+    BufferInternalFormat_Max
+};
+
+enum BufferComponentType
+{
+    BCT_Unknown = -1,
+    BCT_Unsigned_Byte,
+    BCT_Unsigned_Int,
+    BCT_Float,
+    BufferComponentType_Max
+};
+
 enum RendererDataType
 {
     RDT_Unknown                 = 0,
@@ -32,7 +73,7 @@ enum BindingFlag
     BF_BindIndex,
     BF_BindToIndirect,
     BF_BindIndexToIndirect,
-    BF_Max
+    BindingFlag_Max
 };
 
 enum BufferUsage
@@ -43,7 +84,7 @@ enum BufferUsage
     BU_Dynamic_Read,
     BU_Dynamic_Copy,
     BU_Dynamic_Draw,
-    BU_Max
+    BufferUsage_Max
 };
 
 enum BufferAccess
@@ -51,7 +92,7 @@ enum BufferAccess
     BA_Read_Only = 0,
     BA_Write_Only,
     BA_Read_Write,
-    BA_Max
+    BufferAccess_Max
 };
 
 enum FilterType
@@ -62,14 +103,14 @@ enum FilterType
     FT_Linear_Nearest,
     FT_Nearest_Linear,
     FT_Linear_Linear,
-    FT_Max
+    FilterType_Max
 };
 
 enum WrapType
 {
     WT_Clamp = 0,
     WT_Repeat,
-    WT_Max
+    WrapType_Max
 };
 
 struct SamplerDesc

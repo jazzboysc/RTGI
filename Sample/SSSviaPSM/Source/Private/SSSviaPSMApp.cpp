@@ -80,11 +80,11 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
     shadowMapHeight = 1024;
     mShadowMapTexture = new Texture2D();
     mShadowMapTexture->CreateRenderTarget(mDevice, shadowMapWidth, 
-        shadowMapHeight, TF_RGBF);
+        shadowMapHeight, BF_RGBF);
 
     mShadowMapDepthTexture = new Texture2D();
     mShadowMapDepthTexture->CreateRenderTarget(mDevice, shadowMapWidth,
-        shadowMapHeight, TF_Depth);
+        shadowMapHeight, BF_Depth);
 
     // Create shadow map frame buffer.
     Texture* renderTargets[] = { mShadowMapTexture };

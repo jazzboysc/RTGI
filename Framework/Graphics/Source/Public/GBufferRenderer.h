@@ -25,7 +25,7 @@ public:
     GBufferRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~GBufferRenderer();
 
-    void CreateGBuffer(int width, int height, TextureFormat format);
+    void CreateGBuffer(int width, int height, BufferFormat format);
     void Render(int technique, int pass, Camera* camera);
 
 protected:

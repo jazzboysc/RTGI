@@ -22,7 +22,7 @@ public:
     ~Texture2DArray();
 
 	void CreateRenderTarget(GPUDevice* device, int width, int height, 
-        int depth, TextureFormat format);
+        int depth, BufferFormat format);
 
 	int Width, Height, Depth;
 	bool IsRenderTarget;

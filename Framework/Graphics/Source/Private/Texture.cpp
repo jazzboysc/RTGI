@@ -15,9 +15,9 @@ Texture::Texture()
     IsTextureBuffer(false),
     HasMipMap(false),
     mTextureHandle(0),
-    mFormat(TF_Unknown),
-    mInternalFormat(TIF_Unknown),
-    mComponentType(TCT_Unknown)
+    mFormat(BF_Unknown),
+    mInternalFormat(BIF_Unknown),
+    mComponentType(BCT_Unknown)
 {
 }
 //----------------------------------------------------------------------------

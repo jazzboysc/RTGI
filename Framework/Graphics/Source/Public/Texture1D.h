@@ -24,8 +24,8 @@ public:
 	~Texture1D();
 
     bool LoadFromSystemMemory(GPUDevice* device, 
-        TextureInternalFormat internalFormat, int width, TextureFormat format, 
-        TextureComponentType type, void* pixels);
+        BufferInternalFormat internalFormat, int width, BufferFormat format, 
+        BufferComponentType type, void* pixels);
 
     // Update a render target from pixel buffer.
     void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);

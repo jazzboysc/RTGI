@@ -97,8 +97,8 @@ void VPLGenerator::Initialize(GPUDevice* device, int vplCount)
     mVPLSamplePattern = new Texture1D();
     mVPLSamplePattern->CreateUniformRandomTexture(device, mVPLCount, 4);
     mVPLSampleTest = new Texture1D();
-    mVPLSampleTest->LoadFromSystemMemory(device, TIF_RGBA32F, mVPLCount, 
-        TF_RGBA, TCT_Float, 0);
+    mVPLSampleTest->LoadFromSystemMemory(device, BIF_RGBA32F, mVPLCount, 
+        BF_RGBA, BCT_Float, 0);
 
     // Create VPL buffer.
     GLuint vplBufferSize = (sizeof(vec4) * 3 + sizeof(mat4)) * mVPLCount;

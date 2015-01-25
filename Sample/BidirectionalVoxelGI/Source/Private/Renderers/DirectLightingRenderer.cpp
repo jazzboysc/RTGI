@@ -73,7 +73,7 @@ DirectLightingRenderer::~DirectLightingRenderer()
 }
 //----------------------------------------------------------------------------
 void DirectLightingRenderer::Initialize(GPUDevice* device, int width, 
-    int height, TextureFormat format, Camera* lightProjector)
+    int height, BufferFormat format, Camera* lightProjector)
 {
     ShaderProgramInfo directLightingProgramInfo;
     directLightingProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vDirectLighting.glsl";

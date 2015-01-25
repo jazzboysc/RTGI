@@ -102,7 +102,7 @@ RenderSet* SubRenderer::GetRenderSet() const
 }
 //----------------------------------------------------------------------------
 void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
-    int height, int depth, TextureType type, TextureFormat format)
+    int height, int depth, TextureType type, BufferFormat format)
 {
     assert(GetFrameBufferTargetByName(name) == 0);
     assert(GetGenericBufferTargetByName(name) == 0);
@@ -188,7 +188,8 @@ Texture* SubRenderer::GetDepthTexture() const
 void SubRenderer::AddInputDependency(SubRenderer* producer, 
     const std::string& srcName, RendererInputDataView* view)
 {
-    assert(view->BindingType >= BF_Bindless && view->BindingType < BF_Max);
+    assert(view->BindingType >= BF_Bindless && 
+        view->BindingType < BindingFlag_Max);
     assert(mInputs.size() < MAX_INPUT_DEPENDENCY_COUNT);
     RendererOutput* producerOutput = 
         producer->GetFrameBufferTargetByName(srcName);
@@ -236,13 +237,13 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight,
     case TT_Texture2D:
         depthTexture = new Texture2D();
         ((Texture2D*)depthTexture)->CreateRenderTarget(mDevice, depthWidth, 
-            depthHeight, TF_Depth);
+            depthHeight, BF_Depth);
         break;
 
     case TT_Texture2DArray:
         depthTexture = new Texture2DArray();
         ((Texture2DArray*)depthTexture)->CreateRenderTarget(mDevice, 
-            depthWidth, depthHeight, depthCount, TF_Depth);
+            depthWidth, depthHeight, depthCount, BF_Depth);
         break;
 
     default:

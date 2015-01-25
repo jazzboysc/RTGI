@@ -195,7 +195,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	// Create ray head pointer texture.
 	mRayHeadPointerTexture = new Texture2D();
 	mRayHeadPointerTexture->CreateRenderTarget(mDevice, mRayBundleRTWidth, 
-        mRayBundleRTHeight, TF_R32UI);
+        mRayBundleRTHeight, BF_R32UI);
 
 	// Create ray head pointer texture init data.
 	pixelCount = mRayBundleRTWidth * mRayBundleRTHeight;
@@ -211,7 +211,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	// Create per-voxel mutex texture.
 	int voxelMutexCount = mVoxelCount;
 	mPerVoxelMutexTexture = new Texture1D();
-	mPerVoxelMutexTexture->LoadFromSystemMemory(mDevice, TIF_R32UI, voxelMutexCount, TF_R32UI, TCT_Unsigned_Byte, 0);
+	mPerVoxelMutexTexture->LoadFromSystemMemory(mDevice, BIF_R32UI, voxelMutexCount, BF_R32UI, BCT_Unsigned_Byte, 0);
 
 	// Create per-voxel mutex texture init data.
 	mPerVoxelMutexTextureInitData = new PixelBuffer();
@@ -240,9 +240,9 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	// Create ray-bundle render target.
 	mRayBundleRT = new Texture2D();
-	mRayBundleRT->CreateRenderTarget(mDevice, mRayBundleRTWidth, mRayBundleRTHeight, TF_RGBF);
+	mRayBundleRT->CreateRenderTarget(mDevice, mRayBundleRTWidth, mRayBundleRTHeight, BF_RGBF);
 	mRayBundleDepth = new Texture2D();
-	mRayBundleDepth->CreateRenderTarget(mDevice, mRayBundleRTWidth, mRayBundleRTHeight, TF_Depth);
+	mRayBundleDepth->CreateRenderTarget(mDevice, mRayBundleRTWidth, mRayBundleRTHeight, BF_Depth);
 
 	Texture* rayBundleRT[1] = {mRayBundleRT};
 	mRayBundleFB = new FrameBuffer(mDevice);

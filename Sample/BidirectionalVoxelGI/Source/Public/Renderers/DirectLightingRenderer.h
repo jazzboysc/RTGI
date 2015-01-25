@@ -52,7 +52,7 @@ public:
     virtual ~DirectLightingRenderer();
 
     void Initialize(GPUDevice* device, int width, int height, 
-        TextureFormat format, Camera* LightProjector);
+        BufferFormat format, Camera* LightProjector);
     void SetInputs(GBufferRenderer* gbuffer, ShadowMapRenderer* shadowMap);
     void Render();
 

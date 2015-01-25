@@ -93,13 +93,13 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create MRT textures.
 	mPositionTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
+	mPositionTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
 	mNormalTexture = new Texture2D();
-	mNormalTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
+	mNormalTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
 	mColorTexture = new Texture2D();
-	mColorTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
+	mColorTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
 	mDepthTexture = new Texture2D();
-	mDepthTexture->CreateRenderTarget(mDevice, Width, Height, TF_Depth);
+	mDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
 
 	// Create G-buffer.
 	Texture* colorTextures[3] = {mPositionTexture, mNormalTexture, mColorTexture};
@@ -108,7 +108,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create direct lighting render target.
 	mDirectLightingTexture = new Texture2D();
-	mDirectLightingTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
+	mDirectLightingTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
 
 	// Create direct lighting framebuffer.
 	Texture* directLightingTexture[1] = {mDirectLightingTexture};
@@ -117,7 +117,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create SSDO render target.
 	mSSDOTexture = new Texture2D();
-	mSSDOTexture->CreateRenderTarget(mDevice, Width, Height, TF_RGBF);
+	mSSDOTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
 
 	// Create SSDO framebuffer.
 	Texture* ssdoTexture[1] = {mSSDOTexture};
