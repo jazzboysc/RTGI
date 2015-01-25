@@ -7,6 +7,41 @@
 
 using namespace RTGI;
 
+GLenum gsBufferFormat[BufferFormat_Max] =
+{
+    GL_R,
+    GL_RG,
+    GL_RGB,
+    GL_RGBA,
+    GL_RGB,
+    GL_RGBA,
+    GL_RED_INTEGER,
+    GL_RED,
+    GL_DEPTH_COMPONENT
+};
+
+GLint gsBufferInternalFormat[BufferInternalFormat_Max] =
+{
+    GL_RGB8,
+    GL_RGBA8,
+    GL_RGB32F_ARB,
+    GL_RGBA32F_ARB,
+    GL_RGBA32UI,
+    GL_RGB16F_ARB,
+    GL_RGBA16F_ARB,
+    GL_R32UI,
+    GL_R32F,
+    GL_RG32F,
+    GL_DEPTH_COMPONENT24
+};
+
+GLenum gsBufferComponentType[BufferComponentType_Max] =
+{
+    GL_UNSIGNED_BYTE,
+    GL_UNSIGNED_INT,
+    GL_FLOAT
+};
+
 GLenum Buffer::msBufferUsage[BufferUsage_Max] =
 {
     GL_STATIC_READ,
@@ -126,6 +161,31 @@ void Buffer::ReserveMutableDeviceResource(size_t size, BufferUsage usage)
 	glBindBuffer(mType, mBuffer);
     glBufferData(mType, size, 0, msBufferUsage[(int)usage]);
 	glBindBuffer(mType, 0);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void Buffer::ReserveImmutableDeviceResource(size_t size)
+{
+    mSize = size;
+    glGenBuffers(1, &mBuffer);
+    glBindBuffer(mType, mBuffer);
+    glBufferStorage(mType, size, 0, 0);
+    glBindBuffer(mType, 0);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void Buffer::Clear(BufferInternalFormat internalFormat, BufferFormat format,
+    BufferComponentType type, void* data)
+{
+    glInvalidateBufferData(mBuffer);
+    glClearBufferData(mType, gsBufferInternalFormat[(int)internalFormat],
+        gsBufferFormat[(int)format], gsBufferComponentType[(int)type], data);
 #ifdef _DEBUG
     GLenum res = glGetError();
     assert(res == GL_NO_ERROR);

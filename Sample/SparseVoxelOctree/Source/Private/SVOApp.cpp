@@ -7,6 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
+//#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -38,7 +39,7 @@ void SVOApp::Initialize(GPUDevice* device)
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
    
     // Create scene camera.
-    mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 1.0f, 50.0f);
+    mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 1.0f, 150.0f);
     mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
@@ -124,7 +125,11 @@ void SVOApp::Initialize(GPUDevice* device)
 
     // Create atomic counter buffer.
     mAtomicCounterBuffer = new AtomicCounterBuffer();
+#ifdef DEBUG_VOXEL
     mAtomicCounterBuffer->ReserveMutableDeviceResource(sizeof(GLuint)*2, BU_Dynamic_Copy);
+#else
+    mAtomicCounterBuffer->ReserveImmutableDeviceResource(sizeof(GLuint)*2);
+#endif
 
 	// Create scene.
 	mat4 rotM;
@@ -261,7 +266,7 @@ void SVOApp::VoxelizeScene()
 	mLeftWall->Render(0, 0);
 	mRightWall->Render(0, 0);
 
-    glViewport(0, 0, 8, 8);
+    glViewport(0, 0, 4, 4);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
@@ -298,11 +303,18 @@ void SVOApp::FrameFunc()
     // Reset counter.
     mAtomicCounterBuffer->Bind(0);
     mTimer->Start();
-    //GLuint* counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
-    //assert(counterData);
-    //counterData[0] = 0;
-    //counterData[1] = 0;
-    //mAtomicCounterBuffer->Unmap();
+#ifdef DEBUG_VOXEL
+    GLuint* counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
+    assert(counterData);
+    counterData[0] = 0;
+    counterData[1] = 0;
+    mAtomicCounterBuffer->Unmap();
+#else
+    unsigned int counterData[2];
+    counterData[0] = 0;
+    counterData[1] = 0;
+    mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int, counterData);
+#endif
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Reset Counter Time", workLoad);
@@ -319,11 +331,11 @@ void SVOApp::FrameFunc()
 
     // Debug reset voxel buffer task.
 #ifdef DEBUG_VOXEL
-    GLuint* bufferData = (GLuint*)mVoxelBuffer->Map(GL_WRITE_ONLY);
-    assert(bufferData);
-    int res = memcmp(mZeroBuffer, bufferData, VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*sizeof(GLuint));
-    assert(res == 0);
-    mVoxelBuffer->Unmap();
+    //GLuint* bufferData = (GLuint*)mVoxelBuffer->Map(GL_READ_ONLY);
+    //assert(bufferData);
+    //int res = memcmp(mZeroBuffer, bufferData, VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*sizeof(GLuint));
+    //assert(res == 0);
+    //mVoxelBuffer->Unmap();
 #endif
 
     // Scene voxelization pass.
@@ -345,14 +357,14 @@ void SVOApp::FrameFunc()
 #ifdef DEBUG_VOXEL
     GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
     GLfloat* gatheredVoxelData = (GLfloat*)(indirectCommandbufferData + 10);
-    infoPanel->SetLabelValue("Voxel Count", (double)indirectCommandbufferData[1]);
+    infoPanel->SetTimingLabelValue("Voxel Count", (double)indirectCommandbufferData[1]);
     mIndirectCommandBuffer->Unmap();
-#endif
 
-    //counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
-    //infoPanel->SetTimingLabelValue("Voxel Fragment Count", (double)counterData[0]);
-    //infoPanel->SetTimingLabelValue("Counter", (double)counterData[1]);
-    //mAtomicCounterBuffer->Unmap();
+    counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
+    infoPanel->SetTimingLabelValue("Voxel Fragment Count", (double)counterData[0]);
+    infoPanel->SetTimingLabelValue("Counter", (double)counterData[1]);
+    mAtomicCounterBuffer->Unmap();
+#endif
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);

@@ -25,9 +25,11 @@ public:
 
 	void* Map(GLenum access);
 	void Unmap();
+
 	void Bind(GLuint index);
 	void Bind();
     void BindToIndirect();
+
 	void UpdateSubData(GLuint bindingPoint, int offset, size_t size, void* data);
 
 	// Load buffer data from system memory. User is responsible for deleting
@@ -35,6 +37,11 @@ public:
     bool LoadFromSystemMemory(size_t size, void* data, BufferUsage usage);
 
     void ReserveMutableDeviceResource(size_t size, BufferUsage usage);
+
+    void ReserveImmutableDeviceResource(size_t size);
+
+    void Clear(BufferInternalFormat internalFormat, BufferFormat format, 
+        BufferComponentType type, void* data);
 
 	GLuint GetBuffer() const;
 	GLuint GetSize() const;
