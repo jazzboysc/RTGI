@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-//#define DEBUG_VOXEL
+#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -252,6 +252,11 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddDebugLabel("Iteration Count", 16, 340);
 #endif
 
+#ifdef DEBUG_VOXEL
+    InformationPanel::GetInstance()->AddDebugLabel("Voxel Ratio", 16, 360);
+    InformationPanel::GetInstance()->AddDebugLabel("Voxel Fragment Ratio", 16, 380);
+#endif
+
     // Create GPU timer.
     mTimer = new GPUTimer();
     mTimer->CreateDeviceResource();
@@ -266,7 +271,7 @@ void SVOApp::VoxelizeScene()
 	mLeftWall->Render(0, 0);
 	mRightWall->Render(0, 0);
 
-    glViewport(0, 0, 4, 4);
+    glViewport(0, 0, 8, 8);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
@@ -300,11 +305,11 @@ void SVOApp::FrameFunc()
     mIndirectCommandBuffer->Bind(1);
     mIndirectCommandBuffer->BindToIndirect();
 
-    // Reset counter.
+    // Reset counters.
     mAtomicCounterBuffer->Bind(0);
     mTimer->Start();
 #ifdef DEBUG_VOXEL
-    GLuint* counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
+    GLuint* counterData = (GLuint*)mAtomicCounterBuffer->Map(BA_Write_Only);
     assert(counterData);
     counterData[0] = 0;
     counterData[1] = 0;
@@ -355,15 +360,20 @@ void SVOApp::FrameFunc()
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM);
 #ifdef DEBUG_VOXEL
-    GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
+    GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(BA_Read_Only);
     GLfloat* gatheredVoxelData = (GLfloat*)(indirectCommandbufferData + 10);
     infoPanel->SetTimingLabelValue("Voxel Count", (double)indirectCommandbufferData[1]);
     mIndirectCommandBuffer->Unmap();
 
-    counterData = (GLuint*)mAtomicCounterBuffer->Map(GL_WRITE_ONLY);
+    counterData = (GLuint*)mAtomicCounterBuffer->Map(BA_Write_Only);
     infoPanel->SetTimingLabelValue("Voxel Fragment Count", (double)counterData[0]);
     infoPanel->SetTimingLabelValue("Counter", (double)counterData[1]);
     mAtomicCounterBuffer->Unmap();
+
+    float voxelRatio = (float)counterData[1] / (float)(VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION);
+    float voxelFragmentRatio = (float)counterData[0] / (float)(VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION);
+    infoPanel->SetDebugLabelValue("Voxel Ratio", (double)voxelRatio);
+    infoPanel->SetDebugLabelValue("Voxel Fragment Ratio", (double)voxelFragmentRatio);
 #endif
 
     // Visualize scene voxelization pass.
