@@ -8,45 +8,50 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-BufferBase* CreateStructuredBuffer(int size, BufferUsage usage)
+BufferBase* CreateStructuredBuffer(GPUDevice* device, int size, 
+    BufferUsage usage)
 {
     StructuredBuffer* buffer = new StructuredBuffer();
-    buffer->ReserveMutableDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(device, (size_t)size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
-BufferBase* CreateAtomicCounterBuffer(int size, BufferUsage usage)
+BufferBase* CreateAtomicCounterBuffer(GPUDevice* device, int size, 
+    BufferUsage usage)
 {
     AtomicCounterBuffer* buffer = new AtomicCounterBuffer();
-    buffer->ReserveMutableDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(device, (size_t)size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
-BufferBase* CreateUniformBuffer(int size, BufferUsage usage)
+BufferBase* CreateUniformBuffer(GPUDevice* device, int size, 
+    BufferUsage usage)
 {
     UniformBuffer* buffer = new UniformBuffer();
-    buffer->ReserveMutableDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(device, (size_t)size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
-BufferBase* CreateDispatchIndirectBuffer(int size, BufferUsage usage)
+BufferBase* CreateDispatchIndirectBuffer(GPUDevice* device, int size, 
+    BufferUsage usage)
 {
     DispatchIndirectBuffer* buffer = new DispatchIndirectBuffer();
-    buffer->ReserveMutableDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(device, (size_t)size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
-BufferBase* CreatePixelBuffer(int size, BufferUsage usage)
+BufferBase* CreatePixelBuffer(GPUDevice* device, int size, BufferUsage usage)
 {
     PixelBuffer* buffer = new PixelBuffer();
-    buffer->ReserveMutableDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(device, (size_t)size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
-BufferBase* CreateTextureBuffer(int size, BufferUsage usage)
+BufferBase* CreateTextureBuffer(GPUDevice* device, int size, 
+    BufferUsage usage)
 {
     TextureBuffer* buffer = new TextureBuffer();
-    buffer->ReserveMutableDeviceResource(size, usage);
+    buffer->ReserveMutableDeviceResource(device, (size_t)size, usage);
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
@@ -266,8 +271,8 @@ void SubRenderer::AddGenericBufferTarget(const std::string& name,
 
     float typeValue = (float)(int)bufferType;
     int functionIndex = (int)glm::log2(typeValue) - 2;
-    BufferBase* genericBufferTarget = msFactoryFunctions[functionIndex](size, 
-        usage);
+    BufferBase* genericBufferTarget = msFactoryFunctions[functionIndex](
+        mDevice, size, usage);
 
     RendererOutput* ro = new RendererOutput(name, genericBufferTarget, false, 
         flag, binding, reset, resetValue);

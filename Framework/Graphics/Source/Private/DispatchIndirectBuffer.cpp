@@ -12,7 +12,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 DispatchIndirectBuffer::DispatchIndirectBuffer()
     :
-    Buffer(GL_DISPATCH_INDIRECT_BUFFER)
+    Buffer(BT_DispatchIndirect)
 {
 }
 //----------------------------------------------------------------------------

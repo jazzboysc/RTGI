@@ -52,6 +52,7 @@ class ShaderProgram;
 class PassInfo;
 class ShaderUniform;
 class Texture;
+class Buffer;
 class PixelBuffer;
 class TextureBuffer;
 class FrameBuffer;
@@ -62,6 +63,7 @@ struct PassInfoHandle;
 struct ShaderUniformHandle;
 struct TextureHandle;
 struct FBOHandle;
+struct BufferHandle;
 struct SamplerDesc;
 
 enum ShaderProgramParameter;
@@ -69,6 +71,7 @@ enum BufferInternalFormat;
 enum BufferFormat;
 enum BufferComponentType;
 enum BufferAccess;
+enum BufferUsage;
 
 typedef void (GPUDevice::*GPUDeviceInitialize)(
     GPUDeviceDescription* deviceDesc);
@@ -148,6 +151,24 @@ typedef void (GPUDevice::*GPUDeviceFrameBufferDisable)(
 typedef void (GPUDevice::*GPUDeviceComputeShaderDispatch)(
     ShaderProgram* program, unsigned int globalX, unsigned int globalY, 
     unsigned int globalZ);
+typedef void (GPUDevice::*GPUDeviceDeleteBuffer)(Buffer* buffer);
+typedef void* (GPUDevice::*GPUDeviceBufferMap)(Buffer* buffer,
+    BufferAccess access);
+typedef void (GPUDevice::*GPUDeviceBufferUnmap)(Buffer* buffer);
+typedef void (GPUDevice::*GPUDeviceBufferBindIndex)(Buffer* buffer, 
+    unsigned int index);
+typedef void (GPUDevice::*GPUDeviceBufferBind)(Buffer* buffer);
+typedef void (GPUDevice::*GPUDeviceBufferBindToIndirect)(Buffer* buffer);
+typedef void (GPUDevice::*GPUDeviceBufferUpdateSubData)(Buffer* buffer, 
+    int offset, size_t size, void* data);
+typedef BufferHandle* (GPUDevice::*GPUDeviceBufferLoadFromSystemMemory)(
+    Buffer* buffer, size_t size, void* data, BufferUsage usage);
+typedef BufferHandle* 
+    (GPUDevice::*GPUDeviceBufferLoadImmutableFromSystemMemory)(Buffer* buffer, 
+    size_t size, void* data);
+typedef void (GPUDevice::*GPUDeviceBufferClear)(Buffer* buffer, 
+    BufferInternalFormat internalFormat, BufferFormat format, 
+    BufferComponentType type, void* data);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -159,43 +180,53 @@ public:
     GPUDevice();
     ~GPUDevice();
 
-    GPUDeviceInitialize                        Initialize;
-    GPUDeviceTerminate                         Terminate;
-    GPUDeviceCreateShader                      CreateShader;
-    GPUDeviceDeleteShader                      DeleteShader;
-    GPUDeviceCreateProgram                     CreateProgram;
-    GPUDeviceDeleteProgram                     DeleteProgram;
-    GPUDeviceEnableProgram                     EnableProgram;
-    GPUDeviceDisableProgram                    DisableProgram;
-    GPUDeviceCreatePassInfo                    CreatePassInfo;
-    GPUDeviceDeletePassInfo                    DeletePassInfo;
-    GPUDeviceGetUniformLocation                GetUniformLocation;
-    GPUDeviceSetUniformValueMat4               SetUniformValueMat4;
-    GPUDeviceSetUniformValueVec3               SetUniformValueVec3;
-    GPUDeviceSetUniformValueInt                SetUniformValueInt;
-    GPUDeviceSetUniformValueFloat              SetUniformValueFloat;
-    GPUDeviceSetUniformValueFloat2             SetUniformValueFloat2;
-    GPUDeviceSetProgramParameterInt            SetProgramParameterInt;
-    GPUDeviceDeleteTexture                     DeleteTexture;
-    GPUDeviceTexture1DLoadFromSystemMemory     Texture1DLoadFromSystemMemory;
-    GPUDeviceTexture1DUpdateFromPixelBuffer    Texture1DUpdateFromPixelBuffer;
-    GPUDeviceTextureBindToImageUnit            TextureBindToImageUnit;
-    GPUDeviceTextureBindToSampler              TextureBindToSampler;
-    GPUDeviceTexture1DGetDataFromGPUMemory     Texture1DGetDataFromGPUMemory;
-    GPUDeviceTexture2DLoadFromSystemMemory     Texture2DLoadFromSystemMemory;
-    GPUDeviceTexture2DLoadFromTextureBuffer    Texture2DLoadFromTextureBuffer;
-    GPUDeviceTexture2DUpdateFromPixelBuffer    Texture2DUpdateFromPixelBuffer;
-    GPUDeviceTexture2DGetImageData             Texture2DGetImageData;
-    GPUDeviceTex2DArrayLoadFromSystemMemory    Tex2DArrayLoadFromSystemMemory;
-    GPUDeviceTexture3DLoadFromSystemMemory     Texture3DLoadFromSystemMemory;
-    GPUDeviceTexture3DUpdateFromPixelBuffer    Texture3DUpdateFromPixelBuffer;
-    GPUDeviceTextureCubeLoadFromSystemMemory   TextureCubeLoadFromSystemMemory;
-    GPUDeviceCreateFrameBuffer                 CreateFrameBuffer;
-    GPUDeviceDeleteFrameBuffer                 DeleteFrameBuffer;
-    GPUDeviceFrameBufferSetRenderTargets       FrameBufferSetRenderTargets;
-    GPUDeviceFrameBufferEnable                 FrameBufferEnable;
-    GPUDeviceFrameBufferDisable                FrameBufferDisable;
-    GPUDeviceComputeShaderDispatch             ComputeShaderDispatch;
+    GPUDeviceInitialize                           Initialize;
+    GPUDeviceTerminate                            Terminate;
+    GPUDeviceCreateShader                         CreateShader;
+    GPUDeviceDeleteShader                         DeleteShader;
+    GPUDeviceCreateProgram                        CreateProgram;
+    GPUDeviceDeleteProgram                        DeleteProgram;
+    GPUDeviceEnableProgram                        EnableProgram;
+    GPUDeviceDisableProgram                       DisableProgram;
+    GPUDeviceCreatePassInfo                       CreatePassInfo;
+    GPUDeviceDeletePassInfo                       DeletePassInfo;
+    GPUDeviceGetUniformLocation                   GetUniformLocation;
+    GPUDeviceSetUniformValueMat4                  SetUniformValueMat4;
+    GPUDeviceSetUniformValueVec3                  SetUniformValueVec3;
+    GPUDeviceSetUniformValueInt                   SetUniformValueInt;
+    GPUDeviceSetUniformValueFloat                 SetUniformValueFloat;
+    GPUDeviceSetUniformValueFloat2                SetUniformValueFloat2;
+    GPUDeviceSetProgramParameterInt               SetProgramParameterInt;
+    GPUDeviceDeleteTexture                        DeleteTexture;
+    GPUDeviceTexture1DLoadFromSystemMemory        Texture1DLoadFromSystemMemory;
+    GPUDeviceTexture1DUpdateFromPixelBuffer       Texture1DUpdateFromPixelBuffer;
+    GPUDeviceTextureBindToImageUnit               TextureBindToImageUnit;
+    GPUDeviceTextureBindToSampler                 TextureBindToSampler;
+    GPUDeviceTexture1DGetDataFromGPUMemory        Texture1DGetDataFromGPUMemory;
+    GPUDeviceTexture2DLoadFromSystemMemory        Texture2DLoadFromSystemMemory;
+    GPUDeviceTexture2DLoadFromTextureBuffer       Texture2DLoadFromTextureBuffer;
+    GPUDeviceTexture2DUpdateFromPixelBuffer       Texture2DUpdateFromPixelBuffer;
+    GPUDeviceTexture2DGetImageData                Texture2DGetImageData;
+    GPUDeviceTex2DArrayLoadFromSystemMemory       Tex2DArrayLoadFromSystemMemory;
+    GPUDeviceTexture3DLoadFromSystemMemory        Texture3DLoadFromSystemMemory;
+    GPUDeviceTexture3DUpdateFromPixelBuffer       Texture3DUpdateFromPixelBuffer;
+    GPUDeviceTextureCubeLoadFromSystemMemory      TextureCubeLoadFromSystemMemory;
+    GPUDeviceCreateFrameBuffer                    CreateFrameBuffer;
+    GPUDeviceDeleteFrameBuffer                    DeleteFrameBuffer;
+    GPUDeviceFrameBufferSetRenderTargets          FrameBufferSetRenderTargets;
+    GPUDeviceFrameBufferEnable                    FrameBufferEnable;
+    GPUDeviceFrameBufferDisable                   FrameBufferDisable;
+    GPUDeviceComputeShaderDispatch                ComputeShaderDispatch;
+    GPUDeviceDeleteBuffer                         DeleteBuffer;
+    GPUDeviceBufferMap                            BufferMap;
+    GPUDeviceBufferUnmap                          BufferUnmap;
+    GPUDeviceBufferBindIndex                      BufferBindIndex;
+    GPUDeviceBufferBind                           BufferBind;
+    GPUDeviceBufferBindToIndirect                 BufferBindToIndirect;
+    GPUDeviceBufferUpdateSubData                  BufferUpdateSubData;
+    GPUDeviceBufferLoadFromSystemMemory           BufferLoadFromSystemMemory;
+    GPUDeviceBufferLoadImmutableFromSystemMemory  BufferLoadImmutableFromSystemMemory;
+    GPUDeviceBufferClear                          BufferClear;
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;

@@ -15,7 +15,17 @@ GLenum gsShaderProgramParams[SPP_Max] =
     GL_GEOMETRY_VERTICES_OUT_EXT
 };
 
-GLenum gsTextureFormat[BufferFormat_Max] =
+GLenum gsBufferTargets[BufferType_Max] =
+{
+    GL_ATOMIC_COUNTER_BUFFER,
+    GL_DISPATCH_INDIRECT_BUFFER,
+    GL_PIXEL_UNPACK_BUFFER,
+    GL_SHADER_STORAGE_BUFFER,
+    GL_TEXTURE_BUFFER,
+    GL_UNIFORM_BUFFER
+};
+
+GLenum gsBufferFormat[BufferFormat_Max] =
 {
     GL_R,
     GL_RG,
@@ -28,7 +38,7 @@ GLenum gsTextureFormat[BufferFormat_Max] =
     GL_DEPTH_COMPONENT
 };
 
-GLint gsTextureInternalFormat[BufferInternalFormat_Max] =
+GLint gsBufferInternalFormat[BufferInternalFormat_Max] =
 {
     GL_RGB8,
     GL_RGBA8,
@@ -43,7 +53,7 @@ GLint gsTextureInternalFormat[BufferInternalFormat_Max] =
     GL_DEPTH_COMPONENT24
 };
 
-GLenum gsTextureComponentType[BufferComponentType_Max] =
+GLenum gsBufferComponentType[BufferComponentType_Max] =
 {
     GL_UNSIGNED_BYTE,
     GL_UNSIGNED_INT,
@@ -55,6 +65,16 @@ GLenum gsBufferAccess[BufferAccess_Max] =
     GL_READ_ONLY,
     GL_WRITE_ONLY,
     GL_READ_WRITE
+};
+
+GLenum gsBufferUsage[BufferUsage_Max] =
+{
+    GL_STATIC_READ,
+    GL_STATIC_COPY,
+    GL_STATIC_DRAW,
+    GL_DYNAMIC_READ,
+    GL_DYNAMIC_COPY,
+    GL_DYNAMIC_DRAW
 };
 
 GLenum gsTextureTargets[TextureType_Max] =
@@ -467,8 +487,8 @@ TextureHandle* OpenGLDevice::__Texture1DLoadFromSystemMemory(Texture* texture,
     glGenTextures(1, &textureHandle->mTexture);
     glBindTexture(GL_TEXTURE_1D, textureHandle->mTexture);
     glTexImage1D(GL_TEXTURE_1D, 0, 
-        gsTextureInternalFormat[(int)internalFormat], width, 0, 
-        gsTextureFormat[(int)format], gsTextureComponentType[(int)type],
+        gsBufferInternalFormat[(int)internalFormat], width, 0, 
+        gsBufferFormat[(int)format], gsBufferComponentType[(int)type],
         pixels);
 
     glBindTexture(GL_TEXTURE_1D, 0);
@@ -492,14 +512,15 @@ void OpenGLDevice::__Texture1DUpdateFromPixelBuffer(Texture* texture,
         return;
     }
 
-    GLuint buffer = pixelBuffer->GetBuffer();
+    GLuint buffer = 
+        ((OpenGLBufferHandle*)pixelBuffer->GetBufferHandle())->mBuffer;
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
     glBindTexture(GL_TEXTURE_1D, textureHandle->mTexture);
     glTexImage1D(GL_TEXTURE_1D, 0, 
-        gsTextureInternalFormat[(int)texture->GetInternalFormat()], 
+        gsBufferInternalFormat[(int)texture->GetInternalFormat()], 
         ((Texture1D*)texture)->Width, 0, 
-        gsTextureFormat[(int)texture->GetFormat()],
-        gsTextureComponentType[(int)texture->GetComponentType()],
+        gsBufferFormat[(int)texture->GetFormat()],
+        gsBufferComponentType[(int)texture->GetComponentType()],
     	0);
     glBindTexture(GL_TEXTURE_1D, 0);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
@@ -526,7 +547,7 @@ void OpenGLDevice::__TextureBindToImageUnit(Texture* texture,
 
     glBindImageTexture(unit, textureHandle->mTexture, 0, GL_FALSE, 0, 
         gsBufferAccess[(int)access],
-        gsTextureInternalFormat[(int)texture->GetInternalFormat()]);
+        gsBufferInternalFormat[(int)texture->GetInternalFormat()]);
     
 #ifdef _DEBUG
     GLenum res = glGetError();
@@ -621,8 +642,8 @@ void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture,
 
     glBindTexture(GL_TEXTURE_1D, textureHandle->mTexture);
     glGetTexImage(GL_TEXTURE_1D, 0, 
-        gsTextureFormat[(int)texture->GetFormat()],
-        gsTextureComponentType[(int)texture->GetComponentType()],
+        gsBufferFormat[(int)texture->GetFormat()],
+        gsBufferComponentType[(int)texture->GetComponentType()],
         dstData);
     glBindTexture(GL_TEXTURE_1D, 0);
     
@@ -643,8 +664,8 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
     glGenTextures(1, &textureHandle->mTexture);
     glBindTexture(GL_TEXTURE_2D, textureHandle->mTexture);
     glTexImage2D(GL_TEXTURE_2D, 0,
-        gsTextureInternalFormat[(int)internalFormat], width, height, 0,
-        gsTextureFormat[(int)format], gsTextureComponentType[(int)type],
+        gsBufferInternalFormat[(int)internalFormat], width, height, 0,
+        gsBufferFormat[(int)format], gsBufferComponentType[(int)type],
         pixels);
 
     if( mipMap )
@@ -669,11 +690,12 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromTextureBuffer(
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
     textureHandle->Device = this;
 
-    GLuint buffer = textureBuffer->GetBuffer();
+    GLuint buffer = 
+        ((OpenGLBufferHandle*)textureBuffer->GetBufferHandle())->mBuffer;
     glGenTextures(1, &textureHandle->mTexture);
     glBindTexture(GL_TEXTURE_BUFFER, textureHandle->mTexture);
     glTexBuffer(GL_TEXTURE_BUFFER, 
-        gsTextureInternalFormat[(int)internalFormat], buffer);
+        gsBufferInternalFormat[(int)internalFormat], buffer);
     glBindTexture(GL_TEXTURE_BUFFER, 0);
 
 #ifdef _DEBUG
@@ -691,14 +713,15 @@ void OpenGLDevice::__Texture2DUpdateFromPixelBuffer(Texture* texture,
         (OpenGLTextureHandle*)texture->GetTextureHandle();
     assert(textureHandle);
 
-    GLuint buffer = pixelBuffer->GetBuffer();
+    GLuint buffer = 
+        ((OpenGLBufferHandle*)pixelBuffer->GetBufferHandle())->mBuffer;
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
     glBindTexture(GL_TEXTURE_2D, textureHandle->mTexture);
     glTexImage2D(GL_TEXTURE_2D, 0,
-        gsTextureInternalFormat[(int)texture->GetInternalFormat()], 
+        gsBufferInternalFormat[(int)texture->GetInternalFormat()], 
         ((Texture2D*)texture)->Width, ((Texture2D*)texture)->Height, 0,
-        gsTextureFormat[(int)texture->GetFormat()],
-        gsTextureComponentType[(int)texture->GetComponentType()], 0);
+        gsBufferFormat[(int)texture->GetFormat()],
+        gsBufferComponentType[(int)texture->GetComponentType()], 0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
     
@@ -715,8 +738,8 @@ void OpenGLDevice::__Texture2DGetImageData(Texture* texture, void* dstPixels)
     assert(textureHandle);
 
     glBindTexture(GL_TEXTURE_2D, textureHandle->mTexture);
-    glGetTexImage(GL_TEXTURE_2D, 0, gsTextureFormat[(int)texture->GetFormat()],
-        gsTextureComponentType[(int)texture->GetComponentType()], dstPixels);
+    glGetTexImage(GL_TEXTURE_2D, 0, gsBufferFormat[(int)texture->GetFormat()],
+        gsBufferComponentType[(int)texture->GetComponentType()], dstPixels);
     glBindTexture(GL_TEXTURE_2D, 0);
     
 #ifdef _DEBUG
@@ -736,8 +759,8 @@ TextureHandle* OpenGLDevice::__Tex2DArrayLoadFromSystemMemory(
     glGenTextures(1, &textureHandle->mTexture);
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureHandle->mTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, 
-        gsTextureInternalFormat[(int)internalFormat], width, height, depth,
-        0, gsTextureFormat[(int)format], gsTextureComponentType[(int)type], 
+        gsBufferInternalFormat[(int)internalFormat], width, height, depth,
+        0, gsBufferFormat[(int)format], gsBufferComponentType[(int)type], 
         pixels);
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
@@ -761,8 +784,8 @@ TextureHandle* OpenGLDevice::__Texture3DLoadFromSystemMemory(
     glGenTextures(1, &textureHandle->mTexture);
     glBindTexture(GL_TEXTURE_3D, textureHandle->mTexture);
     glTexImage3D(GL_TEXTURE_3D, 0, 
-        gsTextureInternalFormat[(int)internalFormat], width, height, depth, 0,
-        gsTextureFormat[(int)format], gsTextureComponentType[(int)type], 
+        gsBufferInternalFormat[(int)internalFormat], width, height, depth, 0,
+        gsBufferFormat[(int)format], gsBufferComponentType[(int)type], 
         pixels);
 
     glBindTexture(GL_TEXTURE_3D, 0);
@@ -782,15 +805,16 @@ void OpenGLDevice::__Texture3DUpdateFromPixelBuffer(Texture* texture,
         (OpenGLTextureHandle*)texture->GetTextureHandle();
     assert(textureHandle);
 
-    GLuint buffer = pixelBuffer->GetBuffer();
+    GLuint buffer = 
+        ((OpenGLBufferHandle*)pixelBuffer->GetBufferHandle())->mBuffer;
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
     glBindTexture(GL_TEXTURE_3D, textureHandle->mTexture);
     glTexImage3D(GL_TEXTURE_3D, 0,
-        gsTextureInternalFormat[(int)texture->GetInternalFormat()],
+        gsBufferInternalFormat[(int)texture->GetInternalFormat()],
         ((Texture3D*)texture)->Width, ((Texture3D*)texture)->Height,
         ((Texture3D*)texture)->Depth, 0,
-        gsTextureFormat[(int)texture->GetFormat()],
-        gsTextureComponentType[(int)texture->GetComponentType()], 0);
+        gsBufferFormat[(int)texture->GetFormat()],
+        gsBufferComponentType[(int)texture->GetComponentType()], 0);
 
     glBindTexture(GL_TEXTURE_3D, 0);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
@@ -810,9 +834,9 @@ TextureHandle* OpenGLDevice::__TextureCubeLoadFromSystemMemory(
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
     textureHandle->Device = this;
 
-    GLint tempInternalFormat = gsTextureInternalFormat[(int)internalFormat];
-    GLenum tempFormat = gsTextureFormat[(int)format];
-    GLenum tempType = gsTextureComponentType[(int)type];
+    GLint tempInternalFormat = gsBufferInternalFormat[(int)internalFormat];
+    GLenum tempFormat = gsBufferFormat[(int)format];
+    GLenum tempType = gsBufferComponentType[(int)type];
 
     glGenTextures(1, &textureHandle->mTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureHandle->mTexture);
@@ -966,7 +990,141 @@ void OpenGLDevice::__ComputeShaderDispatch(ShaderProgram* program,
 #endif
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__DeleteBuffer(Buffer* buffer)
+{
+    OpenGLBufferHandle* bufferHandle = 
+        (OpenGLBufferHandle*)buffer->GetBufferHandle();
+    assert(bufferHandle);
+    glDeleteBuffers(1, &bufferHandle->mBuffer);
 
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void* OpenGLDevice::__BufferMap(Buffer* buffer, BufferAccess access)
+{
+    void* data = glMapBuffer(gsBufferTargets[(int)buffer->GetType()], 
+        gsBufferAccess[(int)access]);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+    return data;
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__BufferUnmap(Buffer* buffer)
+{
+    glUnmapBuffer(gsBufferTargets[(int)buffer->GetType()]);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__BufferBindIndex(Buffer* buffer, unsigned int index)
+{
+#ifndef __APPLE__
+
+    GLuint b = ((OpenGLBufferHandle*)buffer->GetBufferHandle())->mBuffer;
+    glBindBufferBase(gsBufferTargets[(int)buffer->GetType()], index, b);
+    
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert( res == GL_NO_ERROR );
+#endif
+
+#else
+    assert(false);
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__BufferBind(Buffer* buffer)
+{
+    GLuint b = ((OpenGLBufferHandle*)buffer->GetBufferHandle())->mBuffer;
+    glBindBuffer(gsBufferTargets[(int)buffer->GetType()], b);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__BufferBindToIndirect(Buffer* buffer)
+{
+    GLuint b = ((OpenGLBufferHandle*)buffer->GetBufferHandle())->mBuffer;
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, b);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__BufferUpdateSubData(Buffer* buffer, int offset, 
+    size_t size, void* data)
+{
+    glBufferSubData(gsBufferTargets[(int)buffer->GetType()], offset, size, 
+        data);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+BufferHandle* OpenGLDevice::__BufferLoadFromSystemMemory(Buffer* buffer, 
+    size_t size, void* data, BufferUsage usage)
+{
+    OpenGLBufferHandle* bufferHandle = new OpenGLBufferHandle();
+    bufferHandle->Device = this;
+
+    GLenum type = gsBufferTargets[(int)buffer->GetType()];
+    glGenBuffers(1, &bufferHandle->mBuffer);
+    glBindBuffer(type, bufferHandle->mBuffer);
+    glBufferData(type, size, data, gsBufferUsage[(int)usage]);
+    glBindBuffer(type, 0);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
+    return bufferHandle;
+}
+//----------------------------------------------------------------------------
+BufferHandle* OpenGLDevice::__BufferLoadImmutableFromSystemMemory(
+    Buffer* buffer, size_t size, void* data)
+{
+    OpenGLBufferHandle* bufferHandle = new OpenGLBufferHandle();
+    bufferHandle->Device = this;
+
+    GLenum type = gsBufferTargets[(int)buffer->GetType()];
+    glGenBuffers(1, &bufferHandle->mBuffer);
+    glBindBuffer(type, bufferHandle->mBuffer);
+    glBufferStorage(type, size, data, 0);
+    glBindBuffer(type, 0);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
+    return bufferHandle;
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__BufferClear(Buffer* buffer, 
+    BufferInternalFormat internalFormat, BufferFormat format, 
+    BufferComponentType type, void* data)
+{
+    GLuint b = ((OpenGLBufferHandle*)buffer->GetBufferHandle())->mBuffer;
+
+    glInvalidateBufferData(b);
+    glClearBufferData(gsBufferTargets[(int)buffer->GetType()], 
+        gsBufferInternalFormat[(int)internalFormat],
+        gsBufferFormat[(int)format], gsBufferComponentType[(int)type], data);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 OpenGLDevice::OpenGLDevice()
@@ -1006,6 +1164,16 @@ OpenGLDevice::OpenGLDevice()
     FrameBufferEnable = (GPUDeviceFrameBufferEnable)&OpenGLDevice::__FrameBufferEnable;
     FrameBufferDisable = (GPUDeviceFrameBufferDisable)&OpenGLDevice::__FrameBufferDisable;
     ComputeShaderDispatch = (GPUDeviceComputeShaderDispatch)&OpenGLDevice::__ComputeShaderDispatch;
+    DeleteBuffer = (GPUDeviceDeleteBuffer)&OpenGLDevice::__DeleteBuffer;
+    BufferMap = (GPUDeviceBufferMap)&OpenGLDevice::__BufferMap;
+    BufferUnmap = (GPUDeviceBufferUnmap)&OpenGLDevice::__BufferUnmap;
+    BufferBindIndex = (GPUDeviceBufferBindIndex)&OpenGLDevice::__BufferBindIndex;
+    BufferBind = (GPUDeviceBufferBind)&OpenGLDevice::__BufferBind;
+    BufferBindToIndirect = (GPUDeviceBufferBindToIndirect)&OpenGLDevice::__BufferBindToIndirect;
+    BufferUpdateSubData = (GPUDeviceBufferUpdateSubData)&OpenGLDevice::__BufferUpdateSubData;
+    BufferLoadFromSystemMemory = (GPUDeviceBufferLoadFromSystemMemory)&OpenGLDevice::__BufferLoadFromSystemMemory;
+    BufferLoadImmutableFromSystemMemory = (GPUDeviceBufferLoadImmutableFromSystemMemory)&OpenGLDevice::__BufferLoadImmutableFromSystemMemory;
+    BufferClear = (GPUDeviceBufferClear)&OpenGLDevice::__BufferClear;
 
     mEnable4xMsaa = false;
     m4xMsaaQuality = 0;

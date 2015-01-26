@@ -200,10 +200,10 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	// Create ray head pointer texture init data.
 	pixelCount = mRayBundleRTWidth * mRayBundleRTHeight;
 	mRayHeadPointerTextureInitData = new PixelBuffer();
-	mRayHeadPointerTextureInitData->ReserveMutableDeviceResource(
+	mRayHeadPointerTextureInitData->ReserveMutableDeviceResource(mDevice,
 		pixelCount*sizeof(GLuint), BU_Static_Draw);
 	mRayHeadPointerTextureInitData->Bind();
-	pixelBufferData = mRayHeadPointerTextureInitData->Map(GL_WRITE_ONLY);
+	pixelBufferData = mRayHeadPointerTextureInitData->Map(BA_Write_Only);
 	assert( pixelBufferData );
 	memset(pixelBufferData, 0x00, pixelCount*sizeof(GLuint));
 	mRayHeadPointerTextureInitData->Unmap();
@@ -211,32 +211,34 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	// Create per-voxel mutex texture.
 	int voxelMutexCount = mVoxelCount;
 	mPerVoxelMutexTexture = new Texture1D();
-	mPerVoxelMutexTexture->LoadFromSystemMemory(mDevice, BIF_R32UI, voxelMutexCount, BF_R32UI, BCT_Unsigned_Byte, 0);
+	mPerVoxelMutexTexture->LoadFromSystemMemory(mDevice, BIF_R32UI, voxelMutexCount, 
+        BF_R32UI, BCT_Unsigned_Byte, 0);
 
 	// Create per-voxel mutex texture init data.
 	mPerVoxelMutexTextureInitData = new PixelBuffer();
-	mPerVoxelMutexTextureInitData->ReserveMutableDeviceResource(voxelMutexCount*sizeof(GLuint), BU_Static_Draw);
+	mPerVoxelMutexTextureInitData->ReserveMutableDeviceResource(mDevice, 
+        voxelMutexCount*sizeof(GLuint), BU_Static_Draw);
 	mPerVoxelMutexTextureInitData->Bind();
-	pixelBufferData = mPerVoxelMutexTextureInitData->Map(GL_WRITE_ONLY);
+	pixelBufferData = mPerVoxelMutexTextureInitData->Map(BA_Write_Only);
 	assert( pixelBufferData );
 	memset(pixelBufferData, 0x00, voxelMutexCount*sizeof(GLuint));
 	mPerVoxelMutexTextureInitData->Unmap();
 
 	// Create ray GPU memory allocator counter.
 	mRayAllocCounter = new AtomicCounterBuffer();
-	mRayAllocCounter->ReserveMutableDeviceResource(sizeof(GLuint),
+	mRayAllocCounter->ReserveMutableDeviceResource(mDevice, sizeof(GLuint),
         BU_Dynamic_Copy);
 
 	// Create ray GPU memory pool for concurrent linked lists.
 	gpuMemPoolSize = 8 * pixelCount * (4*sizeof(vec4) + sizeof(GLuint) + 
 		sizeof(GLfloat) + sizeof(GLboolean));
 	mRayBundleNodeBuffer = new StructuredBuffer();
-    mRayBundleNodeBuffer->ReserveMutableDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
+    mRayBundleNodeBuffer->ReserveMutableDeviceResource(mDevice, gpuMemPoolSize, BU_Dynamic_Copy);
 
 	// Create accumulation buffer.
 	size_t bufferSize = mVoxelCount * sizeof(vec4);
 	mAccumulationBuffer = new StructuredBuffer();
-    mAccumulationBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mAccumulationBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
 	// Create ray-bundle render target.
 	mRayBundleRT = new Texture2D();
@@ -318,7 +320,7 @@ void RayBundleApp::FrameFunc()
 {
 	// Reset accumulation buffer.
 	mAccumulationBuffer->Bind(1);
-	vec4* bufferData = (vec4*)mAccumulationBuffer->Map(GL_WRITE_ONLY);
+	vec4* bufferData = (vec4*)mAccumulationBuffer->Map(BA_Write_Only);
 	assert( bufferData );
 	memset(bufferData, 0x00, mAccumulationBuffer->GetSize());
 	mAccumulationBuffer->Unmap();
@@ -347,7 +349,7 @@ void RayBundleApp::FrameFunc()
 
 		// Reset ray bundle atomic counter.
 		mRayAllocCounter->Bind(0);
-		GLuint* counterData = (GLuint*)mRayAllocCounter->Map(GL_WRITE_ONLY);
+		GLuint* counterData = (GLuint*)mRayAllocCounter->Map(BA_Write_Only);
 		assert( counterData );
 		counterData[0] = 0;
 		mRayAllocCounter->Unmap();

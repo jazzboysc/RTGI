@@ -7,55 +7,10 @@
 
 using namespace RTGI;
 
-GLenum gsBufferFormat[BufferFormat_Max] =
-{
-    GL_R,
-    GL_RG,
-    GL_RGB,
-    GL_RGBA,
-    GL_RGB,
-    GL_RGBA,
-    GL_RED_INTEGER,
-    GL_RED,
-    GL_DEPTH_COMPONENT
-};
-
-GLint gsBufferInternalFormat[BufferInternalFormat_Max] =
-{
-    GL_RGB8,
-    GL_RGBA8,
-    GL_RGB32F_ARB,
-    GL_RGBA32F_ARB,
-    GL_RGBA32UI,
-    GL_RGB16F_ARB,
-    GL_RGBA16F_ARB,
-    GL_R32UI,
-    GL_R32F,
-    GL_RG32F,
-    GL_DEPTH_COMPONENT24
-};
-
-GLenum gsBufferComponentType[BufferComponentType_Max] =
-{
-    GL_UNSIGNED_BYTE,
-    GL_UNSIGNED_INT,
-    GL_FLOAT
-};
-
-GLenum Buffer::msBufferUsage[BufferUsage_Max] =
-{
-    GL_STATIC_READ,
-    GL_STATIC_COPY,
-    GL_STATIC_DRAW,
-    GL_DYNAMIC_READ,
-    GL_DYNAMIC_COPY,
-    GL_DYNAMIC_DRAW
-};
-
 //----------------------------------------------------------------------------
-Buffer::Buffer(GLenum type)
+Buffer::Buffer(BufferType type)
 	:
-	mBuffer(0),
+	mBufferHandle(0),
 	mSize(0),
 	mType(type)
 {
@@ -63,132 +18,78 @@ Buffer::Buffer(GLenum type)
 //----------------------------------------------------------------------------
 Buffer::~Buffer()
 {
-	glDeleteBuffers(1, &mBuffer);
+    GPU_DEVICE_FUNC(mBufferHandle->Device, DeleteBuffer)(this);
 }
 //----------------------------------------------------------------------------
-GLuint Buffer::GetBuffer() const
+void* Buffer::Map(BufferAccess access)
 {
-	return mBuffer;
-}
-//----------------------------------------------------------------------------
-GLuint Buffer::GetSize() const
-{
-	return mSize;
-}
-//----------------------------------------------------------------------------
-void* Buffer::Map(GLenum access)
-{
-	void* data = glMapBuffer(mType, access);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
-	return data;
+    assert(mBufferHandle);
+    return GPU_DEVICE_FUNC(mBufferHandle->Device, BufferMap)(this, access);
 }
 //----------------------------------------------------------------------------
 void Buffer::Unmap()
 {
-	glUnmapBuffer(mType);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    assert(mBufferHandle);
+    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferUnmap)(this);
 }
 //----------------------------------------------------------------------------
-void Buffer::Bind(GLuint index)
+void Buffer::Bind(unsigned int index)
 {
-#ifndef __APPLE__
-
-	glBindBufferBase(mType, index, mBuffer);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert( res == GL_NO_ERROR );
-#endif
-
-#else
-    assert( false );
-#endif
+    assert(mBufferHandle);
+    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferBindIndex)(this, index);
 }
 //----------------------------------------------------------------------------
 void Buffer::Bind()
 {
-	glBindBuffer(mType, mBuffer);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    assert(mBufferHandle);
+    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferBind)(this);
 }
 //----------------------------------------------------------------------------
 void Buffer::BindToIndirect()
 {
-    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mBuffer);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    assert(mBufferHandle);
+    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferBindToIndirect)(this);
 }
 //----------------------------------------------------------------------------
-void Buffer::UpdateSubData(GLuint bindingPoint, int offset, size_t size, 
+void Buffer::UpdateSubData(unsigned int bindingPoint, int offset, size_t size, 
 	void* data)
 {
+    assert(mBufferHandle);
 	Bind(bindingPoint);
-	glBufferSubData(mType, offset, size, data);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferUpdateSubData)(this, offset, 
+        size, data);
 }
 //----------------------------------------------------------------------------
-bool Buffer::LoadFromSystemMemory(size_t size, void* data, BufferUsage usage)
+bool Buffer::LoadFromSystemMemory(GPUDevice* device, size_t size, void* data, 
+    BufferUsage usage)
 {
 	mSize = size;
-	glGenBuffers(1, &mBuffer);
-	glBindBuffer(mType, mBuffer);
-    glBufferData(mType, size, data, msBufferUsage[(int)usage]);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    mBufferHandle = GPU_DEVICE_FUNC(device, BufferLoadFromSystemMemory)(this, 
+        size, data, usage);
 
 	return true;
 }
 //----------------------------------------------------------------------------
-void Buffer::ReserveMutableDeviceResource(size_t size, BufferUsage usage)
+void Buffer::ReserveMutableDeviceResource(GPUDevice* device, size_t size, 
+    BufferUsage usage)
 {
 	mSize = size;
-	glGenBuffers(1, &mBuffer);
-	glBindBuffer(mType, mBuffer);
-    glBufferData(mType, size, 0, msBufferUsage[(int)usage]);
-	glBindBuffer(mType, 0);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    mBufferHandle = GPU_DEVICE_FUNC(device, BufferLoadFromSystemMemory)(this, 
+        size, 0, usage);
 }
 //----------------------------------------------------------------------------
-void Buffer::ReserveImmutableDeviceResource(size_t size)
+void Buffer::ReserveImmutableDeviceResource(GPUDevice* device, size_t size)
 {
     mSize = size;
-    glGenBuffers(1, &mBuffer);
-    glBindBuffer(mType, mBuffer);
-    glBufferStorage(mType, size, 0, 0);
-    glBindBuffer(mType, 0);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    mBufferHandle = GPU_DEVICE_FUNC(device, 
+        BufferLoadImmutableFromSystemMemory)(this, size, 0);
 }
 //----------------------------------------------------------------------------
 void Buffer::Clear(BufferInternalFormat internalFormat, BufferFormat format,
     BufferComponentType type, void* data)
 {
-    glInvalidateBufferData(mBuffer);
-    glClearBufferData(mType, gsBufferInternalFormat[(int)internalFormat],
-        gsBufferFormat[(int)format], gsBufferComponentType[(int)type], data);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
+    assert(mBufferHandle);
+    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferClear)(this, internalFormat, 
+        format, type, data);
 }
 //----------------------------------------------------------------------------

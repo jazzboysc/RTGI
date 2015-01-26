@@ -52,6 +52,10 @@ struct FBOHandle : public GPUResource
 {
 };
 
+struct BufferHandle : public GPUResource
+{
+};
+
 }
 
 #endif

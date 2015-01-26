@@ -90,6 +90,21 @@ private:
     void __ComputeShaderDispatch(ShaderProgram* program, unsigned int globalX, 
         unsigned int globalY, unsigned int globalZ);
 
+    // Buffer.
+    void __DeleteBuffer(Buffer* buffer);
+    void* __BufferMap(Buffer* buffer, BufferAccess access);
+    void __BufferUnmap(Buffer* buffer);
+    void __BufferBindIndex(Buffer* buffer, unsigned int index);
+    void __BufferBind(Buffer* buffer);
+    void __BufferBindToIndirect(Buffer* buffer);
+    void __BufferUpdateSubData(Buffer* buffer, int offset, size_t size, void* data);
+    BufferHandle* __BufferLoadFromSystemMemory(Buffer* buffer, size_t size, 
+        void* data, BufferUsage usage);
+    BufferHandle* __BufferLoadImmutableFromSystemMemory(Buffer* buffer, 
+        size_t size, void* data);
+    void __BufferClear(Buffer* buffer, BufferInternalFormat internalFormat, 
+        BufferFormat format, BufferComponentType type, void* data);
+
 private:
     bool mEnable4xMsaa;
     unsigned int m4xMsaaQuality;

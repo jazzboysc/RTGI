@@ -117,17 +117,17 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
-    mVoxelBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mVoxelBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
     memset(mZeroBuffer, 0x00, bufferSize);
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
     bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*35 + voxelCount*sizeof(GLfloat)*4;
-    mIndirectCommandBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mIndirectCommandBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create gathered voxel GPU memory allocator counter.
     mGatheredVoxelAllocCounter = new AtomicCounterBuffer();
-    mGatheredVoxelAllocCounter->ReserveMutableDeviceResource(sizeof(GLuint), BU_Dynamic_Copy);
+    mGatheredVoxelAllocCounter->ReserveMutableDeviceResource(mDevice, sizeof(GLuint), BU_Dynamic_Copy);
 
 	// Create scene.
 	mat4 rotM;
@@ -314,7 +314,7 @@ void SimpleVoxelizationApp::FrameFunc()
     // Reset counter.
     mGatheredVoxelAllocCounter->Bind(0);
     mTimer->Start();
-    GLuint* counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(GL_WRITE_ONLY);
+    GLuint* counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(BA_Write_Only);
     assert(counterData);
     counterData[0] = 0;
     mGatheredVoxelAllocCounter->Unmap();
@@ -364,7 +364,7 @@ void SimpleVoxelizationApp::FrameFunc()
     mIndirectCommandBuffer->Unmap();
 #endif
 
-    counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(GL_WRITE_ONLY);
+    counterData = (GLuint*)mGatheredVoxelAllocCounter->Map(BA_Write_Only);
     infoPanel->SetTimingLabelValue("Counter", (double)counterData[0]);
     mGatheredVoxelAllocCounter->Unmap();
 
@@ -432,6 +432,7 @@ void SimpleVoxelizationApp::Terminate()
 	// Release all resources.
 	delete mVoxelizationProjector;
 
+    mGatheredVoxelAllocCounter = 0;
     mResetVoxelBufferTask = 0;
     mGatherVoxelBufferTask = 0;
     mVoxelGridIntersectionTask = 0;

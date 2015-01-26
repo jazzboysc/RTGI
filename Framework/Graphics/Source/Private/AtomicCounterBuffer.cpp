@@ -12,7 +12,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 AtomicCounterBuffer::AtomicCounterBuffer()
 	:
-	Buffer(GL_ATOMIC_COUNTER_BUFFER)
+    Buffer(BT_AtomicCounter)
 {
 }
 //----------------------------------------------------------------------------

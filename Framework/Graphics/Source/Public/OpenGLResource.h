@@ -41,6 +41,11 @@ struct OpenGLFBOHandle : public FBOHandle
     GLuint mFBO;
 };
 
+struct OpenGLBufferHandle : public BufferHandle
+{
+    GLuint mBuffer;
+};
+
 }
 
 #endif

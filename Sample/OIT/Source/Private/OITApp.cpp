@@ -87,28 +87,30 @@ void OITApp::Initialize(GPUDevice* device)
 	// Create head pointer texture init data.
 	int pixelCount = Width * Height;
 	mHeadPointerTextureInitData = new PixelBuffer();
-	mHeadPointerTextureInitData->ReserveMutableDeviceResource(
+	mHeadPointerTextureInitData->ReserveMutableDeviceResource(mDevice,
 		pixelCount*sizeof(GLuint), BU_Static_Draw);
 	mHeadPointerTextureInitData->Bind();
-	void* pixelBufferData = mHeadPointerTextureInitData->Map(GL_WRITE_ONLY);
+	void* pixelBufferData = mHeadPointerTextureInitData->Map(BA_Write_Only);
 	assert( pixelBufferData );
 	memset(pixelBufferData, 0x00, pixelCount*sizeof(GLuint));
 	mHeadPointerTextureInitData->Unmap();
 
 	// Create GPU memory allocator counter.
 	mGPUMemAllocCounter = new AtomicCounterBuffer();
-	mGPUMemAllocCounter->ReserveMutableDeviceResource(sizeof(GLuint),
+	mGPUMemAllocCounter->ReserveMutableDeviceResource(mDevice, sizeof(GLuint),
         BU_Dynamic_Copy);
 
 	// Create GPU memory pool for concurrent linked lists.
 	size_t gpuMemPoolSize = 2 * pixelCount * sizeof(vec4);
 	mGPUMemPool = new TextureBuffer();
-    mGPUMemPool->ReserveMutableDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
+    mGPUMemPool->ReserveMutableDeviceResource(mDevice, gpuMemPoolSize, 
+        BU_Dynamic_Copy);
 
 	gpuMemPoolSize = 2 * pixelCount * (sizeof(vec4) + sizeof(GLuint) + 
 		sizeof(GLfloat));
 	mGPUMemPool2 = new StructuredBuffer();
-    mGPUMemPool2->ReserveMutableDeviceResource(gpuMemPoolSize, BU_Dynamic_Copy);
+    mGPUMemPool2->ReserveMutableDeviceResource(mDevice, gpuMemPoolSize, 
+        BU_Dynamic_Copy);
 
 	// Create GPU memory pool texture.
 	mGPUMemPoolTexture = new Texture2D();
@@ -122,7 +124,7 @@ void OITApp::FrameFunc()
 	//GLuint zero = 0;
 	//mGPUMemAllocCounter->UpdateSubData(0, 0, sizeof(zero), &zero);
 	mGPUMemAllocCounter->Bind(0);
-	GLuint* counterData = (GLuint*)mGPUMemAllocCounter->Map(GL_WRITE_ONLY);
+	GLuint* counterData = (GLuint*)mGPUMemAllocCounter->Map(BA_Write_Only);
 	assert( counterData );
 	counterData[0] = 0;
 	mGPUMemAllocCounter->Unmap();

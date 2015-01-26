@@ -343,7 +343,7 @@ void TriangleMesh::CreateDeviceResource(GPUDevice* device)
         IndirectCommandBuffer->Bind();
         DrawElementsIndirectCommand* bufferData = 
             (DrawElementsIndirectCommand*)IndirectCommandBuffer->Map(
-            GL_WRITE_ONLY);
+            BA_Write_Only);
         assert( bufferData );
         bufferData->Count = (unsigned int)mIndexData.size();
         bufferData->PrimCount = 0;

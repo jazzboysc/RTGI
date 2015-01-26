@@ -61,7 +61,7 @@ void RendererOutput::Enable()
     if( Reset )
     {
         size_t bufferSize = buffer->GetSize();
-        int* bufferData = (int*)buffer->Map(GL_WRITE_ONLY);
+        int* bufferData = (int*)buffer->Map(BA_Write_Only);
         assert(bufferData);
         memset(bufferData, ResetValue, bufferSize);
         buffer->Unmap();

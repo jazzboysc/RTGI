@@ -28,8 +28,8 @@ enum SubRendererOutput
     SRO_BackBuffer    = 4
 };
 
-typedef BufferBase* (*SubRendererCreateRendererData)(int size, 
-    BufferUsage usage);
+typedef BufferBase* (*SubRendererCreateRendererData)(GPUDevice* device, 
+    int size, BufferUsage usage);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun

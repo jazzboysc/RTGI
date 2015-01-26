@@ -115,20 +115,20 @@ void SVOApp::Initialize(GPUDevice* device)
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
-    mVoxelBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mVoxelBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
     memset(mZeroBuffer, 0x00, bufferSize);
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
     bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*35 + voxelCount*sizeof(GLfloat)*4;
-    mIndirectCommandBuffer->ReserveMutableDeviceResource(bufferSize, BU_Dynamic_Copy);
+    mIndirectCommandBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create atomic counter buffer.
     mAtomicCounterBuffer = new AtomicCounterBuffer();
 #ifdef DEBUG_VOXEL
-    mAtomicCounterBuffer->ReserveMutableDeviceResource(sizeof(GLuint)*2, BU_Dynamic_Copy);
+    mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice, sizeof(GLuint)*2, BU_Dynamic_Copy);
 #else
-    mAtomicCounterBuffer->ReserveImmutableDeviceResource(sizeof(GLuint)*2);
+    mAtomicCounterBuffer->ReserveImmutableDeviceResource(mDevice, sizeof(GLuint)*2);
 #endif
 
 	// Create scene.

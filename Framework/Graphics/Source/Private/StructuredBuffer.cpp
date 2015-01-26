@@ -12,7 +12,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 StructuredBuffer::StructuredBuffer()
 	:
-	Buffer(GL_SHADER_STORAGE_BUFFER)
+	Buffer(BT_Structured)
 {
 }
 //----------------------------------------------------------------------------
