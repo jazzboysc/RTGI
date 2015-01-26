@@ -21,7 +21,7 @@ layout(std430, binding = 0)  buffer _voxelBuffer
     Voxel data[];
 } voxelBuffer;
 
-layout(std430, binding = 1)  buffer _indirectCommandBuffer
+layout(std430, binding = 2)  buffer _indirectCommandBuffer
 {
     uint  count;
     uint  primCount;

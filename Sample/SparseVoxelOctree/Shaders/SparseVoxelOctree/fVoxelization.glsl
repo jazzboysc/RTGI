@@ -4,8 +4,24 @@ in vec4 gPositionWorld;
 in vec4 gNormalWorld;
 
 //----------------------------------------------------------------------------
+// SVO Voxel Fragment List
+//----------------------------------------------------------------------------
 layout(binding = 0, offset = 0) uniform atomic_uint voxelFragmentCounter;
 
+struct VoxelFragment
+{
+    uint xyz;
+    uint albedo;
+};
+
+layout(std430, binding = 1)  buffer _voxelFragmentBuffer
+{
+    uint dispatchX;  // == voxelFragmentCounter
+    uint dispatchY;  // == 1
+    uint dispatchZ;  // == 1
+
+    VoxelFragment data[]; // must be big enough to hold all voxel fragments.
+} voxelFragmentBuffer;
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------

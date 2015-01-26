@@ -11,7 +11,7 @@ struct GatheredVoxel
     vec4 translation;
 };
 
-layout(std430, binding = 1)  buffer _indirectCommandBuffer
+layout(std430, binding = 2)  buffer _indirectCommandBuffer
 {
     uint  count;
     uint  primCount;

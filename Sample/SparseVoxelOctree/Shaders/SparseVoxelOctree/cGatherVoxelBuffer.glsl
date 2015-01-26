@@ -3,6 +3,12 @@
 #define LOCAL_GROUP_DIM 8
 layout(local_size_x = LOCAL_GROUP_DIM, local_size_y = LOCAL_GROUP_DIM, local_size_z = LOCAL_GROUP_DIM) in;
 
+//----------------------------------------------------------------------------
+// SVO
+//----------------------------------------------------------------------------
+layout(binding = 0, offset = 0) uniform atomic_uint voxelFragmentCounter;
+//----------------------------------------------------------------------------
+
 struct Voxel
 {
     uint value1;
@@ -21,7 +27,7 @@ layout(std430, binding = 0)  buffer _voxelBuffer
     Voxel data[];
 } voxelBuffer;
 
-layout(std430, binding = 1)  buffer _indirectCommandBuffer
+layout(std430, binding = 2)  buffer _indirectCommandBuffer
 {
     uint  count;
     uint  primCount;

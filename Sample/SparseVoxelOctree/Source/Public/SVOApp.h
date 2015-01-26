@@ -8,6 +8,7 @@
 #include "ResetVoxelBuffer.h"
 #include "GatherVoxelBuffer.h"
 #include "VoxelGridIntersection.h"
+#include "GatherVoxelFragmentListInfo.h"
 #include "InformationPanel.h"
 #include "FormEventListener.h"
 
@@ -16,7 +17,7 @@ namespace RTGI
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: 10/08/2014
+// Date: 01/26/2015
 //----------------------------------------------------------------------------
 class SVOApp : public Application, GUIFramework::FormEventListener
 {
@@ -54,8 +55,10 @@ private:
     ResetVoxelBufferPtr mResetVoxelBufferTask;
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
     VoxelGridIntersectionPtr mVoxelGridIntersectionTask;
+    GatherVoxelFragmentListInfoPtr mGatherVoxelFragmentListInfoTask;
     StructuredBufferPtr mVoxelBuffer;
     StructuredBufferPtr mIndirectCommandBuffer;
+    StructuredBufferPtr mVoxelFragmentListBuffer;
     GLuint mZeroBuffer[VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*4];
     AABB mSceneBB;
 
