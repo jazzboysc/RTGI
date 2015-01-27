@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-#define DEBUG_VOXEL
+//#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -255,6 +255,7 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Intersection Pass", 16, 140);
     InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Count", 16, 160);
     InformationPanel::GetInstance()->AddTimingLabel("GVF Count", 16, 180);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 200);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
@@ -280,8 +281,8 @@ void SVOApp::Initialize(GPUDevice* device)
 #endif
 
 #ifdef DEBUG_VOXEL
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 200);
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 220);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 220);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 240);
 #endif
 
     // Create GPU timer.
@@ -408,8 +409,12 @@ void SVOApp::FrameFunc()
     mGatherVoxelFragmentListInfoTask->DispatchCompute(0, 1, 1, 1);
 
     // Build SVO pass.
+    mTimer->Start();
     mVoxelFragmentListBuffer->Bind(1);
     mBuildSVOTask->DispatchVertexIndirect(0, mVoxelFragmentListBuffer, 0);
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
+    infoPanel->SetTimingLabelValue("Build SVO Pass", workLoad);
 
 #ifdef DEBUG_VOXEL
     GLuint* dispatchIndirectCommandbufferData = (GLuint*)mVoxelFragmentListBuffer->Map(BA_Read_Only);
