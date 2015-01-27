@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-#define DEBUG_VOXEL
+//#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -136,7 +136,7 @@ void SVOApp::Initialize(GPUDevice* device)
     // Create voxel fragment list buffer.
     mVoxelFragmentListBuffer = new StructuredBuffer();
     GLuint voxelFragmentCount = GLuint((float)voxelCount*0.1f);
-    bufferSize = sizeof(GLuint)*4 + voxelFragmentCount*sizeof(GLuint)*2;
+    bufferSize = sizeof(GLuint)*3 + voxelFragmentCount*sizeof(GLuint)*2;
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create atomic counter buffer.
@@ -395,9 +395,11 @@ void SVOApp::FrameFunc()
     // Gather voxel fragment list info pass.
     mVoxelFragmentListBuffer->Bind(1);
     mGatherVoxelFragmentListInfoTask->Dispatch(0, 1, 1, 1);
+#ifdef DEBUG_VOXEL
     GLuint* dispatchIndirectCommandbufferData = (GLuint*)mVoxelFragmentListBuffer->Map(BA_Read_Only);
     infoPanel->SetTimingLabelValue("GVF Count", (double)dispatchIndirectCommandbufferData[0]);
     mVoxelFragmentListBuffer->Unmap();
+#endif
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);
