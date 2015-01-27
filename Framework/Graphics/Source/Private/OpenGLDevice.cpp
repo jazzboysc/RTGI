@@ -990,6 +990,16 @@ void OpenGLDevice::__ComputeShaderDispatch(ShaderProgram* program,
 #endif
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__DispatchVertexIndirect(void* indirect)
+{
+    glDrawArraysIndirect(GL_POINTS, indirect);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
 void OpenGLDevice::__DeleteBuffer(Buffer* buffer)
 {
     OpenGLBufferHandle* bufferHandle = 
@@ -1164,6 +1174,7 @@ OpenGLDevice::OpenGLDevice()
     FrameBufferEnable = (GPUDeviceFrameBufferEnable)&OpenGLDevice::__FrameBufferEnable;
     FrameBufferDisable = (GPUDeviceFrameBufferDisable)&OpenGLDevice::__FrameBufferDisable;
     ComputeShaderDispatch = (GPUDeviceComputeShaderDispatch)&OpenGLDevice::__ComputeShaderDispatch;
+    DispatchVertexIndirect = (GPUDeviceDispatchVertexIndirect)&OpenGLDevice::__DispatchVertexIndirect;
     DeleteBuffer = (GPUDeviceDeleteBuffer)&OpenGLDevice::__DeleteBuffer;
     BufferMap = (GPUDeviceBufferMap)&OpenGLDevice::__BufferMap;
     BufferUnmap = (GPUDeviceBufferUnmap)&OpenGLDevice::__BufferUnmap;

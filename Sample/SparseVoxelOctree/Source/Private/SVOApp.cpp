@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-//#define DEBUG_VOXEL
+#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -121,6 +121,16 @@ void SVOApp::Initialize(GPUDevice* device)
     mGatherVoxelFragmentListInfoTask->AddPass(passGatherVoxelFragmentListInfo);
     mGatherVoxelFragmentListInfoTask->CreateDeviceResource(mDevice);
 
+    // Create build SVO task.
+    ShaderProgramInfo buildSVOProgramInfo;
+    buildSVOProgramInfo.VShaderFileName = "SparseVoxelOctree/vBuildSVO.glsl";
+    buildSVOProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
+
+    ComputePass* passBuildSVO = new ComputePass(buildSVOProgramInfo);
+    mBuildSVOTask = new BuildSVO();
+    mBuildSVOTask->AddPass(passBuildSVO);
+    mBuildSVOTask->CreateDeviceResource(mDevice);
+
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
@@ -136,7 +146,7 @@ void SVOApp::Initialize(GPUDevice* device)
     // Create voxel fragment list buffer.
     mVoxelFragmentListBuffer = new StructuredBuffer();
     GLuint voxelFragmentCount = GLuint((float)voxelCount*0.1f);
-    bufferSize = sizeof(GLuint)*3 + voxelFragmentCount*sizeof(GLuint)*2;
+    bufferSize = sizeof(GLuint)*4 + voxelFragmentCount*sizeof(GLuint)*4;
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create atomic counter buffer.
@@ -342,7 +352,7 @@ void SVOApp::FrameFunc()
 
     // Reset voxel buffer pass.
     mTimer->Start();
-    mResetVoxelBufferTask->Dispatch(0, 
+    mResetVoxelBufferTask->DispatchCompute(0,
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM);
@@ -365,13 +375,14 @@ void SVOApp::FrameFunc()
     glDisable(GL_CULL_FACE);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     mTimer->Start();
+    mVoxelFragmentListBuffer->Bind(1);
 	VoxelizeScene();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Voxelization Pass", workLoad);
 
     // Gather voxel buffer pass.
-    mGatherVoxelBufferTask->Dispatch(0, 
+    mGatherVoxelBufferTask->DispatchCompute(0,
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM);
@@ -394,10 +405,15 @@ void SVOApp::FrameFunc()
 
     // Gather voxel fragment list info pass.
     mVoxelFragmentListBuffer->Bind(1);
-    mGatherVoxelFragmentListInfoTask->Dispatch(0, 1, 1, 1);
+    mGatherVoxelFragmentListInfoTask->DispatchCompute(0, 1, 1, 1);
+
+    // Build SVO pass.
+    mVoxelFragmentListBuffer->Bind(1);
+    mBuildSVOTask->DispatchVertexIndirect(0, mVoxelFragmentListBuffer, 0);
+
 #ifdef DEBUG_VOXEL
     GLuint* dispatchIndirectCommandbufferData = (GLuint*)mVoxelFragmentListBuffer->Map(BA_Read_Only);
-    infoPanel->SetTimingLabelValue("GVF Count", (double)dispatchIndirectCommandbufferData[0]);
+    infoPanel->SetTimingLabelValue("GVF Count", (double)dispatchIndirectCommandbufferData[1]);
     mVoxelFragmentListBuffer->Unmap();
 #endif
 
@@ -427,7 +443,7 @@ void SVOApp::FrameFunc()
         mIndirectCommandBuffer->Bind(2);
 
         mTimer->Start();
-        mVoxelGridIntersectionTask->Dispatch(0, 1, 1, 1);
+        mVoxelGridIntersectionTask->DispatchCompute(0, 1, 1, 1);
         mTimer->Stop();
         workLoad = mTimer->GetTimeElapsed();
         infoPanel->SetTimingLabelValue("Intersection Pass", workLoad);
@@ -470,6 +486,7 @@ void SVOApp::Terminate()
     mGatherVoxelBufferTask = 0;
     mVoxelGridIntersectionTask = 0;
     mGatherVoxelFragmentListInfoTask = 0;
+    mBuildSVOTask = 0;
     mVoxelBuffer = 0;
     mIndirectCommandBuffer = 0;
     mVoxelFragmentListBuffer = 0;

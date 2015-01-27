@@ -89,7 +89,8 @@ void Voxelizer::OnRender(int technique, int pass, Camera*)
         RTGI_MAX(sceneBBLen.y, sceneBBLen.z));
 
     // Reset voxel buffer pass.
-    mResetVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
+    mResetVoxelBufferTask->DispatchCompute(0, mGlobalDim, mGlobalDim, 
+        mGlobalDim);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisable(GL_DEPTH_TEST);

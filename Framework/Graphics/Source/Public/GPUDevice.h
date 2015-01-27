@@ -151,6 +151,7 @@ typedef void (GPUDevice::*GPUDeviceFrameBufferDisable)(
 typedef void (GPUDevice::*GPUDeviceComputeShaderDispatch)(
     ShaderProgram* program, unsigned int globalX, unsigned int globalY, 
     unsigned int globalZ);
+typedef void (GPUDevice::*GPUDeviceDispatchVertexIndirect)(void* indirect);
 typedef void (GPUDevice::*GPUDeviceDeleteBuffer)(Buffer* buffer);
 typedef void* (GPUDevice::*GPUDeviceBufferMap)(Buffer* buffer,
     BufferAccess access);
@@ -217,6 +218,7 @@ public:
     GPUDeviceFrameBufferEnable                    FrameBufferEnable;
     GPUDeviceFrameBufferDisable                   FrameBufferDisable;
     GPUDeviceComputeShaderDispatch                ComputeShaderDispatch;
+    GPUDeviceDispatchVertexIndirect               DispatchVertexIndirect;
     GPUDeviceDeleteBuffer                         DeleteBuffer;
     GPUDeviceBufferMap                            BufferMap;
     GPUDeviceBufferUnmap                          BufferUnmap;

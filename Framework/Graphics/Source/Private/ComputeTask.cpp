@@ -23,11 +23,12 @@ void ComputeTask::CreateDeviceResource(GPUDevice* device)
     OnGetShaderConstants();
 }
 //----------------------------------------------------------------------------
-void ComputeTask::Dispatch(unsigned int pass, unsigned int globalX,
+void ComputeTask::DispatchCompute(unsigned int pass, unsigned int globalX,
     unsigned int globalY, unsigned int globalZ)
 {
     ComputePass* p = (ComputePass*)GetPass(pass);
     assert(p);
+    assert(p->IsVertexPass() == false);
 
     ShaderProgram* program = p->GetShaderProgram();
     program->Enable();
@@ -35,6 +36,33 @@ void ComputeTask::Dispatch(unsigned int pass, unsigned int globalX,
 
     GPU_DEVICE_FUNC(program->GetProgramHandle()->Device, 
         ComputeShaderDispatch)(program, globalX, globalY, globalZ);
+
+    OnPostDispatch(pass);
+    program->Disable();
+}
+//----------------------------------------------------------------------------
+void ComputeTask::DispatchComputeIndirect(unsigned int pass,
+    StructuredBuffer* indirectCommandBuffer, void* indirect)
+{
+    // TODO:
+    assert(false);
+}
+//----------------------------------------------------------------------------
+void ComputeTask::DispatchVertexIndirect(unsigned int pass,
+    StructuredBuffer* indirectCommandBuffer, void* indirect)
+{
+    ComputePass* p = (ComputePass*)GetPass(pass);
+    assert(p);
+    assert(p->IsVertexPass() == true);
+    assert(indirectCommandBuffer);
+
+    ShaderProgram* program = p->GetShaderProgram();
+    program->Enable();
+    OnPreDispatch(pass);
+
+    indirectCommandBuffer->BindToIndirect();
+    GPU_DEVICE_FUNC(program->GetProgramHandle()->Device,
+        DispatchVertexIndirect)(indirect);
 
     OnPostDispatch(pass);
     program->Disable();

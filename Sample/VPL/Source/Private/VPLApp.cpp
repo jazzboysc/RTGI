@@ -491,7 +491,7 @@ void VPLApp::FrameFunc()
 
     // Sample RSM pass (VPL generation).
     mTimer->Start();
-    mSampleRSMTask->Dispatch(0, VPL_SAMPLE_COUNT, 1, 1);
+    mSampleRSMTask->DispatchCompute(0, VPL_SAMPLE_COUNT, 1, 1);
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("VPL Creation Pass", workLoad);

@@ -86,7 +86,7 @@ void VPLGenerator::Run()
 //----------------------------------------------------------------------------
 void VPLGenerator::OnRender(int, int, Camera*)
 {
-    mSampleRSMTask->Dispatch(0, mVPLCount, 1, 1);
+    mSampleRSMTask->DispatchCompute(0, mVPLCount, 1, 1);
 }
 //----------------------------------------------------------------------------
 void VPLGenerator::Initialize(GPUDevice* device, int vplCount)

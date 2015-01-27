@@ -148,3 +148,12 @@ bool ShaderProgram::IsComputeEnabled() const
     return false;
 }
 //----------------------------------------------------------------------------
+bool ShaderProgram::IsVertexEnabled() const
+{
+    if( mProgramInfo.ShaderStageFlag & ShaderType::ST_Vertex )
+    {
+        return true;
+    }
+    return false;
+}
+//----------------------------------------------------------------------------

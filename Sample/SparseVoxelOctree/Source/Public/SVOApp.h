@@ -9,6 +9,7 @@
 #include "GatherVoxelBuffer.h"
 #include "VoxelGridIntersection.h"
 #include "GatherVoxelFragmentListInfo.h"
+#include "BuildSVO.h"
 #include "InformationPanel.h"
 #include "FormEventListener.h"
 
@@ -56,6 +57,7 @@ private:
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
     VoxelGridIntersectionPtr mVoxelGridIntersectionTask;
     GatherVoxelFragmentListInfoPtr mGatherVoxelFragmentListInfoTask;
+    BuildSVOPtr mBuildSVOTask;
     StructuredBufferPtr mVoxelBuffer;
     StructuredBufferPtr mIndirectCommandBuffer;
     StructuredBufferPtr mVoxelFragmentListBuffer;

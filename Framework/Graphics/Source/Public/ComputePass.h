@@ -21,6 +21,13 @@ public:
     ComputePass(const ShaderProgramInfo& programInfo);
     ComputePass(ShaderProgram* computeProgram);
     ~ComputePass();
+
+    inline bool IsVertexPass() const { return mIsVertexPass; }
+
+protected:
+    ComputePass();
+
+    bool mIsVertexPass;
 };
 
 typedef RefPointer<ComputePass> ComputePassPtr;

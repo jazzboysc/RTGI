@@ -324,7 +324,7 @@ void SimpleVoxelizationApp::FrameFunc()
 
     // Reset voxel buffer pass.
     mTimer->Start();
-    mResetVoxelBufferTask->Dispatch(0, 
+    mResetVoxelBufferTask->DispatchCompute(0,
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM);
@@ -353,7 +353,7 @@ void SimpleVoxelizationApp::FrameFunc()
     infoPanel->SetTimingLabelValue("Voxelization Pass", workLoad);
 
     // Gather voxel buffer pass.
-    mGatherVoxelBufferTask->Dispatch(0, 
+    mGatherVoxelBufferTask->DispatchCompute(0,
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM);
@@ -393,7 +393,7 @@ void SimpleVoxelizationApp::FrameFunc()
         mIndirectCommandBuffer->Bind(1);
 
         mTimer->Start();
-        mVoxelGridIntersectionTask->Dispatch(0, 1, 1, 1);
+        mVoxelGridIntersectionTask->DispatchCompute(0, 1, 1, 1);
         mTimer->Stop();
         workLoad = mTimer->GetTimeElapsed();
         infoPanel->SetTimingLabelValue("Intersection Pass", workLoad);

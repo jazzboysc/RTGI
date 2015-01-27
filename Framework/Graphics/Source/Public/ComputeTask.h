@@ -8,6 +8,7 @@
 
 #include "PassManager.h"
 #include "ComputePass.h"
+#include "StructuredBuffer.h"
 
 namespace RTGI
 {
@@ -24,8 +25,14 @@ public:
 
     void CreateDeviceResource(GPUDevice* device);
 
-    void Dispatch(unsigned int pass, unsigned int globalX, 
+    void DispatchCompute(unsigned int pass, unsigned int globalX, 
         unsigned int globalY, unsigned int globalZ);
+
+    void DispatchComputeIndirect(unsigned int pass, 
+        StructuredBuffer* indirectCommandBuffer, void* indirect);
+
+    void DispatchVertexIndirect(unsigned int pass, 
+        StructuredBuffer* indirectCommandBuffer, void* indirect);
 
     virtual void OnGetShaderConstants(){};
     virtual void OnPreDispatch(unsigned int pass){};

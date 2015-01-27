@@ -324,7 +324,8 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
         mVoxelBuffer->Bind(0);
 
         // Gather voxel buffer pass.
-        mGatherVoxelBufferTask->Dispatch(0, mGlobalDim, mGlobalDim, mGlobalDim);
+        mGatherVoxelBufferTask->DispatchCompute(0, mGlobalDim, mGlobalDim, 
+            mGlobalDim);
 
         // Show voxel grid.
         mVoxelCubeModel->Render(0, 0);

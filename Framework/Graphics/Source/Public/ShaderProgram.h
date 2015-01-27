@@ -99,6 +99,7 @@ public:
 
     bool IsTessellationEnabled() const;
     bool IsComputeEnabled() const;
+    bool IsVertexEnabled() const;
 
 	void Enable();
 	void Disable();
