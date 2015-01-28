@@ -3,18 +3,7 @@
 in vec4 vPositionWorld;
 in vec4 vNormalWorld;
 
-struct Voxel
-{
-    uint value1;
-    uint value2;
-    uint value3;
-    uint value4;
-};
-
-layout(std430, binding = 0)  buffer _voxelBuffer
-{
-    Voxel data[];
-} voxelBuffer;
+#include "SparseVoxelOctree/sVoxelGrid.glsl"
 
 uniform vec3 SceneBBCenter;
 uniform vec3 SceneBBExtension;

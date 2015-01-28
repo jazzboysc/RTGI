@@ -418,7 +418,7 @@ void SVOApp::FrameFunc()
 
 #ifdef DEBUG_VOXEL
     GLuint* dispatchIndirectCommandbufferData = (GLuint*)mVoxelFragmentListBuffer->Map(BA_Read_Only);
-    infoPanel->SetTimingLabelValue("GVF Count", (double)dispatchIndirectCommandbufferData[1]);
+    infoPanel->SetTimingLabelValue("GVF Count", (double)dispatchIndirectCommandbufferData[0]);
     mVoxelFragmentListBuffer->Unmap();
 #endif
 

@@ -3,18 +3,7 @@
 #define LOCAL_GROUP_DIM 8
 layout(local_size_x = LOCAL_GROUP_DIM, local_size_y = LOCAL_GROUP_DIM, local_size_z = LOCAL_GROUP_DIM) in;
 
-struct Voxel
-{
-    uint value1;
-    uint value2;
-    uint value3;
-    uint value4;
-};
-
-layout(std430, binding = 0)  buffer _voxelBuffer
-{
-    Voxel data[];
-} voxelBuffer;
+#include "SparseVoxelOctree/sVoxelGrid.glsl"
 
 void main()
 {

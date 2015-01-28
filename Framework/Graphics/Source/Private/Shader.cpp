@@ -65,11 +65,30 @@ bool Shader::LoadFromFile(const std::string& shaderFileName)
         return false;
     }
 	
+    size_t startPos, endPos, range;
 	std::string curLine;
 	while( !shaderFileData.eof() )
 	{
 		getline(shaderFileData, curLine);
-		mShaderSource += curLine + "\n";
+
+        startPos = curLine.find("#include");
+        if( startPos == std::string::npos )
+        {
+            mShaderSource += curLine + "\n";
+        }
+        else
+        {
+            startPos += 8;
+            startPos = curLine.find_first_not_of(" \t", startPos);
+            startPos += 1;
+            endPos = curLine.find_first_of("\"", startPos);
+            range = endPos - startPos;
+            std::string includeFileName = "Shaders/" + curLine.substr(
+                startPos, range);
+
+            bool res = LoadFromFile(includeFileName);
+            assert(res);
+        }
 	}
 
 	return true;
