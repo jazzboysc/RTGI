@@ -31,6 +31,8 @@ public:
     void DispatchComputeIndirect(unsigned int pass, 
         StructuredBuffer* indirectCommandBuffer, void* indirect);
 
+    void DispatchVertex(unsigned int pass, unsigned int threadCount);
+
     void DispatchVertexIndirect(unsigned int pass, 
         StructuredBuffer* indirectCommandBuffer, void* indirect);
 

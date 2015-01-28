@@ -89,6 +89,7 @@ private:
     // Compute.
     void __ComputeShaderDispatch(ShaderProgram* program, unsigned int globalX, 
         unsigned int globalY, unsigned int globalZ);
+    void __DispatchVertex(unsigned int threadCount);
     void __DispatchVertexIndirect(void* indirect);
 
     // Buffer.

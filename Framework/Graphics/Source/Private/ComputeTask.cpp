@@ -48,6 +48,23 @@ void ComputeTask::DispatchComputeIndirect(unsigned int pass,
     assert(false);
 }
 //----------------------------------------------------------------------------
+void ComputeTask::DispatchVertex(unsigned int pass, unsigned int threadCount)
+{
+    ComputePass* p = (ComputePass*)GetPass(pass);
+    assert(p);
+    assert(p->IsVertexPass() == true);
+
+    ShaderProgram* program = p->GetShaderProgram();
+    program->Enable();
+    OnPreDispatch(pass);
+
+    GPU_DEVICE_FUNC(program->GetProgramHandle()->Device, DispatchVertex)(
+        threadCount);
+
+    OnPostDispatch(pass);
+    program->Disable();
+}
+//----------------------------------------------------------------------------
 void ComputeTask::DispatchVertexIndirect(unsigned int pass,
     StructuredBuffer* indirectCommandBuffer, void* indirect)
 {

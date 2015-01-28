@@ -131,6 +131,16 @@ void SVOApp::Initialize(GPUDevice* device)
     mBuildSVOTask->AddPass(passBuildSVO);
     mBuildSVOTask->CreateDeviceResource(mDevice);
 
+    // Create reset SVO buffer task.
+    ShaderProgramInfo resetSVOBufferProgramInfo;
+    resetSVOBufferProgramInfo.VShaderFileName = "SparseVoxelOctree/vResetSVOBuffer.glsl";
+    resetSVOBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
+
+    ComputePass* passResetSVOBuffer = new ComputePass(resetSVOBufferProgramInfo);
+    mResetSVOBufferTask = new ResetSVOBuffer();
+    mResetSVOBufferTask->AddPass(passResetSVOBuffer);
+    mResetSVOBufferTask->CreateDeviceResource(mDevice);
+
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
@@ -149,12 +159,18 @@ void SVOApp::Initialize(GPUDevice* device)
     bufferSize = sizeof(GLuint)*4 + voxelFragmentCount*sizeof(GLuint)*4;
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
-    // Create atomic counter buffer.
+    // Create SVO buffer.
+    mSVOBuffer = new StructuredBuffer();
+    mSVONodeCount = unsigned int((float)voxelCount*(0.15f + 0.05f));
+    bufferSize = mSVONodeCount*sizeof(GLuint) * 2;
+    mSVOBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
+
+    // Create atomic counter buffer. We create 4 atomic counters here.
     mAtomicCounterBuffer = new AtomicCounterBuffer();
 #ifdef DEBUG_VOXEL
-    mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice, sizeof(GLuint)*2, BU_Dynamic_Copy);
+    mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice, sizeof(GLuint)*4, BU_Dynamic_Copy);
 #else
-    mAtomicCounterBuffer->ReserveImmutableDeviceResource(mDevice, sizeof(GLuint)*2);
+    mAtomicCounterBuffer->ReserveImmutableDeviceResource(mDevice, sizeof(GLuint)*4);
 #endif
 
 	// Create scene.
@@ -256,6 +272,7 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Count", 16, 160);
     InformationPanel::GetInstance()->AddTimingLabel("GVF Count", 16, 180);
     InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 200);
+    InformationPanel::GetInstance()->AddTimingLabel("Reset SVO Buffer Pass", 16, 220);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
@@ -281,8 +298,8 @@ void SVOApp::Initialize(GPUDevice* device)
 #endif
 
 #ifdef DEBUG_VOXEL
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 220);
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 240);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 240);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 260);
 #endif
 
     // Create GPU timer.
@@ -340,11 +357,15 @@ void SVOApp::FrameFunc()
     assert(counterData);
     counterData[0] = 0;
     counterData[1] = 0;
+    counterData[2] = 0;
+    counterData[3] = 0;
     mAtomicCounterBuffer->Unmap();
 #else
-    unsigned int counterData[2];
+    unsigned int counterData[4];
     counterData[0] = 0;
     counterData[1] = 0;
+    counterData[2] = 0;
+    counterData[3] = 0;
     mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int, counterData);
 #endif
     mTimer->Stop();
@@ -395,7 +416,7 @@ void SVOApp::FrameFunc()
 
     counterData = (GLuint*)mAtomicCounterBuffer->Map(BA_Write_Only);
     infoPanel->SetTimingLabelValue("Voxel Fragment Count", (double)counterData[0]);
-    infoPanel->SetTimingLabelValue("Counter", (double)counterData[1]);
+    infoPanel->SetTimingLabelValue("Counter", (double)counterData[3]);
     mAtomicCounterBuffer->Unmap();
 
     float voxelRatio = (float)counterData[1] / (float)(VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION);
@@ -408,9 +429,22 @@ void SVOApp::FrameFunc()
     mVoxelFragmentListBuffer->Bind(1);
     mGatherVoxelFragmentListInfoTask->DispatchCompute(0, 1, 1, 1);
 
+    // Reset SVO buffer pass.
+    mSVOBuffer->Bind(3);
+    mTimer->Start();
+    mResetSVOBufferTask->DispatchVertex(0, mSVONodeCount);
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
+    infoPanel->SetTimingLabelValue("Reset SVO Buffer Pass", workLoad);
+#ifdef DEBUG_VOXEL
+    GLuint* svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+    mSVOBuffer->Unmap();
+#endif
+
     // Build SVO pass.
     mTimer->Start();
     mVoxelFragmentListBuffer->Bind(1);
+    mSVOBuffer->Bind(3);
     mBuildSVOTask->DispatchVertexIndirect(0, mVoxelFragmentListBuffer, 0);
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
@@ -492,9 +526,11 @@ void SVOApp::Terminate()
     mVoxelGridIntersectionTask = 0;
     mGatherVoxelFragmentListInfoTask = 0;
     mBuildSVOTask = 0;
+    mResetSVOBufferTask = 0;
     mVoxelBuffer = 0;
     mIndirectCommandBuffer = 0;
     mVoxelFragmentListBuffer = 0;
+    mSVOBuffer = 0;
 
 	mGround = 0;
 	mCeiling = 0;

@@ -10,6 +10,7 @@
 #include "VoxelGridIntersection.h"
 #include "GatherVoxelFragmentListInfo.h"
 #include "BuildSVO.h"
+#include "ResetSVOBuffer.h"
 #include "InformationPanel.h"
 #include "FormEventListener.h"
 
@@ -58,11 +59,14 @@ private:
     VoxelGridIntersectionPtr mVoxelGridIntersectionTask;
     GatherVoxelFragmentListInfoPtr mGatherVoxelFragmentListInfoTask;
     BuildSVOPtr mBuildSVOTask;
+    ResetSVOBufferPtr mResetSVOBufferTask;
     StructuredBufferPtr mVoxelBuffer;
     StructuredBufferPtr mIndirectCommandBuffer;
     StructuredBufferPtr mVoxelFragmentListBuffer;
+    StructuredBufferPtr mSVOBuffer;
     GLuint mZeroBuffer[VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*4];
     AABB mSceneBB;
+    unsigned int mSVONodeCount;
 
 	SVOTriMeshPtr mGround;
 	SVOTriMeshPtr mCeiling;

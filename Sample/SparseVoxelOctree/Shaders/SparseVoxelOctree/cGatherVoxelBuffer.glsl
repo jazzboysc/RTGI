@@ -5,7 +5,7 @@ layout(local_size_x = LOCAL_GROUP_DIM, local_size_y = LOCAL_GROUP_DIM, local_siz
 
 #include "SparseVoxelOctree/sVoxelGrid.glsl"
 
-layout(binding = 0, offset = 4) uniform atomic_uint gpuMemoryAllocator;
+layout(binding = 0, offset = 12) uniform atomic_uint gpuMemoryAllocator;
 
 uniform vec3 SceneBBMin;
 uniform vec3 SceneBBExtension;
