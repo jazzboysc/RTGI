@@ -95,6 +95,24 @@ enum BufferAccess
     BufferAccess_Max
 };
 
+/*
+Filter Combination                     | Bilinear | Bilinear | Mipmapping
+(MAG_FILTER / MIN_FILTER)              | (Near)   | (FAR)    |
+---------------------------------------+----------+----------+------------
+GL_NEAREST / GL_NEAREST_MIPMAP_NEAREST | Off      | Off      | Standard
+GL_NEAREST / GL_LINEAR_MIPMAP_NEAREST  | Off      | On       | Standard
+GL_NEAREST / GL_NEAREST_MIPMAP_LINEAR  | Off      | Off      | Trilinear filtering
+GL_NEAREST / GL_LINEAR_MIPMAP_LINEAR   | Off      | On       | Trilinear filtering
+GL_NEAREST / GL_NEAREST                | Off      | Off      | None
+GL_NEAREST / GL_LINEAR                 | Off      | On       | None
+GL_LINEAR / GL_NEAREST_MIPMAP_NEAREST  | On       | Off      | Standard
+GL_LINEAR / GL_LINEAR_MIPMAP_NEAREST   | On       | On       | Standard
+GL_LINEAR / GL_NEAREST_MIPMAP_LINEAR   | On       | Off      | Trilinear filtering
+GL_LINEAR / GL_LINEAR_MIPMAP_LINEAR    | On       | On       | Trilinear filtering
+GL_LINEAR / GL_NEAREST                 | On       | Off      | None
+GL_LINEAR / GL_LINEAR                  | On       | On       | None
+*/
+
 enum FilterType
 {
     FT_Nearest = 0,

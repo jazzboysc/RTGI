@@ -171,6 +171,8 @@ typedef BufferHandle*
 typedef void (GPUDevice::*GPUDeviceBufferClear)(Buffer* buffer, 
     BufferInternalFormat internalFormat, BufferFormat format, 
     BufferComponentType type, void* data);
+typedef void (GPUDevice::*GPUDeviceGetMaxAnisFilterLevel)(int* maxAnisFilterLevel);
+typedef void (GPUDevice::*GPUDeviceSetAnisFilterLevel)(int maxAnisFilterLevel);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -181,7 +183,7 @@ class GPUDevice : public RefObject
 public:
     GPUDevice();
     ~GPUDevice();
-
+	
     GPUDeviceInitialize                           Initialize;
     GPUDeviceTerminate                            Terminate;
     GPUDeviceCreateShader                         CreateShader;
@@ -231,6 +233,9 @@ public:
     GPUDeviceBufferLoadFromSystemMemory           BufferLoadFromSystemMemory;
     GPUDeviceBufferLoadImmutableFromSystemMemory  BufferLoadImmutableFromSystemMemory;
     GPUDeviceBufferClear                          BufferClear;
+	GPUDeviceGetMaxAnisFilterLevel				  GetMaxAnisFilterLevel;
+	GPUDeviceSetAnisFilterLevel					  SetAnisFilterLevel;
+
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;

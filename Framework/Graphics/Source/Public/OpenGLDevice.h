@@ -27,6 +27,11 @@ private:
     void __Terminate();
     void __OnResize(unsigned int width, unsigned int height);
 
+	// Misc.
+	int __IsExtensionSupported(const char *extension);
+	void __GetMaxAnisFilterLevel(int* maxAnisFilterLevel);
+	void __SetAnisFilterLevel(int anisFilterLevel);
+
     // Shader.
     ShaderHandle* __CreateShader(Shader* shader);
     void __DeleteShader(Shader* shader);
@@ -110,7 +115,7 @@ private:
 private:
     bool mEnable4xMsaa;
     unsigned int m4xMsaaQuality;
-
+	GLint mAnisFilterLevel;
 };
 
 }

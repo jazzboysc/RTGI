@@ -65,12 +65,22 @@ void Application::Initialize(GPUDevice* device)
 		return;
 	}
 
-	// default GL settings
+	// TODO: should init GL context but we are using GLFW
     GPU_DEVICE_FUNC(mDevice, Initialize)(0);
+
+	// Anisotropic Filtering
+	GLint maxAnisFilterLevel;
+	GPU_DEVICE_FUNC(mDevice, GetMaxAnisFilterLevel)(&maxAnisFilterLevel);
+	GPU_DEVICE_FUNC(mDevice, SetAnisFilterLevel)(maxAnisFilterLevel);
+
+	// some GL default values
 	float color = 0.5f;
 	glClearColor(color, color, color, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+
 
 	// Call child class initialize
 	this->Initialize(device);

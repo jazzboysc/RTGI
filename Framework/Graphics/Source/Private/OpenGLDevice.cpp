@@ -580,6 +580,17 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
     assert(res == GL_NO_ERROR);
 #endif
 
+	// Anisotropic Filtering
+	if (mAnisFilterLevel)
+	{
+		glTexParameteri(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, mAnisFilterLevel);
+	}
+
+#ifdef _DEBUG
+	res = glGetError();
+	assert(res == GL_NO_ERROR);
+#endif
+
     if( sampler )
     {
         // Filtering.
@@ -1196,12 +1207,73 @@ OpenGLDevice::OpenGLDevice()
     BufferLoadFromSystemMemory = (GPUDeviceBufferLoadFromSystemMemory)&OpenGLDevice::__BufferLoadFromSystemMemory;
     BufferLoadImmutableFromSystemMemory = (GPUDeviceBufferLoadImmutableFromSystemMemory)&OpenGLDevice::__BufferLoadImmutableFromSystemMemory;
     BufferClear = (GPUDeviceBufferClear)&OpenGLDevice::__BufferClear;
+	GetMaxAnisFilterLevel = (GPUDeviceGetMaxAnisFilterLevel)&OpenGLDevice::__GetMaxAnisFilterLevel;
+	SetAnisFilterLevel = (GPUDeviceSetAnisFilterLevel)&OpenGLDevice::__SetAnisFilterLevel;
+
 
     mEnable4xMsaa = false;
     m4xMsaaQuality = 0;
+	mAnisFilterLevel = 0;
 }
 //----------------------------------------------------------------------------
 OpenGLDevice::~OpenGLDevice()
 {
 }
+//----------------------------------------------------------------------------
+/* From: https://www.opengl.org/archives/resources/features/OGLextensions/ */
+int RTGI::OpenGLDevice::__IsExtensionSupported(const char *extension)
+{
+	const GLubyte *extensions = NULL;
+	const GLubyte *start;
+	GLubyte *where, *terminator;
+
+	/* Extension names should not have spaces. */
+	where = (GLubyte *)strchr(extension, ' ');
+	if (where || *extension == '\0')
+		return 0;
+	extensions = glGetString(GL_EXTENSIONS);
+	/* It takes a bit of care to be fool-proof about parsing the
+	OpenGL extensions string. Don't be fooled by sub-strings,
+	etc. */
+	start = extensions;
+	for (;;)
+	{
+		where = (GLubyte *)strstr((const char *)start, extension);
+		if (!where)
+			break;
+		terminator = where + strlen(extension);
+		if (where == start || *(where - 1) == ' ')
+		if (*terminator == ' ' || *terminator == '\0')
+			return 1;
+		start = terminator;
+	}
+	return 0;
+}
+//----------------------------------------------------------------------------
+
+void RTGI::OpenGLDevice::__GetMaxAnisFilterLevel(int* maxAnisFilterLevel)
+{
+	// TODO: maybe move this somewhere else
+	if (__IsExtensionSupported("GL_EXT_texture_filter_anisotropic"))
+	{
+		glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisFilterLevel);
+	}
+	else
+	{
+		*maxAnisFilterLevel = 0;
+	}
+}
+//----------------------------------------------------------------------------
+
+void RTGI::OpenGLDevice::__SetAnisFilterLevel(int anisFilterLevel)
+{
+	GLint maxAnisFilterLevel;
+	__GetMaxAnisFilterLevel(&maxAnisFilterLevel);
+
+	if (maxAnisFilterLevel >= anisFilterLevel)
+	{
+		mAnisFilterLevel = anisFilterLevel;
+	}
+}
+
 //----------------------------------------------------------------------------
