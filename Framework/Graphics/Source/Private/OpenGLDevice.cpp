@@ -580,10 +580,11 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
     assert(res == GL_NO_ERROR);
 #endif
 
-	// Anisotropic Filtering
-	if (mAnisFilterLevel)
+	// Anisotropic Filtering.
+	if( mAnisFilterLevel )
 	{
-		glTexParameteri(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, mAnisFilterLevel);
+		glTexParameteri(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, 
+            mAnisFilterLevel);
 	}
 
 #ifdef _DEBUG

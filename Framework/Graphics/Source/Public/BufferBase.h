@@ -99,18 +99,18 @@ enum BufferAccess
 Filter Combination                     | Bilinear | Bilinear | Mipmapping
 (MAG_FILTER / MIN_FILTER)              | (Near)   | (FAR)    |
 ---------------------------------------+----------+----------+------------
-GL_NEAREST / GL_NEAREST_MIPMAP_NEAREST | Off      | Off      | Standard
-GL_NEAREST / GL_LINEAR_MIPMAP_NEAREST  | Off      | On       | Standard
-GL_NEAREST / GL_NEAREST_MIPMAP_LINEAR  | Off      | Off      | Trilinear filtering
-GL_NEAREST / GL_LINEAR_MIPMAP_LINEAR   | Off      | On       | Trilinear filtering
-GL_NEAREST / GL_NEAREST                | Off      | Off      | None
-GL_NEAREST / GL_LINEAR                 | Off      | On       | None
-GL_LINEAR / GL_NEAREST_MIPMAP_NEAREST  | On       | Off      | Standard
-GL_LINEAR / GL_LINEAR_MIPMAP_NEAREST   | On       | On       | Standard
-GL_LINEAR / GL_NEAREST_MIPMAP_LINEAR   | On       | Off      | Trilinear filtering
-GL_LINEAR / GL_LINEAR_MIPMAP_LINEAR    | On       | On       | Trilinear filtering
-GL_LINEAR / GL_NEAREST                 | On       | Off      | None
-GL_LINEAR / GL_LINEAR                  | On       | On       | None
+FT_Nearest / FT_Nearest_Nearest        | Off      | Off      | Standard
+FT_Nearest / FT_Linear_Nearest         | Off      | On       | Standard
+FT_Nearest / FT_Nearest_Linear         | Off      | Off      | Trilinear filtering
+FT_Nearest / FT_Linear_Linear          | Off      | On       | Trilinear filtering
+FT_Nearest / FT_Nearest                | Off      | Off      | None
+FT_Nearest / FT_Linear                 | Off      | On       | None
+FT_Linear / FT_Nearest_Nearest         | On       | Off      | Standard
+FT_Linear / FT_Linear_Nearest          | On       | On       | Standard
+FT_Linear / FT_Nearest_Linear          | On       | Off      | Trilinear filtering
+FT_Linear / FT_Linear_Linear           | On       | On       | Trilinear filtering
+FT_Linear / FT_Nearest                 | On       | Off      | None
+FT_Linear / FT_Linear                  | On       | On       | None
 */
 
 enum FilterType
