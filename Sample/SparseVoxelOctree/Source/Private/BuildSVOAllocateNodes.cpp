@@ -1,25 +1,26 @@
-#include "BuildSVO.h"
+#include "BuildSVOAllocateNodes.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-BuildSVO::BuildSVO()
+BuildSVOAllocateNodes::BuildSVOAllocateNodes()
 {
 }
 //----------------------------------------------------------------------------
-BuildSVO::~BuildSVO()
+BuildSVOAllocateNodes::~BuildSVOAllocateNodes()
 {
 }
 //----------------------------------------------------------------------------
-void BuildSVO::OnGetShaderConstants()
+void BuildSVOAllocateNodes::OnGetShaderConstants()
 {
 }
 //----------------------------------------------------------------------------
-void BuildSVO::OnPreDispatch(unsigned int pass)
+void BuildSVOAllocateNodes::OnPreDispatch(unsigned int pass)
 {
 }
 //----------------------------------------------------------------------------
-void BuildSVO::OnPostDispatch(unsigned int pass)
+void BuildSVOAllocateNodes::OnPostDispatch(unsigned int pass)
 {
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 //----------------------------------------------------------------------------

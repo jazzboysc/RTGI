@@ -1,5 +1,5 @@
-#ifndef RTGI_BuildSVO_H
-#define RTGI_BuildSVO_H
+#ifndef RTGI_BuildSVOAllocateNodes_H
+#define RTGI_BuildSVOAllocateNodes_H
 
 #include "ComputeTask.h"
 
@@ -10,11 +10,11 @@ namespace RTGI
 // Author: Che Sun
 // Date: 01/27/2015
 //----------------------------------------------------------------------------
-class BuildSVO : public ComputeTask
+class BuildSVOAllocateNodes : public ComputeTask
 {
 public:
-    BuildSVO();
-    ~BuildSVO();
+    BuildSVOAllocateNodes();
+    ~BuildSVOAllocateNodes();
 
     // Implement base class interface.
     virtual void OnGetShaderConstants();
@@ -23,7 +23,7 @@ public:
 
 };
 
-typedef RefPointer<BuildSVO> BuildSVOPtr;
+typedef RefPointer<BuildSVOAllocateNodes> BuildSVOAllocateNodesPtr;
 
 }
 
