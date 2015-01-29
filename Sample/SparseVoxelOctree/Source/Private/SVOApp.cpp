@@ -155,13 +155,13 @@ void SVOApp::Initialize(GPUDevice* device)
 
     // Create voxel fragment list buffer.
     mVoxelFragmentListBuffer = new StructuredBuffer();
-    GLuint voxelFragmentCount = GLuint((float)voxelCount*0.1f);
+    GLuint voxelFragmentCount = GLuint((float)voxelCount*0.2f); // voxel fragment ratio.
     bufferSize = sizeof(GLuint)*4 + voxelFragmentCount*sizeof(GLuint)*4;
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create SVO buffer.
     mSVOBuffer = new StructuredBuffer();
-    mSVONodeCount = unsigned int((float)voxelCount*(0.15f + 0.05f));
+    mSVONodeCount = unsigned int((float)voxelCount*(0.143f + 0.05f)); // interior node ratio (1/7, fixed) and leaf node ratio.
     bufferSize = mSVONodeCount*sizeof(GLuint) * 2;
     mSVOBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
@@ -316,7 +316,7 @@ void SVOApp::VoxelizeScene()
 	mLeftWall->Render(0, 0);
 	mRightWall->Render(0, 0);
 
-    glViewport(0, 0, 4, 4);
+    glViewport(0, 0, 2, 2);
 	mModel->Render(0, 0);
 }
 //----------------------------------------------------------------------------
@@ -409,17 +409,19 @@ void SVOApp::FrameFunc()
         VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
         VOXEL_DIMENSION / LOCAL_GROUP_DIM);
 #ifdef DEBUG_VOXEL
+    mIndirectCommandBuffer->Bind();
     GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(BA_Read_Only);
     GLfloat* gatheredVoxelData = (GLfloat*)(indirectCommandbufferData + 10);
     infoPanel->SetTimingLabelValue("Voxel Count", (double)indirectCommandbufferData[1]);
     mIndirectCommandBuffer->Unmap();
 
+    mAtomicCounterBuffer->Bind();
     counterData = (GLuint*)mAtomicCounterBuffer->Map(BA_Write_Only);
     infoPanel->SetTimingLabelValue("Voxel Fragment Count", (double)counterData[0]);
     infoPanel->SetTimingLabelValue("Counter", (double)counterData[3]);
     mAtomicCounterBuffer->Unmap();
 
-    float voxelRatio = (float)counterData[1] / (float)(VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION);
+    float voxelRatio = (float)counterData[3] / (float)(VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION);
     float voxelFragmentRatio = (float)counterData[0] / (float)(VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION);
     infoPanel->SetTimingLabelValue("Voxel Ratio", (double)voxelRatio);
     infoPanel->SetTimingLabelValue("Voxel Fragment Ratio", (double)voxelFragmentRatio);
@@ -437,6 +439,7 @@ void SVOApp::FrameFunc()
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Reset SVO Buffer Pass", workLoad);
 #ifdef DEBUG_VOXEL
+    mSVOBuffer->Bind();
     GLuint* svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
     mSVOBuffer->Unmap();
 #endif
@@ -451,6 +454,7 @@ void SVOApp::FrameFunc()
     infoPanel->SetTimingLabelValue("Build SVO Pass", workLoad);
 
 #ifdef DEBUG_VOXEL
+    mVoxelFragmentListBuffer->Bind();
     GLuint* dispatchIndirectCommandbufferData = (GLuint*)mVoxelFragmentListBuffer->Map(BA_Read_Only);
     infoPanel->SetTimingLabelValue("GVF Count", (double)dispatchIndirectCommandbufferData[0]);
     mVoxelFragmentListBuffer->Unmap();
@@ -488,6 +492,7 @@ void SVOApp::FrameFunc()
         infoPanel->SetTimingLabelValue("Intersection Pass", workLoad);
 
 #ifdef DEBUG_VOXEL_RAY_INTERSECTION
+        mIndirectCommandBuffer->Bind();
         GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
         GLfloat* intersectionData = (GLfloat*)(indirectCommandbufferData + 8);
 
