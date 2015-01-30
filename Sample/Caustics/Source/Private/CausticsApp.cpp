@@ -23,15 +23,15 @@ void CausticsApp::Initialize(GPUDevice* device)
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	// Create camera and light
-	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 2.0f, 50.0f);
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 1.0f, 50.0f);
 	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 	mLight = new Light;
-	mLight->SetLocation(vec3(0.0f, 0.0f, 0.0f));
+	mLight->SetLocation(vec3(0.0f, 0.65f, 0.0f));
 
 	ShaderProgramInfo SICaustics;
-	SICaustics += "Caustics/causticsDeferredLighting.vert";
-	SICaustics += "Caustics/causticsDeferredLighting.frag";
+	SICaustics << "Caustics/causticsDeferredLighting.vert";
+	SICaustics << "Caustics/causticsDeferredLighting.frag";
 	auto mtCaustics = new MaterialTemplate(new Technique(new Pass(SICaustics)));
 	
 	// Create MRT textures.
@@ -51,13 +51,13 @@ void CausticsApp::Initialize(GPUDevice* device)
 
 	// Create material templates.
 	ShaderProgramInfo gbufferProgramInfo;
-	gbufferProgramInfo += "Caustics/GBuffer.vert";
-	gbufferProgramInfo += "Caustics/GBuffer.frag";
+	gbufferProgramInfo << "Caustics/GBuffer.vert";
+	gbufferProgramInfo << "Caustics/GBuffer.frag";
 	auto mtGBuffer = new MaterialTemplate(new Technique(new Pass(gbufferProgramInfo)));
 
 	ShaderProgramInfo gbufferCubeProgramInfo;
-	gbufferCubeProgramInfo += "Caustics/GBufferCube.vert";
-	gbufferCubeProgramInfo += "Caustics/GBufferCube.frag";
+	gbufferCubeProgramInfo << "Caustics/GBufferCube.vert";
+	gbufferCubeProgramInfo << "Caustics/GBufferCube.frag";
 	auto mtGBufferCube = new MaterialTemplate(new Technique(new Pass(gbufferCubeProgramInfo)));
 
 	mGround = new CausticsTriMesh(new Material(mtGBuffer), mMainCamera);
@@ -104,21 +104,24 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mPool->SetWorldScale(vec3(1, -1, 1));
 	mPool->MaterialColor = vec3(1, 1, 1);
 	mPool->CubeTexture = mCubeMap;
-//	Error |= !PoolSkyCubeMap.LoadTextureCubeMap(PoolSkyCubeMapFileNames);
-
-	// ------------------------------------------------------------------------------------------------------------------------
-
-// 	Error |= !WaterAddDropProgram.Load("wateradddrop.vs", "wateradddrop.fs");
-// 	Error |= !WaterHeightMapProgram.Load("waterheightmap.vs", "waterheightmap.fs");
-// 	Error |= !WaterNormalMapProgram.Load("waternormalmap.vs", "waternormalmap.fs");
-// 	Error |= !PoolSkyProgram.Load("poolsky.vs", "poolsky.fs");
-// 	Error |= !WaterProgram.Load("water.vs", "water.fs");
+	
+	auto material = new Material(mtGBuffer);
+	mMesh = new CausticsTriMesh(material, mMainCamera);
+	mMesh->LoadFromFile("dragon_s.ply");
+	mMesh->GenerateNormals();
+	mMesh->CreateDeviceResource(mDevice);
+	mat4 rot = rotate(mat4(), radians(30.0f), vec3(0, 1, 0));
+	mMesh->SetWorldTransform(rot);
+	mMesh->SetWorldTranslation(vec3(0.0f, -0.65f, 0.0f));
+	mMesh->SetWorldScale(vec3(5.0f));
+	mMesh->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
 }
 //----------------------------------------------------------------------------
 void CausticsApp::DrawScene()
 {
 	mGround->Render(0, 0);
 	mPool->Render(0, 0);
+	mMesh->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void CausticsApp::FrameFunc()

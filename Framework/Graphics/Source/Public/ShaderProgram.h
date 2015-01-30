@@ -47,7 +47,7 @@ struct ShaderProgramInfo
 
     ShaderProgramInfo(){ ShaderStageFlag = ShaderType::ST_Unknown; }
 
-	ShaderProgramInfo& operator+=(const char* _shaderName)
+	ShaderProgramInfo& operator<<(const char* _shaderName)
 	{
 		std::string shaderName = _shaderName;
 		std::transform(shaderName.begin(), shaderName.end(), shaderName.begin(),
