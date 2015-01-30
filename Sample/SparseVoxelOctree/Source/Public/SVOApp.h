@@ -73,6 +73,7 @@ private:
     GLuint mZeroBuffer[VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*4];
     AABB mSceneBB;
     unsigned int mSVONodeCount;
+    unsigned int mSVOMaxLevel;
 
 	SVOTriMeshPtr mGround;
 	SVOTriMeshPtr mCeiling;

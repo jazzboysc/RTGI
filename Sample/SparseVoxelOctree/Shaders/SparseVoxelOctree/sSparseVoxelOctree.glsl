@@ -11,5 +11,9 @@ struct SVONode
 
 layout(std430, binding = 3)  buffer _svoNodeBuffer
 {
+    uint rootFlag;
+    uint rootChild;
+    uint value2;
+    uint value3;
     SVONode data[];
 } svoNodeBuffer;

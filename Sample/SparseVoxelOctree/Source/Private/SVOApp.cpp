@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-//#define DEBUG_VOXEL
+#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -190,9 +190,10 @@ void SVOApp::Initialize(GPUDevice* device)
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create SVO buffer.
+    mSVOMaxLevel = (unsigned int)glm::log2((float)VOXEL_DIMENSION);
     mSVOBuffer = new StructuredBuffer();
     mSVONodeCount = unsigned int((float)voxelCount*(0.143f + 0.05f)); // interior node ratio (1/7, fixed) and leaf node ratio.
-    bufferSize = mSVONodeCount*sizeof(GLuint) * 2;
+    bufferSize = sizeof(GLuint)*4 + mSVONodeCount*sizeof(GLuint)*2;
     mSVOBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create atomic counter buffer. We create 4 atomic counters here.
@@ -301,7 +302,7 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Intersection Pass", 16, 140);
     InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Count", 16, 160);
     InformationPanel::GetInstance()->AddTimingLabel("GVF Count", 16, 180);
-    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 200);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 200);
     InformationPanel::GetInstance()->AddTimingLabel("Reset SVO Buffer Pass", 16, 220);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
@@ -460,6 +461,12 @@ void SVOApp::FrameFunc()
     // Gather voxel fragment list info pass.
     mVoxelFragmentListBuffer->Bind(1);
     mGatherVoxelFragmentListInfoTask->DispatchCompute(0, 1, 1, 1);
+#ifdef DEBUG_VOXEL
+    mVoxelFragmentListBuffer->Bind();
+    GLuint* dispatchIndirectCommandbufferData = (GLuint*)mVoxelFragmentListBuffer->Map(BA_Read_Only);
+    infoPanel->SetTimingLabelValue("GVF Count", (double)dispatchIndirectCommandbufferData[0]);
+    mVoxelFragmentListBuffer->Unmap();
+#endif
 
     // Reset SVO buffer pass.
     mSVOBuffer->Bind(3);
@@ -474,21 +481,38 @@ void SVOApp::FrameFunc()
     mSVOBuffer->Unmap();
 #endif
 
-    // Build SVO pass.
-    mTimer->Start();
+    // Build SVO init root pass.
     mVoxelFragmentListBuffer->Bind(1);
     mSVOBuffer->Bind(3);
-    mBuildSVOInitRootTask->DispatchVertexIndirect(0, mVoxelFragmentListBuffer, 0);
+    mTimer->Start();
+    mBuildSVOInitRootTask->DispatchVertex(0, 1);
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetTimingLabelValue("Build SVO Pass", workLoad);
-
+    infoPanel->SetTimingLabelValue("Build SVO Init Root Pass", workLoad);
 #ifdef DEBUG_VOXEL
-    mVoxelFragmentListBuffer->Bind();
-    GLuint* dispatchIndirectCommandbufferData = (GLuint*)mVoxelFragmentListBuffer->Map(BA_Read_Only);
-    infoPanel->SetTimingLabelValue("GVF Count", (double)dispatchIndirectCommandbufferData[0]);
-    mVoxelFragmentListBuffer->Unmap();
+    mSVOBuffer->Bind();
+    svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+    mSVOBuffer->Unmap();
 #endif
+
+    for( int curLevel = 1; curLevel < 2/*mSVOMaxLevel*/; ++curLevel )
+    {
+        // Flag SVO nodes.
+        mVoxelFragmentListBuffer->Bind(1);
+        mSVOBuffer->Bind(3);
+        mBuildSVOFlagNodesTask->DispatchVertexIndirect(0, mVoxelFragmentListBuffer, 0);
+#ifdef DEBUG_VOXEL
+        mSVOBuffer->Bind();
+        svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+        mSVOBuffer->Unmap();
+#endif
+    }
+
+    //mTimer->Start();
+    //mTimer->Stop();
+    //workLoad = mTimer->GetTimeElapsed();
+    //infoPanel->SetTimingLabelValue("Build SVO Init Root Pass", workLoad);
+
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);
@@ -523,7 +547,7 @@ void SVOApp::FrameFunc()
 
 #ifdef DEBUG_VOXEL_RAY_INTERSECTION
         mIndirectCommandBuffer->Bind();
-        GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(GL_READ_ONLY);
+        GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(BA_Read_Only);
         GLfloat* intersectionData = (GLfloat*)(indirectCommandbufferData + 8);
 
         InformationPanel::GetInstance()->SetDebugLabelValue("Ray Direction X", (double)intersectionData[1]);

@@ -5,4 +5,9 @@
 
 void main()
 {
+    if( voxelFragmentBuffer.count > 0 )
+    {
+        svoNodeBuffer.rootChild = atomicCounterIncrement(svoNodeAllocator);
+        svoNodeBuffer.rootFlag = 1;
+    }
 }
