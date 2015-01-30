@@ -30,6 +30,7 @@
 
 // Buffers
 #include "Buffer.h"
+#include "IndexableBuffer.h"
 #include "PixelBuffer.h"
 #include "AtomicCounterBuffer.h"
 #include "TextureBuffer.h"
