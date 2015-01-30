@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-#define DEBUG_VOXEL
+//#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -302,8 +302,9 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Intersection Pass", 16, 140);
     InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Count", 16, 160);
     InformationPanel::GetInstance()->AddTimingLabel("GVF Count", 16, 180);
-    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 200);
-    InformationPanel::GetInstance()->AddTimingLabel("Reset SVO Buffer Pass", 16, 220);
+    InformationPanel::GetInstance()->AddTimingLabel("Reset SVO Buffer Pass", 16, 200);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 220);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Flag Nodes Pass", 16, 240);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
@@ -329,8 +330,8 @@ void SVOApp::Initialize(GPUDevice* device)
 #endif
 
 #ifdef DEBUG_VOXEL
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 240);
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 260);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 300);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 320);
 #endif
 
     // Create GPU timer.
@@ -341,11 +342,11 @@ void SVOApp::Initialize(GPUDevice* device)
 void SVOApp::VoxelizeScene()
 {
     glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
-	mGround->Render(0, 0);
-	mCeiling->Render(0, 0);
-	mBackWall->Render(0, 0);
-	mLeftWall->Render(0, 0);
-	mRightWall->Render(0, 0);
+	//mGround->Render(0, 0);
+	//mCeiling->Render(0, 0);
+	//mBackWall->Render(0, 0);
+	//mLeftWall->Render(0, 0);
+	//mRightWall->Render(0, 0);
 
     glViewport(0, 0, 2, 2);
 	mModel->Render(0, 0);
@@ -353,11 +354,11 @@ void SVOApp::VoxelizeScene()
 //----------------------------------------------------------------------------
 void SVOApp::ShowVoxelization()
 {
-    mGround->Render(0, 1);
-    mCeiling->Render(0, 1);
-    mBackWall->Render(0, 1);
-    mLeftWall->Render(0, 1);
-    mRightWall->Render(0, 1);
+    //mGround->Render(0, 1);
+    //mCeiling->Render(0, 1);
+    //mBackWall->Render(0, 1);
+    //mLeftWall->Render(0, 1);
+    //mRightWall->Render(0, 1);
     mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
@@ -500,7 +501,11 @@ void SVOApp::FrameFunc()
         // Flag SVO nodes.
         mVoxelFragmentListBuffer->Bind(1);
         mSVOBuffer->Bind(3);
+        mTimer->Start();
         mBuildSVOFlagNodesTask->DispatchVertexIndirect(0, mVoxelFragmentListBuffer, 0);
+        mTimer->Stop();
+        workLoad = mTimer->GetTimeElapsed();
+        infoPanel->SetTimingLabelValue("Build SVO Flag Nodes Pass", workLoad);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
         svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
