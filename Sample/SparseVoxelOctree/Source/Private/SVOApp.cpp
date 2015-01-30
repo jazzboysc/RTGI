@@ -196,6 +196,13 @@ void SVOApp::Initialize(GPUDevice* device)
     bufferSize = sizeof(GLuint)*4 + mSVONodeCount*sizeof(GLuint)*2;
     mSVOBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
+    // Create SVO uniform buffer.
+    mSVOUniformBuffer = new UniformBuffer();
+    bufferSize = sizeof(GLuint)*2;
+    mSVOUniformBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Draw);
+    GLuint svoUniformBufferData[2] = { 0, VOXEL_DIMENSION };
+    mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(GLuint)*2, (void*)svoUniformBufferData);
+
     // Create atomic counter buffer. We create 4 atomic counters here.
     mAtomicCounterBuffer = new AtomicCounterBuffer();
 #ifdef DEBUG_VOXEL
@@ -496,8 +503,16 @@ void SVOApp::FrameFunc()
     mSVOBuffer->Unmap();
 #endif
 
-    for( int curLevel = 1; curLevel < 2/*mSVOMaxLevel*/; ++curLevel )
+    unsigned int curLevel = 1;
+    for( ; curLevel < 2/*mSVOMaxLevel*/; ++curLevel )
     {
+        // Update SVO uniform buffer.
+        mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(unsigned int), (void*)&curLevel);
+#ifdef DEBUG_VOXEL
+        GLuint* svoUniformBufferData = (GLuint*)mSVOUniformBuffer->Map(BA_Read_Only);
+        mSVOUniformBuffer->Unmap();
+#endif
+
         // Flag SVO nodes.
         mVoxelFragmentListBuffer->Bind(1);
         mSVOBuffer->Bind(3);
@@ -598,6 +613,7 @@ void SVOApp::Terminate()
     mIndirectCommandBuffer = 0;
     mVoxelFragmentListBuffer = 0;
     mSVOBuffer = 0;
+    mSVOUniformBuffer = 0;
 
 	mGround = 0;
 	mCeiling = 0;

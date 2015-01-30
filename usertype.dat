@@ -96,6 +96,7 @@ local_size_x
 local_size_y
 local_size_z
 binding
+std140
 std430
 triangles
 triangle_strip
@@ -294,7 +295,9 @@ shadow1DProj
 shadow2DProj
 EmitVertex
 EndPrimitive
+atomicCounter
 atomicCounterIncrement
+atomicCounterDecrement
 imageAtomicExchange
 imageAtomicCompSwap
 imageLoad

@@ -70,6 +70,7 @@ private:
     StructuredBufferPtr mIndirectCommandBuffer;
     StructuredBufferPtr mVoxelFragmentListBuffer;
     StructuredBufferPtr mSVOBuffer;
+    UniformBufferPtr mSVOUniformBuffer;
     GLuint mZeroBuffer[VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*4];
     AABB mSceneBB;
     unsigned int mSVONodeCount;

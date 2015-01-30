@@ -25,6 +25,12 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     SVONode data[];
 } svoNodeBuffer;
 
+layout(std140, binding = 0) uniform _svoUniformBuffer
+{
+    uint curLevel;
+    uint dim;
+} svoUniformBuffer;
+
 //----------------------------------------------------------------------------
 uint GetSVOChildNodeIndex(ivec3 voxelGridPos, SVONodeAABB nodeBox)
 {

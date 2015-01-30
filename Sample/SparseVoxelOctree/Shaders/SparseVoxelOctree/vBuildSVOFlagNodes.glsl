@@ -3,9 +3,6 @@
 #include "SparseVoxelOctree/sVoxelFragmentList.glsl"
 #include "SparseVoxelOctree/sSparseVoxelOctree.glsl"
 
-uniform uint curLevel;
-uniform uint dim;
-
 void main()
 {
     VoxelFragment voxelFrag = voxelFragmentBuffer.data[gl_VertexID];
@@ -23,6 +20,6 @@ void main()
         childIndex++;
     }
 
-    svoNodeBuffer.data[gl_VertexID].child = childIndex;
+    svoNodeBuffer.data[gl_VertexID].child = svoUniformBuffer.curLevel;
     svoNodeBuffer.data[gl_VertexID].flag = gl_VertexID;
 }
