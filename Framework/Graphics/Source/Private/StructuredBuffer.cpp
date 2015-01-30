@@ -12,7 +12,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 StructuredBuffer::StructuredBuffer()
 	:
-	Buffer(BT_Structured)
+    IndexableBuffer(BT_Structured)
 {
 }
 //----------------------------------------------------------------------------

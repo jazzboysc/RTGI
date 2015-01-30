@@ -7,7 +7,7 @@
 #define RTGI_RendererInput_H
 
 #include "RefObject.h"
-#include "BufferBase.h"
+#include "IndexableBuffer.h"
 #include <string>
 
 namespace RTGI

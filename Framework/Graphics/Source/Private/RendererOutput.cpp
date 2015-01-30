@@ -41,7 +41,7 @@ void RendererOutput::Enable()
         break;
 
     case BF_BindIndex:
-        buffer->Bind(Binding);
+        ((IndexableBuffer*)buffer)->Bind(Binding);
         break;
 
     case BF_BindToIndirect:
@@ -49,7 +49,7 @@ void RendererOutput::Enable()
         break;
 
     case BF_BindIndexToIndirect:
-        buffer->Bind(Binding);
+        ((IndexableBuffer*)buffer)->Bind(Binding);
         buffer->BindToIndirect();
         break;
 

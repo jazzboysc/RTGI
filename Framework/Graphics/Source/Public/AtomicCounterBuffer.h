@@ -8,7 +8,7 @@
 
 #ifndef __APPLE__
 
-#include "Buffer.h"
+#include "IndexableBuffer.h"
 
 namespace RTGI
 {
@@ -17,7 +17,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 07/21/2013
 //----------------------------------------------------------------------------
-class AtomicCounterBuffer : public Buffer
+class AtomicCounterBuffer : public IndexableBuffer
 {
 public:
 	AtomicCounterBuffer();

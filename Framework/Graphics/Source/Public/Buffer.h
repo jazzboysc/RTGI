@@ -36,12 +36,8 @@ public:
     void* Map(BufferAccess access);
 	void Unmap();
 
-	void Bind(unsigned int index);
 	void Bind();
     void BindToIndirect();
-
-	void UpdateSubData(unsigned int bindingPoint, int offset, size_t size, 
-        void* data);
 
 	// Load buffer data from system memory. User is responsible for deleting
 	// the system memory data.

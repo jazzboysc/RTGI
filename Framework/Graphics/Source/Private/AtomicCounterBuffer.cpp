@@ -12,7 +12,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 AtomicCounterBuffer::AtomicCounterBuffer()
 	:
-    Buffer(BT_AtomicCounter)
+    IndexableBuffer(BT_AtomicCounter)
 {
 }
 //----------------------------------------------------------------------------

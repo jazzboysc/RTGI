@@ -33,12 +33,6 @@ void Buffer::Unmap()
     GPU_DEVICE_FUNC(mBufferHandle->Device, BufferUnmap)(this);
 }
 //----------------------------------------------------------------------------
-void Buffer::Bind(unsigned int index)
-{
-    assert(mBufferHandle);
-    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferBindIndex)(this, index);
-}
-//----------------------------------------------------------------------------
 void Buffer::Bind()
 {
     assert(mBufferHandle);
@@ -49,15 +43,6 @@ void Buffer::BindToIndirect()
 {
     assert(mBufferHandle);
     GPU_DEVICE_FUNC(mBufferHandle->Device, BufferBindToIndirect)(this);
-}
-//----------------------------------------------------------------------------
-void Buffer::UpdateSubData(unsigned int bindingPoint, int offset, size_t size, 
-	void* data)
-{
-    assert(mBufferHandle);
-	Bind(bindingPoint);
-    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferUpdateSubData)(this, offset, 
-        size, data);
 }
 //----------------------------------------------------------------------------
 bool Buffer::LoadFromSystemMemory(GPUDevice* device, size_t size, void* data, 

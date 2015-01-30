@@ -24,7 +24,7 @@ void EnableBuffer(RendererInput* input)
         break;
 
     case BF_BindIndex:
-        buffer->Bind(input->View.BindingSlot);
+        ((IndexableBuffer*)buffer)->Bind(input->View.BindingSlot);
         break;
 
     case BF_BindToIndirect:

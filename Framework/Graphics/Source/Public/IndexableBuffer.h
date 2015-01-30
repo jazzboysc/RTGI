@@ -3,27 +3,37 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#ifndef RTGI_UniformBuffer_H
-#define RTGI_UniformBuffer_H
+#ifndef RTGI_IndexableBuffer_H
+#define RTGI_IndexableBuffer_H
 
-#include "IndexableBuffer.h"
+#include "Buffer.h"
 
 namespace RTGI
 {
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: 09/23/2014
+// Date: 01/30/2015
 //----------------------------------------------------------------------------
-class UniformBuffer : public IndexableBuffer
+class IndexableBuffer : public Buffer
 {
 public:
-    UniformBuffer();
-    ~UniformBuffer();
+    IndexableBuffer(BufferType type);
+    ~IndexableBuffer();
+
+    using Buffer::Bind;
+    void Bind(unsigned int index);
+
+    void UpdateSubData(unsigned int index, int offset, size_t size,
+        void* data);
+
+private:
+    IndexableBuffer();
 };
 
-typedef RefPointer<UniformBuffer> UniformBufferPtr;
+typedef RefPointer<IndexableBuffer> IndexableBufferBufferPtr;
 
 }
+
 
 #endif

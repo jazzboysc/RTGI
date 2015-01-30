@@ -10,7 +10,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 UniformBuffer::UniformBuffer()
     :
-    Buffer(BT_Uniform)
+    IndexableBuffer(BT_Uniform)
 {
 }
 //----------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 
 #ifndef __APPLE__
 
-#include "Buffer.h"
+#include "IndexableBuffer.h"
 
 namespace RTGI
 {
@@ -26,7 +26,7 @@ typedef struct _DrawElementsIndirectCommand
 // Author: Che Sun
 // Date: 07/22/2013
 //----------------------------------------------------------------------------
-class StructuredBuffer : public Buffer
+class StructuredBuffer : public IndexableBuffer
 {
 public:
 	StructuredBuffer();
