@@ -16,7 +16,8 @@ void main()
         svoNodeBuffer.curLevelEndIndex = atomicCounter(svoNodeAllocator);
 
         // Update indirect command buffer for SVO allocate nodes pass.
-        svoNodeBuffer.allocThreadCountForCurLevel = (svoNodeBuffer.curLevelEndIndex - svoNodeBuffer.curLevelStartIndex)*SVO_NODE_TILE_SIZE;
+        svoNodeBuffer.allocThreadCountForCurLevel = 
+            (svoNodeBuffer.curLevelEndIndex - svoNodeBuffer.curLevelStartIndex)*SVO_NODE_TILE_SIZE;
         svoNodeBuffer.instanceCount = 1;
         svoNodeBuffer.first = 0;
         svoNodeBuffer.baseInstance = 0;

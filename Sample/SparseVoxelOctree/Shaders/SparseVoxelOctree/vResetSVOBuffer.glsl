@@ -9,5 +9,6 @@ void main()
         svoNodeBuffer.rootFlag = 0;
     }
 
+    svoNodeBuffer.data[gl_VertexID].child = 0;
     svoNodeBuffer.data[gl_VertexID].flag = 0;
 }

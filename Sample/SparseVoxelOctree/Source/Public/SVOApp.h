@@ -12,6 +12,7 @@
 #include "BuildSVOInitRoot.h"
 #include "BuildSVOFlagNodes.h"
 #include "BuildSVOAllocateNodes.h"
+#include "BuildSVOPostAllocateNodes.h"
 #include "BuildSVOInitNodes.h"
 #include "ResetSVOBuffer.h"
 #include "InformationPanel.h"
@@ -64,6 +65,7 @@ private:
     BuildSVOInitRootPtr mBuildSVOInitRootTask;
     BuildSVOFlagNodesPtr mBuildSVOFlagNodesTask;
     BuildSVOAllocateNodesPtr mBuildSVOAllocateNodesTask;
+    BuildSVOPostAllocateNodesPtr mBuildSVOPostAllocateNodesTask;
     BuildSVOInitNodesPtr mBuildSVOInitNodesTask;
     ResetSVOBufferPtr mResetSVOBufferTask;
     StructuredBufferPtr mVoxelBuffer;

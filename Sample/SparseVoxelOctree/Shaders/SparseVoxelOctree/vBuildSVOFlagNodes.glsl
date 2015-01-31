@@ -30,5 +30,5 @@ void main()
         // Update node AABB to visit.
         nodeBox = GetSVOChildNodeBox(childIndex, nodeBox);
     }
-    svoNodeBuffer.data[nextNodeIndex].flag = 1234;
+    svoNodeBuffer.data[nextNodeIndex].flag = SVO_NODE_FLAGED;
 }

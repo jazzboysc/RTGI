@@ -21,6 +21,6 @@ void BuildSVOAllocateNodes::OnPreDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 void BuildSVOAllocateNodes::OnPostDispatch(unsigned int pass)
 {
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    glMemoryBarrier(GL_ALL_BARRIER_BITS);
 }
 //----------------------------------------------------------------------------

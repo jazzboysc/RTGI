@@ -151,6 +151,16 @@ void SVOApp::Initialize(GPUDevice* device)
     mBuildSVOAllocateNodesTask->AddPass(passBuildSVOAllocateNodes);
     mBuildSVOAllocateNodesTask->CreateDeviceResource(mDevice);
 
+    // Create build SVO post allocate nodes task.
+    ShaderProgramInfo buildSVOPostAllocateNodesProgramInfo;
+    buildSVOPostAllocateNodesProgramInfo.VShaderFileName = "SparseVoxelOctree/vBuildSVOPostAllocateNodes.glsl";
+    buildSVOPostAllocateNodesProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
+
+    ComputePass* passBuildSVOPostAllocateNodes = new ComputePass(buildSVOPostAllocateNodesProgramInfo);
+    mBuildSVOPostAllocateNodesTask = new BuildSVOPostAllocateNodes();
+    mBuildSVOPostAllocateNodesTask->AddPass(passBuildSVOPostAllocateNodes);
+    mBuildSVOPostAllocateNodesTask->CreateDeviceResource(mDevice);
+
     // Create build SVO init nodes task.
     ShaderProgramInfo buildSVOInitNodesProgramInfo;
     buildSVOInitNodesProgramInfo.VShaderFileName = "SparseVoxelOctree/vBuildSVOInitNodes.glsl";
@@ -311,7 +321,7 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("GVF Count", 16, 180);
     InformationPanel::GetInstance()->AddTimingLabel("Reset SVO Buffer Pass", 16, 200);
     InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 220);
-    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Flag Nodes Pass", 16, 240);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 240);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
@@ -337,8 +347,8 @@ void SVOApp::Initialize(GPUDevice* device)
 #endif
 
 #ifdef DEBUG_VOXEL
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 300);
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 320);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 320);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 340);
 #endif
 
     // Create GPU timer.
@@ -503,8 +513,9 @@ void SVOApp::FrameFunc()
     mSVOBuffer->Unmap();
 #endif
 
+    mTimer->Start();
     unsigned int curLevel = 1;
-    for( ; curLevel < mSVOMaxLevel; ++curLevel )
+    for( ; curLevel <= 7/*mSVOMaxLevel*/; ++curLevel )
     {
         // Update SVO uniform buffer.
         mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(unsigned int), (void*)&curLevel);
@@ -513,20 +524,38 @@ void SVOApp::FrameFunc()
         mSVOUniformBuffer->Unmap();
 #endif
 
-        // Flag SVO nodes.
+        // Flag SVO nodes pass.
         mVoxelFragmentListBuffer->Bind(1);
         mSVOBuffer->Bind(3);
-        mTimer->Start();
         mBuildSVOFlagNodesTask->DispatchVertexIndirect(0, mVoxelFragmentListBuffer, 0);
-        mTimer->Stop();
-        workLoad = mTimer->GetTimeElapsed();
-        infoPanel->SetTimingLabelValue("Build SVO Flag Nodes Pass", workLoad);
+#ifdef DEBUG_VOXEL
+        mSVOBuffer->Bind();
+        svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+        mSVOBuffer->Unmap();
+#endif
+
+        // Allocate SVO nodes pass.
+        mBuildSVOAllocateNodesTask->DispatchVertexIndirect(0, mSVOBuffer, 0);
+#ifdef DEBUG_VOXEL
+        mSVOBuffer->Bind();
+        svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+        mSVOBuffer->Unmap();
+#endif
+
+        // Post allocate SVO nodes pass.
+        mBuildSVOPostAllocateNodesTask->DispatchVertex(0, 1);
+
+        // Init SVO nodes pass.
+        mBuildSVOInitNodesTask->DispatchVertexIndirect(0, mSVOBuffer, 0);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
         svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
         mSVOBuffer->Unmap();
 #endif
     }
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
+    infoPanel->SetTimingLabelValue("Build SVO Pass", workLoad);
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);
@@ -601,6 +630,7 @@ void SVOApp::Terminate()
     mBuildSVOInitRootTask = 0;
     mBuildSVOFlagNodesTask = 0;
     mBuildSVOAllocateNodesTask = 0;
+    mBuildSVOPostAllocateNodesTask = 0;
     mBuildSVOInitNodesTask = 0;
     mResetSVOBufferTask = 0;
     mVoxelBuffer = 0;
