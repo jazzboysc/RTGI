@@ -13,12 +13,14 @@ struct VoxelFragment
 
 layout(std430, binding = 1)  buffer _voxelFragmentBuffer
 {
+    // Indirect command buffer data for SVO flag nodes pass.
     uint  count;
     uint  instanceCount;
     uint  first;
     uint  baseInstance;
 
-    VoxelFragment data[]; // must be big enough to hold all voxel fragments.
+    // Voxel fragment buffer. Must be big enough to hold all voxel fragments.
+    VoxelFragment data[];
 } voxelFragmentBuffer;
 
 //----------------------------------------------------------------------------

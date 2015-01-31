@@ -19,11 +19,19 @@ struct SVONodeAABB
 
 layout(std430, binding = 3)  buffer _svoNodeBuffer
 {
+    // Shared data between SVO passes.
     uint rootFlag;
     uint rootChild;
-    uint value1;
-    uint value2;
+    uint curLevelStartIndex;
+    uint curLevelEndIndex;
 
+    // Indirect command buffer data for allocation of SVO node tile pass.
+    uint  allocThreadCountForCurLevel;
+    uint  instanceCount;
+    uint  first;
+    uint  baseInstance;
+
+    // SVO node buffer. Must be big enough to hold all tree nodes.
     SVONode data[];
 } svoNodeBuffer;
 
