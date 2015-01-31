@@ -348,7 +348,7 @@ void SVOApp::Initialize(GPUDevice* device)
 //----------------------------------------------------------------------------
 void SVOApp::VoxelizeScene()
 {
-    glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
+ //   glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
 	//mGround->Render(0, 0);
 	//mCeiling->Render(0, 0);
 	//mBackWall->Render(0, 0);
@@ -504,7 +504,7 @@ void SVOApp::FrameFunc()
 #endif
 
     unsigned int curLevel = 1;
-    for( ; curLevel < 2/*mSVOMaxLevel*/; ++curLevel )
+    for( ; curLevel < mSVOMaxLevel; ++curLevel )
     {
         // Update SVO uniform buffer.
         mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(unsigned int), (void*)&curLevel);
@@ -527,12 +527,6 @@ void SVOApp::FrameFunc()
         mSVOBuffer->Unmap();
 #endif
     }
-
-    //mTimer->Start();
-    //mTimer->Stop();
-    //workLoad = mTimer->GetTimeElapsed();
-    //infoPanel->SetTimingLabelValue("Build SVO Init Root Pass", workLoad);
-
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);

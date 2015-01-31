@@ -5,21 +5,30 @@
 
 void main()
 {
+    // Fetch voxel fragment for the thread.
     VoxelFragment voxelFrag = voxelFragmentBuffer.data[gl_VertexID];
 
+    // Create SVO root node bound.
     SVONodeAABB nodeBox;
     nodeBox.Min = ivec3(0, 0, 0);
-    nodeBox.Max = ivec3(128, 128, 128);
+    nodeBox.Max = ivec3(svoUniformBuffer.dim, svoUniformBuffer.dim, svoUniformBuffer.dim);
 
-    ivec3 voxelGridPos;
+    ivec3 voxelGridPos = UintToIvec3(voxelFrag.gridPosition);
     uint childIndex;
-    for( int i = 0; i < 8; ++i )
+    uint nodeTileIndex = 0;
+    uint nextNodeIndex;
+    for( int i = 1; i <= svoUniformBuffer.curLevel; ++i )
     {
-        voxelGridPos = UintToIvec3(voxelFrag.gridPosition);
         childIndex = GetSVOChildNodeIndex(voxelGridPos, nodeBox);
-        childIndex++;
-    }
+        
+        // Locate SVO nodes for current tree level.
+        nextNodeIndex = nodeTileIndex*SVO_NODE_TILE_SIZE + childIndex;
 
-    svoNodeBuffer.data[gl_VertexID].child = svoUniformBuffer.curLevel;
-    svoNodeBuffer.data[gl_VertexID].flag = gl_VertexID;
+        // Update node tile index to visit.
+        nodeTileIndex = svoNodeBuffer.data[nextNodeIndex].child;
+
+        // Update node AABB to visit.
+        nodeBox = GetSVOChildNodeBox(childIndex, nodeBox);
+    }
+    svoNodeBuffer.data[nextNodeIndex].flag = 1234;
 }

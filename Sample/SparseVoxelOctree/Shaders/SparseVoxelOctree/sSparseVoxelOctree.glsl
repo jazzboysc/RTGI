@@ -3,6 +3,8 @@
 //----------------------------------------------------------------------------
 layout(binding = 0, offset = 4) uniform atomic_uint svoNodeAllocator;
 
+#define SVO_NODE_TILE_SIZE 8
+
 struct SVONode
 {
     uint child;
@@ -35,9 +37,34 @@ layout(std140, binding = 0) uniform _svoUniformBuffer
 uint GetSVOChildNodeIndex(ivec3 voxelGridPos, SVONodeAABB nodeBox)
 {
     ivec3 mid = (nodeBox.Min + nodeBox.Max) >> 1;
-    uint childIndex = (voxelGridPos.x > mid.x ? 4 : 0) +
-                      (voxelGridPos.y > mid.y ? 2 : 0) +
-                      (voxelGridPos.z > mid.z ? 1 : 0);
+    uint childIndex = (voxelGridPos.x >= mid.x ? 4 : 0) +
+                      (voxelGridPos.y >= mid.y ? 2 : 0) +
+                      (voxelGridPos.z >= mid.z ? 1 : 0);
     return childIndex;
+}
+//----------------------------------------------------------------------------
+SVONodeAABB GetSVOChildNodeBox(uint childIndex, SVONodeAABB nodeBox)
+{
+    SVONodeAABB childNodeBoxes[8];
+
+    ivec3 mid = (nodeBox.Min + nodeBox.Max) >> 1;
+    childNodeBoxes[0].Min = nodeBox.Min;
+    childNodeBoxes[0].Max = mid;
+    childNodeBoxes[1].Min = ivec3(nodeBox.Min.x, nodeBox.Min.y, mid.z);
+    childNodeBoxes[1].Max = ivec3(mid.x, mid.y, nodeBox.Max.z);
+    childNodeBoxes[2].Min = ivec3(nodeBox.Min.x, mid.y, nodeBox.Min.z);
+    childNodeBoxes[2].Max = ivec3(mid.x, nodeBox.Max.y, mid.z);
+    childNodeBoxes[3].Min = ivec3(nodeBox.Min.x, mid.y, mid.z);
+    childNodeBoxes[3].Max = ivec3(mid.x, nodeBox.Max.y, nodeBox.Max.z);
+    childNodeBoxes[4].Min = ivec3(mid.x, nodeBox.Min.y, nodeBox.Min.z);
+    childNodeBoxes[4].Max = ivec3(nodeBox.Max.x, mid.y, mid.z);
+    childNodeBoxes[5].Min = ivec3(mid.x, nodeBox.Min.y, mid.z);
+    childNodeBoxes[5].Max = ivec3(nodeBox.Max.x, mid.y, nodeBox.Max.z);
+    childNodeBoxes[6].Min = ivec3(mid.x, mid.y, nodeBox.Min.z);
+    childNodeBoxes[6].Max = ivec3(nodeBox.Max.x, nodeBox.Max.y, mid.z);
+    childNodeBoxes[7].Min = mid;
+    childNodeBoxes[7].Max = nodeBox.Max;
+
+    return childNodeBoxes[childIndex];
 }
 //----------------------------------------------------------------------------
