@@ -33,8 +33,8 @@ layout(binding = 0, offset = 4) uniform atomic_uint svoNodeAllocator;
 
 struct SVONodeAABB
 {
-    ivec3 Min;
-    ivec3 Max;
+    uint Min;
+    uint Max;
 };
 
 struct SVONode
@@ -94,7 +94,11 @@ ivec3 UintToIvec3(uint value)
 //----------------------------------------------------------------------------
 uint GetSVOChildNodeIndex(ivec3 voxelGridPos, SVONodeAABB nodeBox)
 {
-    ivec3 mid = (nodeBox.Min + nodeBox.Max) >> 1;
+    ivec3 nodeBoxMin, nodeBoxMax, mid;
+    nodeBoxMin = UintToIvec3(nodeBox.Min);
+    nodeBoxMax = UintToIvec3(nodeBox.Max);
+    mid = (nodeBoxMin + nodeBoxMax) >> 1;
+
     uint childIndex = (voxelGridPos.x >= mid.x ? 4 : 0) +
                       (voxelGridPos.y >= mid.y ? 2 : 0) +
                       (voxelGridPos.z >= mid.z ? 1 : 0);
@@ -105,41 +109,44 @@ SVONodeAABB GetSVOChildNodeBox(uint childIndex, SVONodeAABB nodeBox)
 {
     SVONodeAABB childNodeBoxes[8];
 
-    ivec3 mid = (nodeBox.Min + nodeBox.Max) >> 1;
-    childNodeBoxes[0].Min = nodeBox.Min;
-    childNodeBoxes[0].Max = mid;
-    childNodeBoxes[1].Min = ivec3(nodeBox.Min.x, nodeBox.Min.y, mid.z);
-    childNodeBoxes[1].Max = ivec3(mid.x, mid.y, nodeBox.Max.z);
-    childNodeBoxes[2].Min = ivec3(nodeBox.Min.x, mid.y, nodeBox.Min.z);
-    childNodeBoxes[2].Max = ivec3(mid.x, nodeBox.Max.y, mid.z);
-    childNodeBoxes[3].Min = ivec3(nodeBox.Min.x, mid.y, mid.z);
-    childNodeBoxes[3].Max = ivec3(mid.x, nodeBox.Max.y, nodeBox.Max.z);
-    childNodeBoxes[4].Min = ivec3(mid.x, nodeBox.Min.y, nodeBox.Min.z);
-    childNodeBoxes[4].Max = ivec3(nodeBox.Max.x, mid.y, mid.z);
-    childNodeBoxes[5].Min = ivec3(mid.x, nodeBox.Min.y, mid.z);
-    childNodeBoxes[5].Max = ivec3(nodeBox.Max.x, mid.y, nodeBox.Max.z);
-    childNodeBoxes[6].Min = ivec3(mid.x, mid.y, nodeBox.Min.z);
-    childNodeBoxes[6].Max = ivec3(nodeBox.Max.x, nodeBox.Max.y, mid.z);
-    childNodeBoxes[7].Min = mid;
-    childNodeBoxes[7].Max = nodeBox.Max;
+    ivec3 nodeBoxMin, nodeBoxMax, mid;
+    nodeBoxMin = UintToIvec3(nodeBox.Min);
+    nodeBoxMax = UintToIvec3(nodeBox.Max);
+    mid = (nodeBoxMin + nodeBoxMax) >> 1;
 
-    // Test the cost of this function.
-    //childNodeBoxes[8].Min = nodeBox.Min;
-    //childNodeBoxes[8].Max = mid;
-    //childNodeBoxes[9].Min = ivec3(nodeBox.Min.x, nodeBox.Min.y, mid.z);
-    //childNodeBoxes[9].Max = ivec3(mid.x, mid.y, nodeBox.Max.z);
-    //childNodeBoxes[10].Min = ivec3(nodeBox.Min.x, mid.y, nodeBox.Min.z);
-    //childNodeBoxes[10].Max = ivec3(mid.x, nodeBox.Max.y, mid.z);
-    //childNodeBoxes[11].Min = ivec3(nodeBox.Min.x, mid.y, mid.z);
-    //childNodeBoxes[11].Max = ivec3(mid.x, nodeBox.Max.y, nodeBox.Max.z);
-    //childNodeBoxes[12].Min = ivec3(mid.x, nodeBox.Min.y, nodeBox.Min.z);
-    //childNodeBoxes[12].Max = ivec3(nodeBox.Max.x, mid.y, mid.z);
-    //childNodeBoxes[13].Min = ivec3(mid.x, nodeBox.Min.y, mid.z);
-    //childNodeBoxes[13].Max = ivec3(nodeBox.Max.x, mid.y, nodeBox.Max.z);
-    //childNodeBoxes[14].Min = ivec3(mid.x, mid.y, nodeBox.Min.z);
-    //childNodeBoxes[14].Max = ivec3(nodeBox.Max.x, nodeBox.Max.y, mid.z);
-    //childNodeBoxes[15].Min = mid;
-    //childNodeBoxes[15].Max = nodeBox.Max;
+    childNodeBoxes[0].Min = Ivec3ToUint(nodeBoxMin);
+    childNodeBoxes[0].Max = Ivec3ToUint(mid);
+    childNodeBoxes[1].Min = Ivec3ToUint(ivec3(nodeBoxMin.x, nodeBoxMin.y, mid.z));
+    childNodeBoxes[1].Max = Ivec3ToUint(ivec3(mid.x, mid.y, nodeBoxMax.z));
+    childNodeBoxes[2].Min = Ivec3ToUint(ivec3(nodeBoxMin.x, mid.y, nodeBoxMin.z));
+    childNodeBoxes[2].Max = Ivec3ToUint(ivec3(mid.x, nodeBoxMax.y, mid.z));
+    childNodeBoxes[3].Min = Ivec3ToUint(ivec3(nodeBoxMin.x, mid.y, mid.z));
+    childNodeBoxes[3].Max = Ivec3ToUint(ivec3(mid.x, nodeBoxMax.y, nodeBoxMax.z));
+    childNodeBoxes[4].Min = Ivec3ToUint(ivec3(mid.x, nodeBoxMin.y, nodeBoxMin.z));
+    childNodeBoxes[4].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, mid.y, mid.z));
+    childNodeBoxes[5].Min = Ivec3ToUint(ivec3(mid.x, nodeBoxMin.y, mid.z));
+    childNodeBoxes[5].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, mid.y, nodeBoxMax.z));
+    childNodeBoxes[6].Min = Ivec3ToUint(ivec3(mid.x, mid.y, nodeBoxMin.z));
+    childNodeBoxes[6].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, nodeBoxMax.y, mid.z));
+    childNodeBoxes[7].Min = Ivec3ToUint(mid);
+    childNodeBoxes[7].Max = Ivec3ToUint(nodeBoxMax);
+
+    //childNodeBoxes[8].Min = Ivec3ToUint(nodeBoxMin);
+    //childNodeBoxes[8].Max = Ivec3ToUint(mid);
+    //childNodeBoxes[9].Min = Ivec3ToUint(ivec3(nodeBoxMin.x, nodeBoxMin.y, mid.z));
+    //childNodeBoxes[9].Max = Ivec3ToUint(ivec3(mid.x, mid.y, nodeBoxMax.z));
+    //childNodeBoxes[10].Min = Ivec3ToUint(ivec3(nodeBoxMin.x, mid.y, nodeBoxMin.z));
+    //childNodeBoxes[10].Max = Ivec3ToUint(ivec3(mid.x, nodeBoxMax.y, mid.z));
+    //childNodeBoxes[11].Min = Ivec3ToUint(ivec3(nodeBoxMin.x, mid.y, mid.z));
+    //childNodeBoxes[11].Max = Ivec3ToUint(ivec3(mid.x, nodeBoxMax.y, nodeBoxMax.z));
+    //childNodeBoxes[12].Min = Ivec3ToUint(ivec3(mid.x, nodeBoxMin.y, nodeBoxMin.z));
+    //childNodeBoxes[12].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, mid.y, mid.z));
+    //childNodeBoxes[13].Min = Ivec3ToUint(ivec3(mid.x, nodeBoxMin.y, mid.z));
+    //childNodeBoxes[13].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, mid.y, nodeBoxMax.z));
+    //childNodeBoxes[14].Min = Ivec3ToUint(ivec3(mid.x, mid.y, nodeBoxMin.z));
+    //childNodeBoxes[14].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, nodeBoxMax.y, mid.z));
+    //childNodeBoxes[15].Min = Ivec3ToUint(mid);
+    //childNodeBoxes[15].Max = Ivec3ToUint(nodeBoxMax);
 
     return childNodeBoxes[childIndex];
 }

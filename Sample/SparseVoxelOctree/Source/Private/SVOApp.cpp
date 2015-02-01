@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-#define DEBUG_VOXEL
+//#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------

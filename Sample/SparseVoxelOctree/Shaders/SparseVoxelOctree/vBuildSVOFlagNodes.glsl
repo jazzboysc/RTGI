@@ -9,10 +9,10 @@ void main()
 
     // Create SVO root node bound.
     SVONodeAABB nodeBox;
-    nodeBox.Min = ivec3(0, 0, 0);
-    nodeBox.Max = ivec3(svoUniformBuffer.dim, svoUniformBuffer.dim, svoUniformBuffer.dim);
+    nodeBox.Min = Ivec3ToUint(ivec3(0, 0, 0));
+    nodeBox.Max = Ivec3ToUint(ivec3(svoUniformBuffer.dim, svoUniformBuffer.dim, svoUniformBuffer.dim));
 
-    //uint test = Ivec3ToUint(ivec3(125, 126, 128));
+    //uint test = Ivec3ToUint(ivec3(0, 0, 128));
     //ivec3 test1 = UintToIvec3(test);
     //svoNodeBuffer.value1 = test1.x;
     //svoNodeBuffer.value2 = test1.y;
