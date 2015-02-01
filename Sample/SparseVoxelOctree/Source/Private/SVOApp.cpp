@@ -187,7 +187,7 @@ void SVOApp::Initialize(GPUDevice* device)
     mSVOMaxLevel = (unsigned int)glm::log2((float)VOXEL_DIMENSION);
     mSVOBuffer = new StructuredBuffer();
     mSVONodeCount = unsigned int((float)voxelCount*(0.143f + 0.05f)); // interior node ratio (1/7, fixed) and leaf node ratio.
-    bufferSize = sizeof(GLuint)*8 + mSVONodeCount*sizeof(GLuint)*2;
+    bufferSize = sizeof(SVONodeBufferHead) + mSVONodeCount*sizeof(SVONode);
     mSVOBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create SVO uniform buffer.

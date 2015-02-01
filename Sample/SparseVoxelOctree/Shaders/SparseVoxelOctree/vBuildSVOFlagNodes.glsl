@@ -12,6 +12,12 @@ void main()
     nodeBox.Min = ivec3(0, 0, 0);
     nodeBox.Max = ivec3(svoUniformBuffer.dim, svoUniformBuffer.dim, svoUniformBuffer.dim);
 
+    //uint test = Ivec3ToUint(ivec3(125, 126, 128));
+    //ivec3 test1 = UintToIvec3(test);
+    //svoNodeBuffer.value1 = test1.x;
+    //svoNodeBuffer.value2 = test1.y;
+    //svoNodeBuffer.value3 = test1.z;
+
     ivec3 voxelGridPos = UintToIvec3(voxelFrag.gridPosition);
     uint childIndex;
     uint nodeTileIndex = 0;

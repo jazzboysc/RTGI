@@ -37,6 +37,12 @@ struct SVONodeBufferHead
     unsigned int rootChild;
     unsigned int curLevelStartIndex;
     unsigned int curLevelEndIndex;
+
+    // Debug.
+    unsigned int value1;
+    unsigned int value2;
+    unsigned int value3;
+    unsigned int value4;
 };
 
 //----------------------------------------------------------------------------

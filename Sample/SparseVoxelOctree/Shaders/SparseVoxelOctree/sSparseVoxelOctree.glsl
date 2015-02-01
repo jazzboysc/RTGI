@@ -57,6 +57,12 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     uint curLevelStartIndex;
     uint curLevelEndIndex;
 
+    // Debug.
+    uint value1;
+    uint value2;
+    uint value3;
+    uint value4;
+
     // SVO node buffer. Must be big enough to hold all tree nodes.
     SVONode data[];
 } svoNodeBuffer;
