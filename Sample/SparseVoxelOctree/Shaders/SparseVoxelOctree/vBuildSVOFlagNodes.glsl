@@ -1,6 +1,5 @@
 #version 430 core
 
-#include "SparseVoxelOctree/sVoxelFragmentList.glsl"
 #include "SparseVoxelOctree/sSparseVoxelOctree.glsl"
 
 void main()
@@ -30,5 +29,6 @@ void main()
         // Update node AABB to visit.
         nodeBox = GetSVOChildNodeBox(childIndex, nodeBox);
     }
-    svoNodeBuffer.data[nextNodeIndex].flag = SVO_NODE_FLAGED;
+    
+    FlagSVONode(nextNodeIndex);
 }

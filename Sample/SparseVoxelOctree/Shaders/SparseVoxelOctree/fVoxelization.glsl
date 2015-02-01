@@ -3,7 +3,7 @@
 in vec4 gPositionWorld;
 in vec4 gNormalWorld;
 
-#include "SparseVoxelOctree/sVoxelFragmentList.glsl"
+#include "SparseVoxelOctree/sSparseVoxelOctree.glsl"
 
 //----------------------------------------------------------------------------
 struct Voxel
