@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-//#define DEBUG_VOXEL
+#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -121,55 +121,39 @@ void SVOApp::Initialize(GPUDevice* device)
     mGatherVoxelFragmentListInfoTask->AddPass(passGatherVoxelFragmentListInfo);
     mGatherVoxelFragmentListInfoTask->CreateDeviceResource(mDevice);
 
-    // Create build SVO init root task.
+    // Create build SVO task.
     ShaderProgramInfo buildSVOInitRootProgramInfo;
     buildSVOInitRootProgramInfo.VShaderFileName = "SparseVoxelOctree/vBuildSVOInitRoot.glsl";
     buildSVOInitRootProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
-
     ComputePass* passBuildSVOInitRoot = new ComputePass(buildSVOInitRootProgramInfo);
-    mBuildSVOInitRootTask = new BuildSVOInitRoot();
-    mBuildSVOInitRootTask->AddPass(passBuildSVOInitRoot);
-    mBuildSVOInitRootTask->CreateDeviceResource(mDevice);
 
-    // Create build SVO flag nodes task.
     ShaderProgramInfo buildSVOFlagNodesProgramInfo;
     buildSVOFlagNodesProgramInfo.VShaderFileName = "SparseVoxelOctree/vBuildSVOFlagNodes.glsl";
     buildSVOFlagNodesProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
-
     ComputePass* passBuildSVOFlagNodes = new ComputePass(buildSVOFlagNodesProgramInfo);
-    mBuildSVOFlagNodesTask = new BuildSVOFlagNodes();
-    mBuildSVOFlagNodesTask->AddPass(passBuildSVOFlagNodes);
-    mBuildSVOFlagNodesTask->CreateDeviceResource(mDevice);
 
-    // Create build SVO allocate nodes task.
     ShaderProgramInfo buildSVOAllocateNodesProgramInfo;
     buildSVOAllocateNodesProgramInfo.VShaderFileName = "SparseVoxelOctree/vBuildSVOAllocateNodes.glsl";
     buildSVOAllocateNodesProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
-
     ComputePass* passBuildSVOAllocateNodes = new ComputePass(buildSVOAllocateNodesProgramInfo);
-    mBuildSVOAllocateNodesTask = new BuildSVOAllocateNodes();
-    mBuildSVOAllocateNodesTask->AddPass(passBuildSVOAllocateNodes);
-    mBuildSVOAllocateNodesTask->CreateDeviceResource(mDevice);
 
-    // Create build SVO post allocate nodes task.
     ShaderProgramInfo buildSVOPostAllocateNodesProgramInfo;
     buildSVOPostAllocateNodesProgramInfo.VShaderFileName = "SparseVoxelOctree/vBuildSVOPostAllocateNodes.glsl";
     buildSVOPostAllocateNodesProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
-
     ComputePass* passBuildSVOPostAllocateNodes = new ComputePass(buildSVOPostAllocateNodesProgramInfo);
-    mBuildSVOPostAllocateNodesTask = new BuildSVOPostAllocateNodes();
-    mBuildSVOPostAllocateNodesTask->AddPass(passBuildSVOPostAllocateNodes);
-    mBuildSVOPostAllocateNodesTask->CreateDeviceResource(mDevice);
 
-    // Create build SVO init nodes task.
     ShaderProgramInfo buildSVOInitNodesProgramInfo;
     buildSVOInitNodesProgramInfo.VShaderFileName = "SparseVoxelOctree/vBuildSVOInitNodes.glsl";
     buildSVOInitNodesProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
-
     ComputePass* passBuildSVOInitNodes = new ComputePass(buildSVOInitNodesProgramInfo);
-    mBuildSVOInitNodesTask = new BuildSVOInitNodes();
-    mBuildSVOInitNodesTask->AddPass(passBuildSVOInitNodes);
-    mBuildSVOInitNodesTask->CreateDeviceResource(mDevice);
+
+    mBuildSVOTask = new BuildSVO();
+    mBuildSVOTask->AddPass(passBuildSVOInitRoot);
+    mBuildSVOTask->AddPass(passBuildSVOFlagNodes);
+    mBuildSVOTask->AddPass(passBuildSVOAllocateNodes);
+    mBuildSVOTask->AddPass(passBuildSVOPostAllocateNodes);
+    mBuildSVOTask->AddPass(passBuildSVOInitNodes);
+    mBuildSVOTask->CreateDeviceResource(mDevice);
 
     // Create reset SVO buffer task.
     ShaderProgramInfo resetSVOBufferProgramInfo;
@@ -495,7 +479,9 @@ void SVOApp::FrameFunc()
     infoPanel->SetTimingLabelValue("Reset SVO Buffer Pass", workLoad);
 #ifdef DEBUG_VOXEL
     mSVOBuffer->Bind();
-    GLuint* svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+    void* svoBufferData = mSVOBuffer->Map(BA_Read_Only);
+    SVONodeBufferHead* svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
+    SVONodeTile* svoNodeTileData = (SVONodeTile*)(svoBufferHeadData+1);
     mSVOBuffer->Unmap();
 #endif
 
@@ -503,13 +489,15 @@ void SVOApp::FrameFunc()
     mVoxelFragmentListBuffer->Bind(1);
     mSVOBuffer->Bind(3);
     mTimer->Start();
-    mBuildSVOInitRootTask->DispatchVertex(0, 1);
+    mBuildSVOTask->DispatchVertex(BUILD_SVO_INIT_ROOT_PASS, 1);
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Build SVO Init Root Pass", workLoad);
 #ifdef DEBUG_VOXEL
     mSVOBuffer->Bind();
-    svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+    svoBufferData = mSVOBuffer->Map(BA_Read_Only);
+    svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
+    svoNodeTileData = (SVONodeTile*)(svoBufferHeadData + 1);
     mSVOBuffer->Unmap();
 #endif
 
@@ -527,29 +515,38 @@ void SVOApp::FrameFunc()
         // Flag SVO nodes pass.
         mVoxelFragmentListBuffer->Bind(1);
         mSVOBuffer->Bind(3);
-        mBuildSVOFlagNodesTask->DispatchVertexIndirect(0, mVoxelFragmentListBuffer, 0);
+        mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_FLAG_NODES_PASS, 
+            mVoxelFragmentListBuffer, 0);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
-        svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+        svoBufferData = mSVOBuffer->Map(BA_Read_Only);
+        svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
+        svoNodeTileData = (SVONodeTile*)(svoBufferHeadData + 1);
         mSVOBuffer->Unmap();
 #endif
 
         // Allocate SVO nodes pass.
-        mBuildSVOAllocateNodesTask->DispatchVertexIndirect(0, mSVOBuffer, 0);
+        mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_ALLOC_NODES_PASS, 
+            mSVOBuffer, 0);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
-        svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+        svoBufferData = mSVOBuffer->Map(BA_Read_Only);
+        svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
+        svoNodeTileData = (SVONodeTile*)(svoBufferHeadData + 1);
         mSVOBuffer->Unmap();
 #endif
 
         // Post allocate SVO nodes pass.
-        mBuildSVOPostAllocateNodesTask->DispatchVertex(0, 1);
+        mBuildSVOTask->DispatchVertex(BUILD_SVO_POST_ALLOC_NODES_PASS, 1);
 
         // Init SVO nodes pass.
-        mBuildSVOInitNodesTask->DispatchVertexIndirect(0, mSVOBuffer, 0);
+        mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_INIT_NODES_PASS, 
+            mSVOBuffer, 0);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
-        svoBufferData = (GLuint*)mSVOBuffer->Map(BA_Read_Only);
+        svoBufferData = mSVOBuffer->Map(BA_Read_Only);
+        svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
+        svoNodeTileData = (SVONodeTile*)(svoBufferHeadData + 1);
         mSVOBuffer->Unmap();
 #endif
     }
@@ -627,11 +624,7 @@ void SVOApp::Terminate()
     mGatherVoxelBufferTask = 0;
     mVoxelGridIntersectionTask = 0;
     mGatherVoxelFragmentListInfoTask = 0;
-    mBuildSVOInitRootTask = 0;
-    mBuildSVOFlagNodesTask = 0;
-    mBuildSVOAllocateNodesTask = 0;
-    mBuildSVOPostAllocateNodesTask = 0;
-    mBuildSVOInitNodesTask = 0;
+    mBuildSVOTask = 0;
     mResetSVOBufferTask = 0;
     mVoxelBuffer = 0;
     mIndirectCommandBuffer = 0;

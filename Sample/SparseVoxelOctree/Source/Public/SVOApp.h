@@ -9,11 +9,7 @@
 #include "GatherVoxelBuffer.h"
 #include "VoxelGridIntersection.h"
 #include "GatherVoxelFragmentListInfo.h"
-#include "BuildSVOInitRoot.h"
-#include "BuildSVOFlagNodes.h"
-#include "BuildSVOAllocateNodes.h"
-#include "BuildSVOPostAllocateNodes.h"
-#include "BuildSVOInitNodes.h"
+#include "BuildSVO.h"
 #include "ResetSVOBuffer.h"
 #include "InformationPanel.h"
 #include "FormEventListener.h"
@@ -62,11 +58,7 @@ private:
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
     VoxelGridIntersectionPtr mVoxelGridIntersectionTask;
     GatherVoxelFragmentListInfoPtr mGatherVoxelFragmentListInfoTask;
-    BuildSVOInitRootPtr mBuildSVOInitRootTask;
-    BuildSVOFlagNodesPtr mBuildSVOFlagNodesTask;
-    BuildSVOAllocateNodesPtr mBuildSVOAllocateNodesTask;
-    BuildSVOPostAllocateNodesPtr mBuildSVOPostAllocateNodesTask;
-    BuildSVOInitNodesPtr mBuildSVOInitNodesTask;
+    BuildSVOPtr mBuildSVOTask;
     ResetSVOBufferPtr mResetSVOBufferTask;
     StructuredBufferPtr mVoxelBuffer;
     StructuredBufferPtr mIndirectCommandBuffer;
