@@ -32,16 +32,22 @@ void PassInfo::Create(GLuint program, GLuint vbo, GLuint ibo, bool hasNormal,
 	// Specify vertex attributes.
 	if( !hasNormal && !hasTCoord )
 	{
-		GLuint loc = glGetAttribLocation(program, "vPosition");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		GLint loc = glGetAttribLocation(program, "vPosition");
+        if( loc != -1 )
+        {
+            glEnableVertexAttribArray(loc);
+            glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        }
 	}
 	else if( hasNormal && !hasTCoord )
 	{
-		GLuint loc = glGetAttribLocation(program, "vPosition");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponentCount*sizeof(float), 0);
+		GLint loc = glGetAttribLocation(program, "vPosition");
+        if( loc != -1 )
+        {
+            glEnableVertexAttribArray(loc);
+            glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE,
+                vertexComponentCount*sizeof(float), 0);
+        }
 
 		loc = glGetAttribLocation(program, "vNormal");
         if( loc != -1 )
@@ -53,10 +59,13 @@ void PassInfo::Create(GLuint program, GLuint vbo, GLuint ibo, bool hasNormal,
 	}
 	else if( hasNormal && hasTCoord )
 	{
-		GLuint loc = glGetAttribLocation(program, "vPosition");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponentCount*sizeof(float), 0);
+		GLint loc = glGetAttribLocation(program, "vPosition");
+        if( loc != -1 )
+        {
+            glEnableVertexAttribArray(loc);
+            glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE,
+                vertexComponentCount*sizeof(float), 0);
+        }
 
 		loc = glGetAttribLocation(program, "vTCoord");
         if( loc != -1 )
@@ -76,10 +85,13 @@ void PassInfo::Create(GLuint program, GLuint vbo, GLuint ibo, bool hasNormal,
 	}
 	else
 	{
-		GLuint loc = glGetAttribLocation(program, "vPosition");
-		glEnableVertexAttribArray(loc);
-		glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 
-			vertexComponentCount*sizeof(float), 0);
+		GLint loc = glGetAttribLocation(program, "vPosition");
+        if( loc != -1 )
+        {
+            glEnableVertexAttribArray(loc);
+            glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE,
+                vertexComponentCount*sizeof(float), 0);
+        }
 
 		loc = glGetAttribLocation(program, "vTCoord");
         if( loc != -1 )
