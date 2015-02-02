@@ -7,7 +7,7 @@ void main()
     if( voxelFragmentBuffer.count > 0 )
     {
         // Flag root and allocate children nodes for it.
-        svoNodeBuffer.rootFlag = 1;
+        svoNodeBuffer.rootFlag = 1234;
         svoNodeBuffer.rootChild = atomicCounterIncrement(svoNodeAllocator);
 
         // Update current level node tile range.
@@ -28,10 +28,17 @@ void main()
             svoUniformBuffer.dim));
 
         // Create first level node boxes.
-        for( int i = 0; i < SVO_NODE_TILE_SIZE; ++i )
+        uint childID;
+        for( uint i = 0; i < SVO_NODE_TILE_SIZE; ++i )
         {
-            svoNodeBuffer.data[svoNodeBuffer.rootChild*SVO_NODE_TILE_SIZE + i].nodeBox = 
-                GetSVOChildNodeBox(i, nodeBox);
+            childID = svoNodeBuffer.rootChild*SVO_NODE_TILE_SIZE + i;
+            svoNodeBuffer.data[childID].nodeBox = GetSVOChildNodeBox(i, nodeBox);
+            svoNodeBuffer.data[childID].child = 0;
+            svoNodeBuffer.data[childID].flag = 0;
         }
+    }
+    else
+    {
+        svoNodeBuffer.rootFlag = 0;
     }
 }

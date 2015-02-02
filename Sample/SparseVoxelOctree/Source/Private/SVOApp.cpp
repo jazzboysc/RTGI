@@ -17,6 +17,7 @@ SVOApp::SVOApp(int width, int height)
 	Height = height;
 	Title = "Sparse voxel octree demo";
     mIsRotatingModel = false;
+    mVoxelizeCornell = false;
     mShowCornell = false;
     mShowMode = SM_VoxelGrid;
 }
@@ -156,22 +157,11 @@ void SVOApp::Initialize(GPUDevice* device)
     mBuildSVOTask->AddPass(passBuildSVOInitNodes);
     mBuildSVOTask->CreateDeviceResource(mDevice);
 
-    // Create reset SVO buffer task.
-    ShaderProgramInfo resetSVOBufferProgramInfo;
-    resetSVOBufferProgramInfo.VShaderFileName = "SparseVoxelOctree/vResetSVOBuffer.glsl";
-    resetSVOBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
-
-    ComputePass* passResetSVOBuffer = new ComputePass(resetSVOBufferProgramInfo);
-    mResetSVOBufferTask = new ResetSVOBuffer();
-    mResetSVOBufferTask->AddPass(passResetSVOBuffer);
-    mResetSVOBufferTask->CreateDeviceResource(mDevice);
-
     // Create scene voxel buffer.
     mVoxelBuffer = new StructuredBuffer();
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
     mVoxelBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
-    memset(mZeroBuffer, 0x00, bufferSize);
 
     // Create indirect command buffer.
     mIndirectCommandBuffer = new StructuredBuffer();
@@ -304,9 +294,8 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Intersection Pass", 16, 140);
     InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Count", 16, 160);
     InformationPanel::GetInstance()->AddTimingLabel("GVF Count", 16, 180);
-    InformationPanel::GetInstance()->AddTimingLabel("Reset SVO Buffer Pass", 16, 200);
-    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 220);
-    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 240);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 200);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 220);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
@@ -332,8 +321,8 @@ void SVOApp::Initialize(GPUDevice* device)
 #endif
 
 #ifdef DEBUG_VOXEL
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 320);
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 340);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Ratio", 16, 280);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Ratio", 16, 300);
 #endif
 
     // Create GPU timer.
@@ -343,7 +332,7 @@ void SVOApp::Initialize(GPUDevice* device)
 //----------------------------------------------------------------------------
 void SVOApp::VoxelizeScene()
 {
-    if( mShowCornell )
+    if( mVoxelizeCornell )
     {
         glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
         mGround->Render(0, 0);
@@ -359,7 +348,7 @@ void SVOApp::VoxelizeScene()
 //----------------------------------------------------------------------------
 void SVOApp::ShowVoxelization()
 {
-    if( mShowCornell )
+    if( mVoxelizeCornell && mShowCornell )
     {
         mGround->Render(0, 1);
         mCeiling->Render(0, 1);
@@ -423,15 +412,6 @@ void SVOApp::FrameFunc()
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Reset Voxel Buffer Pass", workLoad);
 
-    // Debug reset voxel buffer task.
-#ifdef DEBUG_VOXEL
-    //GLuint* bufferData = (GLuint*)mVoxelBuffer->Map(GL_READ_ONLY);
-    //assert(bufferData);
-    //int res = memcmp(mZeroBuffer, bufferData, VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION*sizeof(GLuint));
-    //assert(res == 0);
-    //mVoxelBuffer->Unmap();
-#endif
-
     // Scene voxelization pass.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisable(GL_DEPTH_TEST);
@@ -478,21 +458,6 @@ void SVOApp::FrameFunc()
     mVoxelFragmentListBuffer->Unmap();
 #endif
 
-    // Reset SVO buffer pass.
-    mSVOBuffer->Bind(3);
-    mTimer->Start();
-    mResetSVOBufferTask->DispatchVertex(0, mSVONodeCount);
-    mTimer->Stop();
-    workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetTimingLabelValue("Reset SVO Buffer Pass", workLoad);
-#ifdef DEBUG_VOXEL
-    mSVOBuffer->Bind();
-    void* svoBufferData = mSVOBuffer->Map(BA_Read_Only);
-    SVONodeBufferHead* svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
-    SVONodeTile* svoNodeTileData = (SVONodeTile*)(svoBufferHeadData+1);
-    mSVOBuffer->Unmap();
-#endif
-
     // Build SVO init root pass.
     mSVOUniformBuffer->Bind(0);
     mVoxelFragmentListBuffer->Bind(1);
@@ -504,15 +469,15 @@ void SVOApp::FrameFunc()
     infoPanel->SetTimingLabelValue("Build SVO Init Root Pass", workLoad);
 #ifdef DEBUG_VOXEL
     mSVOBuffer->Bind();
-    svoBufferData = mSVOBuffer->Map(BA_Read_Only);
-    svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
-    svoNodeTileData = (SVONodeTile*)(svoBufferHeadData + 1);
+    void* svoBufferData = mSVOBuffer->Map(BA_Read_Only);
+    SVONodeBufferHead* svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
+    SVONodeTile* svoNodeTileData = (SVONodeTile*)(svoBufferHeadData + 1);
     mSVOBuffer->Unmap();
 #endif
 
     mTimer->Start();
     unsigned int curLevel = 1;
-    for( ; curLevel <= 7/*mSVOMaxLevel*/; ++curLevel )
+    for( ; curLevel <= mSVOMaxLevel; ++curLevel )
     {
         // Update SVO uniform buffer.
         mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(unsigned int), (void*)&curLevel);
@@ -634,7 +599,6 @@ void SVOApp::Terminate()
     mVoxelGridIntersectionTask = 0;
     mGatherVoxelFragmentListInfoTask = 0;
     mBuildSVOTask = 0;
-    mResetSVOBufferTask = 0;
     mVoxelBuffer = 0;
     mIndirectCommandBuffer = 0;
     mVoxelFragmentListBuffer = 0;
@@ -672,6 +636,10 @@ void SVOApp::ProcessInput()
 		mIsRotatingModel = !mIsRotatingModel;
 	}
     if( glfwGetKey(Window, GLFW_KEY_T) == GLFW_PRESS )
+    {
+        mVoxelizeCornell = !mVoxelizeCornell;
+    }
+    if( glfwGetKey(Window, GLFW_KEY_Y) == GLFW_PRESS )
     {
         mShowCornell = !mShowCornell;
     }
