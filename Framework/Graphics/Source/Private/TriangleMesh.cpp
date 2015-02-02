@@ -23,13 +23,14 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
     mTriangleMaxEdgeLength = 0.0f;
     IsQuad = false;
     InstanceCount = 1;
-    IsIndirect = false;
+    mIsIndirect = false;
+    mCommandOffset = 0;
     SetCamera(camera);
 }
 //----------------------------------------------------------------------------
 TriangleMesh::~TriangleMesh()
 {
-    IndirectCommandBuffer = 0;
+    mIndirectCommandBuffer = 0;
 
 	glDeleteBuffers(1, &mVBO);
 	glDeleteBuffers(1, &mIBO);
@@ -63,7 +64,7 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
     {
         if( !IsQuad )
         {
-            if( !IsIndirect )
+            if( !mIsIndirect )
             {
                 if( InstanceCount == 1 )
                 {
@@ -77,8 +78,9 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
             }
             else
             {
-                assert(IndirectCommandBuffer != 0);
-                glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_SHORT, 0);
+                assert(mIndirectCommandBuffer != 0);
+                glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_SHORT, 
+                    (void*)mCommandOffset);
             }
         }
         else
@@ -337,20 +339,20 @@ void TriangleMesh::CreateDeviceResource(GPUDevice* device)
 	// Get shader constants here.
 	OnGetShaderConstants();
 
-    if( IsIndirect )
+    if( mIsIndirect )
     {
-        assert(IndirectCommandBuffer);
-        IndirectCommandBuffer->Bind();
-        DrawElementsIndirectCommand* bufferData = 
-            (DrawElementsIndirectCommand*)IndirectCommandBuffer->Map(
-            BA_Write_Only);
+        assert(mIndirectCommandBuffer);
+        mIndirectCommandBuffer->Bind();
+        char* bufferData = (char*)mIndirectCommandBuffer->Map(BA_Write_Only);
         assert( bufferData );
-        bufferData->Count = (unsigned int)mIndexData.size();
-        bufferData->PrimCount = 0;
-        bufferData->FirstIndex = 0;
-        bufferData->BaseVertex = 0;
-        bufferData->BaseInstance = 0;
-        IndirectCommandBuffer->Unmap();
+        DrawElementsIndirectCommand* commandBufferData = 
+            (DrawElementsIndirectCommand*)(bufferData + mCommandOffset);
+        commandBufferData->Count = (unsigned int)mIndexData.size();
+        commandBufferData->PrimCount = 0;
+        commandBufferData->FirstIndex = 0;
+        commandBufferData->BaseVertex = 0;
+        commandBufferData->BaseInstance = 0;
+        mIndirectCommandBuffer->Unmap();
     }
 }
 //----------------------------------------------------------------------------
@@ -629,5 +631,18 @@ void TriangleMesh::CreateIndexBufferDeviceResource()
     GLenum res = glGetError();
     assert(res == GL_NO_ERROR);
 #endif
+}
+//----------------------------------------------------------------------------
+void TriangleMesh::SetIndirectCommandBuffer(
+    StructuredBuffer* indirectCommandBuffer, unsigned int commandOffset)
+{
+    mIsIndirect = true;
+    mIndirectCommandBuffer = indirectCommandBuffer;
+    mCommandOffset = commandOffset;
+}
+//----------------------------------------------------------------------------
+bool TriangleMesh::IsIndirect() const
+{
+    return mIsIndirect;
 }
 //----------------------------------------------------------------------------

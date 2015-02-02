@@ -205,8 +205,7 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
     mVoxelCubeModel = new VoxelCubeTriMesh(material, mMainCamera);
     mVoxelCubeModel->LoadFromFile("box.ply");
     mVoxelCubeModel->GenerateNormals();
-    mVoxelCubeModel->IsIndirect = true;
-    mVoxelCubeModel->IndirectCommandBuffer = mIndirectCommandBuffer;
+    mVoxelCubeModel->SetIndirectCommandBuffer(mIndirectCommandBuffer, 0);
     mVoxelCubeModel->CreateDeviceResource(mDevice);
 
 	// Create information panel.

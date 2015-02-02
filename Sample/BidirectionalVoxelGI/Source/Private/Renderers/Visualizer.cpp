@@ -278,10 +278,9 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mVoxelCubeModel = new VoxelCubeTriMesh(material, mainCamera);
     mVoxelCubeModel->LoadFromFile("box.ply");
     mVoxelCubeModel->GenerateNormals();
-    mVoxelCubeModel->IsIndirect = true;
-    mVoxelCubeModel->IndirectCommandBuffer = 
+    mVoxelCubeModel->SetIndirectCommandBuffer(
         (StructuredBuffer*)GetGenericBufferByName(
-        RTGI_Visualizer_IndirectCommandBuffer_Name);
+        RTGI_Visualizer_IndirectCommandBuffer_Name), 0);
     mVoxelCubeModel->CreateDeviceResource(device);
 
     // Create screen quad.

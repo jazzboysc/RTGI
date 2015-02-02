@@ -74,12 +74,18 @@ public:
 	glm::mat4 Offset;
 
     unsigned int InstanceCount;
-    bool IsIndirect;
-    StructuredBufferPtr IndirectCommandBuffer;
+
+    void SetIndirectCommandBuffer(StructuredBuffer* indirectCommandBuffer, 
+        unsigned int commandOffset);
+    bool IsIndirect() const;
 
 protected:
 	void CreateVertexBufferDeviceResource();
 	void CreateIndexBufferDeviceResource();
+
+    bool mIsIndirect;
+    StructuredBufferPtr mIndirectCommandBuffer;
+    unsigned int mCommandOffset;
 
 	AABB mModelSpaceBB;
     float mTriangleMaxEdgeLength;
