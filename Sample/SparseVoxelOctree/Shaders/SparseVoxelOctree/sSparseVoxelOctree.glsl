@@ -41,6 +41,8 @@ struct SVONode
 {
     uint child;
     uint flag;
+
+    SVONodeAABB nodeBox;
 };
 
 layout(std430, binding = 3)  buffer _svoNodeBuffer
@@ -130,23 +132,6 @@ SVONodeAABB GetSVOChildNodeBox(uint childIndex, SVONodeAABB nodeBox)
     childNodeBoxes[6].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, nodeBoxMax.y, mid.z));
     childNodeBoxes[7].Min = Ivec3ToUint(mid);
     childNodeBoxes[7].Max = Ivec3ToUint(nodeBoxMax);
-
-    //childNodeBoxes[8].Min = Ivec3ToUint(nodeBoxMin);
-    //childNodeBoxes[8].Max = Ivec3ToUint(mid);
-    //childNodeBoxes[9].Min = Ivec3ToUint(ivec3(nodeBoxMin.x, nodeBoxMin.y, mid.z));
-    //childNodeBoxes[9].Max = Ivec3ToUint(ivec3(mid.x, mid.y, nodeBoxMax.z));
-    //childNodeBoxes[10].Min = Ivec3ToUint(ivec3(nodeBoxMin.x, mid.y, nodeBoxMin.z));
-    //childNodeBoxes[10].Max = Ivec3ToUint(ivec3(mid.x, nodeBoxMax.y, mid.z));
-    //childNodeBoxes[11].Min = Ivec3ToUint(ivec3(nodeBoxMin.x, mid.y, mid.z));
-    //childNodeBoxes[11].Max = Ivec3ToUint(ivec3(mid.x, nodeBoxMax.y, nodeBoxMax.z));
-    //childNodeBoxes[12].Min = Ivec3ToUint(ivec3(mid.x, nodeBoxMin.y, nodeBoxMin.z));
-    //childNodeBoxes[12].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, mid.y, mid.z));
-    //childNodeBoxes[13].Min = Ivec3ToUint(ivec3(mid.x, nodeBoxMin.y, mid.z));
-    //childNodeBoxes[13].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, mid.y, nodeBoxMax.z));
-    //childNodeBoxes[14].Min = Ivec3ToUint(ivec3(mid.x, mid.y, nodeBoxMin.z));
-    //childNodeBoxes[14].Max = Ivec3ToUint(ivec3(nodeBoxMax.x, nodeBoxMax.y, mid.z));
-    //childNodeBoxes[15].Min = Ivec3ToUint(mid);
-    //childNodeBoxes[15].Max = Ivec3ToUint(nodeBoxMax);
 
     return childNodeBoxes[childIndex];
 }

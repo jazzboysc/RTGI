@@ -486,6 +486,7 @@ void SVOApp::FrameFunc()
 #endif
 
     // Build SVO init root pass.
+    mSVOUniformBuffer->Bind(0);
     mVoxelFragmentListBuffer->Bind(1);
     mSVOBuffer->Bind(3);
     mTimer->Start();

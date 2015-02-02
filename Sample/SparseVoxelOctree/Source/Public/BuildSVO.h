@@ -12,18 +12,28 @@
 namespace RTGI
 {
 
+//----------------------------------------------------------------------------
 // These structs are used for debugging SVO node buffer.
+//----------------------------------------------------------------------------
+struct SVONodeAABB
+{
+    unsigned int Min;
+    unsigned int Max;
+};
+//----------------------------------------------------------------------------
 struct SVONode
 {
     unsigned int child;
     unsigned int flag;
-};
 
+    SVONodeAABB nodeBox;
+};
+//----------------------------------------------------------------------------
 struct SVONodeTile
 {
     SVONode children[8];
 };
-
+//----------------------------------------------------------------------------
 struct SVONodeBufferHead
 {
     // Indirect command buffer data for allocation of SVO node tile pass.
@@ -44,6 +54,7 @@ struct SVONodeBufferHead
     unsigned int value3;
     unsigned int value4;
 };
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Author: Che Sun

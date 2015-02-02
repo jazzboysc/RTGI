@@ -20,5 +20,18 @@ void main()
         svoNodeBuffer.instanceCount = 1;
         svoNodeBuffer.first = 0;
         svoNodeBuffer.baseInstance = 0;
+
+        // Create SVO root node bound.
+        SVONodeAABB nodeBox;
+        nodeBox.Min = Ivec3ToUint(ivec3(0, 0, 0));
+        nodeBox.Max = Ivec3ToUint(ivec3(svoUniformBuffer.dim, svoUniformBuffer.dim, 
+            svoUniformBuffer.dim));
+
+        // Create first level node boxes.
+        for( int i = 0; i < SVO_NODE_TILE_SIZE; ++i )
+        {
+            svoNodeBuffer.data[svoNodeBuffer.rootChild*SVO_NODE_TILE_SIZE + i].nodeBox = 
+                GetSVOChildNodeBox(i, nodeBox);
+        }
     }
 }
