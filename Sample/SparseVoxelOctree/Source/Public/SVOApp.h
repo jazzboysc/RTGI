@@ -52,6 +52,7 @@ private:
 
     ShowMode mShowMode;
     bool mIsRotatingModel;
+    bool mShowCornell;
 
     AtomicCounterBufferPtr mAtomicCounterBuffer;
     ResetVoxelBufferPtr mResetVoxelBufferTask;

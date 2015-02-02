@@ -17,6 +17,7 @@ SVOApp::SVOApp(int width, int height)
 	Height = height;
 	Title = "Sparse voxel octree demo";
     mIsRotatingModel = false;
+    mShowCornell = false;
     mShowMode = SM_VoxelGrid;
 }
 //----------------------------------------------------------------------------
@@ -342,12 +343,15 @@ void SVOApp::Initialize(GPUDevice* device)
 //----------------------------------------------------------------------------
 void SVOApp::VoxelizeScene()
 {
- //   glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
-	//mGround->Render(0, 0);
-	//mCeiling->Render(0, 0);
-	//mBackWall->Render(0, 0);
-	//mLeftWall->Render(0, 0);
-	//mRightWall->Render(0, 0);
+    if( mShowCornell )
+    {
+        glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
+        mGround->Render(0, 0);
+        mCeiling->Render(0, 0);
+        mBackWall->Render(0, 0);
+        mLeftWall->Render(0, 0);
+        mRightWall->Render(0, 0);
+    }
 
     glViewport(0, 0, 2, 2);
 	mModel->Render(0, 0);
@@ -355,11 +359,15 @@ void SVOApp::VoxelizeScene()
 //----------------------------------------------------------------------------
 void SVOApp::ShowVoxelization()
 {
-    //mGround->Render(0, 1);
-    //mCeiling->Render(0, 1);
-    //mBackWall->Render(0, 1);
-    //mLeftWall->Render(0, 1);
-    //mRightWall->Render(0, 1);
+    if( mShowCornell )
+    {
+        mGround->Render(0, 1);
+        mCeiling->Render(0, 1);
+        mBackWall->Render(0, 1);
+        mLeftWall->Render(0, 1);
+        mRightWall->Render(0, 1);
+    }
+
     mModel->Render(0, 1);
 }
 //----------------------------------------------------------------------------
@@ -663,6 +671,10 @@ void SVOApp::ProcessInput()
 	{
 		mIsRotatingModel = !mIsRotatingModel;
 	}
+    if( glfwGetKey(Window, GLFW_KEY_T) == GLFW_PRESS )
+    {
+        mShowCornell = !mShowCornell;
+    }
 }
 //----------------------------------------------------------------------------
 void SVOApp::OnButtonClick(System::Object^  sender, 
