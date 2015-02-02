@@ -16,6 +16,15 @@ RTGI::MaterialTemplate::MaterialTemplate(Technique* _pTechnique)
 {
 	AddTechnique(_pTechnique);
 }
+//----------------------------------------------------------------------------
+RTGI::MaterialTemplate::MaterialTemplate(
+	std::initializer_list<Technique*> _techniques)
+{
+	for (auto i : _techniques)
+	{
+		AddTechnique(i);
+	}
+}
 
 //----------------------------------------------------------------------------
 MaterialTemplate::~MaterialTemplate()

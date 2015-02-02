@@ -21,6 +21,9 @@ public:
 	void Terminate() override;
 
 private:
+	void DrawReceiverLightPoV();
+	void DrawRefracterLightPoV();
+	void DrawReceiverCameraPoV();
 	void DrawScene();
 
 	enum ShowMode
@@ -40,6 +43,24 @@ private:
 	Texture2DPtr mNormalTexture;
 	Texture2DPtr mColorTexture;
 	Texture2DPtr mDepthTexture;
+
+	// Receiver G-buffer
+	FrameBufferPtr mRecvGBuffer;
+	Texture2DPtr mRecvPositionTexture;
+	Texture2DPtr mRecvNormalTexture;
+	Texture2DPtr mRecvColorTexture;
+	Texture2DPtr mRecvDepthTexture;
+
+	// Refracter G-buffer
+	FrameBufferPtr mRefracGBuffer;
+	Texture2DPtr mRefracPositionTexture;
+	Texture2DPtr mRefracNormalTexture;
+	Texture2DPtr mRefracColorTexture;
+	Texture2DPtr mRefracDepthTexture;
+
+	// CausticsMap G-buffer
+	FrameBufferPtr mCausticsGBuffer;
+	Texture2DPtr mCausticsIntersectionPositionTexture;
 
 	TextureCubePtr mCubeMap;
 

@@ -9,7 +9,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 04/23/2014
 //----------------------------------------------------------------------------
-class CausticsTriMesh : public TriangleMesh
+	class CausticsTriMesh : public TriangleMesh
 {
 public:
 	CausticsTriMesh(Material* material, Camera* camera);
@@ -26,6 +26,6 @@ private:
 	ShaderUniform mMaterialColorLoc;
 };
 
-typedef RefPointer<CausticsTriMesh> CausticsTriMeshPtr;
+	typedef RefPointer<CausticsTriMesh> CausticsTriMeshPtr;
 
 }

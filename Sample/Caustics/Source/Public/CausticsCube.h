@@ -21,9 +21,18 @@ public:
 
 	vec3 MaterialColor;
 	TextureCubePtr CubeTexture;
+	Texture2DPtr VertexSplattingTexture;
+
+	LightPtr Light;
 
 private:
+	ShaderUniform mLightPositionLoc;
+	ShaderUniform mLightViewLoc;
+	ShaderUniform mLightProjLoc;
+	ShaderUniform mLightColorLoc;
+
 	ShaderUniform mMaterialColorLoc;
+	ShaderUniform mVertexSplattingSamplerLoc;
 
 	ShaderUniform mCubemapSampler;
 };

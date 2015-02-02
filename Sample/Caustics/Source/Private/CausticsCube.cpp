@@ -18,8 +18,10 @@ void CausticsCube::OnGetShaderConstants()
 {
 	TriangleMesh::OnGetShaderConstants();
 
-	ShaderProgram* program = mMaterial->GetProgram(0, 0);
+	auto program = mMaterial->GetProgram(0, 0);
+
     program->GetUniformLocation(&mMaterialColorLoc, "materialColor");
+
 	program->GetUniformLocation(&mCubemapSampler, "cubemapSampler");
 }
 //----------------------------------------------------------------------------
@@ -27,17 +29,30 @@ void CausticsCube::OnUpdateShaderConstants(int technique, int pass)
 {
 	TriangleMesh::OnUpdateShaderConstants(technique, pass);
 
-    mMaterialColorLoc.SetValue(MaterialColor);
+	SamplerDesc sampler;
+	sampler.MinFilter = FT_Linear_Linear;
+	sampler.MagFilter = FT_Linear;
+	sampler.WrapS = WT_Clamp;
+	sampler.WrapT = WT_Clamp;
+	sampler.WrapR = WT_Clamp;
 
-    SamplerDesc sampler;
-    sampler.MinFilter = FT_Linear_Linear;
-    sampler.MagFilter = FT_Linear;
-    sampler.WrapS = WT_Clamp;
-    sampler.WrapT = WT_Clamp;
-    sampler.WrapR = WT_Clamp;
+	if (technique == 0)
+	{
+		mMaterialColorLoc.SetValue(MaterialColor);
+		CubeTexture->BindToSampler(0, &sampler);
+		mCubemapSampler.SetValue(0);
+	}
 
-    CubeTexture->BindToSampler(0, &sampler);
+	if (technique == 1)
+	{
+		vec3 lightLoc = Light->GetLocation();
+		mLightPositionLoc.SetValue(lightLoc);
+		mLightViewLoc.SetValue(Light->GetProjector()->GetViewTransform());
+		mLightProjLoc.SetValue(Light->GetProjector()->GetProjectionTransform());
+		mLightColorLoc.SetValue(Light->Color);
 
-	mCubemapSampler.SetValue(0);
+		VertexSplattingTexture->BindToSampler(0, &sampler);
+		mVertexSplattingSamplerLoc.SetValue(0);
+	}
 }
 //----------------------------------------------------------------------------

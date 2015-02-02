@@ -74,7 +74,7 @@ void Application::Initialize(GPUDevice* device)
 	GPU_DEVICE_FUNC(mDevice, SetAnisFilterLevel)(maxAnisFilterLevel);
 
 	// some GL default values
-	float color = 0.5f;
+	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

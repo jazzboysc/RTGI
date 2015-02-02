@@ -10,7 +10,7 @@ uniform vec3 materialColor;
 void main()
 {
 	vec3 vNormal = normalize(vNormalWorld.xyz);
-	vNormal.xyz = (vNormal.xyz + 1.0) * 0.5;
+	//vNormal.xyz = (vNormal.xyz + 1.0) * 0.5;
 
 	gl_FragData[0] = vPositionWorld;
 	gl_FragData[1] = vec4(vNormal, 0.0);

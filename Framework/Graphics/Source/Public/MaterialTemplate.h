@@ -22,6 +22,7 @@ class MaterialTemplate : public RefObject
 public:
 	MaterialTemplate();
 	MaterialTemplate(Technique* _pTechnique);
+	MaterialTemplate(std::initializer_list<Technique*> _techniques);
 	~MaterialTemplate();
 
 	void AddTechnique(Technique* technique);

@@ -106,6 +106,7 @@ void PassInfo::Create(GLuint program, GLuint vbo, GLuint ibo, bool hasNormal,
 
 #ifdef _DEBUG
     GLenum error = glGetError();
+	printf("%s\n", gluErrorString(error));
     assert(error == GL_NO_ERROR);
 #endif
 }

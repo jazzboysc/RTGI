@@ -1,34 +1,31 @@
-#version 120
+#version 430
 
-varying vec2 pTCoord;
+in vec2 pTCoord;
+in vec4 vPositionWorld;
+in vec4 vNormalWorld;
+in float intensity;
 
 uniform vec3 lightPosition;
+uniform mat4 lightView;
+uniform mat4 lightProj;
 uniform vec3 lightColor;
 
-uniform mat4 World;
-uniform mat4 View;
-uniform mat4 Proj;
-
-uniform sampler2D positionSampler;
-uniform sampler2D normalSampler;
-uniform sampler2D reflectanceSampler;
+vec2 getTC(mat4 mVP, vec3 wpos)
+{
+	vec4 texPt = mVP * vec4(wpos, 1);
+	vec2 tc = vec2(0.5*(texPt.xy / texPt.w) + vec2(0.5, 0.5));
+	return tc;
+}
 
 void main()
 {
-	vec3 worldNormal = texture2D(normalSampler, pTCoord).rgb;
-	worldNormal = worldNormal.xyz*2.0 - vec3(1.0);
-	vec3 worldPosition = texture2D(positionSampler, pTCoord).rgb;
-	vec3 worldLightPosition = (World * vec4(lightPosition, 1.0)).xyz;
 
-	
-	vec3 lightDir = worldLightPosition - worldPosition;
-	float lightDistance = length(lightDir);
-	lightDir = lightDir / lightDistance;
-	float cosAlpha = max(0.0, dot(lightDir, worldNormal));
+	gl_FragData[0] = vec4(1,1,1, 1);
+	//gl_FragData[0] = vec4(dist, dist, dist, 1.0) * 1.5;// vec4(intPt,1);
+	////
 
-	vec3 reflectance = texture2D(reflectanceSampler, pTCoord).rgb;
+	         // look up alpha mask
 
-	vec3 diffuseColor = vec3(cosAlpha) * lightColor * reflectance;
-
-	gl_FragData[0] = vec4(diffuseColor, 1.0);
+    //     float4 tcol = tex2D(pixelSampler,input.tc);
+    //     return float4(input.light_int,1-tcol.r);
 }

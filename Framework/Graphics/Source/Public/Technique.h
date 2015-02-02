@@ -20,6 +20,7 @@ class Technique : public PassManager
 public:
 	Technique();
 	Technique(Pass* _pPass);
+	Technique(std::initializer_list<Pass*> _passes);
 	~Technique();
 };
 

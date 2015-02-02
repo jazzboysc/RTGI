@@ -11,10 +11,18 @@ using namespace RTGI;
 Technique::Technique()
 {
 }
-
+//----------------------------------------------------------------------------
 RTGI::Technique::Technique(Pass* _pPass)
 {
 	AddPass(_pPass);
+}
+//----------------------------------------------------------------------------
+RTGI::Technique::Technique(std::initializer_list<Pass*> _passes)
+{
+	for (auto i : _passes)
+	{
+		AddPass(i);
+	}
 }
 
 //----------------------------------------------------------------------------

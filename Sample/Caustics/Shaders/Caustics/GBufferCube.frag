@@ -12,7 +12,7 @@ uniform samplerCube cubemapSampler;
 void main()
 {
 	vec3 vNormal = normalize(vNormalWorld.xyz);
-	vNormal.xyz = (-vNormal.xyz + 1.0) * 0.5;
+	//vNormal.xyz = (-vNormal.xyz + 1.0) * 0.5;
 	vec4 texColor = textureCube(cubemapSampler, pTCoord);
 
 	gl_FragData[0] = vPositionWorld;
