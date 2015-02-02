@@ -17,7 +17,7 @@ void GatherVoxelFragmentListInfo::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 void GatherVoxelFragmentListInfo::OnPreDispatch(unsigned int pass)
 {
-    glMemoryBarrier(GL_ALL_BARRIER_BITS);
+    glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT);
 }
 //----------------------------------------------------------------------------
 void GatherVoxelFragmentListInfo::OnPostDispatch(unsigned int pass)
