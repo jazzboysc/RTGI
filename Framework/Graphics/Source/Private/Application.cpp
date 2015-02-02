@@ -79,8 +79,8 @@ void Application::Initialize(GPUDevice* device)
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-
-
+    // Unrestricted frame rates.
+    glfwSwapInterval(0);
 
 	// Call child class initialize
 	this->Initialize(device);
