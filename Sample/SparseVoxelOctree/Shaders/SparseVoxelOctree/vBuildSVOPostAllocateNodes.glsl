@@ -11,4 +11,8 @@ void main()
     // Update indirect command buffer for SVO allocate nodes pass.
     svoNodeBuffer.allocThreadCountForCurLevel = 
         (svoNodeBuffer.curLevelEndIndex - svoNodeBuffer.curLevelStartIndex)*SVO_NODE_TILE_SIZE;
+
+    // Update indirect command buffer for SVO visualization pass.
+    //svoNodeBuffer.ic2PrimCount = svoNodeBuffer.curLevelEndIndex*SVO_NODE_TILE_SIZE;
+    svoNodeBuffer.ic2PrimCount = svoNodeBuffer.curLevelStartIndex*SVO_NODE_TILE_SIZE;
 }

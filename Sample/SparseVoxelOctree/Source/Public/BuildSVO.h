@@ -42,6 +42,17 @@ struct SVONodeBufferHead
     unsigned int  first;
     unsigned int  baseInstance;
 
+    // Indirect command buffer data for visualizing SVO nodes.
+    unsigned int  ic2Count;
+    unsigned int  ic2PrimCount;
+    unsigned int  ic2FirstIndex;
+    unsigned int  ic2BaseVertex;
+    unsigned int  ic2BaseInstance;
+
+    unsigned int offset0;
+    unsigned int offset1;
+    unsigned int offset2;
+
     // Shared data between SVO passes.
     unsigned int rootFlag;
     unsigned int rootChild;

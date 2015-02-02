@@ -53,6 +53,17 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     uint  first;
     uint  baseInstance;
 
+    // Indirect command buffer data for SVO visualization.
+    uint  ic2Count;
+    uint  ic2PrimCount;
+    uint  ic2FirstIndex;
+    uint  ic2BaseVertex;
+    uint  ic2BaseInstance;
+
+    uint offset0;
+    uint offset1;
+    uint offset2;
+
     // Shared data between SVO passes.
     uint rootFlag;
     uint rootChild;

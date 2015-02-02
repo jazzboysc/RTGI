@@ -81,6 +81,18 @@ void SVOApp::Initialize(GPUDevice* device)
     MaterialTemplate* mtShowVoxelGrid = new MaterialTemplate();
     mtShowVoxelGrid->AddTechnique(techShowVoxelGrid);
 
+    ShaderProgramInfo showSVOProgramInfo;
+    showSVOProgramInfo.VShaderFileName = "SparseVoxelOctree/vShowSVO.glsl";
+    showSVOProgramInfo.FShaderFileName = "SparseVoxelOctree/fShowSVO.glsl";
+    showSVOProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                         ShaderType::ST_Fragment;
+    Pass* passShowSVO = new Pass(showSVOProgramInfo);
+
+    Technique* techShowSVO = new Technique();
+    techShowSVO->AddPass(passShowSVO);
+    MaterialTemplate* mtShowSVO = new MaterialTemplate();
+    mtShowSVO->AddTechnique(techShowSVO);
+
     // Create reset voxel buffer task.
     ShaderProgramInfo resetVoxelBufferProgramInfo;
     resetVoxelBufferProgramInfo.CShaderFileName = "SparseVoxelOctree/cResetVoxelBuffer.glsl";
@@ -274,6 +286,15 @@ void SVOApp::Initialize(GPUDevice* device)
     mVoxelCubeModel->GenerateNormals();
     mVoxelCubeModel->SetIndirectCommandBuffer(mIndirectCommandBuffer, 0);
     mVoxelCubeModel->CreateDeviceResource(mDevice);
+
+    // Create SVO node cube model.
+    material = new Material(mtShowSVO);
+    mSVONodeCubeModel = new SVOCubeTriMesh(material, mMainCamera);
+    mSVONodeCubeModel->LoadFromFile("box.ply");
+    mSVONodeCubeModel->GenerateNormals();
+    mSVONodeCubeModel->SetIndirectCommandBuffer(mSVOBuffer, 16);
+    mSVONodeCubeModel->CreateDeviceResource(mDevice);
+    mSVONodeCubeModel->SceneBB = &mSceneBB;
 
 	// Create information panel.
 	int screenX, screenY;
@@ -527,12 +548,21 @@ void SVOApp::FrameFunc()
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Build SVO Pass", workLoad);
 
-    // Visualize scene voxelization pass.
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
     glViewport(0, 0, Width, Height);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Visualize SVO pass.
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    mSVOBuffer->BindToIndirect();
+    mSVONodeCubeModel->Render(0, 0);
+
+    // Visualize scene voxelization pass.
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     mTimer->Start();
     if( mShowMode == SM_VoxelGrid )
     {
@@ -611,6 +641,7 @@ void SVOApp::Terminate()
 	mRightWall = 0;
 	mModel = 0;
     mVoxelCubeModel = 0;
+    mSVONodeCubeModel = 0;
     mVoxelRaySegment = 0;
 
     mTimer = 0;
