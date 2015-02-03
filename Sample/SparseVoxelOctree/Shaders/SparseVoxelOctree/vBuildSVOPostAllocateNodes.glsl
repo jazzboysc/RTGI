@@ -13,6 +13,6 @@ void main()
         (svoNodeBuffer.curLevelEndIndex - svoNodeBuffer.curLevelStartIndex)*SVO_NODE_TILE_SIZE;
 
     // Update indirect command buffer for SVO visualization pass.
-    //svoNodeBuffer.ic2PrimCount = svoNodeBuffer.curLevelEndIndex*SVO_NODE_TILE_SIZE;
-    svoNodeBuffer.ic2PrimCount = svoNodeBuffer.curLevelStartIndex*SVO_NODE_TILE_SIZE;
+    svoNodeBuffer.ic2PrimCount = svoNodeBuffer.curLevelEndIndex*SVO_NODE_TILE_SIZE;
+    //svoNodeBuffer.ic2PrimCount = svoNodeBuffer.curLevelStartIndex*SVO_NODE_TILE_SIZE;
 }
