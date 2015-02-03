@@ -71,6 +71,7 @@
 #include "ScreenQuad.h"
 #include "GeometryAttributes.h"
 #include "RenderSet.h"
+#include "QuadMesh.h"
 
 // Renderers
 #include "BufferBase.h"
