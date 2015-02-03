@@ -11,12 +11,9 @@ using namespace RTGI;
 PointSet::PointSet(Material* material)
 	:
 	RenderObject(material),
-	mPointCount(0)
+	mPointCount(0),
+    mComponent(0)
 {
-	mWorldWindow[0] = 0.0f;
-	mWorldWindow[1] = 0.0f;
-	mWorldWindow[2] = 0.0f;
-	mWorldWindow[3] = 0.0f;
 }
 //----------------------------------------------------------------------------
 PointSet::~PointSet()
@@ -26,81 +23,53 @@ PointSet::~PointSet()
 //----------------------------------------------------------------------------
 void PointSet::Render(int technique, int pass)
 {
-	// TODO:
-	//// Enable shader program.
-	//mShaderProgram->Enable();
-
-	//// Update shader constants.
-	//glUniformMatrix4fv(mWorldWindowTransformLoc, 1, GL_FALSE, 
-	//	mWorldWindowTransform);
-
-	//// Enable VAO and VBO.
-	//glBindVertexArray(mVAO);
-	//glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-
-	//glDrawArrays(GL_POINTS, 0, mPointCount);
-
-	//// Disable VAO and VBO.
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindVertexArray(0);
-
-	//// Disable shader program.
-	//mShaderProgram->Disable();
+    // Apply current rendering pass.
+    mMaterial->Apply(technique, pass);
 }
 //----------------------------------------------------------------------------
-void PointSet::CreateDeviceResource()
+void PointSet::CreateDeviceResource(GPUDevice* device)
 {
-	// TODO:
-	//// First create shader program used by this geometry object.
-	//mShaderProgram->CreateDeviceResource();
-	//GLuint program = mShaderProgram->GetProgram();
+    if( mVertexData.size() > 0 )
+    {
+        glGenBuffers(1, &mVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mPointCount*mComponent,
+            (GLvoid*)&mVertexData[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
 
-	//// Create a VAO for this object.
-	//glGenVertexArrays(1, &mVAO);
-	//glBindVertexArray(mVAO);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
 
-	//// Create a VBO for this object.
-	//if( mVertexData.size() > 0 )
-	//{
-	//	glGenBuffers(1, &mVBO);
-	//	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*mVertexData.size(), 
-	//		(GLvoid*)&mVertexData[0], GL_STATIC_DRAW);
-	//}
+    // Create shader programs.
+    GeometryAttributes attributes;
+    attributes.VBO = mVBO;
+    attributes.IBO = 0;
+    attributes.HasNormal = false;
+    attributes.HasTCoord = false;
+    attributes.VertexComponentCount = mComponent;
+    mMaterial->CreateDeviceResource(device, &attributes);
 
-	//// Specify vertex attributes.
-	//GLuint loc = glGetAttribLocation(program, "vPosition");
- //   glEnableVertexAttribArray(loc);
- //   glVertexAttribPointer(loc, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	//glBindVertexArray(0);
-
-	//// Get shader constants.
-	//mWorldWindowTransformLoc = glGetUniformLocation(program, "Ortho2DMatrix");
+    // Get shader constants here.
+    OnGetShaderConstants();
 }
 //----------------------------------------------------------------------------
-void PointSet::LoadFromMemory(int pointCount, GLfloat* vertexData)
+void PointSet::LoadFromMemory(unsigned int pointCount, float* vertexData,
+    unsigned int component)
 {
-	assert( pointCount > 0 && vertexData );
+    assert(pointCount > 0 && vertexData && component > 0);
 
 	mPointCount = pointCount;
-	mVertexData.reserve(mPointCount<<2);
-	for( int i = 0; i < mPointCount; ++i )
+    mComponent = component;
+    mVertexData.reserve(mPointCount*component);
+	for( unsigned int i = 0; i < mPointCount; ++i )
 	{
-		mVertexData.push_back(vertexData[2*i    ]);
-		mVertexData.push_back(vertexData[2*i + 1]);
+        for( unsigned int j = 0; j < component; ++j )
+        {
+            mVertexData.push_back(vertexData[i*component + j]);
+        }
 	}
-}
-//----------------------------------------------------------------------------
-void PointSet::SetWorldWindow(GLfloat left, GLfloat top, GLfloat right, 
-	GLfloat bottom)
-{
-	mWorldWindow[0] = left;
-	mWorldWindow[1] = top;
-	mWorldWindow[2] = right;
-	mWorldWindow[3] = bottom;
-
-	mWorldWindowTransform = glm::ortho(mWorldWindow[0], 
-		mWorldWindow[2], mWorldWindow[3], mWorldWindow[1]);
 }
 //----------------------------------------------------------------------------

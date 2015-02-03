@@ -25,20 +25,16 @@ public:
 	virtual void Render(int technique, int pass);
 
 	// Loada data from user specified memory location.
-	void LoadFromMemory(int pointCount, GLfloat* vertexData);
+	void LoadFromMemory(unsigned int pointCount, float* vertexData, 
+        unsigned int component);
 
-	void SetWorldWindow(GLfloat left, GLfloat top, GLfloat right, 
-		GLfloat bottom);
+    void CreateDeviceResource(GPUDevice* device);
+    virtual void OnGetShaderConstants(){};
 
-	void CreateDeviceResource();
-
-private:
-	float mWorldWindow[4]; // Left, Top, Right, Bottom;
-	glm::mat4 mWorldWindowTransform;
-	//GLint mWorldWindowTransformLoc;
-
-	int mPointCount;
-	std::vector<GLfloat> mVertexData;
+protected:
+	unsigned int mPointCount;
+    unsigned int mComponent;
+	std::vector<float> mVertexData;
 };
 
 typedef RefPointer<PointSet> PointSetPtr;
