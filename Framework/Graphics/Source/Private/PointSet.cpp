@@ -21,7 +21,7 @@ PointSet::~PointSet()
 	glDeleteBuffers(1, &mVBO);
 }
 //----------------------------------------------------------------------------
-void PointSet::Render(int technique, int pass)
+void PointSet::Render(int technique, int pass, SubRenderer* subRenderer)
 {
     // Apply current rendering pass.
     mMaterial->Apply(technique, pass);
@@ -29,7 +29,8 @@ void PointSet::Render(int technique, int pass)
 //----------------------------------------------------------------------------
 void PointSet::OnRender(Pass*, PassInfo*)
 { 
-    glDrawArrays(GL_POINTS, 0, mPointCount);
+	//glVertexPointer(3, GL_FLOAT, 0, &mVertexData[0]);
+	glDrawArrays(GL_POINTS, 0, mPointCount);
 }
 //----------------------------------------------------------------------------
 void PointSet::CreateDeviceResource(GPUDevice* device)

@@ -19,12 +19,8 @@ uniform mat4 View;
 uniform mat4 Proj;
 
 
-uniform float causticsMapResolution;
-uniform sampler2D intersectionPositionSampler;
-
 void main()
 {
-	//*
     gl_Position = vPosition;
 	gl_Position.w = 1.0;
 
@@ -32,17 +28,4 @@ void main()
 	vPositionWorld = World * vPosition;
 	pTCoord = vTCoord;
 
-
-	         // look up the intersection position
-	vec4 intPt = texture(intersectionPositionSampler, vTCoord);
-         // set the output value
-	mat4 mLightViewProj = lightProj * lightView;
-
-	
-         // compute the light intensity
-	intensity = vec3(1000,1000,1000)*(4.0/causticsMapResolution);
-
-	gl_Position = intPt * mLightViewProj;
-
-	//*/
 }

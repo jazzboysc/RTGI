@@ -22,6 +22,10 @@ void CausticsApp::Initialize(GPUDevice* device)
 	glFrontFace(GL_CCW);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	// Create camera and light
 	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 1.0f, 50.0f);
 	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f),
@@ -29,17 +33,10 @@ void CausticsApp::Initialize(GPUDevice* device)
 	
 	auto mLightCamera = new Camera;
 	mLightCamera->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 1.0f, 50.0f);
-	mLightCamera->SetLookAt(vec3(0.0f, 0.65f, 0.0f), vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
+	mLightCamera->SetLookAt(vec3(0.0f, 1.55f, 0.0f), vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
 
 	mLight = new Light;
 	mLight->SetProjector(mLightCamera);
-
-
-
-	ShaderProgramInfo SIReceiver;
-	SIReceiver << "Caustics/receiverMesh.vert";
-	SIReceiver << "Caustics/receiverMesh.frag";
-	auto mtReceiver = new MaterialTemplate(new Technique(new Pass(SIReceiver)));
 	
 	// G-buffer for receiver object
 	mRecvPositionTexture = new Texture2D();
@@ -67,12 +64,24 @@ void CausticsApp::Initialize(GPUDevice* device)
 	Texture* RefracColorTextures[3] = { mRefracPositionTexture, mRefracNormalTexture, mRefracColorTexture };
 	mRefracGBuffer->SetRenderTargets(3, RefracColorTextures, mRefracDepthTexture);
 
-	// G-buffer for final image
-	mCausticsIntersectionPositionTexture = new Texture2D();
-	mCausticsIntersectionPositionTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
-	mCausticsGBuffer = new FrameBuffer(mDevice);
-	Texture* IntersectionColorTextures[1] = { mCausticsIntersectionPositionTexture };
-	mCausticsGBuffer->SetRenderTargets(1, IntersectionColorTextures);
+	// G-buffer for intersection points
+	mIntersectionPositionTexture = new Texture2D();
+	mIntersectionDepthTexture = new Texture2D();
+	mIntersectionPositionTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mIntersectionDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
+	mIntersectionGBuffer = new FrameBuffer(mDevice);
+	Texture* IntersectionColorTextures[1] = { mIntersectionPositionTexture };
+	mIntersectionGBuffer->SetRenderTargets(1, IntersectionColorTextures, mIntersectionDepthTexture);
+
+
+	// G-buffer for caustics map
+	mCausticsMapTexture = new Texture2D();
+	mCausticsMapDepthTexture = new Texture2D();
+	mCausticsMapTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mCausticsMapDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
+	mCausticsMapGBuffer = new FrameBuffer(mDevice);
+	Texture* CausticsMapColorTextures[1] = { mCausticsMapTexture };
+	mCausticsMapGBuffer->SetRenderTargets(1, CausticsMapColorTextures, mCausticsMapDepthTexture);
 
 	// G-buffer for final image
 	mPositionTexture = new Texture2D();
@@ -88,7 +97,9 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mGBuffer->SetRenderTargets(3, colorTextures, mDepthTexture);
 
 	// Create material templates.
-
+	mCausticsDebugBuffer = new StructuredBuffer();
+	auto bufferSize = sizeof(CausticsDebugBuffer) + this->Width * this->Height * sizeof(vec2);
+	mCausticsDebugBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
 
 
@@ -109,12 +120,12 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mGround->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
 
 	mMesh = new CausticsTriMesh(new Material(mtGBuffer), mMainCamera);
-	mMesh->LoadFromFile("dragon_s.ply");
+	mMesh->LoadFromFile("sphere.ply");
 	mMesh->GenerateNormals();
 	mMesh->CreateDeviceResource(mDevice);
 	mMesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
-	mMesh->SetWorldTranslation(vec3(0.0f, -0.65f, 0.0f));
-	mMesh->SetWorldScale(vec3(5.0f));
+	mMesh->SetWorldTranslation(vec3(0.0f, 0.5f, 0.0f));
+	mMesh->SetWorldScale(vec3(0.3f));
 	mMesh->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
 
 
@@ -135,11 +146,13 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mPool->LoadFromFile("cube.ply");
 	mPool->GenerateNormals();
 	mPool->CreateDeviceResource(mDevice);
+	mPool->SetWorldTranslation(vec3(0.0f, 1.0f, 0.0f));
 	mPool->SetWorldScale(vec3(1, -1, 1));
 	mPool->MaterialColor = vec3(1, 1, 1);
 	mPool->CubeTexture = mCubeMap;
 	mPool->VertexSplattingTexture = mRefracPositionTexture;
 	mPool->Light = mLight;
+
 
 	// caustics map processor
 	vec2 tcoord00(0.0f, 0.0f);
@@ -147,14 +160,12 @@ void CausticsApp::Initialize(GPUDevice* device)
 	vec2 tcoord10(1.0f, 0.0f);
 	vec2 tcoord11(1.0f, 1.0f);
 	ShaderProgramInfo SICausticsMapIntersect;
-	SICausticsMapIntersect << "Caustics/CausticsMap.vert";
-	SICausticsMapIntersect << "Caustics/CausticsMap.frag";
-	ShaderProgramInfo SICausticsMapLighting;
-	SICausticsMapLighting << "Caustics/CausticsDeferredLighting.vert";
-	SICausticsMapLighting << "Caustics/CausticsDeferredLighting.frag";
+	SICausticsMapIntersect << "Caustics/Intersection.vert"  << "Caustics/Intersection.frag";
+	ShaderProgramInfo SICausticsFinalImage;
+	SICausticsFinalImage << "Caustics/CausticsFinalImage.vert" << "Caustics/CausticsFinalImage.frag";
 	auto mtCausticsMap = new MaterialTemplate(new Technique({
 		new Pass(SICausticsMapIntersect),
-		new Pass(SICausticsMapLighting) }));
+		new Pass(SICausticsFinalImage) }));
 
 	mCausticsScreenQuad = new CausticsScreenQuad(new Material(mtCausticsMap), mMainCamera);
 	mCausticsScreenQuad->LoadFromFile("screenquad.ply");
@@ -167,15 +178,27 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mCausticsScreenQuad->PositionTexture = mPositionTexture;
 	mCausticsScreenQuad->NormalTexture = mNormalTexture;
 	mCausticsScreenQuad->ReflectanceTexture = mColorTexture;
-	mCausticsScreenQuad->ReracterPositionTexture = mRefracPositionTexture;
-	mCausticsScreenQuad->ReracterNormalTexture = mRefracNormalTexture;
+	mCausticsScreenQuad->RefracterPositionTexture = mRefracPositionTexture;
+	mCausticsScreenQuad->RefracterNormalTexture = mRefracNormalTexture;
 	mCausticsScreenQuad->ReceiverPositionTexture = mRecvPositionTexture;
 	mCausticsScreenQuad->RefractionIndex = 1.0;
 	mCausticsScreenQuad->CubeTexture = mCubeMap;
 	mCausticsScreenQuad->Light = mLight;
 	// Pass 1
-	mCausticsScreenQuad->CausticsMapsResolution = 10000;
-	mCausticsScreenQuad->IntersectionPositionTexture = mCausticsIntersectionPositionTexture;
+	mCausticsScreenQuad->CausticsMapTexture2 = mCausticsMapTexture;
+
+	ShaderProgramInfo SICausticsMap;
+	SICausticsMap << "Caustics/CausticsMap.vert" << "Caustics/CausticsMap.frag";
+	auto mtVertexGrid = new MaterialTemplate(new Technique(new Pass(SICausticsMap)));
+	mVertexGrid = new VertexGrid(this->Width, this->Height, new Material(mtVertexGrid));
+
+	mVertexGrid->CreateDeviceResource(mDevice);
+	// Pass 0
+	mVertexGrid->CausticsMapsResolution = 0;
+	mVertexGrid->CausticsMapTexture = mCausticsMapTexture;
+	mVertexGrid->IntersectionPositionTexture = mIntersectionPositionTexture;
+	mVertexGrid->Light = mLight;
+
 }
 
 //----------------------------------------------------------------------------
@@ -183,7 +206,7 @@ void CausticsApp::DrawReceiverLightPoV()
 {
 	mGround->SetCamera(mLight->GetProjector());
 	mPool->SetCamera(mLight->GetProjector());
-	mGround->Render(0, 0);
+	//mGround->Render(0, 0);
 	mPool->Render(0, 0);
 	mGround->SetCamera(mMainCamera);
 	mPool->SetCamera(mMainCamera);
@@ -199,6 +222,7 @@ void CausticsApp::DrawRefracterLightPoV()
 void CausticsApp::DrawReceiverCameraPoV()
 {
 	mPool->Render(0, 0);
+	mMesh->Render(0, 0);
 }
 
 void CausticsApp::DrawScene()
@@ -229,12 +253,40 @@ void CausticsApp::FrameFunc()
 	mGBuffer->Disable();
 
 	// Draw intersection points
-	mCausticsGBuffer->Enable();
+
+	GLuint occlusionQuery = 0;
+	unsigned int numPixels = 0;
+	glGenQueries(1, &occlusionQuery);
+
+	glBeginQuery(GL_SAMPLES_PASSED, occlusionQuery);
+	mIntersectionGBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	mCausticsScreenQuad->Render(0, 0);
-	mCausticsGBuffer->Disable();
+	mIntersectionGBuffer->Disable();
+	glEndQuery(GL_SAMPLES_PASSED);
+	glGetQueryObjectuiv(occlusionQuery, GL_QUERY_RESULT, &numPixels);
+	mVertexGrid->CausticsMapsResolution = numPixels;
+
+	// Draw Caustics Map
+	glBeginQuery(GL_PRIMITIVES_GENERATED, occlusionQuery);
+	mCausticsMapGBuffer->Enable();
+	mCausticsDebugBuffer->Bind(3);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	mVertexGrid->Render(0, 0);
+	mCausticsDebugBuffer->Bind(); 
+	mCausticsMapGBuffer->Disable();
+	glEndQuery(GL_PRIMITIVES_GENERATED);
+	glGetQueryObjectuiv(occlusionQuery, GL_QUERY_RESULT, &numPixels);
+	//printf("GL_PRIMITIVES_GENERATED: %i\n", numPixels);
+
+
+	void* bufferData = mCausticsDebugBuffer->Map(BA_Read_Only);
+	auto dataPtr = (CausticsDebugBuffer*)bufferData;
+	auto dataPtr2 = (vec2*)(dataPtr + 1);
+	mCausticsDebugBuffer->Unmap();
 
 	// Draw final image
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	mCausticsScreenQuad->Render(0, 1);
 
 	switch (mShowMode)
@@ -242,6 +294,12 @@ void CausticsApp::FrameFunc()
 		break;
 	default:
 		break;
+	}
+
+	//dealloc
+	if (occlusionQuery)
+	{
+		glDeleteQueries(1, &occlusionQuery);
 	}
 }
 //----------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 #pragma once
 #include "CausticsTriMesh.h"
+#include "VertexGrid.h"
 #include "CausticsCube.h"
 #include "CausticsScreenQuad.h"
 namespace RTGI
@@ -58,9 +59,16 @@ private:
 	Texture2DPtr mRefracColorTexture;
 	Texture2DPtr mRefracDepthTexture;
 
-	// CausticsMap G-buffer
-	FrameBufferPtr mCausticsGBuffer;
-	Texture2DPtr mCausticsIntersectionPositionTexture;
+	// Intersection map G-buffer
+	FrameBufferPtr mIntersectionGBuffer;
+	Texture2DPtr mIntersectionPositionTexture;
+	Texture2DPtr mIntersectionDepthTexture;
+
+	// caustics map G-buffer
+	FrameBufferPtr mCausticsMapGBuffer;
+	Texture2DPtr mCausticsMapTexture;
+	Texture2DPtr mCausticsMapDepthTexture;
+
 
 	TextureCubePtr mCubeMap;
 
@@ -68,6 +76,19 @@ private:
 	CausticsCubePtr mPool;
 	CausticsTriMeshPtr mMesh;
 	CausticsScreenQuadPtr mCausticsScreenQuad;
+	VertexGridPtr mVertexGrid;
+
+
+
+	StructuredBufferPtr mCausticsDebugBuffer;
+	struct CausticsDebugBuffer
+	{
+		// Debug.
+		unsigned int value1;
+		unsigned int value2;
+		unsigned int value3;
+		unsigned int value4;
+	};
 
 	ShowMode mShowMode;
 

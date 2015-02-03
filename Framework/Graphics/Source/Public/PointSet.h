@@ -22,7 +22,7 @@ public:
 	~PointSet();
 
 	// Implement base class interface.
-	virtual void Render(int technique, int pass);
+	void Render(int technique, int pass, SubRenderer* subRenderer = 0) override;
     virtual void OnRender(Pass* pass, PassInfo* passInfo);
 
 	// Loada data from user specified memory location.
@@ -30,7 +30,8 @@ public:
         unsigned int component);
 
     void CreateDeviceResource(GPUDevice* device);
-    virtual void OnGetShaderConstants(){};
+	void OnUpdateShaderConstants(int technique, int pass) override {};
+	virtual void OnGetShaderConstants() {};
 
 protected:
 	unsigned int mPointCount;

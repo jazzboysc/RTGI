@@ -42,8 +42,8 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 		PositionTexture->BindToSampler(0, &sampler);
 		NormalTexture->BindToSampler(1, &sampler);
 		ReflectanceTexture->BindToSampler(2, &sampler);
-		ReracterPositionTexture->BindToSampler(3, &sampler);
-		ReracterNormalTexture->BindToSampler(4, &sampler);
+		RefracterPositionTexture->BindToSampler(3, &sampler);
+		RefracterNormalTexture->BindToSampler(4, &sampler);
 		ReceiverPositionTexture->BindToSampler(5, &sampler);
 
 		CubeTexture->BindToSampler(6, &sampler);
@@ -60,24 +60,21 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	if (pass == 1)
 	{
-		GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc2, mWorldTransform);
+		GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc3, mWorldTransform);
 		if (mCamera)
 		{
 			glm::mat4 viewTrans = mCamera->GetViewTransform();
-			GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc2, viewTrans);
+			GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc3, viewTrans);
 
 			glm::mat4 projTrans = mCamera->GetProjectionTransform();
-			GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc2, projTrans);
+			GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc3, projTrans);
 		}
 
-		mLightViewLoc2.SetValue(Light->GetProjector()->GetViewTransform());
-		mLightProjLoc2.SetValue(Light->GetProjector()->GetProjectionTransform());
+		mLightViewLoc3.SetValue(Light->GetProjector()->GetViewTransform());
+		mLightProjLoc3.SetValue(Light->GetProjector()->GetProjectionTransform());
 
-
-		IntersectionPositionTexture->BindToSampler(0, &sampler);
-
-		mIntersectionPositionSamplerLoc.SetValue(0);
-		mCausticsMapResolutionLoc.SetValue(CausticsMapsResolution);
+		CausticsMapTexture2->BindToSampler(0, &sampler);
+		mCausticsMapSamplerLoc2.SetValue(0);
 	}
 }
 //----------------------------------------------------------------------------
@@ -104,13 +101,12 @@ void CausticsScreenQuad::OnGetShaderConstants()
 	program->GetUniformLocation(&mCubeTextureLoc, "cubeSampler");
 
 	program = mMaterial->GetProgram(0, 1);
-	program->GetUniformLocation(&mWorldLoc2, "World");
-	program->GetUniformLocation(&mViewLoc2, "View");
-	program->GetUniformLocation(&mProjLoc2, "Proj");
+	program->GetUniformLocation(&mWorldLoc3, "World");
+	program->GetUniformLocation(&mViewLoc3, "View");
+	program->GetUniformLocation(&mProjLoc3, "Proj");
 
-	program->GetUniformLocation(&mIntersectionPositionSamplerLoc, "intersectionPositionSampler");
-	program->GetUniformLocation(&mCausticsMapResolutionLoc, "causticsMapResolution");
-	program->GetUniformLocation(&mLightViewLoc2, "lightView");
-	program->GetUniformLocation(&mLightProjLoc2, "lightProj");
+	program->GetUniformLocation(&mCausticsMapSamplerLoc2, "causticsMapSampler");
+	program->GetUniformLocation(&mLightViewLoc3, "lightView");
+	program->GetUniformLocation(&mLightProjLoc3, "lightProj");
 }
 //----------------------------------------------------------------------------

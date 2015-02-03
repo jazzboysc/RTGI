@@ -27,17 +27,14 @@ public:
 	Texture2DPtr NormalTexture;
 	Texture2DPtr ReflectanceTexture;
 
-	Texture2DPtr ReracterPositionTexture;
-	Texture2DPtr ReracterNormalTexture;
+	Texture2DPtr RefracterPositionTexture;
+	Texture2DPtr RefracterNormalTexture;
 	Texture2DPtr ReceiverPositionTexture;
 
 	TextureCubePtr CubeTexture;
 
 	// Pass 1
-	Texture2DPtr IntersectionPositionTexture;
-	int CausticsMapsResolution;
-
-
+	Texture2DPtr CausticsMapTexture2;
 private:
 	// Pass 0
 	ShaderUniform mLightPositionLoc;
@@ -58,12 +55,10 @@ private:
 
 
 	// Pass 1
-	ShaderUniform mCausticsMapResolutionLoc;
-	ShaderUniform mIntersectionPositionSamplerLoc;
-
-	ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
-	ShaderUniform mLightViewLoc2;
-	ShaderUniform mLightProjLoc2;
+	ShaderUniform mCausticsMapSamplerLoc2;
+	ShaderUniform mWorldLoc3, mViewLoc3, mProjLoc3;
+	ShaderUniform mLightViewLoc3;
+	ShaderUniform mLightProjLoc3;
 };
 
 	typedef RefPointer<CausticsScreenQuad> CausticsScreenQuadPtr;

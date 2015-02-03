@@ -5,10 +5,16 @@ in vec4 vPositionWorld;
 in vec4 vNormalWorld;
 in float intensity;
 
+uniform sampler2D causticsMapSampler;
+
 uniform vec3 lightPosition;
 uniform mat4 lightView;
 uniform mat4 lightProj;
 uniform vec3 lightColor;
+
+uniform mat4 World;
+uniform mat4 View;
+uniform mat4 Proj;
 
 vec2 getTC(mat4 mVP, vec3 wpos)
 {
@@ -19,13 +25,11 @@ vec2 getTC(mat4 mVP, vec3 wpos)
 
 void main()
 {
+	mat4 mVPLight = lightProj * lightView;
+	mat4 mVPCam = Proj * View;
 
-	gl_FragData[0] = vec4(1,1,1, 1);
-	//gl_FragData[0] = vec4(dist, dist, dist, 1.0) * 1.5;// vec4(intPt,1);
-	////
+	vec2 pTCoord = vec2(0.5*(vPositionWorld.xy / vPositionWorld.w) + vec2(0.5, 0.5));
+	vec4 caustics = texture(causticsMapSampler, pTCoord);
 
-	         // look up alpha mask
-
-    //     float4 tcol = tex2D(pixelSampler,input.tc);
-    //     return float4(input.light_int,1-tcol.r);
+	gl_FragData[0] = vec4(caustics);
 }
