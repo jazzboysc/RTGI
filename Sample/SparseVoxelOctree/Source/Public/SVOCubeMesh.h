@@ -1,7 +1,7 @@
-#ifndef RTGI_SVOCubeTriMesh_H
-#define RTGI_SVOCubeTriMesh_H
+#ifndef RTGI_SVOCubeMesh_H
+#define RTGI_SVOCubeMesh_H
 
-#include "TriangleMesh.h"
+#include "QuadMesh.h"
 #include "AABB.h"
 
 namespace RTGI
@@ -11,11 +11,11 @@ namespace RTGI
 // Author: Che Sun
 // Date: 02/02/2015
 //----------------------------------------------------------------------------
-class SVOCubeTriMesh : public TriangleMesh
+class SVOCubeMesh : public QuadMesh
 {
 public:
-    SVOCubeTriMesh(Material* material, Camera* camera);
-    virtual ~SVOCubeTriMesh();
+    SVOCubeMesh(Material* material, Camera* camera);
+    virtual ~SVOCubeMesh();
 
 	// Implement base class interface.
 	virtual void OnGetShaderConstants();
@@ -28,7 +28,7 @@ private:
     ShaderUniform mVoxelExtensionLoc;
 };
 
-typedef RefPointer<SVOCubeTriMesh> SVOCubeTriMeshPtr;
+typedef RefPointer<SVOCubeMesh> SVOCubeMeshPtr;
 
 }
 

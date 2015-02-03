@@ -288,10 +288,32 @@ void SVOApp::Initialize(GPUDevice* device)
     mVoxelCubeModel->CreateDeviceResource(mDevice);
 
     // Create SVO node cube model.
+    std::vector<vec3> svoCubeVertices;
+    svoCubeVertices.reserve(8);
+    svoCubeVertices.push_back(vec3(-1.0f,  1.0f,  1.0f));
+    svoCubeVertices.push_back(vec3( 1.0f,  1.0f,  1.0f));
+    svoCubeVertices.push_back(vec3( 1.0f,  1.0f, -1.0f));
+    svoCubeVertices.push_back(vec3(-1.0f,  1.0f, -1.0f));
+    svoCubeVertices.push_back(vec3(-1.0f, -1.0f,  1.0f));
+    svoCubeVertices.push_back(vec3( 1.0f, -1.0f,  1.0f));
+    svoCubeVertices.push_back(vec3( 1.0f, -1.0f, -1.0f));
+    svoCubeVertices.push_back(vec3(-1.0f, -1.0f, -1.0f));
+    std::vector<unsigned short> svoCubeIndices;
+    svoCubeIndices.reserve(24);
+    static unsigned short indices[] = { 0, 1, 2, 3,
+                                        0, 4, 5, 1,
+                                        0, 3, 7, 4,
+                                        2, 6, 7, 3,
+                                        1, 5, 6, 2,
+                                        4, 7, 6, 5 };
+    for( int i = 0; i < 24; ++i )
+    {
+        svoCubeIndices.push_back(indices[i]);
+    }
+
     material = new Material(mtShowSVO);
-    mSVONodeCubeModel = new SVOCubeTriMesh(material, mMainCamera);
-    mSVONodeCubeModel->LoadFromFile("box.ply");
-    mSVONodeCubeModel->GenerateNormals();
+    mSVONodeCubeModel = new SVOCubeMesh(material, mMainCamera);
+    mSVONodeCubeModel->LoadFromSystemMemory(svoCubeVertices, svoCubeIndices);
     mSVONodeCubeModel->SetIndirectCommandBuffer(mSVOBuffer, 16);
     mSVONodeCubeModel->CreateDeviceResource(mDevice);
     mSVONodeCubeModel->SceneBB = &mSceneBB;

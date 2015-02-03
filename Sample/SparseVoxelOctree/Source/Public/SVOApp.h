@@ -3,7 +3,7 @@
 
 #include "SVOTriMesh.h"
 #include "VoxelCubeTriMesh.h"
-#include "SVOCubeTriMesh.h"
+#include "SVOCubeMesh.h"
 #include "VoxelRaySegment.h"
 #include "GPUTimer.h"
 #include "ResetVoxelBuffer.h"
@@ -77,7 +77,7 @@ private:
 	SVOTriMeshPtr mRightWall;
 	SVOTriMeshPtr mModel;
     VoxelCubeTriMeshPtr mVoxelCubeModel;
-    SVOCubeTriMeshPtr mSVONodeCubeModel;
+    SVOCubeMeshPtr mSVONodeCubeModel;
     VoxelRaySegmentPtr mVoxelRaySegment;
 
     GPUTimerPtr mTimer;

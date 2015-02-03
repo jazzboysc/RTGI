@@ -33,7 +33,11 @@ public:
 	virtual void OnEnableBuffers();
 	virtual void OnDisableBuffers();
 
-	// Should be called after calling LoadFromFile or LoadFromMemory.
+    // Load data from user specified memory location.
+    void LoadFromSystemMemory(std::vector<glm::vec3>& vertexData, 
+        std::vector<unsigned short>& indexData);
+
+	// Should be called after calling LoadFromSystemMemory.
     void CreateDeviceResource(GPUDevice* device);
 	virtual void OnGetShaderConstants();
 

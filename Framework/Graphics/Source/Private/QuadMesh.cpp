@@ -94,6 +94,16 @@ void QuadMesh::OnUpdateShaderConstants(int technique, int pass)
 	}
 }
 //----------------------------------------------------------------------------
+void QuadMesh::LoadFromSystemMemory(std::vector<glm::vec3>& vertexData,
+    std::vector<unsigned short>& indexData)
+{
+    mVertexCount = (int)vertexData.size();
+    mFaceCount = (int)(indexData.size() >> 2);
+    mVertexComponentCount = 3;
+    mVertexData = vertexData;
+    mIndexData = indexData;
+}
+//----------------------------------------------------------------------------
 void QuadMesh::CreateDeviceResource(GPUDevice* device)
 {
 	// Create VBO and IBO.
@@ -257,46 +267,21 @@ void QuadMesh::UpdateModelSpaceVertices(const glm::mat4& trans)
 //----------------------------------------------------------------------------
 void QuadMesh::CreateVertexBufferDeviceResource()
 {
-	mVertexComponentCount = 3;
-	//if( mHasTCoord )
-	//{
-	//	mVertexComponentCount += 2;
-	//}
-	//if( mHasNormal )
-	//{
-	//	mVertexComponentCount += 3;
-	//}
-	//std::vector<float> tempVB;
-	//if( mVertexData.size() > 0 )
-	//{
-	//	glGenBuffers(1, &mVBO);
-	//	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+    glGenBuffers(1, &mVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 
-	//	for( int i = 0; i < mVertexCount; ++i )
-	//	{
-	//		tempVB.push_back(mVertexData[i].x);
-	//		tempVB.push_back(mVertexData[i].y);
-	//		tempVB.push_back(mVertexData[i].z);
+    size_t bufferSize = sizeof(float) * mVertexCount * mVertexComponentCount;
+    if( mVertexData.size() > 0 )
+    {
+        glBufferData(GL_ARRAY_BUFFER, bufferSize, (GLvoid*)&mVertexData[0], 
+            GL_STATIC_DRAW);
+    }
+    else
+    {
+        glBufferData(GL_ARRAY_BUFFER, bufferSize, 0, GL_STATIC_DRAW);
+    }
 
-	//		if( mHasTCoord )
-	//		{
-	//			tempVB.push_back(mTCoordData[i].x);
-	//			tempVB.push_back(mTCoordData[i].y);
-	//		}
-
-	//		if( mHasNormal )
-	//		{
-	//			tempVB.push_back(mVertexNormalData[i].x);
-	//			tempVB.push_back(mVertexNormalData[i].y);
-	//			tempVB.push_back(mVertexNormalData[i].z);
-	//		}
-	//	}
-
-	//	glBufferData(GL_ARRAY_BUFFER, 
-	//		sizeof(GLfloat)*mVertexCount*mVertexComponentCount, 
-	//		(GLvoid*)&tempVB[0], GL_STATIC_DRAW);
-	//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//}
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 #ifdef _DEBUG
     GLenum res = glGetError();

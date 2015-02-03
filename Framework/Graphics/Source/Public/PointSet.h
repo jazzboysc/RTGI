@@ -25,7 +25,7 @@ public:
 	void Render(int technique, int pass, SubRenderer* subRenderer = 0) override;
     virtual void OnRender(Pass* pass, PassInfo* passInfo);
 
-	// Loada data from user specified memory location.
+	// Load data from user specified memory location.
     void LoadFromSystemMemory(unsigned int pointCount, float* vertexData,
         unsigned int component);
 

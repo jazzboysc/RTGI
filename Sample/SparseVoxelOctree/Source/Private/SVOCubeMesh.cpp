@@ -1,31 +1,31 @@
-#include "SVOCubeTriMesh.h"
+#include "SVOCubeMesh.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-SVOCubeTriMesh::SVOCubeTriMesh(Material* material, Camera* camera)
+SVOCubeMesh::SVOCubeMesh(Material* material, Camera* camera)
 	:
-	TriangleMesh(material, camera)
+	QuadMesh(material, camera)
 {
     SceneBB = 0;
 }
 //----------------------------------------------------------------------------
-SVOCubeTriMesh::~SVOCubeTriMesh()
+SVOCubeMesh::~SVOCubeMesh()
 {
 }
 //----------------------------------------------------------------------------
-void SVOCubeTriMesh::OnGetShaderConstants()
+void SVOCubeMesh::OnGetShaderConstants()
 {
-    TriangleMesh::OnGetShaderConstants();
+    QuadMesh::OnGetShaderConstants();
 
     ShaderProgram* program = mMaterial->GetProgram(0, 0);
     program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
     program->GetUniformLocation(&mVoxelExtensionLoc, "VoxelExtension");
 }
 //----------------------------------------------------------------------------
-void SVOCubeTriMesh::OnUpdateShaderConstants(int technique, int pass)
+void SVOCubeMesh::OnUpdateShaderConstants(int technique, int pass)
 {
-    TriangleMesh::OnUpdateShaderConstants(technique, pass);
+    QuadMesh::OnUpdateShaderConstants(technique, pass);
 
     vec3 sceneBBMin = SceneBB->Min;
     vec3 voxelExtension = (SceneBB->Max - SceneBB->Min);
