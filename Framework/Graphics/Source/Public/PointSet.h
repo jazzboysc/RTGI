@@ -23,9 +23,10 @@ public:
 
 	// Implement base class interface.
 	virtual void Render(int technique, int pass);
+    virtual void OnRender(Pass* pass, PassInfo* passInfo);
 
 	// Loada data from user specified memory location.
-	void LoadFromMemory(unsigned int pointCount, float* vertexData, 
+    void LoadFromSystemMemory(unsigned int pointCount, float* vertexData,
         unsigned int component);
 
     void CreateDeviceResource(GPUDevice* device);

@@ -27,16 +27,28 @@ void PointSet::Render(int technique, int pass)
     mMaterial->Apply(technique, pass);
 }
 //----------------------------------------------------------------------------
+void PointSet::OnRender(Pass*, PassInfo*)
+{ 
+    glDrawArrays(GL_POINTS, 0, mPointCount);
+}
+//----------------------------------------------------------------------------
 void PointSet::CreateDeviceResource(GPUDevice* device)
 {
+    glGenBuffers(1, &mVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+
     if( mVertexData.size() > 0 )
     {
-        glGenBuffers(1, &mVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, mVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mPointCount*mComponent,
             (GLvoid*)&mVertexData[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
+    else
+    {
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mPointCount*mComponent, 0, 
+            GL_STATIC_DRAW);
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 #ifdef _DEBUG
     GLenum res = glGetError();
@@ -56,20 +68,22 @@ void PointSet::CreateDeviceResource(GPUDevice* device)
     OnGetShaderConstants();
 }
 //----------------------------------------------------------------------------
-void PointSet::LoadFromMemory(unsigned int pointCount, float* vertexData,
-    unsigned int component)
+void PointSet::LoadFromSystemMemory(unsigned int pointCount, 
+    float* vertexData, unsigned int component)
 {
-    assert(pointCount > 0 && vertexData && component > 0);
-
 	mPointCount = pointCount;
     mComponent = component;
     mVertexData.reserve(mPointCount*component);
-	for( unsigned int i = 0; i < mPointCount; ++i )
-	{
-        for( unsigned int j = 0; j < component; ++j )
+
+    if( vertexData )
+    {
+        for( unsigned int i = 0; i < mPointCount; ++i )
         {
-            mVertexData.push_back(vertexData[i*component + j]);
+            for( unsigned int j = 0; j < component; ++j )
+            {
+                mVertexData.push_back(vertexData[i*component + j]);
+            }
         }
-	}
+    }
 }
 //----------------------------------------------------------------------------
