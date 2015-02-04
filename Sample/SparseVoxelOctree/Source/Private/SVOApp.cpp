@@ -461,6 +461,8 @@ void SVOApp::FrameFunc()
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Reset Voxel Buffer Pass", workLoad);
 
+    //--------------------------------- Begin building SVO ---------------------------------//
+
     // Scene voxelization pass.
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisable(GL_DEPTH_TEST);
@@ -526,7 +528,7 @@ void SVOApp::FrameFunc()
 
     mTimer->Start();
     unsigned int curLevel = 1;
-    for( ; curLevel < 7/*mSVOMaxLevel*/; ++curLevel )
+    for( ; curLevel < mSVOMaxLevel; ++curLevel )
     {
         // Update SVO uniform buffer.
         mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(unsigned int), (void*)&curLevel);
@@ -594,6 +596,8 @@ void SVOApp::FrameFunc()
     mSVOBuffer->Unmap();
 #endif
 
+    //--------------------------------- End building SVO ---------------------------------//
+
     glViewport(0, 0, Width, Height);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -613,7 +617,7 @@ void SVOApp::FrameFunc()
     if( mShowMode == SM_VoxelGrid )
     {
         mIndirectCommandBuffer->BindToIndirect();
-        //mVoxelCubeModel->Render(0, 0);
+        mVoxelCubeModel->Render(0, 0);
     }
     else
     {

@@ -4,6 +4,7 @@ in vec4 vPositionWorld;
 in vec4 vNormalWorld;
 
 #include "SparseVoxelOctree/sVoxelGrid.glsl"
+#include "SparseVoxelOctree/sSparseVoxelOctree.glsl"
 
 uniform vec3 SceneBBCenter;
 uniform vec3 SceneBBExtension;
@@ -29,19 +30,71 @@ vec4 UintToVec4(uint value)
         float((value & 0xFF000000) >> 24U));
 }
 
-void main()
+vec4 FetchColorFromVoxelGrid(ivec3 gridPosition)
 {
-    ivec3 res = GetIndex(vPositionWorld.xyz);
-    int index = res.z * dim * dim + res.y * dim + res.x;
+    int index = gridPosition.z * dim * dim + gridPosition.y * dim + gridPosition.x;
     vec4 color = UintToVec4(voxelBuffer.data[index].value1);
     color.xyz /= 255.0;
     color.w = 1.0;
 
+    return color;
+}
+
+vec4 FetchColorFromSVO(ivec3 gridPosition)
+{
+    vec4 color;
+
+    // Create SVO root node bound.
+    SVONodeAABB nodeBox;
+    nodeBox.Min = Ivec3ToUint(ivec3(0, 0, 0));
+    nodeBox.Max = Ivec3ToUint(ivec3(svoUniformBuffer.dim, svoUniformBuffer.dim, svoUniformBuffer.dim));
+
+    uint childIndex;
+    uint nodeTileIndex = 0;
+    uint nextNodeIndex;
+    for( int i = 1; i <= svoUniformBuffer.curLevel + 1; ++i )
+    {
+        // Figure out which child node to visit.
+        childIndex = GetSVOChildNodeIndex(gridPosition, nodeBox);
+
+        // Locate child node for current tree level.
+        nextNodeIndex = nodeTileIndex*SVO_NODE_TILE_SIZE + childIndex;
+
+        if( !IsSVONodeFlaged(nextNodeIndex) )
+        {
+            return vec4(0.0, 0.0, 0.0, 1.0);
+        }
+
+        // Update node tile index to visit.
+        nodeTileIndex = svoNodeBuffer.data[nextNodeIndex].child;
+
+        // Update node AABB to visit.
+        nodeBox = svoNodeBuffer.data[nextNodeIndex].nodeBox;
+    }
+
+    if( !IsSVONodeFlaged(nextNodeIndex) )
+    {
+        return vec4(0.0, 0.0, 0.0, 1.0);
+    }
+
+    color = UintToVec4(svoNodeBuffer.data[nextNodeIndex].albedo);
+    color.xyz /= 255.0;
+    color.w = 1.0;
+
+    return color;
+}
+
+void main()
+{
+    ivec3 gridPos = GetIndex(vPositionWorld.xyz);
+    //vec4 color = FetchColorFromVoxelGrid(gridPos);
+    vec4 color = FetchColorFromSVO(gridPos);
+
     if( ShowWorldPosition == 1 )
     {
-        gl_FragData[0] = vec4(float(float(res.x) / float(dim - 1)),
-            float(float(res.y) / float(dim - 1)),
-            float(float(res.z) / float(dim - 1)),
+        gl_FragData[0] = vec4(float(float(gridPos.x) / float(dim - 1)),
+            float(float(gridPos.y) / float(dim - 1)),
+            float(float(gridPos.z) / float(dim - 1)),
             1.0);
     }
     else
