@@ -38,7 +38,7 @@ mat4 GetSVONodeWorldTransform(SVONode node)
 void main()
 {
     SVONode node = svoNodeBuffer.data[gl_InstanceID];
-    if( node.flag == SVO_NODE_FLAGED )
+    if( node.albedo > 0 )
     {
         boxColor = vec4(1.0, 0.0, 0.0, 1.0);
     }

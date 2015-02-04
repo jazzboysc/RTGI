@@ -161,12 +161,18 @@ void SVOApp::Initialize(GPUDevice* device)
     buildSVOInitNodesProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
     ComputePass* passBuildSVOInitNodes = new ComputePass(buildSVOInitNodesProgramInfo);
 
+    ShaderProgramInfo buildSVOSplatLeafNodesProgramInfo;
+    buildSVOSplatLeafNodesProgramInfo.VShaderFileName = "SparseVoxelOctree/vBuildSVOSplatLeafNodes.glsl";
+    buildSVOSplatLeafNodesProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex;
+    ComputePass* passBuildSVOSplatLeafNodes = new ComputePass(buildSVOSplatLeafNodesProgramInfo);
+
     mBuildSVOTask = new BuildSVO();
     mBuildSVOTask->AddPass(passBuildSVOInitRoot);
     mBuildSVOTask->AddPass(passBuildSVOFlagNodes);
     mBuildSVOTask->AddPass(passBuildSVOAllocateNodes);
     mBuildSVOTask->AddPass(passBuildSVOPostAllocateNodes);
     mBuildSVOTask->AddPass(passBuildSVOInitNodes);
+    mBuildSVOTask->AddPass(passBuildSVOSplatLeafNodes);
     mBuildSVOTask->CreateDeviceResource(mDevice);
 
     // Create scene voxel buffer.
@@ -338,6 +344,7 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("GVF Count", 16, 180);
     InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 200);
     InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 220);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Splat Leaf Nodes Pass", 16, 240);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
@@ -519,7 +526,7 @@ void SVOApp::FrameFunc()
 
     mTimer->Start();
     unsigned int curLevel = 1;
-    for( ; curLevel <= mSVOMaxLevel; ++curLevel )
+    for( ; curLevel < 7/*mSVOMaxLevel*/; ++curLevel )
     {
         // Update SVO uniform buffer.
         mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(unsigned int), (void*)&curLevel);
@@ -570,6 +577,23 @@ void SVOApp::FrameFunc()
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Build SVO Pass", workLoad);
 
+    // Splat SVO leaf nodes pass.
+    mTimer->Start();
+    mVoxelFragmentListBuffer->Bind(1);
+    mSVOBuffer->Bind(3);
+    mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_SPLAT_LEAF_NODES_PASS,
+        mVoxelFragmentListBuffer, 0);
+    mTimer->Stop();
+    workLoad = mTimer->GetTimeElapsed();
+    infoPanel->SetTimingLabelValue("Build SVO Splat Leaf Nodes Pass", workLoad);
+#ifdef DEBUG_VOXEL
+    mSVOBuffer->Bind();
+    svoBufferData = mSVOBuffer->Map(BA_Read_Only);
+    svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
+    svoNodeTileData = (SVONodeTile*)(svoBufferHeadData + 1);
+    mSVOBuffer->Unmap();
+#endif
+
     glViewport(0, 0, Width, Height);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -589,7 +613,7 @@ void SVOApp::FrameFunc()
     if( mShowMode == SM_VoxelGrid )
     {
         mIndirectCommandBuffer->BindToIndirect();
-        mVoxelCubeModel->Render(0, 0);
+        //mVoxelCubeModel->Render(0, 0);
     }
     else
     {

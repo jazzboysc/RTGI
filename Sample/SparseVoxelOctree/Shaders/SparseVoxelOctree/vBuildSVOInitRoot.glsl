@@ -33,8 +33,7 @@ void main()
         {
             childID = svoNodeBuffer.rootChild*SVO_NODE_TILE_SIZE + i;
             svoNodeBuffer.data[childID].nodeBox = GetSVOChildNodeBox(i, nodeBox);
-            svoNodeBuffer.data[childID].child = 0;
-            svoNodeBuffer.data[childID].flag = 0;
+            InitSVONode(childID);
         }
     }
     else

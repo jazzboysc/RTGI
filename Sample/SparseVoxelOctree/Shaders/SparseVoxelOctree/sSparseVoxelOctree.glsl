@@ -41,6 +41,8 @@ struct SVONode
 {
     uint child;
     uint flag;
+    uint albedo;
+    uint normals[4];
 
     SVONodeAABB nodeBox;
 };
@@ -155,5 +157,16 @@ void FlagSVONode(uint nodeIndex)
 bool IsSVONodeFlaged(uint nodeIndex)
 {
     return (svoNodeBuffer.data[nodeIndex].flag == SVO_NODE_FLAGED);
+}
+//----------------------------------------------------------------------------
+void InitSVONode(uint nodeIndex)
+{
+    svoNodeBuffer.data[nodeIndex].child = 0;
+    svoNodeBuffer.data[nodeIndex].flag = 0;
+    svoNodeBuffer.data[nodeIndex].albedo = 0;
+    svoNodeBuffer.data[nodeIndex].normals[0] = 0;
+    svoNodeBuffer.data[nodeIndex].normals[1] = 0;
+    svoNodeBuffer.data[nodeIndex].normals[2] = 0;
+    svoNodeBuffer.data[nodeIndex].normals[3] = 0;
 }
 //----------------------------------------------------------------------------

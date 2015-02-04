@@ -8,6 +8,7 @@
 #define BUILD_SVO_ALLOC_NODES_PASS      2
 #define BUILD_SVO_POST_ALLOC_NODES_PASS 3
 #define BUILD_SVO_INIT_NODES_PASS       4
+#define BUILD_SVO_SPLAT_LEAF_NODES_PASS 5
 
 namespace RTGI
 {
@@ -25,6 +26,8 @@ struct SVONode
 {
     unsigned int child;
     unsigned int flag;
+    unsigned int albedo;
+    unsigned int normals[4];
 
     SVONodeAABB nodeBox;
 };
