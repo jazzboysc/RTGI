@@ -2,13 +2,8 @@
 #define RTGI_SVOApp_H
 
 #include "SVOTriMesh.h"
-#include "VoxelCubeTriMesh.h"
 #include "SVOCubeMesh.h"
-#include "VoxelRaySegment.h"
 #include "GPUTimer.h"
-#include "ResetVoxelBuffer.h"
-#include "GatherVoxelBuffer.h"
-#include "VoxelGridIntersection.h"
 #include "GatherVoxelFragmentListInfo.h"
 #include "BuildSVO.h"
 #include "InformationPanel.h"
@@ -45,7 +40,6 @@ private:
     friend class SVOTriMesh;
     enum ShowMode
     {
-        SM_VoxelGrid,
         SM_Scene,
         SM_WorldPosition
     };
@@ -56,16 +50,12 @@ private:
     bool mShowCornell;
 
     AtomicCounterBufferPtr mAtomicCounterBuffer;
-    ResetVoxelBufferPtr mResetVoxelBufferTask;
-    GatherVoxelBufferPtr mGatherVoxelBufferTask;
-    VoxelGridIntersectionPtr mVoxelGridIntersectionTask;
     GatherVoxelFragmentListInfoPtr mGatherVoxelFragmentListInfoTask;
     BuildSVOPtr mBuildSVOTask;
-    StructuredBufferPtr mVoxelBuffer;
-    StructuredBufferPtr mIndirectCommandBuffer;
     StructuredBufferPtr mVoxelFragmentListBuffer;
     StructuredBufferPtr mSVOBuffer;
     UniformBufferPtr mSVOUniformBuffer;
+
     AABB mSceneBB;
     unsigned int mSVONodeCount;
     unsigned int mSVOMaxLevel;
@@ -76,9 +66,7 @@ private:
 	SVOTriMeshPtr mLeftWall;
 	SVOTriMeshPtr mRightWall;
 	SVOTriMeshPtr mModel;
-    VoxelCubeTriMeshPtr mVoxelCubeModel;
     SVOCubeMeshPtr mSVONodeCubeModel;
-    VoxelRaySegmentPtr mVoxelRaySegment;
 
     GPUTimerPtr mTimer;
 };

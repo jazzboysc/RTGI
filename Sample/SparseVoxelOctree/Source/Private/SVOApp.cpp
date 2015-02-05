@@ -19,7 +19,7 @@ SVOApp::SVOApp(int width, int height)
     mIsRotatingModel = false;
     mVoxelizeCornell = false;
     mShowCornell = false;
-    mShowMode = SM_VoxelGrid;
+    mShowMode = SM_WorldPosition;
 }
 //----------------------------------------------------------------------------
 SVOApp::~SVOApp()
@@ -50,7 +50,7 @@ void SVOApp::Initialize(GPUDevice* device)
     ShaderProgramInfo voxelizationProgramInfo;
     voxelizationProgramInfo.VShaderFileName = "SparseVoxelOctree/vVoxelization.glsl";
     voxelizationProgramInfo.GShaderFileName = "SparseVoxelOctree/gVoxelization.glsl";
-    voxelizationProgramInfo.FShaderFileName = "SparseVoxelOctree/fVoxelization.glsl";
+    voxelizationProgramInfo.FShaderFileName = "SparseVoxelOctree/fSVOVoxelization.glsl";
     voxelizationProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
                                               ShaderType::ST_Geometry | 
                                               ShaderType::ST_Fragment;
@@ -69,18 +69,6 @@ void SVOApp::Initialize(GPUDevice* device)
     MaterialTemplate* mtVoxelization = new MaterialTemplate();
     mtVoxelization->AddTechnique(techVoxelization);
 
-    ShaderProgramInfo showVoxelGridProgramInfo;
-    showVoxelGridProgramInfo.VShaderFileName = "SparseVoxelOctree/vShowVoxelGrid.glsl";
-    showVoxelGridProgramInfo.FShaderFileName = "SparseVoxelOctree/fShowVoxelGrid.glsl";
-    showVoxelGridProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                               ShaderType::ST_Fragment;
-    Pass* passShowVoxelGrid = new Pass(showVoxelGridProgramInfo);
-
-    Technique* techShowVoxelGrid = new Technique();
-    techShowVoxelGrid->AddPass(passShowVoxelGrid);
-    MaterialTemplate* mtShowVoxelGrid = new MaterialTemplate();
-    mtShowVoxelGrid->AddTechnique(techShowVoxelGrid);
-
     ShaderProgramInfo showSVOProgramInfo;
     showSVOProgramInfo.VShaderFileName = "SparseVoxelOctree/vShowSVO.glsl";
     showSVOProgramInfo.FShaderFileName = "SparseVoxelOctree/fShowSVO.glsl";
@@ -92,38 +80,6 @@ void SVOApp::Initialize(GPUDevice* device)
     techShowSVO->AddPass(passShowSVO);
     MaterialTemplate* mtShowSVO = new MaterialTemplate();
     mtShowSVO->AddTechnique(techShowSVO);
-
-    // Create reset voxel buffer task.
-    ShaderProgramInfo resetVoxelBufferProgramInfo;
-    resetVoxelBufferProgramInfo.CShaderFileName = "SparseVoxelOctree/cResetVoxelBuffer.glsl";
-    resetVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-
-    ComputePass* passResetVoxelBuffer = new ComputePass(resetVoxelBufferProgramInfo);
-    mResetVoxelBufferTask = new ResetVoxelBuffer();
-    mResetVoxelBufferTask->AddPass(passResetVoxelBuffer);
-    mResetVoxelBufferTask->CreateDeviceResource(mDevice);
-
-    // Create gather voxel buffer task.
-    ShaderProgramInfo gatherVoxelBufferProgramInfo;
-    gatherVoxelBufferProgramInfo.CShaderFileName = "SparseVoxelOctree/cGatherVoxelBuffer.glsl";
-    gatherVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-
-    ComputePass* passGatherVoxelBuffer = new ComputePass(gatherVoxelBufferProgramInfo);
-    mGatherVoxelBufferTask = new GatherVoxelBuffer();
-    mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
-    mGatherVoxelBufferTask->CreateDeviceResource(mDevice);
-    mGatherVoxelBufferTask->SceneBB = &mSceneBB;
-
-    // Create voxel grid intersection task.
-    ShaderProgramInfo voxelGridIntersectionProgramInfo;
-    voxelGridIntersectionProgramInfo.CShaderFileName = "SparseVoxelOctree/cVoxelGridIntersection.glsl";
-    voxelGridIntersectionProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-
-    ComputePass* passVoxelGridIntersection = new ComputePass(voxelGridIntersectionProgramInfo);
-    mVoxelGridIntersectionTask = new VoxelGridIntersection();
-    mVoxelGridIntersectionTask->AddPass(passVoxelGridIntersection);
-    mVoxelGridIntersectionTask->CreateDeviceResource(mDevice);
-    mVoxelGridIntersectionTask->SceneBB = &mSceneBB;
 
     // Create gather voxel fragment list info task.
     ShaderProgramInfo gatherVoxelFragmentListInfoProgramInfo;
@@ -175,21 +131,11 @@ void SVOApp::Initialize(GPUDevice* device)
     mBuildSVOTask->AddPass(passBuildSVOSplatLeafNodes);
     mBuildSVOTask->CreateDeviceResource(mDevice);
 
-    // Create scene voxel buffer.
-    mVoxelBuffer = new StructuredBuffer();
-    GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
-    GLuint bufferSize = voxelCount * sizeof(GLuint) * 4;
-    mVoxelBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
-
-    // Create indirect command buffer.
-    mIndirectCommandBuffer = new StructuredBuffer();
-    bufferSize = sizeof(GLuint)*5 + sizeof(GLfloat)*35 + voxelCount*sizeof(GLfloat)*4;
-    mIndirectCommandBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
-
     // Create voxel fragment list buffer.
+    GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     mVoxelFragmentListBuffer = new StructuredBuffer();
     GLuint voxelFragmentCount = GLuint((float)voxelCount*0.2f); // voxel fragment ratio.
-    bufferSize = sizeof(GLuint)*4 + voxelFragmentCount*sizeof(GLuint)*4;
+    GLuint bufferSize = sizeof(GLuint) * 4 + voxelFragmentCount*sizeof(GLuint) * 4;
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create SVO buffer.
@@ -206,12 +152,12 @@ void SVOApp::Initialize(GPUDevice* device)
     GLuint svoUniformBufferData[2] = { 0, VOXEL_DIMENSION };
     mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(GLuint)*2, (void*)svoUniformBufferData);
 
-    // Create atomic counter buffer. We create 4 atomic counters here.
+    // Create atomic counter buffer. We create 2 atomic counters here.
     mAtomicCounterBuffer = new AtomicCounterBuffer();
 #ifdef DEBUG_VOXEL
-    mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice, sizeof(GLuint)*4, BU_Dynamic_Copy);
+    mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice, sizeof(GLuint)*2, BU_Dynamic_Copy);
 #else
-    mAtomicCounterBuffer->ReserveImmutableDeviceResource(mDevice, sizeof(GLuint)*4);
+    mAtomicCounterBuffer->ReserveImmutableDeviceResource(mDevice, sizeof(GLuint)*2);
 #endif
 
 	// Create scene.
@@ -285,14 +231,6 @@ void SVOApp::Initialize(GPUDevice* device)
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
-    // Create voxel cube model.
-    material = new Material(mtShowVoxelGrid);
-    mVoxelCubeModel = new VoxelCubeTriMesh(material, mMainCamera);
-    mVoxelCubeModel->LoadFromFile("box.ply");
-    mVoxelCubeModel->GenerateNormals();
-    mVoxelCubeModel->SetIndirectCommandBuffer(mIndirectCommandBuffer, 0);
-    mVoxelCubeModel->CreateDeviceResource(mDevice);
-
     // Create SVO node cube model.
     std::vector<vec3> svoCubeVertices;
     svoCubeVertices.reserve(8);
@@ -333,40 +271,19 @@ void SVOApp::Initialize(GPUDevice* device)
 
     // Create GUI elements.
     InformationPanel::GetInstance()->AddListener(this);
-    InformationPanel::GetInstance()->AddTimingLabel("Reset Voxel Buffer Pass", 16, 20);
-    InformationPanel::GetInstance()->AddTimingLabel("Voxelization Pass", 16, 40);
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Count", 16, 60);
-    InformationPanel::GetInstance()->AddTimingLabel("Reset Counter Time", 16, 80);
-    InformationPanel::GetInstance()->AddTimingLabel("Counter", 16, 100);
-    InformationPanel::GetInstance()->AddTimingLabel("Visualization Pass", 16, 120);
-    InformationPanel::GetInstance()->AddTimingLabel("Intersection Pass", 16, 140);
-    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Count", 16, 160);
-    InformationPanel::GetInstance()->AddTimingLabel("GVF Count", 16, 180);
-    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 200);
-    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 220);
-    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Splat Leaf Nodes Pass", 16, 240);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxelization Pass", 16, 20);
+    InformationPanel::GetInstance()->AddTimingLabel("Reset Counter Time", 16, 40);
+    InformationPanel::GetInstance()->AddTimingLabel("Visualization Pass", 16, 60);
+    InformationPanel::GetInstance()->AddTimingLabel("Voxel Fragment Count", 16, 80);
+    InformationPanel::GetInstance()->AddTimingLabel("GVF Count", 16, 100);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 120);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 140);
+    InformationPanel::GetInstance()->AddTimingLabel("Build SVO Splat Leaf Nodes Pass", 16, 160);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
 
 #ifdef DEBUG_VOXEL_RAY_INTERSECTION
-    InformationPanel::GetInstance()->AddDebugLabel("Ray Direction X", 16, 20);
-    InformationPanel::GetInstance()->AddDebugLabel("Ray Direction Y", 16, 40);
-    InformationPanel::GetInstance()->AddDebugLabel("Ray Direction Z", 16, 60);
-    InformationPanel::GetInstance()->AddDebugLabel("Voxel Extension X", 16, 80);
-    InformationPanel::GetInstance()->AddDebugLabel("Voxel Extension Y", 16, 100);
-    InformationPanel::GetInstance()->AddDebugLabel("Voxel Extension Z", 16, 120);
-    InformationPanel::GetInstance()->AddDebugLabel("Ray maxT", 16, 140);
-    InformationPanel::GetInstance()->AddDebugLabel("Start GridPos X", 16, 160);
-    InformationPanel::GetInstance()->AddDebugLabel("Start GridPos Y", 16, 180);
-    InformationPanel::GetInstance()->AddDebugLabel("Start GridPos Z", 16, 200);
-    InformationPanel::GetInstance()->AddDebugLabel("End GridPos X", 16, 220);
-    InformationPanel::GetInstance()->AddDebugLabel("End GridPos Y", 16, 240);
-    InformationPanel::GetInstance()->AddDebugLabel("End GridPos Z", 16, 260);
-    InformationPanel::GetInstance()->AddDebugLabel("First Hit GridPos X", 16, 280);
-    InformationPanel::GetInstance()->AddDebugLabel("First Hit GridPos Y", 16, 300);
-    InformationPanel::GetInstance()->AddDebugLabel("First Hit GridPos Z", 16, 320);
-    InformationPanel::GetInstance()->AddDebugLabel("Iteration Count", 16, 340);
 #endif
 
 #ifdef DEBUG_VOXEL
@@ -425,9 +342,6 @@ void SVOApp::FrameFunc()
     InformationPanel^ infoPanel = InformationPanel::GetInstance();
     static double workLoad = 0.0;
 
-    mVoxelBuffer->Bind(0);
-    mIndirectCommandBuffer->Bind(2);
-
     // Reset counters.
     mAtomicCounterBuffer->Bind(0);
     mTimer->Start();
@@ -436,30 +350,17 @@ void SVOApp::FrameFunc()
     assert(counterData);
     counterData[0] = 0;
     counterData[1] = 0;
-    counterData[2] = 0;
-    counterData[3] = 0;
     mAtomicCounterBuffer->Unmap();
 #else
-    unsigned int counterData[4];
+    unsigned int counterData[2];
     counterData[0] = 0;
     counterData[1] = 0;
-    counterData[2] = 0;
-    counterData[3] = 0;
     mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int, counterData);
 #endif
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Reset Counter Time", workLoad);
 
-    // Reset voxel buffer pass.
-    mTimer->Start();
-    mResetVoxelBufferTask->DispatchCompute(0,
-        VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
-        VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
-        VOXEL_DIMENSION / LOCAL_GROUP_DIM);
-    mTimer->Stop();
-    workLoad = mTimer->GetTimeElapsed();
-    infoPanel->SetTimingLabelValue("Reset Voxel Buffer Pass", workLoad);
 
     //--------------------------------- Begin building SVO ---------------------------------//
 
@@ -474,30 +375,6 @@ void SVOApp::FrameFunc()
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Voxelization Pass", workLoad);
-
-    // Gather voxel buffer pass.
-    mGatherVoxelBufferTask->DispatchCompute(0,
-        VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
-        VOXEL_DIMENSION / LOCAL_GROUP_DIM, 
-        VOXEL_DIMENSION / LOCAL_GROUP_DIM);
-#ifdef DEBUG_VOXEL
-    mIndirectCommandBuffer->Bind();
-    GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(BA_Read_Only);
-    GLfloat* gatheredVoxelData = (GLfloat*)(indirectCommandbufferData + 10);
-    infoPanel->SetTimingLabelValue("Voxel Count", (double)indirectCommandbufferData[1]);
-    mIndirectCommandBuffer->Unmap();
-
-    mAtomicCounterBuffer->Bind();
-    counterData = (GLuint*)mAtomicCounterBuffer->Map(BA_Write_Only);
-    infoPanel->SetTimingLabelValue("Voxel Fragment Count", (double)counterData[0]);
-    infoPanel->SetTimingLabelValue("Counter", (double)counterData[3]);
-    mAtomicCounterBuffer->Unmap();
-
-    float voxelRatio = (float)counterData[3] / (float)(VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION);
-    float voxelFragmentRatio = (float)counterData[0] / (float)(VOXEL_DIMENSION*VOXEL_DIMENSION*VOXEL_DIMENSION);
-    infoPanel->SetTimingLabelValue("Voxel Ratio", (double)voxelRatio);
-    infoPanel->SetTimingLabelValue("Voxel Fragment Ratio", (double)voxelFragmentRatio);
-#endif
 
     // Gather voxel fragment list info pass.
     mVoxelFragmentListBuffer->Bind(1);
@@ -614,58 +491,10 @@ void SVOApp::FrameFunc()
     glEnable(GL_CULL_FACE);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     mTimer->Start();
-    if( mShowMode == SM_VoxelGrid )
-    {
-        mIndirectCommandBuffer->BindToIndirect();
-        mVoxelCubeModel->Render(0, 0);
-    }
-    else
-    {
-        ShowVoxelization();
-    }
+    ShowVoxelization();
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Visualization Pass", workLoad);
-
-    if( mVoxelRaySegment )
-    {
-        mVoxelBuffer->Bind(0);
-        mIndirectCommandBuffer->Bind(2);
-
-        mTimer->Start();
-        mVoxelGridIntersectionTask->DispatchCompute(0, 1, 1, 1);
-        mTimer->Stop();
-        workLoad = mTimer->GetTimeElapsed();
-        infoPanel->SetTimingLabelValue("Intersection Pass", workLoad);
-
-#ifdef DEBUG_VOXEL_RAY_INTERSECTION
-        mIndirectCommandBuffer->Bind();
-        GLuint* indirectCommandbufferData = (GLuint*)mIndirectCommandBuffer->Map(BA_Read_Only);
-        GLfloat* intersectionData = (GLfloat*)(indirectCommandbufferData + 8);
-
-        InformationPanel::GetInstance()->SetDebugLabelValue("Ray Direction X", (double)intersectionData[1]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Ray Direction Y", (double)intersectionData[2]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Ray Direction Z", (double)intersectionData[3]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Voxel Extension X", (double)intersectionData[4]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Voxel Extension Y", (double)intersectionData[5]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Voxel Extension Z", (double)intersectionData[6]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Ray maxT", (double)intersectionData[7]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Start GridPos X", (double)intersectionData[8]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Start GridPos Y", (double)intersectionData[9]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Start GridPos Z", (double)intersectionData[10]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("End GridPos X", (double)intersectionData[11]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("End GridPos Y", (double)intersectionData[12]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("End GridPos Z", (double)intersectionData[13]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("First Hit GridPos X", (double)intersectionData[14]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("First Hit GridPos Y", (double)intersectionData[15]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("First Hit GridPos Z", (double)intersectionData[16]);
-        InformationPanel::GetInstance()->SetDebugLabelValue("Iteration Count", (double)intersectionData[17]);
-
-        mIndirectCommandBuffer->Unmap();
-#endif
-
-        mVoxelRaySegment->Render(0, 0);
-    }
 }
 //----------------------------------------------------------------------------
 void SVOApp::Terminate()
@@ -673,16 +502,12 @@ void SVOApp::Terminate()
 	// Release all resources.
 
     mAtomicCounterBuffer = 0;
-    mResetVoxelBufferTask = 0;
-    mGatherVoxelBufferTask = 0;
-    mVoxelGridIntersectionTask = 0;
-    mGatherVoxelFragmentListInfoTask = 0;
-    mBuildSVOTask = 0;
-    mVoxelBuffer = 0;
-    mIndirectCommandBuffer = 0;
     mVoxelFragmentListBuffer = 0;
     mSVOBuffer = 0;
     mSVOUniformBuffer = 0;
+
+    mGatherVoxelFragmentListInfoTask = 0;
+    mBuildSVOTask = 0;
 
 	mGround = 0;
 	mCeiling = 0;
@@ -690,9 +515,7 @@ void SVOApp::Terminate()
 	mLeftWall = 0;
 	mRightWall = 0;
 	mModel = 0;
-    mVoxelCubeModel = 0;
     mSVONodeCubeModel = 0;
-    mVoxelRaySegment = 0;
 
     mTimer = 0;
 }
@@ -701,15 +524,11 @@ void SVOApp::ProcessInput()
 {
 	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		mShowMode = SM_VoxelGrid;
+        mShowMode = SM_WorldPosition;
 	}
 	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
 	{
 		mShowMode = SM_Scene;
-	}
-	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
-	{
-		mShowMode = SM_WorldPosition;
 	}
 	if (glfwGetKey(Window, GLFW_KEY_R) == GLFW_PRESS)
 	{
@@ -738,25 +557,5 @@ void SVOApp::OnButtonClick(System::Object^  sender,
         RaySegment[i] = (float)Convert::ToDouble((String^)p1Res[i]);
         RaySegment[i + 3] = (float)Convert::ToDouble((String^)p2Res[i]);
     }
-
-    ShaderProgramInfo voxelRaySegmentProgramInfo;
-    voxelRaySegmentProgramInfo.VShaderFileName = "SparseVoxelOctree/vVoxelRaySegment.glsl";
-    voxelRaySegmentProgramInfo.FShaderFileName = "SparseVoxelOctree/fVoxelRaySegment.glsl";
-    voxelRaySegmentProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                                 ShaderType::ST_Fragment;
-    Pass* passVoxelRaySegment = new Pass(voxelRaySegmentProgramInfo);
-
-    Technique* techVoxelRaySegment = new Technique();
-    techVoxelRaySegment->AddPass(passVoxelRaySegment);
-    MaterialTemplate* mtVoxelRaySegment = new MaterialTemplate();
-    mtVoxelRaySegment->AddTechnique(techVoxelRaySegment);
-    Material* material = new Material(mtVoxelRaySegment);
-    mVoxelRaySegment = new VoxelRaySegment(material, mMainCamera);
-    mVoxelRaySegment->LineWidth = 3.0f;
-    std::vector<int> temp;
-    temp.reserve(1);
-    temp.push_back(2);
-    mVoxelRaySegment->LoadFromMemory(1, temp, 2, RaySegment);
-    mVoxelRaySegment->CreateDeviceResource(mDevice);
 }
 //----------------------------------------------------------------------------

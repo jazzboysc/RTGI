@@ -32,7 +32,6 @@ private:
     ShaderUniform mSceneBBExtensionLoc;
     ShaderUniform mMaterialColorLoc;
     ShaderUniform mDimLoc;
-    ShaderUniform mShowWorldPositionLoc;
     ShaderUniform mInv2SceneBBExtensionLoc;
 
     // pass 2.
@@ -40,6 +39,7 @@ private:
     ShaderUniform mSceneBBCenterLoc2;
     ShaderUniform mSceneBBExtensionLoc2;
     ShaderUniform mDimLoc2;
+    ShaderUniform mShowWorldPositionLoc;
 };
 
 typedef RefPointer<SVOTriMesh> SVOTriMeshPtr;

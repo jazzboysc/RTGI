@@ -3,7 +3,6 @@
 in vec4 vPositionWorld;
 in vec4 vNormalWorld;
 
-#include "SparseVoxelOctree/sVoxelGrid.glsl"
 #include "SparseVoxelOctree/sSparseVoxelOctree.glsl"
 
 uniform vec3 SceneBBCenter;
@@ -11,7 +10,7 @@ uniform vec3 SceneBBExtension;
 uniform int dim;
 uniform int ShowWorldPosition;
 
-ivec3 GetIndex(vec3 worldPosition)
+ivec3 GetVoxelGridPosition(vec3 worldPosition)
 {
     vec3 imageDim = vec3(float(dim), float(dim), float(dim));
     imageDim = imageDim - vec3(1.0, 1.0, 1.0);
@@ -28,16 +27,6 @@ vec4 UintToVec4(uint value)
         float((value & 0x0000FF00) >> 8U),
         float((value & 0x00FF0000) >> 16U),
         float((value & 0xFF000000) >> 24U));
-}
-
-vec4 FetchColorFromVoxelGrid(ivec3 gridPosition)
-{
-    int index = gridPosition.z * dim * dim + gridPosition.y * dim + gridPosition.x;
-    vec4 color = UintToVec4(voxelBuffer.data[index].value1);
-    color.xyz /= 255.0;
-    color.w = 1.0;
-
-    return color;
 }
 
 vec4 FetchColorFromSVO(ivec3 gridPosition)
@@ -86,9 +75,7 @@ vec4 FetchColorFromSVO(ivec3 gridPosition)
 
 void main()
 {
-    ivec3 gridPos = GetIndex(vPositionWorld.xyz);
-    //vec4 color = FetchColorFromVoxelGrid(gridPos);
-    vec4 color = FetchColorFromSVO(gridPos);
+    ivec3 gridPos = GetVoxelGridPosition(vPositionWorld.xyz);
 
     if( ShowWorldPosition == 1 )
     {
@@ -99,6 +86,7 @@ void main()
     }
     else
     {
+        vec4 color = FetchColorFromSVO(gridPos);
         gl_FragData[0] = color;
     }
 }
