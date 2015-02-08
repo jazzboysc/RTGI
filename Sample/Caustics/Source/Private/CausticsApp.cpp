@@ -33,7 +33,10 @@ void CausticsApp::Initialize(GPUDevice* device)
 	
 	auto mLightCamera = new Camera;
 	mLightCamera->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 1.0f, 50.0f);
-	mLightCamera->SetLookAt(vec3(0.0f, 1.55f, 0.0f), vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, 0.0f, 1.0f));
+	mLightCamera->SetLookAt(vec3(0.0f, 1.5f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
+	auto test = mLightCamera->GetViewTransform();
+	auto redUV = test * vec4(1, -1, -1, 1);
+	redUV = redUV / length(redUV);
 
 	mLight = new Light;
 	mLight->SetProjector(mLightCamera);
@@ -83,6 +86,15 @@ void CausticsApp::Initialize(GPUDevice* device)
 	Texture* CausticsMapColorTextures[1] = { mCausticsMapTexture };
 	mCausticsMapGBuffer->SetRenderTargets(1, CausticsMapColorTextures, mCausticsMapDepthTexture);
 
+	// G-buffer for blurred caustics map
+	mBlurredCausticsMapTexture = new Texture2D();
+	mBlurredCausticsMapDepthTexture = new Texture2D();
+	mBlurredCausticsMapTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mBlurredCausticsMapDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
+	mBlurredCausticsMapGBuffer = new FrameBuffer(mDevice);
+	Texture* BlurredCausticsMapColorTextures[1] = { mBlurredCausticsMapTexture };
+	mBlurredCausticsMapGBuffer->SetRenderTargets(1, BlurredCausticsMapColorTextures, mBlurredCausticsMapDepthTexture);
+
 	// G-buffer for final image
 	mPositionTexture = new Texture2D();
 	mNormalTexture = new Texture2D();
@@ -98,7 +110,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 
 	// Create material templates.
 	mCausticsDebugBuffer = new StructuredBuffer();
-	auto bufferSize = sizeof(CausticsDebugBuffer) + this->Width * this->Height * sizeof(vec2);
+	auto bufferSize = sizeof(CausticsDebugBuffer) + this->Width * this->Height * sizeof(vec3);
 	mCausticsDebugBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
 
@@ -124,7 +136,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mMesh->GenerateNormals();
 	mMesh->CreateDeviceResource(mDevice);
 	mMesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
-	mMesh->SetWorldTranslation(vec3(0.0f, 0.5f, 0.0f));
+	mMesh->SetWorldTranslation(vec3(0.0f, -0.5f, 0.0f));
 	mMesh->SetWorldScale(vec3(0.3f));
 	mMesh->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
 
@@ -146,7 +158,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mPool->LoadFromFile("cube.ply");
 	mPool->GenerateNormals();
 	mPool->CreateDeviceResource(mDevice);
-	mPool->SetWorldTranslation(vec3(0.0f, 1.0f, 0.0f));
+	mPool->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
 	mPool->SetWorldScale(vec3(1, -1, 1));
 	mPool->MaterialColor = vec3(1, 1, 1);
 	mPool->CubeTexture = mCubeMap;
@@ -161,11 +173,17 @@ void CausticsApp::Initialize(GPUDevice* device)
 	vec2 tcoord11(1.0f, 1.0f);
 	ShaderProgramInfo SICausticsMapIntersect;
 	SICausticsMapIntersect << "Caustics/Intersection.vert"  << "Caustics/Intersection.frag";
-	ShaderProgramInfo SICausticsFinalImage;
-	SICausticsFinalImage << "Caustics/CausticsFinalImage.vert" << "Caustics/CausticsFinalImage.frag";
+	ShaderProgramInfo SIGaussianBlurH;
+	SIGaussianBlurH << "Caustics/GaussianBlurH.vert" << "Caustics/GaussianBlurH.frag";
+	ShaderProgramInfo SIGaussianBlurV;
+	SIGaussianBlurV << "Caustics/GaussianBlurV.vert" << "Caustics/GaussianBlurV.frag";
+	ShaderProgramInfo SICausticsReceiverFinal;
+	SICausticsReceiverFinal << "Caustics/CausticsReceiverFinal.vert" << "Caustics/CausticsReceiverFinal.frag";
 	auto mtCausticsMap = new MaterialTemplate(new Technique({
 		new Pass(SICausticsMapIntersect),
-		new Pass(SICausticsFinalImage) }));
+		new Pass(SIGaussianBlurH),
+		new Pass(SIGaussianBlurV),
+		new Pass(SICausticsReceiverFinal) }));
 
 	mCausticsScreenQuad = new CausticsScreenQuad(new Material(mtCausticsMap), mMainCamera);
 	mCausticsScreenQuad->LoadFromFile("screenquad.ply");
@@ -178,14 +196,24 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mCausticsScreenQuad->PositionTexture = mPositionTexture;
 	mCausticsScreenQuad->NormalTexture = mNormalTexture;
 	mCausticsScreenQuad->ReflectanceTexture = mColorTexture;
-	mCausticsScreenQuad->RefracterPositionTexture = mRefracPositionTexture;
-	mCausticsScreenQuad->RefracterNormalTexture = mRefracNormalTexture;
-	mCausticsScreenQuad->ReceiverPositionTexture = mRecvPositionTexture;
+	mCausticsScreenQuad->RefracterPositionLightTexture = mRefracPositionTexture;
+	mCausticsScreenQuad->RefracterNormalLightTexture = mRefracNormalTexture;
+	mCausticsScreenQuad->ReceiverPositionLightTexture = mRecvPositionTexture;
 	mCausticsScreenQuad->RefractionIndex = 1.0;
 	mCausticsScreenQuad->CubeTexture = mCubeMap;
 	mCausticsScreenQuad->Light = mLight;
+
 	// Pass 1
-	mCausticsScreenQuad->CausticsMapTexture2 = mCausticsMapTexture;
+	mCausticsScreenQuad->CausticsMapTexture = mCausticsMapTexture;
+
+	// Final Render receiver
+	mCausticsScreenQuad->BlurredCausticsMapTexture = mBlurredCausticsMapTexture;
+	mCausticsScreenQuad->ReceiverPositionTexture = mPositionTexture;
+	mCausticsScreenQuad->ReceiverNormalTexture = mNormalTexture;
+	mCausticsScreenQuad->ReceiverColorTexture = mColorTexture;
+
+	// Final render refracter
+
 
 	ShaderProgramInfo SICausticsMap;
 	SICausticsMap << "Caustics/CausticsMap.vert" << "Caustics/CausticsMap.frag";
@@ -222,7 +250,6 @@ void CausticsApp::DrawRefracterLightPoV()
 void CausticsApp::DrawReceiverCameraPoV()
 {
 	mPool->Render(0, 0);
-	mMesh->Render(0, 0);
 }
 
 void CausticsApp::DrawScene()
@@ -272,8 +299,13 @@ void CausticsApp::FrameFunc()
 	mCausticsMapGBuffer->Enable();
 	mCausticsDebugBuffer->Bind(3);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	mVertexGrid->Render(0, 0);
-	mCausticsDebugBuffer->Bind(); 
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
+	mCausticsDebugBuffer->Bind();
 	mCausticsMapGBuffer->Disable();
 	glEndQuery(GL_PRIMITIVES_GENERATED);
 	glGetQueryObjectuiv(occlusionQuery, GL_QUERY_RESULT, &numPixels);
@@ -282,12 +314,19 @@ void CausticsApp::FrameFunc()
 
 	void* bufferData = mCausticsDebugBuffer->Map(BA_Read_Only);
 	auto dataPtr = (CausticsDebugBuffer*)bufferData;
-	auto dataPtr2 = (vec2*)(dataPtr + 1);
+	auto dataPtr2 = (vec3*)(dataPtr + 1);
 	mCausticsDebugBuffer->Unmap();
+
+	// Blur caustics map
+	mBlurredCausticsMapGBuffer->Enable();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	mCausticsScreenQuad->Render(0, 1);
+	mBlurredCausticsMapGBuffer->Disable();
+	mCausticsScreenQuad->Render(0, 2);
 
 	// Draw final image
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mCausticsScreenQuad->Render(0, 1);
+	mCausticsScreenQuad->Render(0, 3);
 
 	switch (mShowMode)
 	{

@@ -69,6 +69,10 @@ private:
 	Texture2DPtr mCausticsMapTexture;
 	Texture2DPtr mCausticsMapDepthTexture;
 
+	// blurred caustics map G-buffer
+	FrameBufferPtr mBlurredCausticsMapGBuffer;
+	Texture2DPtr mBlurredCausticsMapTexture;
+	Texture2DPtr mBlurredCausticsMapDepthTexture;
 
 	TextureCubePtr mCubeMap;
 

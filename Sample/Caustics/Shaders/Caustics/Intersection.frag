@@ -90,7 +90,7 @@ void main()
 	vec3 lightRefracterPos = texture(refracterPositionLightSampler, pTCoord).xyz;
 	if (lightRefracterPos.rgb == vec3(0.0,0.0,0.0))
 	{
-		//discard;
+		discard;
 	}
 
 
@@ -98,13 +98,13 @@ void main()
 	vec3 lightRefracterNorm = texture(refracterNormalLightSampler, pTCoord).xyz;
 	//lightRefracterNorm = lightRefracterNorm * 0.5 + vec3(0.5);
 
-	vec3 lightDir = normalize( lightReceiverPos - lightPosition);// normalize( (vec4(lightReceiverPos, 1)).xyz - (vec4(lightPosition,1)).xyz);
+	vec3 lightDir = normalize( lightRefracterPos - lightPosition);// normalize( (vec4(lightReceiverPos, 1)).xyz - (vec4(lightPosition,1)).xyz);
 	// Compute refracted ray direction
 	//vec3 lightDir = normalize(posi - lightPosition);
 	vec3 refracDir = normalize(refract(lightDir, lightRefracterNorm, 0.95));
 
 	// Get distance to ray/geometry intersection estimation point
-	float dist = rayGeoNP(lightRefracterPos, refracDir, mVPLight, receiverPositionLightSampler, 32);
+	float dist = rayGeoNP(lightRefracterPos, refracDir, mVPLight, receiverPositionLightSampler, 2);
 
 	/*
 	float eps = 0.1;
@@ -150,7 +150,7 @@ void main()
 		//gl_FragData[0] = vec4(1, 1, 1, 1);
 	}
 	// Testing
-	gl_FragData[0] = vec4(texColor, 1);
+	//gl_FragData[0] = vec4(texColor, 1);
 	//gl_FragData[0] = vec4(dist, dist, dist, 1.0);// * 4 - 3.0f;// vec4(intPt,1);
 	//gl_FragData[0] = vec4(intPt, 1);
 	////

@@ -30,6 +30,7 @@ void PointSet::Render(int technique, int pass, SubRenderer* subRenderer)
 void PointSet::OnRender(Pass*, PassInfo*)
 { 
 	//glVertexPointer(3, GL_FLOAT, 0, &mVertexData[0]);
+	glPointSize(7.0);
 	glDrawArrays(GL_POINTS, 0, mPointCount);
 }
 //----------------------------------------------------------------------------

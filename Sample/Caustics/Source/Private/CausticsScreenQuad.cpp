@@ -42,23 +42,29 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 		PositionTexture->BindToSampler(0, &sampler);
 		NormalTexture->BindToSampler(1, &sampler);
 		ReflectanceTexture->BindToSampler(2, &sampler);
-		RefracterPositionTexture->BindToSampler(3, &sampler);
-		RefracterNormalTexture->BindToSampler(4, &sampler);
-		ReceiverPositionTexture->BindToSampler(5, &sampler);
+		RefracterPositionLightTexture->BindToSampler(3, &sampler);
+		RefracterNormalLightTexture->BindToSampler(4, &sampler);
+		ReceiverPositionLightTexture->BindToSampler(5, &sampler);
 
 		CubeTexture->BindToSampler(6, &sampler);
 
 		mPositionSamplerLoc.SetValue(0);
 		mNormalSamplerLoc.SetValue(1);
 		mReflectanceSamplerLoc.SetValue(2);
-		mRefracterPositionSamplerLoc.SetValue(3);
-		mRefracterNormalSamplerLoc.SetValue(4);
-		mReceiverPositionSamplerLoc.SetValue(5);
+		mRefracterPositionLightSamplerLoc.SetValue(3);
+		mRefracterNormalLightSamplerLoc.SetValue(4);
+		mReceiverPositionLightSamplerLoc.SetValue(5);
 
 		mCubeTextureLoc.SetValue(6);
 	}
 
 	if (pass == 1)
+	{
+		CausticsMapTexture->BindToSampler(0, &sampler);
+		this->mCausticsMapSamplerLoc2.SetValue(0);
+	}
+
+	if (pass == 3)
 	{
 		GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc3, mWorldTransform);
 		if (mCamera)
@@ -70,11 +76,22 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 			GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc3, projTrans);
 		}
 
+		mLightPositionLoc3.SetValue(Light->GetLocation());
 		mLightViewLoc3.SetValue(Light->GetProjector()->GetViewTransform());
 		mLightProjLoc3.SetValue(Light->GetProjector()->GetProjectionTransform());
+		mLightColorLoc3.SetValue(Light->Color);
 
-		CausticsMapTexture2->BindToSampler(0, &sampler);
-		mCausticsMapSamplerLoc2.SetValue(0);
+		BlurredCausticsMapTexture->BindToSampler(0, &sampler);
+		mBlurredCausticsMapSamplerLoc.SetValue(0);
+		
+		ReceiverPositionTexture->BindToSampler(1, &sampler);
+		mReceiverPositionSamplerLoc.SetValue(1);
+
+		ReceiverNormalTexture->BindToSampler(2, &sampler);
+		mReceiverNormalSamplerLoc.SetValue(2);
+
+		ReceiverColorTexture->BindToSampler(3, &sampler);
+		mReceiverColorSamplerLoc.SetValue(3);
 	}
 }
 //----------------------------------------------------------------------------
@@ -95,18 +112,30 @@ void CausticsScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
 	program->GetUniformLocation(&mReflectanceSamplerLoc, "reflectanceSampler");
 
-	program->GetUniformLocation(&mRefracterPositionSamplerLoc, "refracterPositionLightSampler");
-	program->GetUniformLocation(&mRefracterNormalSamplerLoc, "refracterNormalLightSampler");
-	program->GetUniformLocation(&mReceiverPositionSamplerLoc, "receiverPositionLightSampler");
+	program->GetUniformLocation(&mRefracterPositionLightSamplerLoc, "refracterPositionLightSampler");
+	program->GetUniformLocation(&mRefracterNormalLightSamplerLoc, "refracterNormalLightSampler");
+	program->GetUniformLocation(&mReceiverPositionLightSamplerLoc, "receiverPositionLightSampler");
 	program->GetUniformLocation(&mCubeTextureLoc, "cubeSampler");
 
+	// Gaussian Blur
 	program = mMaterial->GetProgram(0, 1);
+	program->GetUniformLocation(&mCausticsMapSamplerLoc, "causticsMapSampler");
+	program = mMaterial->GetProgram(0, 2);
+	program->GetUniformLocation(&mCausticsMapSamplerLoc2, "causticsMapSampler");
+
+	program = mMaterial->GetProgram(0, 3);
 	program->GetUniformLocation(&mWorldLoc3, "World");
 	program->GetUniformLocation(&mViewLoc3, "View");
 	program->GetUniformLocation(&mProjLoc3, "Proj");
 
-	program->GetUniformLocation(&mCausticsMapSamplerLoc2, "causticsMapSampler");
+	program->GetUniformLocation(&mBlurredCausticsMapSamplerLoc, "blurredCausticsMapSampler");
+	program->GetUniformLocation(&mReceiverPositionSamplerLoc, "receiverPositionSampler");
+	program->GetUniformLocation(&mReceiverNormalSamplerLoc, "receiverNormalSampler");
+	program->GetUniformLocation(&mReceiverColorSamplerLoc, "receiverReflectanceSampler");
+
+	program->GetUniformLocation(&mLightPositionLoc3, "lightPosition");
 	program->GetUniformLocation(&mLightViewLoc3, "lightView");
 	program->GetUniformLocation(&mLightProjLoc3, "lightProj");
+	program->GetUniformLocation(&mLightColorLoc3, "lightColor");
 }
 //----------------------------------------------------------------------------

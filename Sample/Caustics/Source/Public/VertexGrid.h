@@ -37,11 +37,12 @@ private:
 	ShaderUniform mCausticsMapSamplerLoc;
 	ShaderUniform mIntersectionPositionSamplerLoc;
 
-	ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;
-	ShaderUniform mLightViewLoc2;
-	ShaderUniform mLightProjLoc2;
+	ShaderUniform mWorldLoc, mViewLoc, mProjLoc;
+	ShaderUniform mLightViewLoc;
+	ShaderUniform mLightProjLoc;
 
 	ShaderUniform mMaterialColorLoc;
+
 };
 
 	typedef RefPointer<VertexGrid> VertexGridPtr;

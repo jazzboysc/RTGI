@@ -5,21 +5,13 @@ in vec3 vNormal;
 in vec2 vTCoord;
 
 out vec2 pTCoord;
-out vec4 vPositionWorld;
-out vec4 vNormalWorld;
 out float intensity;
 
-uniform int causticsMapResolution;
+uniform sampler2D causticsMapSampler;
 uniform sampler2D intersectionPositionSampler;
-
-uniform vec3 lightPosition;
+uniform int causticsMapResolution;
 uniform mat4 lightView;
 uniform mat4 lightProj;
-uniform vec3 lightColor;
-
-uniform mat4 World;
-uniform mat4 View;
-uniform mat4 Proj;
 
 layout(std430, binding = 3)  buffer _causticsDebugBuffer
 {
@@ -29,22 +21,27 @@ layout(std430, binding = 3)  buffer _causticsDebugBuffer
     uint value3;
     uint value4;
 
-	vec2 coord[];
+	vec3 coord[];
 
 } causticsDebugBuffer;
 
 void main()
 {
+	mat4 mLightViewProj = lightProj * lightView;
 	float x = gl_VertexID % 1024;
 	float y = gl_VertexID / 1024;
-	vec2 pTCoord = vec2(x / 1024, y / 768);
-	gl_PointSize = 200.0;
+	pTCoord = vec2(x / 1024, y / 768);
+	vec2 tc = pTCoord * 2 - 1;
 
-    gl_Position = vec4(pTCoord, 1, 1);
+	vec3 intPt = texture(intersectionPositionSampler, pTCoord).xyz;
+	
+	vec3 finalPt = (mLightViewProj * vec4(intPt, 1)).xyz;
+    gl_Position = vec4(finalPt, 1);
 
 	causticsDebugBuffer.value1 = gl_VertexID;
-	causticsDebugBuffer.coord[gl_VertexID] = vec2(pTCoord);
+	causticsDebugBuffer.coord[gl_VertexID] = finalPt;
 
+	intensity = vec3(1000,1000,1000) * (4.0 / causticsMapResolution);
 
 
 
@@ -70,7 +67,6 @@ void main()
 
 	
          // compute the light intensity
-	intensity = vec3(1000,1000,1000) * (4.0/causticsMapResolution);
 	//intensity = intPt.xyz;
 
 	//gl_Position = intPt * mLightViewProj;

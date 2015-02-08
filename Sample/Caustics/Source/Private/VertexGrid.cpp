@@ -9,8 +9,6 @@ VertexGrid::VertexGrid(int width, int height, Material* material)
 	MaterialColor(0.75f, 0.75f, 0.75f)
 {
 	mPointCount = width * height;
-	mVertexData.resize(mPointCount);
-	mVertexData[5] = 1.0f;
 }
 //----------------------------------------------------------------------------
 VertexGrid::~VertexGrid()
@@ -30,15 +28,15 @@ void VertexGrid::OnUpdateShaderConstants(int technique, int pass)
 
 	if (pass == 0)
 	{
-		mLightViewLoc2.SetValue(Light->GetProjector()->GetViewTransform());
-		mLightProjLoc2.SetValue(Light->GetProjector()->GetProjectionTransform());
+		mLightViewLoc.SetValue(Light->GetProjector()->GetViewTransform());
+		mLightProjLoc.SetValue(Light->GetProjector()->GetProjectionTransform());
 
 
 		IntersectionPositionTexture->BindToSampler(0, &sampler);
-		CausticsMapTexture->BindToSampler(1, &sampler);
+		//CausticsMapTexture->BindToSampler(1, &sampler);
 
 		mIntersectionPositionSamplerLoc.SetValue(0);
-		mCausticsMapSamplerLoc.SetValue(1);
+		//mCausticsMapSamplerLoc.SetValue(1);
 
 		mCausticsMapResolutionLoc.SetValue(CausticsMapsResolution);
 	}
@@ -53,15 +51,15 @@ void VertexGrid::OnGetShaderConstants()
 	ShaderProgram* program = mMaterial->GetProgram(0, 0);
     program->GetUniformLocation(&mMaterialColorLoc, "materialColor");
 
-	program->GetUniformLocation(&mWorldLoc2, "World");
-	program->GetUniformLocation(&mViewLoc2, "View");
-	program->GetUniformLocation(&mProjLoc2, "Proj");
+	program->GetUniformLocation(&mWorldLoc, "World");
+	program->GetUniformLocation(&mViewLoc, "View");
+	program->GetUniformLocation(&mProjLoc, "Proj");
 
 	program->GetUniformLocation(&mIntersectionPositionSamplerLoc, "intersectionPositionSampler");
 	program->GetUniformLocation(&mCausticsMapSamplerLoc, "causticsMapSampler");
 	program->GetUniformLocation(&mCausticsMapResolutionLoc, "causticsMapResolution");
-	program->GetUniformLocation(&mLightViewLoc2, "lightView");
-	program->GetUniformLocation(&mLightProjLoc2, "lightProj");
+	program->GetUniformLocation(&mLightViewLoc, "lightView");
+	program->GetUniformLocation(&mLightProjLoc, "lightProj");
 
 }
 //----------------------------------------------------------------------------
