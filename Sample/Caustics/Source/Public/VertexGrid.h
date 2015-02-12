@@ -40,6 +40,7 @@ private:
 	ShaderUniform mWorldLoc, mViewLoc, mProjLoc;
 	ShaderUniform mLightViewLoc;
 	ShaderUniform mLightProjLoc;
+	ShaderUniform mLightColorLoc;
 
 	ShaderUniform mMaterialColorLoc;
 

@@ -30,6 +30,7 @@ void VertexGrid::OnUpdateShaderConstants(int technique, int pass)
 	{
 		mLightViewLoc.SetValue(Light->GetProjector()->GetViewTransform());
 		mLightProjLoc.SetValue(Light->GetProjector()->GetProjectionTransform());
+		mLightColorLoc.SetValue(Light->Color);
 
 
 		IntersectionPositionTexture->BindToSampler(0, &sampler);
@@ -60,6 +61,7 @@ void VertexGrid::OnGetShaderConstants()
 	program->GetUniformLocation(&mCausticsMapResolutionLoc, "causticsMapResolution");
 	program->GetUniformLocation(&mLightViewLoc, "lightView");
 	program->GetUniformLocation(&mLightProjLoc, "lightProj");
+	program->GetUniformLocation(&mLightColorLoc, "lightColor");
 
 }
 //----------------------------------------------------------------------------

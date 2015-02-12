@@ -8,6 +8,7 @@ in float intensity;
 uniform sampler2D intersectionPositionSampler;
 uniform sampler2D causticsMapSampler;
 uniform int causticsMapResolution;
+uniform vec3 lightColor;
 
 layout(std430, binding = 3)  buffer _causticsDebugBuffer
 {
@@ -31,6 +32,6 @@ vec2 getTC(mat4 mVP, vec3 wpos)
 void main()
 {
 	vec4 tcol = texture(causticsMapSampler, pTCoord);
-	gl_FragData[0] = vec4(intensity, intensity, intensity, 1 - tcol.r);
+	gl_FragData[0] = vec4(lightColor * intensity, 1 - tcol.r);
 	//gl_FragData[0] = vec4(1, 1, 1, 1);
 }

@@ -23,13 +23,13 @@ public:
 	LightPtr Light;
 	float RefractionIndex;
 
-	Texture2DPtr PositionTexture;
-	Texture2DPtr NormalTexture;
-	Texture2DPtr ReflectanceTexture;
+	Texture2DPtr ReceiverPositionLightTexture;
+	Texture2DPtr ReceiverNormalLightTexture;
+	Texture2DPtr ReceiverReflectanceLightTexture;
 
 	Texture2DPtr RefracterPositionLightTexture;
 	Texture2DPtr RefracterNormalLightTexture;
-	Texture2DPtr ReceiverPositionLightTexture;
+	Texture2DPtr RefracterReflectanceLightTexture;
 
 	TextureCubePtr CubeTexture;
 
@@ -38,14 +38,17 @@ public:
 
 	// Pass final render receiver
 	Texture2DPtr BlurredCausticsMapTexture;
-
 	Texture2DPtr ReceiverPositionTexture;
 	Texture2DPtr ReceiverNormalTexture;
+	Texture2DPtr ReceiverColorTexture;
+	Texture2DPtr ShadowmapTexture;
 
 	// Pass final render Refractive obj
-	Texture2DPtr RefracterPositionTexture;
-	Texture2DPtr RefracterNormalTexture;
-	Texture2DPtr ReceiverColorTexture;
+	Texture2DPtr RefracPositionTexture;
+	Texture2DPtr RefracNormalTexture;
+	Texture2DPtr RefracColorTexture;
+	TextureCubePtr CubeTexture2;
+	Texture2DPtr ShadowmapTexture2;
 private:
 	// Pass 0
 	ShaderUniform mLightPositionLoc;
@@ -68,7 +71,7 @@ private:
 	ShaderUniform mCausticsMapSamplerLoc;
 	ShaderUniform mCausticsMapSamplerLoc2;
 
-	// Pass FInal Render
+	// Pass final render receiver
 	ShaderUniform mReceiverPositionSamplerLoc;
 	ShaderUniform mReceiverNormalSamplerLoc;
 	ShaderUniform mReceiverColorSamplerLoc;
@@ -78,7 +81,24 @@ private:
 	ShaderUniform mLightViewLoc3;
 	ShaderUniform mLightProjLoc3;
 	ShaderUniform mLightColorLoc3;
-};
+	ShaderUniform mShadowMapTextureLoc;
+
+	// pass final render refractive obj
+	ShaderUniform mRefracPositionSamplerLoc;
+	ShaderUniform mRefracNormalSamplerLoc;
+	ShaderUniform mRefracColorSamplerLoc;
+	ShaderUniform mWorldLoc4, mViewLoc4, mProjLoc4;
+	ShaderUniform mLightPositionLoc4;
+	ShaderUniform mLightViewLoc4;
+	ShaderUniform mLightProjLoc4;
+	ShaderUniform mLightColorLoc4;
+
+	ShaderUniform mRefractionIndexLoc2;
+	ShaderUniform mShadowMapTextureLoc2;
+
+	// optional
+	ShaderUniform mCubeTextureLoc2;
+	};
 
 	typedef RefPointer<CausticsScreenQuad> CausticsScreenQuadPtr;
 

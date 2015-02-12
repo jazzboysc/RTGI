@@ -25,7 +25,7 @@ private:
 	void DrawReceiverLightPoV();
 	void DrawRefracterLightPoV();
 	void DrawReceiverCameraPoV();
-	void DrawScene();
+	void DrawRefracCameraPoV();
 
 	enum ShowMode
 	{
@@ -38,26 +38,39 @@ private:
 
 	LightPtr mLight;
 
-	// G-buffer.
-	FrameBufferPtr mGBuffer;
-	Texture2DPtr mPositionTexture;
-	Texture2DPtr mNormalTexture;
-	Texture2DPtr mColorTexture;
-	Texture2DPtr mDepthTexture;
+	// G-buffer receiver
+	FrameBufferPtr mReceiverGBuffer;
+	Texture2DPtr mReceiverPositionTexture;
+	Texture2DPtr mReceiverNormalTexture;
+	Texture2DPtr mReceiverColorTexture;
+	Texture2DPtr mReceiverDepthTexture;
 
-	// Receiver G-buffer
-	FrameBufferPtr mRecvGBuffer;
-	Texture2DPtr mRecvPositionTexture;
-	Texture2DPtr mRecvNormalTexture;
-	Texture2DPtr mRecvColorTexture;
-	Texture2DPtr mRecvDepthTexture;
-
-	// Refracter G-buffer
+	// G-buffer refractive obj
 	FrameBufferPtr mRefracGBuffer;
 	Texture2DPtr mRefracPositionTexture;
 	Texture2DPtr mRefracNormalTexture;
 	Texture2DPtr mRefracColorTexture;
 	Texture2DPtr mRefracDepthTexture;
+
+	// Receiver G-buffer light
+	FrameBufferPtr mRecvGBufferLight;
+	Texture2DPtr mLightReceiverPositionTexture;
+	Texture2DPtr mLightReceiverNormalTexture;
+	Texture2DPtr mLightReceiverColorTexture;
+	Texture2DPtr mLightReceiverDepthTexture;
+
+	// Refracter G-buffer light
+	FrameBufferPtr mRefracGBufferLight;
+	Texture2DPtr mLightRefracPositionTexture;
+	Texture2DPtr mLightRefracNormalTexture;
+	Texture2DPtr mLightRefracColorTexture;
+	Texture2DPtr mLightRefracDepthTexture;
+
+	// G-buffer for final image
+	FrameBufferPtr mGBufferFinal;
+	Texture2DPtr mReceiverTexture;
+	Texture2DPtr mRefracTexture;
+	Texture2DPtr mDepthTexture;
 
 	// Intersection map G-buffer
 	FrameBufferPtr mIntersectionGBuffer;

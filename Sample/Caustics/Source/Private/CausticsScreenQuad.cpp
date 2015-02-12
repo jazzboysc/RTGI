@@ -11,9 +11,9 @@ CausticsScreenQuad::CausticsScreenQuad(Material* material, Camera* camera)
 //----------------------------------------------------------------------------
 CausticsScreenQuad::~CausticsScreenQuad()
 {
-	PositionTexture = 0;
-	NormalTexture = 0;
-	ReflectanceTexture = 0;
+	ReceiverPositionLightTexture = 0;
+	ReceiverNormalLightTexture = 0;
+	ReceiverReflectanceLightTexture = 0;
 }
 //----------------------------------------------------------------------------
 void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
@@ -39,9 +39,9 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 
 
-		PositionTexture->BindToSampler(0, &sampler);
-		NormalTexture->BindToSampler(1, &sampler);
-		ReflectanceTexture->BindToSampler(2, &sampler);
+		ReceiverPositionLightTexture->BindToSampler(0, &sampler);
+		ReceiverNormalLightTexture->BindToSampler(1, &sampler);
+		ReceiverReflectanceLightTexture->BindToSampler(2, &sampler);
 		RefracterPositionLightTexture->BindToSampler(3, &sampler);
 		RefracterNormalLightTexture->BindToSampler(4, &sampler);
 		ReceiverPositionLightTexture->BindToSampler(5, &sampler);
@@ -61,6 +61,12 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 	if (pass == 1)
 	{
 		CausticsMapTexture->BindToSampler(0, &sampler);
+		this->mCausticsMapSamplerLoc.SetValue(0);
+	}
+
+	if (pass == 2)
+	{
+		BlurredCausticsMapTexture->BindToSampler(0, &sampler);
 		this->mCausticsMapSamplerLoc2.SetValue(0);
 	}
 
@@ -83,7 +89,7 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 		BlurredCausticsMapTexture->BindToSampler(0, &sampler);
 		mBlurredCausticsMapSamplerLoc.SetValue(0);
-		
+
 		ReceiverPositionTexture->BindToSampler(1, &sampler);
 		mReceiverPositionSamplerLoc.SetValue(1);
 
@@ -92,6 +98,44 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 		ReceiverColorTexture->BindToSampler(3, &sampler);
 		mReceiverColorSamplerLoc.SetValue(3);
+
+		ShadowmapTexture->BindToSampler(4, &sampler);
+		mShadowMapTextureLoc.SetValue(4);
+	}
+
+	if (pass == 4)
+	{
+		GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc4, mWorldTransform);
+		if (mCamera)
+		{
+			glm::mat4 viewTrans = mCamera->GetViewTransform();
+			GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc4, viewTrans);
+
+			glm::mat4 projTrans = mCamera->GetProjectionTransform();
+			GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc4, projTrans);
+		}
+
+		mRefractionIndexLoc2.SetValue(RefractionIndex);
+
+		mLightPositionLoc4.SetValue(Light->GetLocation());
+		mLightViewLoc4.SetValue(Light->GetProjector()->GetViewTransform());
+		mLightProjLoc4.SetValue(Light->GetProjector()->GetProjectionTransform());
+		mLightColorLoc4.SetValue(Light->Color);
+
+		RefracPositionTexture->BindToSampler(0, &sampler);
+		mRefracPositionSamplerLoc.SetValue(0);
+
+		RefracNormalTexture->BindToSampler(1, &sampler);
+		mRefracNormalSamplerLoc.SetValue(1);
+
+		RefracColorTexture->BindToSampler(2, &sampler);
+		mRefracColorSamplerLoc.SetValue(2);
+
+		CubeTexture->BindToSampler(3, &sampler);
+		mCubeTextureLoc2.SetValue(3);
+
+		ShadowmapTexture2->BindToSampler(4, &sampler);
+		mShadowMapTextureLoc2.SetValue(4);
 	}
 }
 //----------------------------------------------------------------------------
@@ -132,10 +176,30 @@ void CausticsScreenQuad::OnGetShaderConstants()
 	program->GetUniformLocation(&mReceiverPositionSamplerLoc, "receiverPositionSampler");
 	program->GetUniformLocation(&mReceiverNormalSamplerLoc, "receiverNormalSampler");
 	program->GetUniformLocation(&mReceiverColorSamplerLoc, "receiverReflectanceSampler");
+	program->GetUniformLocation(&mShadowMapTextureLoc, "shadowmapSampler");
 
 	program->GetUniformLocation(&mLightPositionLoc3, "lightPosition");
 	program->GetUniformLocation(&mLightViewLoc3, "lightView");
 	program->GetUniformLocation(&mLightProjLoc3, "lightProj");
 	program->GetUniformLocation(&mLightColorLoc3, "lightColor");
+
+	program = mMaterial->GetProgram(0, 4);
+	program->GetUniformLocation(&mWorldLoc4, "World");
+	program->GetUniformLocation(&mViewLoc4, "View");
+	program->GetUniformLocation(&mProjLoc4, "Proj");
+
+	program->GetUniformLocation(&mRefracPositionSamplerLoc, "refracPositionSampler");
+	program->GetUniformLocation(&mRefracNormalSamplerLoc, "refracNormalSampler");
+	program->GetUniformLocation(&mRefracColorSamplerLoc, "refracReflectanceSampler");
+	program->GetUniformLocation(&mShadowMapTextureLoc2, "shadowmapSampler");
+	
+	program->GetUniformLocation(&mRefractionIndexLoc2, "refractionIndex");
+
+	program->GetUniformLocation(&mLightPositionLoc4, "lightPosition");
+	program->GetUniformLocation(&mLightViewLoc4, "lightView");
+	program->GetUniformLocation(&mLightProjLoc4, "lightProj");
+	program->GetUniformLocation(&mLightColorLoc4, "lightColor");
+	program->GetUniformLocation(&mCubeTextureLoc2, "cubeSampler");
+
 }
 //----------------------------------------------------------------------------

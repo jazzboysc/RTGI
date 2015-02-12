@@ -27,34 +27,35 @@ void CausticsApp::Initialize(GPUDevice* device)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Create camera and light
-	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 1.0f, 50.0f);
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.1f, 50.0f);
 	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 	
 	auto mLightCamera = new Camera;
 	mLightCamera->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 1.0f, 50.0f);
-	mLightCamera->SetLookAt(vec3(0.0f, 1.5f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
+	mLightCamera->SetLookAt(vec3(-0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
 	auto test = mLightCamera->GetViewTransform();
 	auto redUV = test * vec4(1, -1, -1, 1);
 	redUV = redUV / length(redUV);
 
 	mLight = new Light;
 	mLight->SetProjector(mLightCamera);
-	
-	// G-buffer for receiver object
-	mRecvPositionTexture = new Texture2D();
-	mRecvNormalTexture = new Texture2D();
-	mRecvColorTexture = new Texture2D();
-	mRecvDepthTexture = new Texture2D();
-	mRecvPositionTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
-	mRecvNormalTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
-	mRecvColorTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
-	mRecvDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
-	mRecvGBuffer = new FrameBuffer(mDevice);
-	Texture* RecvColorTextures[3] = { mRecvPositionTexture, mRecvNormalTexture, mRecvColorTexture };
-	mRecvGBuffer->SetRenderTargets(3, RecvColorTextures, mRecvDepthTexture);
+	mLight->Color = vec3(0.9f, 0.9f, 0.7f);
 
-	// G-buffer for refractive object
+	// G-buffer for receiver
+	mReceiverPositionTexture = new Texture2D();
+	mReceiverNormalTexture = new Texture2D();
+	mReceiverColorTexture = new Texture2D();
+	mReceiverDepthTexture = new Texture2D();
+	mReceiverPositionTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mReceiverNormalTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mReceiverColorTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mReceiverDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
+	mReceiverGBuffer = new FrameBuffer(mDevice);
+	Texture* receiverColorTextures[3] = { mReceiverPositionTexture, mReceiverNormalTexture, mReceiverColorTexture };
+	mReceiverGBuffer->SetRenderTargets(3, receiverColorTextures, mReceiverDepthTexture);
+
+	// G-buffer for refractive obj
 	mRefracPositionTexture = new Texture2D();
 	mRefracNormalTexture = new Texture2D();
 	mRefracColorTexture = new Texture2D();
@@ -66,6 +67,32 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mRefracGBuffer = new FrameBuffer(mDevice);
 	Texture* RefracColorTextures[3] = { mRefracPositionTexture, mRefracNormalTexture, mRefracColorTexture };
 	mRefracGBuffer->SetRenderTargets(3, RefracColorTextures, mRefracDepthTexture);
+
+	// G-buffer for receiver object from light pov
+	mLightReceiverPositionTexture = new Texture2D();
+	mLightReceiverNormalTexture = new Texture2D();
+	mLightReceiverColorTexture = new Texture2D();
+	mLightReceiverDepthTexture = new Texture2D();
+	mLightReceiverPositionTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mLightReceiverNormalTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mLightReceiverColorTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mLightReceiverDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
+	mRecvGBufferLight = new FrameBuffer(mDevice);
+	Texture* LightRecvColorTextures[3] = { mLightReceiverPositionTexture, mLightReceiverNormalTexture, mLightReceiverColorTexture };
+	mRecvGBufferLight->SetRenderTargets(3, LightRecvColorTextures, mLightReceiverDepthTexture);
+
+	// G-buffer for refractive object from light pov
+	mLightRefracPositionTexture = new Texture2D();
+	mLightRefracNormalTexture = new Texture2D();
+	mLightRefracColorTexture = new Texture2D();
+	mLightRefracDepthTexture = new Texture2D();
+	mLightRefracPositionTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mLightRefracNormalTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mLightRefracColorTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mLightRefracDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
+	mRefracGBufferLight = new FrameBuffer(mDevice);
+	Texture* refracColorTextures[3] = { mLightRefracPositionTexture, mLightRefracNormalTexture, mLightRefracColorTexture };
+	mRefracGBufferLight->SetRenderTargets(3, refracColorTextures, mLightRefracDepthTexture);
 
 	// G-buffer for intersection points
 	mIntersectionPositionTexture = new Texture2D();
@@ -95,26 +122,21 @@ void CausticsApp::Initialize(GPUDevice* device)
 	Texture* BlurredCausticsMapColorTextures[1] = { mBlurredCausticsMapTexture };
 	mBlurredCausticsMapGBuffer->SetRenderTargets(1, BlurredCausticsMapColorTextures, mBlurredCausticsMapDepthTexture);
 
-	// G-buffer for final image
-	mPositionTexture = new Texture2D();
-	mNormalTexture = new Texture2D();
-	mColorTexture = new Texture2D();
-	mDepthTexture = new Texture2D();
-	mPositionTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
-	mNormalTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
-	mColorTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
-	mDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
-	mGBuffer = new FrameBuffer(mDevice);
-	Texture* colorTextures[3] = { mPositionTexture, mNormalTexture, mColorTexture };
-	mGBuffer->SetRenderTargets(3, colorTextures, mDepthTexture);
-
 	// Create material templates.
 	mCausticsDebugBuffer = new StructuredBuffer();
 	auto bufferSize = sizeof(CausticsDebugBuffer) + this->Width * this->Height * sizeof(vec3);
 	mCausticsDebugBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
-
-
+	// G-buffer for final image
+	mReceiverTexture = new Texture2D();
+	mRefracTexture = new Texture2D();
+	mDepthTexture = new Texture2D();
+	mReceiverTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mRefracTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mDepthTexture->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
+	mGBufferFinal = new FrameBuffer(mDevice);
+	Texture* finalColorTextures[2] = { mReceiverTexture, mRefracTexture };
+	mGBufferFinal->SetRenderTargets(2, finalColorTextures, mDepthTexture);
 
 
 
@@ -132,13 +154,13 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mGround->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
 
 	mMesh = new CausticsTriMesh(new Material(mtGBuffer), mMainCamera);
-	mMesh->LoadFromFile("sphere.ply");
+	mMesh->LoadFromFile("dragon_s.ply");
 	mMesh->GenerateNormals();
 	mMesh->CreateDeviceResource(mDevice);
 	mMesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
-	mMesh->SetWorldTranslation(vec3(0.0f, -0.5f, 0.0f));
-	mMesh->SetWorldScale(vec3(0.3f));
-	mMesh->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
+	mMesh->SetWorldTranslation(vec3(0.0f, -0.8f, 0.0f));
+	mMesh->SetWorldScale(vec3(3.0f));
+	mMesh->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
 
 
 	auto mCubeMap = new TextureCube();
@@ -162,7 +184,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mPool->SetWorldScale(vec3(1, -1, 1));
 	mPool->MaterialColor = vec3(1, 1, 1);
 	mPool->CubeTexture = mCubeMap;
-	mPool->VertexSplattingTexture = mRefracPositionTexture;
+	mPool->VertexSplattingTexture = mLightRefracPositionTexture;
 	mPool->Light = mLight;
 
 
@@ -179,11 +201,15 @@ void CausticsApp::Initialize(GPUDevice* device)
 	SIGaussianBlurV << "Caustics/GaussianBlurV.vert" << "Caustics/GaussianBlurV.frag";
 	ShaderProgramInfo SICausticsReceiverFinal;
 	SICausticsReceiverFinal << "Caustics/CausticsReceiverFinal.vert" << "Caustics/CausticsReceiverFinal.frag";
+	ShaderProgramInfo SICausticsRefracFinal;
+	SICausticsRefracFinal << "Caustics/CausticsRefracFinal.vert" << "Caustics/CausticsRefracFinal.frag";
 	auto mtCausticsMap = new MaterialTemplate(new Technique({
 		new Pass(SICausticsMapIntersect),
 		new Pass(SIGaussianBlurH),
 		new Pass(SIGaussianBlurV),
-		new Pass(SICausticsReceiverFinal) }));
+		new Pass(SICausticsReceiverFinal),
+		new Pass(SICausticsRefracFinal) }));
+
 
 	mCausticsScreenQuad = new CausticsScreenQuad(new Material(mtCausticsMap), mMainCamera);
 	mCausticsScreenQuad->LoadFromFile("screenquad.ply");
@@ -193,30 +219,35 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mCausticsScreenQuad->SetTCoord(3, tcoord01);
 	mCausticsScreenQuad->CreateDeviceResource(mDevice);
 	// Pass 0
-	mCausticsScreenQuad->PositionTexture = mPositionTexture;
-	mCausticsScreenQuad->NormalTexture = mNormalTexture;
-	mCausticsScreenQuad->ReflectanceTexture = mColorTexture;
-	mCausticsScreenQuad->RefracterPositionLightTexture = mRefracPositionTexture;
-	mCausticsScreenQuad->RefracterNormalLightTexture = mRefracNormalTexture;
-	mCausticsScreenQuad->ReceiverPositionLightTexture = mRecvPositionTexture;
-	mCausticsScreenQuad->RefractionIndex = 1.0;
+	mCausticsScreenQuad->ReceiverPositionLightTexture = mLightReceiverPositionTexture;
+	mCausticsScreenQuad->ReceiverNormalLightTexture = mLightReceiverNormalTexture;
+	mCausticsScreenQuad->ReceiverReflectanceLightTexture = mLightReceiverColorTexture;
+
+	mCausticsScreenQuad->RefracterPositionLightTexture = mLightRefracPositionTexture;
+	mCausticsScreenQuad->RefracterNormalLightTexture = mLightRefracNormalTexture;
+	mCausticsScreenQuad->ReceiverReflectanceLightTexture = mLightRefracColorTexture;
+	mCausticsScreenQuad->RefractionIndex = 0.95f;
 	mCausticsScreenQuad->CubeTexture = mCubeMap;
 	mCausticsScreenQuad->Light = mLight;
 
-	// Pass 1
+	// Pass 1, 2
 	mCausticsScreenQuad->CausticsMapTexture = mCausticsMapTexture;
 
 	// Final Render receiver
 	mCausticsScreenQuad->BlurredCausticsMapTexture = mBlurredCausticsMapTexture;
-	mCausticsScreenQuad->ReceiverPositionTexture = mPositionTexture;
-	mCausticsScreenQuad->ReceiverNormalTexture = mNormalTexture;
-	mCausticsScreenQuad->ReceiverColorTexture = mColorTexture;
+	mCausticsScreenQuad->ReceiverPositionTexture = mReceiverPositionTexture;
+	mCausticsScreenQuad->ReceiverNormalTexture = mReceiverNormalTexture;
+	mCausticsScreenQuad->ReceiverColorTexture = mReceiverColorTexture;
+	mCausticsScreenQuad->ShadowmapTexture = mLightRefracDepthTexture;
 
 	// Final render refracter
-
+	mCausticsScreenQuad->RefracPositionTexture = mRefracPositionTexture;
+	mCausticsScreenQuad->RefracNormalTexture = mRefracNormalTexture;
+	mCausticsScreenQuad->RefracColorTexture = mRefracColorTexture;
+	mCausticsScreenQuad->ShadowmapTexture2 = mLightRefracDepthTexture;
 
 	ShaderProgramInfo SICausticsMap;
-	SICausticsMap << "Caustics/CausticsMap.vert" << "Caustics/CausticsMap.frag";
+	SICausticsMap << "Caustics/CausticsMapPointGathering.vert" << "Caustics/CausticsMapPointGathering.frag";
 	auto mtVertexGrid = new MaterialTemplate(new Technique(new Pass(SICausticsMap)));
 	mVertexGrid = new VertexGrid(this->Width, this->Height, new Material(mtVertexGrid));
 
@@ -252,32 +283,42 @@ void CausticsApp::DrawReceiverCameraPoV()
 	mPool->Render(0, 0);
 }
 
-void CausticsApp::DrawScene()
+void CausticsApp::DrawRefracCameraPoV()
 {
-	mGround->Render(0, 0);
-	mPool->Render(0, 0);
 	mMesh->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void CausticsApp::FrameFunc()
 {
 	// Draw Receiver to G-buffer from Light's PoV.
-	mRecvGBuffer->Enable();
+	mRecvGBufferLight->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glFrontFace(GL_CCW);
 	DrawReceiverLightPoV();
-	mRecvGBuffer->Disable();
+	mRecvGBufferLight->Disable();
 
 	// Draw Refractive object to G-buffer from Light's PoV.
-	mRefracGBuffer->Enable();
+	mRefracGBufferLight->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glFrontFace(GL_CCW);
 	DrawRefracterLightPoV();
-	mRefracGBuffer->Disable();
+	mRefracGBufferLight->Disable();
 	
 	// Draw Receiver Camera pov
-	mGBuffer->Enable();
+	mReceiverGBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glFrontFace(GL_CCW);
 	DrawReceiverCameraPoV();
-	mGBuffer->Disable();
+	mReceiverGBuffer->Disable();
+
+	// Draw Refractive obj Camera pov
+	mRefracGBuffer->Enable();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glFrontFace(GL_CCW);
+	DrawRefracCameraPoV();
+	mRefracGBuffer->Disable();
+
+	glFrontFace(GL_CCW);
 
 	// Draw intersection points
 
@@ -294,6 +335,7 @@ void CausticsApp::FrameFunc()
 	glGetQueryObjectuiv(occlusionQuery, GL_QUERY_RESULT, &numPixels);
 	mVertexGrid->CausticsMapsResolution = numPixels;
 
+	//*
 	// Draw Caustics Map
 	glBeginQuery(GL_PRIMITIVES_GENERATED, occlusionQuery);
 	mCausticsMapGBuffer->Enable();
@@ -310,23 +352,41 @@ void CausticsApp::FrameFunc()
 	glEndQuery(GL_PRIMITIVES_GENERATED);
 	glGetQueryObjectuiv(occlusionQuery, GL_QUERY_RESULT, &numPixels);
 	//printf("GL_PRIMITIVES_GENERATED: %i\n", numPixels);
+	//*/
 
-
+	/*
 	void* bufferData = mCausticsDebugBuffer->Map(BA_Read_Only);
 	auto dataPtr = (CausticsDebugBuffer*)bufferData;
 	auto dataPtr2 = (vec3*)(dataPtr + 1);
 	mCausticsDebugBuffer->Unmap();
+	*/
 
+	//*
 	// Blur caustics map
 	mBlurredCausticsMapGBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
 	mCausticsScreenQuad->Render(0, 1);
-	mBlurredCausticsMapGBuffer->Disable();
 	mCausticsScreenQuad->Render(0, 2);
+	glEnable(GL_DEPTH_TEST);
+	mBlurredCausticsMapGBuffer->Disable();
+	//*/
 
 	// Draw final image
+	//mGBufferFinal->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	mCausticsScreenQuad->Render(0, 3);
+	mCausticsScreenQuad->Render(0, 4);
+	//mGBufferFinal->Disable();
+
+	/* Debug g buffer
+	// Draw Receiver Camera pov
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glFrontFace(GL_CCW);
+	DrawReceiverCameraPoV();
+	glFrontFace(GL_CW);
+	DrawRefracCameraPoV();
+	//*/
 
 	switch (mShowMode)
 	{
@@ -348,18 +408,32 @@ void CausticsApp::Terminate()
 
 	mLight = 0;
 
-	mGBuffer = 0;
-	mNormalTexture = 0;
-	mPositionTexture = 0;
-	mColorTexture = 0;
-	mDepthTexture = 0;
+	mReceiverGBuffer = 0;
+	mReceiverNormalTexture = 0;
+	mReceiverPositionTexture = 0;
+	mReceiverColorTexture = 0;
+	mReceiverDepthTexture = 0;
 }
 //----------------------------------------------------------------------------
 void CausticsApp::ProcessInput()
 {
 	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
 	{
+		mCausticsScreenQuad->RefractionIndex -= 0.01f;
 // 		mSSDOTempResultQuad->TempTexture = mSSDOTexture;
 // 		mShowMode = SM_SSDO;
+	}
+
+	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
+	{
+		mCausticsScreenQuad->RefractionIndex += 0.01f;
+		// 		mSSDOTempResultQuad->TempTexture = mSSDOTexture;
+		// 		mShowMode = SM_SSDO;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
+	{
+		mCausticsScreenQuad->RefractionIndex = 0.95f;
+		// 		mSSDOTempResultQuad->TempTexture = mSSDOTexture;
+		// 		mShowMode = SM_SSDO;
 	}
 }

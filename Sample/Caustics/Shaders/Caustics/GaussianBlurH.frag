@@ -21,21 +21,20 @@ layout(std430, binding = 3)  buffer _causticsDebugBuffer
 
 } causticsDebugBuffer;
 
-const float blurSize = 1.0/128.0;
+const float blurSize = 1.0/512.0;
  
 void main()
 {
 	lowp vec4 sum = vec4(0.0);
-	sum += texture(causticsMapSampler, vec2(pTCoord.x, pTCoord.y - 4.0*blurSize)) * 0.05;
-	sum += texture(causticsMapSampler, vec2(pTCoord.x, pTCoord.y - 3.0*blurSize)) * 0.09;
-	sum += texture(causticsMapSampler, vec2(pTCoord.x, pTCoord.y - 2.0*blurSize)) * 0.12;
-	sum += texture(causticsMapSampler, vec2(pTCoord.x, pTCoord.y - blurSize)) * 0.15;
-	sum += texture(causticsMapSampler, vec2(pTCoord.x, pTCoord.y)) * 0.16;
-	sum += texture(causticsMapSampler, vec2(pTCoord.x, pTCoord.y + blurSize)) * 0.15;
-	sum += texture(causticsMapSampler, vec2(pTCoord.x, pTCoord.y + 2.0*blurSize)) * 0.12;
-	sum += texture(causticsMapSampler, vec2(pTCoord.x, pTCoord.y + 3.0*blurSize)) * 0.09;
-	sum += texture(causticsMapSampler, vec2(pTCoord.x, pTCoord.y + 4.0*blurSize)) * 0.05;
- 
+	sum += texture2D(causticsMapSampler, vec2(pTCoord.x - 4.0*blurSize, pTCoord.y)) * 0.05;
+	sum += texture2D(causticsMapSampler, vec2(pTCoord.x - 3.0*blurSize, pTCoord.y)) * 0.09;
+	sum += texture2D(causticsMapSampler, vec2(pTCoord.x - 2.0*blurSize, pTCoord.y)) * 0.12;
+	sum += texture2D(causticsMapSampler, vec2(pTCoord.x - blurSize, pTCoord.y)) * 0.15;
+	sum += texture2D(causticsMapSampler, vec2(pTCoord.x, pTCoord.y)) * 0.16;
+	sum += texture2D(causticsMapSampler, vec2(pTCoord.x + blurSize, pTCoord.y)) * 0.15;
+	sum += texture2D(causticsMapSampler, vec2(pTCoord.x + 2.0*blurSize, pTCoord.y)) * 0.12;
+	sum += texture2D(causticsMapSampler, vec2(pTCoord.x + 3.0*blurSize, pTCoord.y)) * 0.09;
+	sum += texture2D(causticsMapSampler, vec2(pTCoord.x + 4.0*blurSize, pTCoord.y)) * 0.05;
 
 	/*
 	sum += texture(causticsMapSampler, blurCoordinates[0]) * 0.204164;

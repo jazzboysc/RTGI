@@ -21,7 +21,7 @@ layout(std430, binding = 3)  buffer _causticsDebugBuffer
 
 } causticsDebugBuffer;
 
-const float blurSize = 1.0/128.0;
+const float blurSize = 1.0/512.0;
  
 void main()
 {

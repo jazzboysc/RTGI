@@ -98,13 +98,13 @@ void main()
 	vec3 lightRefracterNorm = texture(refracterNormalLightSampler, pTCoord).xyz;
 	//lightRefracterNorm = lightRefracterNorm * 0.5 + vec3(0.5);
 
-	vec3 lightDir = normalize( lightRefracterPos - lightPosition);// normalize( (vec4(lightReceiverPos, 1)).xyz - (vec4(lightPosition,1)).xyz);
+	vec3 lightDir = normalize(lightPosition - lightRefracterPos);// normalize( (vec4(lightReceiverPos, 1)).xyz - (vec4(lightPosition,1)).xyz);
 	// Compute refracted ray direction
 	//vec3 lightDir = normalize(posi - lightPosition);
-	vec3 refracDir = normalize(refract(lightDir, lightRefracterNorm, 0.95));
+	vec3 refracDir = refract(-lightDir, lightRefracterNorm, refractionIndex);
 
 	// Get distance to ray/geometry intersection estimation point
-	float dist = rayGeoNP(lightRefracterPos, refracDir, mVPLight, receiverPositionLightSampler, 2);
+	float dist = rayGeoNP(lightRefracterPos, refracDir, mVPLight, receiverPositionLightSampler, 3);
 
 	/*
 	float eps = 0.1;
