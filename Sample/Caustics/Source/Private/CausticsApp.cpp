@@ -104,7 +104,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mIntersectionGBuffer->SetRenderTargets(1, IntersectionColorTextures, mIntersectionDepthTexture);
 
 
-	// G-buffer for caustics map
+	// Frame buffer for caustics map
 	mCausticsMapTexture = new Texture2D();
 	mCausticsMapDepthTexture = new Texture2D();
 	mCausticsMapTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
@@ -113,7 +113,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 	Texture* CausticsMapColorTextures[1] = { mCausticsMapTexture };
 	mCausticsMapGBuffer->SetRenderTargets(1, CausticsMapColorTextures, mCausticsMapDepthTexture);
 
-	// G-buffer for blurred caustics map
+	// Frame buffer for horizontal blurred caustics map
 	mBlurredCausticsMapTexture = new Texture2D();
 	mBlurredCausticsMapDepthTexture = new Texture2D();
 	mBlurredCausticsMapTexture->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
@@ -121,6 +121,15 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mBlurredCausticsMapGBuffer = new FrameBuffer(mDevice);
 	Texture* BlurredCausticsMapColorTextures[1] = { mBlurredCausticsMapTexture };
 	mBlurredCausticsMapGBuffer->SetRenderTargets(1, BlurredCausticsMapColorTextures, mBlurredCausticsMapDepthTexture);
+
+	// Frame buffer for final blurred caustics map
+	mBlurredCausticsMapTexture2 = new Texture2D();
+	mBlurredCausticsMapDepthTexture2 = new Texture2D();
+	mBlurredCausticsMapTexture2->CreateRenderTarget(mDevice, Width, Height, BF_RGBF);
+	mBlurredCausticsMapDepthTexture2->CreateRenderTarget(mDevice, Width, Height, BF_Depth);
+	mBlurredCausticsMapGBuffer2 = new FrameBuffer(mDevice);
+	Texture* BlurredCausticsMapColorTextures2[1] = { mBlurredCausticsMapTexture2 };
+	mBlurredCausticsMapGBuffer2->SetRenderTargets(1, BlurredCausticsMapColorTextures2, mBlurredCausticsMapDepthTexture2);
 
 	// Create material templates.
 	mCausticsDebugBuffer = new StructuredBuffer();
@@ -232,9 +241,10 @@ void CausticsApp::Initialize(GPUDevice* device)
 
 	// Pass 1, 2
 	mCausticsScreenQuad->CausticsMapTexture = mCausticsMapTexture;
+	mCausticsScreenQuad->BlurredCausticsMapTexture = mBlurredCausticsMapTexture;
 
 	// Final Render receiver
-	mCausticsScreenQuad->BlurredCausticsMapTexture = mBlurredCausticsMapTexture;
+	mCausticsScreenQuad->BlurredCausticsMapTexture2 = mBlurredCausticsMapTexture2;
 	mCausticsScreenQuad->ReceiverPositionTexture = mReceiverPositionTexture;
 	mCausticsScreenQuad->ReceiverNormalTexture = mReceiverNormalTexture;
 	mCausticsScreenQuad->ReceiverColorTexture = mReceiverColorTexture;
@@ -337,7 +347,7 @@ void CausticsApp::FrameFunc()
 
 	//*
 	// Draw Caustics Map
-	glBeginQuery(GL_PRIMITIVES_GENERATED, occlusionQuery);
+	//glBeginQuery(GL_PRIMITIVES_GENERATED, occlusionQuery);
 	mCausticsMapGBuffer->Enable();
 	mCausticsDebugBuffer->Bind(3);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -349,8 +359,8 @@ void CausticsApp::FrameFunc()
 	glEnable(GL_DEPTH_TEST);
 	mCausticsDebugBuffer->Bind();
 	mCausticsMapGBuffer->Disable();
-	glEndQuery(GL_PRIMITIVES_GENERATED);
-	glGetQueryObjectuiv(occlusionQuery, GL_QUERY_RESULT, &numPixels);
+	//glEndQuery(GL_PRIMITIVES_GENERATED);
+	//glGetQueryObjectuiv(occlusionQuery, GL_QUERY_RESULT, &numPixels);
 	//printf("GL_PRIMITIVES_GENERATED: %i\n", numPixels);
 	//*/
 
@@ -365,19 +375,24 @@ void CausticsApp::FrameFunc()
 	// Blur caustics map
 	mBlurredCausticsMapGBuffer->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST);
 	mCausticsScreenQuad->Render(0, 1);
-	mCausticsScreenQuad->Render(0, 2);
-	glEnable(GL_DEPTH_TEST);
 	mBlurredCausticsMapGBuffer->Disable();
 	//*/
+	//*
+	mBlurredCausticsMapGBuffer2->Enable();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	mCausticsScreenQuad->Render(0, 2);
+	mBlurredCausticsMapGBuffer2->Disable();
+	//*/
 
+	//*
 	// Draw final image
 	//mGBufferFinal->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	mCausticsScreenQuad->Render(0, 3);
 	mCausticsScreenQuad->Render(0, 4);
 	//mGBufferFinal->Disable();
+	//*/
 
 	/* Debug g buffer
 	// Draw Receiver Camera pov

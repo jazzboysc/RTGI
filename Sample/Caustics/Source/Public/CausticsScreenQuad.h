@@ -35,9 +35,9 @@ public:
 
 	// Pass 1, 2 Gaussian Blur X and Y direction
 	Texture2DPtr CausticsMapTexture;
-
-	// Pass final render receiver
 	Texture2DPtr BlurredCausticsMapTexture;
+	// Pass final render receiver
+	Texture2DPtr BlurredCausticsMapTexture2;
 	Texture2DPtr ReceiverPositionTexture;
 	Texture2DPtr ReceiverNormalTexture;
 	Texture2DPtr ReceiverColorTexture;

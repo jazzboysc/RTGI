@@ -87,7 +87,7 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 		mLightProjLoc3.SetValue(Light->GetProjector()->GetProjectionTransform());
 		mLightColorLoc3.SetValue(Light->Color);
 
-		BlurredCausticsMapTexture->BindToSampler(0, &sampler);
+		BlurredCausticsMapTexture2->BindToSampler(0, &sampler);
 		mBlurredCausticsMapSamplerLoc.SetValue(0);
 
 		ReceiverPositionTexture->BindToSampler(1, &sampler);
