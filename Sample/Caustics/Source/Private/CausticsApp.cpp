@@ -34,9 +34,8 @@ void CausticsApp::Initialize(GPUDevice* device)
 	auto mLightCamera = new Camera;
 	mLightCamera->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 1.0f, 50.0f);
 	mLightCamera->SetLookAt(vec3(-0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
-	auto test = mLightCamera->GetViewTransform();
-	auto redUV = test * vec4(1, -1, -1, 1);
-	redUV = redUV / length(redUV);
+
+
 
 	mLight = new Light;
 	mLight->SetProjector(mLightCamera);
@@ -402,13 +401,6 @@ void CausticsApp::FrameFunc()
 	glFrontFace(GL_CW);
 	DrawRefracCameraPoV();
 	//*/
-
-	switch (mShowMode)
-	{
-		break;
-	default:
-		break;
-	}
 
 	//dealloc
 	if (occlusionQuery)

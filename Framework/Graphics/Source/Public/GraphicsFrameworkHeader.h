@@ -11,9 +11,6 @@
 // Utils
 #include "RefObject.h"
 #include "RefPointer.h"
-
-// TODO: move this somewhere else
-// Timer
 #include "Timer.h"
 #include "Thread.h"
 
