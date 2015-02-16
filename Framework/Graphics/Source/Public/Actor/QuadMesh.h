@@ -8,7 +8,6 @@
 
 #include "RenderObject.h"
 #include "Camera.h"
-#include "AABB.h"
 #include "StructuredBuffer.h"
 #include "GPUResource.h"
 #include "ShaderUniform.h"

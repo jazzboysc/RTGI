@@ -13,10 +13,6 @@
 #include <initializer_list>
 #include <fstream>
 #include <cassert>
-
-// Math
-#include "MathHeaders.h"
-
 #include "GraphicsFrameworkHeader.h"
 
 #endif
