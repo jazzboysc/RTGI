@@ -19,6 +19,7 @@ SVOApp::SVOApp(int width, int height)
     mIsRotatingModel = false;
     mVoxelizeCornell = false;
     mShowCornell = false;
+    mShowSVOBoxBV = true;
     mShowMode = SM_WorldPosition;
 }
 //----------------------------------------------------------------------------
@@ -282,6 +283,7 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
+    InformationPanel::GetInstance()->AddCheckBox("Show SVO Node BV", 16, 120, 60, 20, true);
 
 #ifdef DEBUG_VOXEL_RAY_INTERSECTION
 #endif
@@ -480,11 +482,14 @@ void SVOApp::FrameFunc()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Visualize SVO pass.
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    mSVOBuffer->BindToIndirect();
-    mSVONodeCubeModel->Render(0, 0);
+    if( mShowSVOBoxBV )
+    {
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        mSVOBuffer->BindToIndirect();
+        mSVONodeCubeModel->Render(0, 0);
+    }
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);
@@ -495,6 +500,12 @@ void SVOApp::FrameFunc()
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Visualization Pass", workLoad);
+
+    // Show ray segment.
+    if( mSVORaySegment )
+    {
+        mSVORaySegment->Render(0, 0);
+    }
 }
 //----------------------------------------------------------------------------
 void SVOApp::Terminate()
@@ -516,6 +527,7 @@ void SVOApp::Terminate()
 	mRightWall = 0;
 	mModel = 0;
     mSVONodeCubeModel = 0;
+    mSVORaySegment = 0;
 
     mTimer = 0;
 }
@@ -556,6 +568,36 @@ void SVOApp::OnButtonClick(System::Object^  sender,
     {
         RaySegment[i] = (float)Convert::ToDouble((String^)p1Res[i]);
         RaySegment[i + 3] = (float)Convert::ToDouble((String^)p2Res[i]);
+    }
+
+    ShaderProgramInfo svoRaySegmentProgramInfo;
+    svoRaySegmentProgramInfo.VShaderFileName = "SparseVoxelOctree/vSVORaySegment.glsl";
+    svoRaySegmentProgramInfo.FShaderFileName = "SparseVoxelOctree/fSVORaySegment.glsl";
+    svoRaySegmentProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Fragment;
+    Pass* passSVORaySegment = new Pass(svoRaySegmentProgramInfo);
+
+    Technique* techSVORaySegment = new Technique();
+    techSVORaySegment->AddPass(passSVORaySegment);
+    MaterialTemplate* mtSVORaySegment = new MaterialTemplate();
+    mtSVORaySegment->AddTechnique(techSVORaySegment);
+    Material* material = new Material(mtSVORaySegment);
+    mSVORaySegment = new SVORaySegment(material, mMainCamera);
+    mSVORaySegment->LineWidth = 3.0f;
+    std::vector<int> temp;
+    temp.reserve(1);
+    temp.push_back(2);
+    mSVORaySegment->LoadFromMemory(1, temp, 2, RaySegment);
+    mSVORaySegment->CreateDeviceResource(mDevice);
+}
+//----------------------------------------------------------------------------
+void SVOApp::OnCheckBoxClick(System::Object^ sender, System::EventArgs^ e)
+{
+    CheckBox^ checkBox = (CheckBox^)sender;
+
+    if( checkBox->Name == "Show SVO Node BV" )
+    {
+        mShowSVOBoxBV = checkBox->Checked;
     }
 }
 //----------------------------------------------------------------------------
