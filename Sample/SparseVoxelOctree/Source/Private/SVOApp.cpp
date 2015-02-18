@@ -132,6 +132,16 @@ void SVOApp::Initialize(GPUDevice* device)
     mBuildSVOTask->AddPass(passBuildSVOSplatLeafNodes);
     mBuildSVOTask->CreateDeviceResource(mDevice);
 
+    // Create SVO ray intersection task.
+    ShaderProgramInfo svoRayIntersectionProgramInfo;
+    svoRayIntersectionProgramInfo.CShaderFileName = "SparseVoxelOctree/cSVORayIntersection.glsl";
+    svoRayIntersectionProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+    ComputePass* passSVORayIntersection = new ComputePass(svoRayIntersectionProgramInfo);
+
+    mSVORayIntersectionTask = new SVORayIntersection();
+    mSVORayIntersectionTask->AddPass(passSVORayIntersection);
+    mSVORayIntersectionTask->CreateDeviceResource(mDevice);
+
     // Create voxel fragment list buffer.
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     mVoxelFragmentListBuffer = new StructuredBuffer();
@@ -233,11 +243,13 @@ void SVOApp::Initialize(GPUDevice* device)
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
     // Initialize scene bounding box buffer.
+    vec3 sceneBBMin = mSceneBB.Min;
     vec3 center = mSceneBB.GetBoxCenter();
     vec3 extension = mSceneBB.GetExtension();
     vec3 inv2extension = vec3(1.0f / (2.0f*extension.x), 1.0f / (2.0f*extension.y), 1.0f / (2.0f*extension.z));
     mVoxelFragmentListBuffer->Bind();
     VoxelFragmentBufferHead* bufferData = (VoxelFragmentBufferHead*)mVoxelFragmentListBuffer->Map(BA_Write_Only);
+    bufferData->SceneBBMin = vec4(sceneBBMin, 1.0);
     bufferData->SceneBBCenter = vec4(center, 1.0);
     bufferData->SceneBBExtension = vec4(extension, 0.0);
     bufferData->Inv2SceneBBExtension = vec4(inv2extension, 0.0);
@@ -515,6 +527,10 @@ void SVOApp::FrameFunc()
     // Show ray segment.
     if( mSVORaySegment )
     {
+        mVoxelFragmentListBuffer->Bind(1);
+        mSVOBuffer->Bind(3);
+        mSVORayIntersectionTask->DispatchCompute(0, 1, 1, 1);
+
         mSVORaySegment->Render(0, 0);
     }
 }
@@ -530,6 +546,7 @@ void SVOApp::Terminate()
 
     mGatherVoxelFragmentListInfoTask = 0;
     mBuildSVOTask = 0;
+    mSVORayIntersectionTask = 0;
 
 	mGround = 0;
 	mCeiling = 0;

@@ -23,12 +23,7 @@ public:
     virtual void OnPreDispatch(unsigned int pass);
     virtual void OnPostDispatch(unsigned int pass);
 
-    AABB* SceneBB;
-
 private:
-    ShaderUniform mSceneBBCenterLoc;
-    ShaderUniform mSceneBBExtensionLoc;
-    ShaderUniform mDimLoc;
     ShaderUniform mRayStartPointLoc;
     ShaderUniform mRayEndPointLoc;
 };

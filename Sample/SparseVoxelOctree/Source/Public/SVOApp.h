@@ -4,6 +4,7 @@
 #include "SVOTriMesh.h"
 #include "SVOCubeMesh.h"
 #include "SVORaySegment.h"
+#include "SVORayIntersection.h"
 #include "GPUTimer.h"
 #include "GatherVoxelFragmentListInfo.h"
 #include "BuildSVO.h"
@@ -58,6 +59,7 @@ private:
     StructuredBufferPtr mVoxelFragmentListBuffer;
     StructuredBufferPtr mSVOBuffer;
     UniformBufferPtr mSVOUniformBuffer;
+    SVORayIntersectionPtr mSVORayIntersectionTask;
 
     AABB mSceneBB;
     unsigned int mSVONodeCount;

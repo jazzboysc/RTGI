@@ -84,12 +84,13 @@ struct VoxelFragment
 struct VoxelFragmentBufferHead
 {
     // Indirect command buffer data for SVO flag nodes pass.
-    uint  count;
-    uint  instanceCount;
-    uint  first;
-    uint  baseInstance;
+    unsigned int  count;
+    unsigned int  instanceCount;
+    unsigned int  first;
+    unsigned int  baseInstance;
 
     // Scene bounding box.
+    vec4 SceneBBMin;
     vec4 SceneBBCenter;
     vec4 SceneBBExtension;
     vec4 Inv2SceneBBExtension;

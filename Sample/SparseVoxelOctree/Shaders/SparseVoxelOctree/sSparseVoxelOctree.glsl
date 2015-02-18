@@ -25,6 +25,7 @@ layout(std430, binding = 1)  buffer _voxelFragmentBuffer
     uint  baseInstance;
 
     // Scene bounding box.
+    vec4 SceneBBMin;
     vec4 SceneBBCenter;
     vec4 SceneBBExtension;
     vec4 Inv2SceneBBExtension;
@@ -174,6 +175,11 @@ void FlagSVONode(uint nodeIndex)
 bool IsSVONodeFlaged(uint nodeIndex)
 {
     return (svoNodeBuffer.data[nodeIndex].flag == SVO_NODE_FLAGED);
+}
+//----------------------------------------------------------------------------
+bool IsSVOLeafNode(SVONode node)
+{
+    return (node.flag == SVO_NODE_FLAGED);
 }
 //----------------------------------------------------------------------------
 void InitSVONode(uint nodeIndex)
