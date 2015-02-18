@@ -23,11 +23,7 @@ void SVOTriMesh::OnGetShaderConstants()
 
 	// Get pass 1 uniform locations.
     ShaderProgram* program = mMaterial->GetProgram(0, 0);
-    program->GetUniformLocation(&mSceneBBCenterLoc, "SceneBBCenter");
-    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
     program->GetUniformLocation(&mMaterialColorLoc, "MaterialColor");
-    program->GetUniformLocation(&mDimLoc, "dim");
-    program->GetUniformLocation(&mInv2SceneBBExtensionLoc, "Inv2SceneBBExtension");
 
     // Get pass 2 uniform locations.
     program = mMaterial->GetProgram(0, 1);
@@ -47,15 +43,7 @@ void SVOTriMesh::OnUpdateShaderConstants(int technique, int pass)
     {
 		TriangleMesh::OnUpdateShaderConstants(technique, pass);
 
-        vec3 center = SceneBB->GetBoxCenter();
-        vec3 extension = SceneBB->GetExtension();
-        vec3 inv2extension = vec3(1.0f / (2.0f*extension.x), 1.0f / (2.0f*extension.y), 1.0f / (2.0f*extension.z));
-
-        mSceneBBCenterLoc.SetValue(center);
-        mSceneBBExtensionLoc.SetValue(extension);
         mMaterialColorLoc.SetValue(MaterialColor);
-        mDimLoc.SetValue(SVOApp::VOXEL_DIMENSION);
-        mInv2SceneBBExtensionLoc.SetValue(inv2extension);
 	}
 
     if( pass == 1 )

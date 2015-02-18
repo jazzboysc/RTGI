@@ -71,6 +71,32 @@ struct SVONodeBufferHead
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
+// Voxel fragment list buffer.
+//----------------------------------------------------------------------------
+struct VoxelFragment
+{
+    unsigned int gridPosition;
+    unsigned int albedo;
+    unsigned int value1;
+    unsigned int value2;
+};
+//----------------------------------------------------------------------------
+struct VoxelFragmentBufferHead
+{
+    // Indirect command buffer data for SVO flag nodes pass.
+    uint  count;
+    uint  instanceCount;
+    uint  first;
+    uint  baseInstance;
+
+    // Scene bounding box.
+    vec4 SceneBBCenter;
+    vec4 SceneBBExtension;
+    vec4 Inv2SceneBBExtension;
+};
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 01/27/2015
 //----------------------------------------------------------------------------

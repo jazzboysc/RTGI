@@ -1,5 +1,7 @@
 #define SVO_NODE_TILE_SIZE 8
 #define SVO_NODE_FLAGED 1234
+#define SVO_MAX_LEVEL 7
+#define SVO_MAX_LEVEL_DIM 128
 
 //----------------------------------------------------------------------------
 // SVO Voxel Fragment List
@@ -21,6 +23,11 @@ layout(std430, binding = 1)  buffer _voxelFragmentBuffer
     uint  instanceCount;
     uint  first;
     uint  baseInstance;
+
+    // Scene bounding box.
+    vec4 SceneBBCenter;
+    vec4 SceneBBExtension;
+    vec4 Inv2SceneBBExtension;
 
     // Voxel fragment buffer. Must be big enough to hold all voxel fragments.
     VoxelFragment data[];
@@ -107,6 +114,16 @@ ivec3 UintToIvec3(uint value)
     return res;
 }
 //----------------------------------------------------------------------------
+uint Vec4ToUint(vec4 value)
+{
+    uint res = (uint(value.w) & 0x000000FF) << 24U |
+        (uint(value.z) & 0x000000FF) << 16U |
+        (uint(value.y) & 0x000000FF) << 8U |
+        (uint(value.x) & 0x000000FF);
+
+    return res;
+}
+//----------------------------------------------------------------------------
 uint GetSVOChildNodeIndex(ivec3 voxelGridPos, SVONodeAABB nodeBox)
 {
     ivec3 nodeBoxMin, nodeBoxMax, mid;
@@ -168,5 +185,20 @@ void InitSVONode(uint nodeIndex)
     svoNodeBuffer.data[nodeIndex].normals[1] = 0;
     svoNodeBuffer.data[nodeIndex].normals[2] = 0;
     svoNodeBuffer.data[nodeIndex].normals[3] = 0;
+}
+//----------------------------------------------------------------------------
+ivec3 WorldToGridPosition(vec3 worldPosition)
+{
+    vec3 gridDim = vec3(float(SVO_MAX_LEVEL_DIM), float(SVO_MAX_LEVEL_DIM), 
+        float(SVO_MAX_LEVEL_DIM));
+    gridDim = gridDim - vec3(1.0, 1.0, 1.0);
+
+    vec3 offsets = (worldPosition - voxelFragmentBuffer.SceneBBCenter.xyz + 
+        voxelFragmentBuffer.SceneBBExtension.xyz) * 
+        voxelFragmentBuffer.Inv2SceneBBExtension.xyz;
+    offsets = offsets*gridDim + vec3(0.5, 0.5, 0.5);
+    ivec3 res = ivec3(offsets);
+
+    return res;
 }
 //----------------------------------------------------------------------------

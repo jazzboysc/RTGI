@@ -136,7 +136,7 @@ void SVOApp::Initialize(GPUDevice* device)
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     mVoxelFragmentListBuffer = new StructuredBuffer();
     GLuint voxelFragmentCount = GLuint((float)voxelCount*0.2f); // voxel fragment ratio.
-    GLuint bufferSize = sizeof(GLuint) * 4 + voxelFragmentCount*sizeof(GLuint) * 4;
+    GLuint bufferSize = sizeof(VoxelFragmentBufferHead) + voxelFragmentCount*sizeof(VoxelFragment);
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create SVO buffer.
@@ -231,6 +231,17 @@ void SVOApp::Initialize(GPUDevice* device)
     mRightWall->MaterialColor = vec3(0.0f, 1.0f, 0.0f);
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
+
+    // Initialize scene bounding box buffer.
+    vec3 center = mSceneBB.GetBoxCenter();
+    vec3 extension = mSceneBB.GetExtension();
+    vec3 inv2extension = vec3(1.0f / (2.0f*extension.x), 1.0f / (2.0f*extension.y), 1.0f / (2.0f*extension.z));
+    mVoxelFragmentListBuffer->Bind();
+    VoxelFragmentBufferHead* bufferData = (VoxelFragmentBufferHead*)mVoxelFragmentListBuffer->Map(BA_Write_Only);
+    bufferData->SceneBBCenter = vec4(center, 1.0);
+    bufferData->SceneBBExtension = vec4(extension, 0.0);
+    bufferData->Inv2SceneBBExtension = vec4(inv2extension, 0.0);
+    mVoxelFragmentListBuffer->Unmap();
 
     // Create SVO node cube model.
     std::vector<vec3> svoCubeVertices;
