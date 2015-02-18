@@ -16,7 +16,6 @@ void main()
     vec3 sceneBBMin = voxelFragmentBuffer.SceneBBMin.xyz;
     vec3 rayStartPosSVO = rayStartPoint - sceneBBMin;
     vec3 rayEndPosSVO = rayEndPoint - sceneBBMin;
-    ivec3 rayStartGridPos = WorldToGridPosition(rayStartPoint.xyz);
 
     // Initialize sceneMin, sceneMax and ray direction.
     vec3 rayDirection = rayEndPosSVO - rayStartPosSVO;
@@ -25,9 +24,9 @@ void main()
     rayDirection = rayDirection / sceneMax;
 
     bool hit = false;
-    vec3 rayPos = rayStartPoint;
     tMin = tMax = sceneMin;
     SVONode curNode, root;
+    vec3 rayEntryPos;
 
     // Initialize root node.
     root.child = 0;
@@ -44,12 +43,13 @@ void main()
         tMin = tMax;
         tMax = sceneMax;
         level = 0;
+        rayEntryPos = rayStartPosSVO + rayDirection*tMin;
 
         // Descend until we meet a leaf node.
         while( !IsSVOLeafNode(curNode) )
         {
             // Figure out which child node we are in.
-            childIndex = GetSVOChildNodeIndex(rayStartGridPos, curNode.nodeBox);
+            childIndex = GetSVOChildNodeIndex(rayEntryPos, curNode.nodeBox);
 
             // Locate child node for current tree level.
             nextNodeIndex = curNode.child*SVO_NODE_TILE_SIZE + childIndex;
@@ -66,5 +66,8 @@ void main()
             hit = true;
             break;
         }
+
+        // Find tMax for the current node and restart traversal.
+
     }
 }

@@ -138,6 +138,19 @@ uint GetSVOChildNodeIndex(ivec3 voxelGridPos, SVONodeAABB nodeBox)
     return childIndex;
 }
 //----------------------------------------------------------------------------
+uint GetSVOChildNodeIndex(vec3 svoSpaceP, SVONodeAABB nodeBox)
+{
+    vec3 nodeBoxMin, nodeBoxMax, mid;
+    nodeBoxMin = vec3(UintToIvec3(nodeBox.Min));
+    nodeBoxMax = vec3(UintToIvec3(nodeBox.Max));
+    mid = (nodeBoxMin + nodeBoxMax)*0.5;
+
+    uint childIndex = (svoSpaceP.x >= mid.x ? 4 : 0) +
+                      (svoSpaceP.y >= mid.y ? 2 : 0) +
+                      (svoSpaceP.z >= mid.z ? 1 : 0);
+    return childIndex;
+}
+//----------------------------------------------------------------------------
 SVONodeAABB GetSVOChildNodeBox(uint childIndex, SVONodeAABB nodeBox)
 {
     SVONodeAABB childNodeBoxes[8];
