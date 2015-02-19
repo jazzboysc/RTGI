@@ -221,3 +221,40 @@ ivec3 WorldToGridPosition(vec3 worldPosition)
     return res;
 }
 //----------------------------------------------------------------------------
+bool SVORayBoxIntersection(vec3 rayOrigin, vec3 rayInvDirection, float minT, 
+    float maxT, SVONodeAABB nodeBox, out float hitT0, out float hitT1)
+{
+    vec3 nodeBoxMin = vec3(UintToIvec3(nodeBox.Min));
+    vec3 nodeBoxMax = vec3(UintToIvec3(nodeBox.Max));
+    vec3 minMinusOrigin = nodeBoxMin - rayOrigin;
+    vec3 maxMinusOrigin = nodeBoxMax - rayOrigin;
+
+    float t0 = minT, t1 = maxT;
+    for( int i = 0; i < 3; ++i )
+    {
+        float tNear = minMinusOrigin[i] * rayInvDirection[i];
+        float tFar = maxMinusOrigin[i] * rayInvDirection[i];
+
+        if( tNear > tFar )
+        {
+            // Swap.
+            float temp = tNear;
+            tNear = tFar;
+            tFar = temp;
+        }
+
+        t0 = tNear > t0 ? tNear : t0;
+        t1 = tFar  < t1 ? tFar  : t1;
+
+        if( t0 > t1 )
+        {
+            return false;
+        }
+    }
+
+    hitT0 = t0;
+    hitT1 = t1;
+
+    return true;
+}
+//----------------------------------------------------------------------------

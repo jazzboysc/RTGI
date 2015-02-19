@@ -10,21 +10,22 @@ uniform vec3 rayEndPoint;
 
 void main()
 {
-    float tMin, tMax, sceneMin, sceneMax;
+    float minT, maxT, sceneMinT, sceneMaxT;
 
     // Transform world space ray to SVO space.
     vec3 sceneBBMin = voxelFragmentBuffer.SceneBBMin.xyz;
     vec3 rayStartPosSVO = rayStartPoint - sceneBBMin;
     vec3 rayEndPosSVO = rayEndPoint - sceneBBMin;
 
-    // Initialize sceneMin, sceneMax and ray direction.
-    vec3 rayDirection = rayEndPosSVO - rayStartPosSVO;
-    sceneMin = 0.0;
-    sceneMax = length(rayDirection);
-    rayDirection = rayDirection / sceneMax;
+    // Initialize sceneMinT, sceneMaxT and ray direction.
+    vec3 rayDirSVO = rayEndPosSVO - rayStartPosSVO;
+    sceneMinT = 0.0;
+    sceneMaxT = length(rayDirSVO);
+    rayDirSVO = rayDirSVO / sceneMaxT;
+    vec3 rayInvDirSVO = 1.0 / rayDirSVO;
 
     bool hit = false;
-    tMin = tMax = sceneMin;
+    minT = maxT = sceneMinT;
     SVONode curNode, root;
     vec3 rayEntryPos;
 
@@ -36,14 +37,14 @@ void main()
         SVO_MAX_LEVEL_DIM, SVO_MAX_LEVEL_DIM));
 
     uint level, childIndex, nextNodeIndex;
-    while( tMax < sceneMax )
+    while( maxT < sceneMaxT )
     {
         // Restart traversal from root.
         curNode = root;
-        tMin = tMax;
-        tMax = sceneMax;
+        minT = maxT;
+        maxT = sceneMaxT;
         level = 0;
-        rayEntryPos = rayStartPosSVO + rayDirection*tMin;
+        rayEntryPos = rayStartPosSVO + rayDirSVO*minT;
 
         // Descend until we meet a leaf node.
         while( !IsSVOLeafNode(curNode) )
@@ -67,7 +68,8 @@ void main()
             break;
         }
 
-        // Find tMax for the current node and restart traversal.
-
+        // Find maxT for the current node.
+        SVORayBoxIntersection(rayStartPosSVO, rayInvDirSVO, minT, maxT, 
+            curNode.nodeBox, minT, maxT);
     }
 }
