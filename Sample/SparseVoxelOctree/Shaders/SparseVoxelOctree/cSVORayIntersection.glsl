@@ -19,9 +19,9 @@ void main()
     vec3 rayEndPosSVO = (rayEndPoint - sceneBBMin)*inv2SceneBBExtension*SVO_MAX_LEVEL_DIM;
 
     // Debug.
-    svoNodeBuffer.sceneBBMin = vec4(sceneBBMin, 1.0);
-    svoNodeBuffer.rayStartPos = vec4(rayStartPoint, 1.0);
-    svoNodeBuffer.rayEndPos = vec4(rayEndPoint, 1.0);
+    //svoNodeBuffer.sceneBBMin = vec4(sceneBBMin, 1.0);
+    //svoNodeBuffer.rayStartPos = vec4(rayStartPoint, 1.0);
+    //svoNodeBuffer.rayEndPos = vec4(rayEndPoint, 1.0);
 
     // Initialize sceneMinT, sceneMaxT and ray direction.
     vec3 rayDirSVO = rayEndPosSVO - rayStartPosSVO;
@@ -59,17 +59,6 @@ void main()
 
         // Descend until we meet a leaf node.
         bool isLeaf = IsSVOLeafNode(curNode);
-
-        // Debug.
-        //if( isLeaf )
-        //{
-        //    svoNodeBuffer.isLeaf = 1;
-        //}
-        //else
-        //{
-        //    svoNodeBuffer.isLeaf = 0;
-        //}
-
         while( !isLeaf )
         //for( int j = 0; j < 2; ++j )
         {

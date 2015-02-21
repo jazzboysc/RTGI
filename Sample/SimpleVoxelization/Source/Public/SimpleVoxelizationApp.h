@@ -31,7 +31,7 @@ public:
     void OnButtonClick(System::Object^  sender, System::EventArgs^  e);
 
 public:
-    enum { VOXEL_DIMENSION = 64 };
+    enum { VOXEL_DIMENSION = 128 };
     enum { LOCAL_GROUP_DIM = 8 };
     static float RaySegment[6];
 

@@ -303,6 +303,7 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Build SVO Init Root Pass", 16, 120);
     InformationPanel::GetInstance()->AddTimingLabel("Build SVO Pass", 16, 140);
     InformationPanel::GetInstance()->AddTimingLabel("Build SVO Splat Leaf Nodes Pass", 16, 160);
+    InformationPanel::GetInstance()->AddTimingLabel("SVO Ray Intersection Pass", 16, 180);
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
@@ -529,7 +530,11 @@ void SVOApp::FrameFunc()
     {
         mVoxelFragmentListBuffer->Bind(1);
         mSVOBuffer->Bind(3);
+        mTimer->Start();
         mSVORayIntersectionTask->DispatchCompute(0, 1, 1, 1);
+        mTimer->Stop();
+        workLoad = mTimer->GetTimeElapsed();
+        infoPanel->SetTimingLabelValue("SVO Ray Intersection Pass", workLoad);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
         svoBufferData = mSVOBuffer->Map(BA_Read_Only);
