@@ -28,11 +28,7 @@ public:
 
 private:
     // pass 1.
-    ShaderUniform mSceneBBCenterLoc;
-    ShaderUniform mSceneBBExtensionLoc;
     ShaderUniform mMaterialColorLoc;
-    ShaderUniform mDimLoc;
-    ShaderUniform mInv2SceneBBExtensionLoc;
 
     // pass 2.
     ShaderUniform mWorldLoc2, mViewLoc2, mProjLoc2;

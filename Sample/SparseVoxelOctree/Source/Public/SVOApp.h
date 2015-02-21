@@ -3,6 +3,8 @@
 
 #include "SVOTriMesh.h"
 #include "SVOCubeMesh.h"
+#include "SVORaySegment.h"
+#include "SVORayIntersection.h"
 #include "GPUTimer.h"
 #include "GatherVoxelFragmentListInfo.h"
 #include "BuildSVO.h"
@@ -27,6 +29,7 @@ public:
 	void FrameFunc() override;
 	void Terminate() override;
     void OnButtonClick(System::Object^  sender, System::EventArgs^  e);
+    void OnCheckBoxClick(System::Object^  sender, System::EventArgs^  e) override;
 
 public:
     enum { VOXEL_DIMENSION = 128 };
@@ -48,6 +51,7 @@ private:
     bool mIsRotatingModel;
     bool mVoxelizeCornell;
     bool mShowCornell;
+    bool mShowSVOBoxBV;
 
     AtomicCounterBufferPtr mAtomicCounterBuffer;
     GatherVoxelFragmentListInfoPtr mGatherVoxelFragmentListInfoTask;
@@ -55,6 +59,7 @@ private:
     StructuredBufferPtr mVoxelFragmentListBuffer;
     StructuredBufferPtr mSVOBuffer;
     UniformBufferPtr mSVOUniformBuffer;
+    SVORayIntersectionPtr mSVORayIntersectionTask;
 
     AABB mSceneBB;
     unsigned int mSVONodeCount;
@@ -67,6 +72,7 @@ private:
 	SVOTriMeshPtr mRightWall;
 	SVOTriMeshPtr mModel;
     SVOCubeMeshPtr mSVONodeCubeModel;
+    SVORaySegmentPtr mSVORaySegment;
 
     GPUTimerPtr mTimer;
 };

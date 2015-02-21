@@ -1,5 +1,7 @@
 #define SVO_NODE_TILE_SIZE 8
 #define SVO_NODE_FLAGED 1234
+#define SVO_MAX_LEVEL 7
+#define SVO_MAX_LEVEL_DIM 128
 
 //----------------------------------------------------------------------------
 // SVO Voxel Fragment List
@@ -21,6 +23,12 @@ layout(std430, binding = 1)  buffer _voxelFragmentBuffer
     uint  instanceCount;
     uint  first;
     uint  baseInstance;
+
+    // Scene bounding box.
+    vec4 SceneBBMin;
+    vec4 SceneBBCenter;
+    vec4 SceneBBExtension;
+    vec4 Inv2SceneBBExtension;
 
     // Voxel fragment buffer. Must be big enough to hold all voxel fragments.
     VoxelFragment data[];
@@ -73,10 +81,22 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     uint curLevelEndIndex;
 
     // Debug.
-    uint value1;
-    uint value2;
-    uint value3;
-    uint value4;
+    uint hit;
+    float minT;
+    float maxT;
+    float sceneMaxT;
+    uint isLeaf;
+    uint childIndex;
+    uint b;
+    uint c;
+
+    vec4 sceneBBMin;
+    vec4 rayStartPos;
+    vec4 rayEndPos;
+    vec4 rayEntryPos;
+    vec4 nodeBoxMin;
+    vec4 nodeBoxMax;
+    vec4 mid;
 
     // SVO node buffer. Must be big enough to hold all tree nodes.
     SVONode data[];
@@ -107,6 +127,16 @@ ivec3 UintToIvec3(uint value)
     return res;
 }
 //----------------------------------------------------------------------------
+uint Vec4ToUint(vec4 value)
+{
+    uint res = (uint(value.w) & 0x000000FF) << 24U |
+        (uint(value.z) & 0x000000FF) << 16U |
+        (uint(value.y) & 0x000000FF) << 8U |
+        (uint(value.x) & 0x000000FF);
+
+    return res;
+}
+//----------------------------------------------------------------------------
 uint GetSVOChildNodeIndex(ivec3 voxelGridPos, SVONodeAABB nodeBox)
 {
     ivec3 nodeBoxMin, nodeBoxMax, mid;
@@ -117,6 +147,24 @@ uint GetSVOChildNodeIndex(ivec3 voxelGridPos, SVONodeAABB nodeBox)
     uint childIndex = (voxelGridPos.x >= mid.x ? 4 : 0) +
                       (voxelGridPos.y >= mid.y ? 2 : 0) +
                       (voxelGridPos.z >= mid.z ? 1 : 0);
+    return childIndex;
+}
+//----------------------------------------------------------------------------
+uint GetSVOChildNodeIndex2(vec3 svoSpaceP, SVONodeAABB nodeBox)
+{
+    vec3 nodeBoxMin, nodeBoxMax, mid;
+    nodeBoxMin = vec3(UintToIvec3(nodeBox.Min));
+    nodeBoxMax = vec3(UintToIvec3(nodeBox.Max));
+    mid = (nodeBoxMin + nodeBoxMax)*0.5;
+
+    // Debug.
+    svoNodeBuffer.nodeBoxMin = vec4(nodeBoxMin, 1.0);
+    svoNodeBuffer.nodeBoxMax = vec4(nodeBoxMax, 1.0);
+    svoNodeBuffer.mid = vec4(mid, 1.0);
+
+    uint childIndex = (svoSpaceP.x >= mid.x ? 4 : 0) +
+                      (svoSpaceP.y >= mid.y ? 2 : 0) +
+                      (svoSpaceP.z >= mid.z ? 1 : 0);
     return childIndex;
 }
 //----------------------------------------------------------------------------
@@ -159,6 +207,11 @@ bool IsSVONodeFlaged(uint nodeIndex)
     return (svoNodeBuffer.data[nodeIndex].flag == SVO_NODE_FLAGED);
 }
 //----------------------------------------------------------------------------
+bool IsSVOLeafNode(SVONode node)
+{
+    return (node.flag != SVO_NODE_FLAGED);
+}
+//----------------------------------------------------------------------------
 void InitSVONode(uint nodeIndex)
 {
     svoNodeBuffer.data[nodeIndex].child = 0;
@@ -168,5 +221,57 @@ void InitSVONode(uint nodeIndex)
     svoNodeBuffer.data[nodeIndex].normals[1] = 0;
     svoNodeBuffer.data[nodeIndex].normals[2] = 0;
     svoNodeBuffer.data[nodeIndex].normals[3] = 0;
+}
+//----------------------------------------------------------------------------
+ivec3 WorldToGridPosition(vec3 worldPosition)
+{
+    vec3 gridDim = vec3(float(SVO_MAX_LEVEL_DIM), float(SVO_MAX_LEVEL_DIM), 
+        float(SVO_MAX_LEVEL_DIM));
+    gridDim = gridDim - vec3(1.0, 1.0, 1.0);
+
+    vec3 offsets = (worldPosition - voxelFragmentBuffer.SceneBBCenter.xyz + 
+        voxelFragmentBuffer.SceneBBExtension.xyz) * 
+        voxelFragmentBuffer.Inv2SceneBBExtension.xyz;
+    offsets = offsets*gridDim + vec3(0.5, 0.5, 0.5);
+    ivec3 res = ivec3(offsets);
+
+    return res;
+}
+//----------------------------------------------------------------------------
+bool SVORayBoxIntersection(vec3 rayOrigin, vec3 rayInvDirection, float minT, 
+    float maxT, SVONodeAABB nodeBox, out float hitT0, out float hitT1)
+{
+    vec3 nodeBoxMin = vec3(UintToIvec3(nodeBox.Min));
+    vec3 nodeBoxMax = vec3(UintToIvec3(nodeBox.Max));
+    vec3 minMinusOrigin = nodeBoxMin - rayOrigin;
+    vec3 maxMinusOrigin = nodeBoxMax - rayOrigin;
+
+    float t0 = minT, t1 = maxT;
+    for( int i = 0; i < 3; ++i )
+    {
+        float tNear = minMinusOrigin[i] * rayInvDirection[i];
+        float tFar = maxMinusOrigin[i] * rayInvDirection[i];
+
+        if( tNear > tFar )
+        {
+            // Swap.
+            float temp = tNear;
+            tNear = tFar;
+            tFar = temp;
+        }
+
+        t0 = tNear > t0 ? tNear : t0;
+        t1 = tFar  < t1 ? tFar  : t1;
+
+        if( t0 > t1 )
+        {
+            return false;
+        }
+    }
+
+    hitT0 = t0;
+    hitT1 = t1;
+
+    return true;
 }
 //----------------------------------------------------------------------------

@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-//#define DEBUG_VOXEL
+#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -19,6 +19,7 @@ SVOApp::SVOApp(int width, int height)
     mIsRotatingModel = false;
     mVoxelizeCornell = false;
     mShowCornell = false;
+    mShowSVOBoxBV = true;
     mShowMode = SM_WorldPosition;
 }
 //----------------------------------------------------------------------------
@@ -131,11 +132,21 @@ void SVOApp::Initialize(GPUDevice* device)
     mBuildSVOTask->AddPass(passBuildSVOSplatLeafNodes);
     mBuildSVOTask->CreateDeviceResource(mDevice);
 
+    // Create SVO ray intersection task.
+    ShaderProgramInfo svoRayIntersectionProgramInfo;
+    svoRayIntersectionProgramInfo.CShaderFileName = "SparseVoxelOctree/cSVORayIntersection.glsl";
+    svoRayIntersectionProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+    ComputePass* passSVORayIntersection = new ComputePass(svoRayIntersectionProgramInfo);
+
+    mSVORayIntersectionTask = new SVORayIntersection();
+    mSVORayIntersectionTask->AddPass(passSVORayIntersection);
+    mSVORayIntersectionTask->CreateDeviceResource(mDevice);
+
     // Create voxel fragment list buffer.
     GLuint voxelCount = VOXEL_DIMENSION * VOXEL_DIMENSION * VOXEL_DIMENSION;
     mVoxelFragmentListBuffer = new StructuredBuffer();
     GLuint voxelFragmentCount = GLuint((float)voxelCount*0.2f); // voxel fragment ratio.
-    GLuint bufferSize = sizeof(GLuint) * 4 + voxelFragmentCount*sizeof(GLuint) * 4;
+    GLuint bufferSize = sizeof(VoxelFragmentBufferHead) + voxelFragmentCount*sizeof(VoxelFragment);
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create SVO buffer.
@@ -231,6 +242,19 @@ void SVOApp::Initialize(GPUDevice* device)
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
+    // Initialize scene bounding box buffer.
+    vec3 sceneBBMin = mSceneBB.Min;
+    vec3 center = mSceneBB.GetBoxCenter();
+    vec3 extension = mSceneBB.GetExtension();
+    vec3 inv2extension = vec3(1.0f / (2.0f*extension.x), 1.0f / (2.0f*extension.y), 1.0f / (2.0f*extension.z));
+    mVoxelFragmentListBuffer->Bind();
+    VoxelFragmentBufferHead* bufferData = (VoxelFragmentBufferHead*)mVoxelFragmentListBuffer->Map(BA_Write_Only);
+    bufferData->SceneBBMin = vec4(sceneBBMin, 1.0);
+    bufferData->SceneBBCenter = vec4(center, 1.0);
+    bufferData->SceneBBExtension = vec4(extension, 0.0);
+    bufferData->Inv2SceneBBExtension = vec4(inv2extension, 0.0);
+    mVoxelFragmentListBuffer->Unmap();
+
     // Create SVO node cube model.
     std::vector<vec3> svoCubeVertices;
     svoCubeVertices.reserve(8);
@@ -282,6 +306,7 @@ void SVOApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTextBox("P1:", 16, 20, 120, 16);
     InformationPanel::GetInstance()->AddTextBox("P2:", 16, 44, 120, 16);
     InformationPanel::GetInstance()->AddButton("Create Ray", 60, 80, 80, 24);
+    InformationPanel::GetInstance()->AddCheckBox("Show SVO Node BV", 16, 120, 60, 20, true);
 
 #ifdef DEBUG_VOXEL_RAY_INTERSECTION
 #endif
@@ -405,7 +430,7 @@ void SVOApp::FrameFunc()
 
     mTimer->Start();
     unsigned int curLevel = 1;
-    for( ; curLevel < mSVOMaxLevel; ++curLevel )
+    for( ; curLevel < 2/*mSVOMaxLevel*/; ++curLevel )
     {
         // Update SVO uniform buffer.
         mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(unsigned int), (void*)&curLevel);
@@ -480,11 +505,14 @@ void SVOApp::FrameFunc()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Visualize SVO pass.
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    mSVOBuffer->BindToIndirect();
-    mSVONodeCubeModel->Render(0, 0);
+    if( mShowSVOBoxBV )
+    {
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        mSVOBuffer->BindToIndirect();
+        mSVONodeCubeModel->Render(0, 0);
+    }
 
     // Visualize scene voxelization pass.
     glEnable(GL_DEPTH_TEST);
@@ -495,6 +523,23 @@ void SVOApp::FrameFunc()
     mTimer->Stop();
     workLoad = mTimer->GetTimeElapsed();
     infoPanel->SetTimingLabelValue("Visualization Pass", workLoad);
+
+    // Show ray segment.
+    if( mSVORaySegment )
+    {
+        mVoxelFragmentListBuffer->Bind(1);
+        mSVOBuffer->Bind(3);
+        mSVORayIntersectionTask->DispatchCompute(0, 1, 1, 1);
+#ifdef DEBUG_VOXEL
+        mSVOBuffer->Bind();
+        svoBufferData = mSVOBuffer->Map(BA_Read_Only);
+        svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
+        svoNodeTileData = (SVONodeTile*)(svoBufferHeadData + 1);
+        mSVOBuffer->Unmap();
+#endif
+
+        mSVORaySegment->Render(0, 0);
+    }
 }
 //----------------------------------------------------------------------------
 void SVOApp::Terminate()
@@ -508,6 +553,7 @@ void SVOApp::Terminate()
 
     mGatherVoxelFragmentListInfoTask = 0;
     mBuildSVOTask = 0;
+    mSVORayIntersectionTask = 0;
 
 	mGround = 0;
 	mCeiling = 0;
@@ -516,6 +562,7 @@ void SVOApp::Terminate()
 	mRightWall = 0;
 	mModel = 0;
     mSVONodeCubeModel = 0;
+    mSVORaySegment = 0;
 
     mTimer = 0;
 }
@@ -556,6 +603,36 @@ void SVOApp::OnButtonClick(System::Object^  sender,
     {
         RaySegment[i] = (float)Convert::ToDouble((String^)p1Res[i]);
         RaySegment[i + 3] = (float)Convert::ToDouble((String^)p2Res[i]);
+    }
+
+    ShaderProgramInfo svoRaySegmentProgramInfo;
+    svoRaySegmentProgramInfo.VShaderFileName = "SparseVoxelOctree/vSVORaySegment.glsl";
+    svoRaySegmentProgramInfo.FShaderFileName = "SparseVoxelOctree/fSVORaySegment.glsl";
+    svoRaySegmentProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Fragment;
+    Pass* passSVORaySegment = new Pass(svoRaySegmentProgramInfo);
+
+    Technique* techSVORaySegment = new Technique();
+    techSVORaySegment->AddPass(passSVORaySegment);
+    MaterialTemplate* mtSVORaySegment = new MaterialTemplate();
+    mtSVORaySegment->AddTechnique(techSVORaySegment);
+    Material* material = new Material(mtSVORaySegment);
+    mSVORaySegment = new SVORaySegment(material, mMainCamera);
+    mSVORaySegment->LineWidth = 3.0f;
+    std::vector<int> temp;
+    temp.reserve(1);
+    temp.push_back(2);
+    mSVORaySegment->LoadFromMemory(1, temp, 2, RaySegment);
+    mSVORaySegment->CreateDeviceResource(mDevice);
+}
+//----------------------------------------------------------------------------
+void SVOApp::OnCheckBoxClick(System::Object^ sender, System::EventArgs^ e)
+{
+    CheckBox^ checkBox = (CheckBox^)sender;
+
+    if( checkBox->Name == "Show SVO Node BV" )
+    {
+        mShowSVOBoxBV = checkBox->Checked;
     }
 }
 //----------------------------------------------------------------------------

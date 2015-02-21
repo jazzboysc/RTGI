@@ -63,10 +63,49 @@ struct SVONodeBufferHead
     unsigned int curLevelEndIndex;
 
     // Debug.
+    unsigned int hit;
+    float minT;
+    float maxT;
+    float sceneMaxT;
+    unsigned int isLeaf;
+    unsigned int childIndex;
+    unsigned int b;
+    unsigned int c;
+
+    vec4 sceneBBMin;
+    vec4 rayStartPos;
+    vec4 rayEndPos;
+    vec4 rayEntryPos;
+    vec4 nodeBoxMin;
+    vec4 nodeBoxMax;
+    vec4 mid;
+};
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+// Voxel fragment list buffer.
+//----------------------------------------------------------------------------
+struct VoxelFragment
+{
+    unsigned int gridPosition;
+    unsigned int albedo;
     unsigned int value1;
     unsigned int value2;
-    unsigned int value3;
-    unsigned int value4;
+};
+//----------------------------------------------------------------------------
+struct VoxelFragmentBufferHead
+{
+    // Indirect command buffer data for SVO flag nodes pass.
+    unsigned int  count;
+    unsigned int  instanceCount;
+    unsigned int  first;
+    unsigned int  baseInstance;
+
+    // Scene bounding box.
+    vec4 SceneBBMin;
+    vec4 SceneBBCenter;
+    vec4 SceneBBExtension;
+    vec4 Inv2SceneBBExtension;
 };
 //----------------------------------------------------------------------------
 
