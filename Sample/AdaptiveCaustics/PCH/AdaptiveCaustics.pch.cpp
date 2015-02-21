@@ -3,4 +3,4 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#include "CausticsTest.pch.h"
+#include "AdaptiveCaustics.pch.h"

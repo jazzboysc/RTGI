@@ -7,7 +7,9 @@
 
 // Utils
 #include <vector>
+#include <algorithm>
 #include <string>
+#include <initializer_list>
 #include <fstream>
 #include <cassert>
 
