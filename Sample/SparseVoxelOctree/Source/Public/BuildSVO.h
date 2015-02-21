@@ -26,8 +26,8 @@ struct SVONode
 {
     unsigned int child;
     unsigned int flag;
+    unsigned int isLeaf;
     unsigned int albedo;
-    unsigned int normals[4];
 
     SVONodeAABB nodeBox;
 };
@@ -63,22 +63,22 @@ struct SVONodeBufferHead
     unsigned int curLevelEndIndex;
 
     // Debug.
-    unsigned int hit;
-    float minT;
-    float maxT;
-    float sceneMaxT;
-    unsigned int isLeaf;
-    unsigned int childIndex;
-    unsigned int b;
-    unsigned int c;
+    unsigned int _hit;
+    float _minT;
+    float _maxT;
+    float _sceneMaxT;
+    unsigned int _isLeaf;
+    unsigned int _childIndex;
+    unsigned int _childTileIndex;
+    unsigned int _nextNodeIndex;
 
-    vec4 sceneBBMin;
-    vec4 rayStartPos;
-    vec4 rayEndPos;
-    vec4 rayEntryPos;
-    vec4 nodeBoxMin;
-    vec4 nodeBoxMax;
-    vec4 mid;
+    vec4 _sceneBBMin;
+    vec4 _rayStartPos;
+    vec4 _rayEndPos;
+    vec4 _rayEntryPos;
+    vec4 _nodeBoxMin;
+    vec4 _nodeBoxMax;
+    vec4 _mid;
 };
 //----------------------------------------------------------------------------
 

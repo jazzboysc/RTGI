@@ -9,6 +9,7 @@ void main()
     {
         // Allocate children tile.
         svoNodeBuffer.data[curNodeID].child = atomicCounterIncrement(svoNodeAllocator);
+        svoNodeBuffer.data[curNodeID].isLeaf = 0;
 
         // Create next level node boxes for the children tile.
         uint childrenStartIndex = svoNodeBuffer.data[curNodeID].child * SVO_NODE_TILE_SIZE;

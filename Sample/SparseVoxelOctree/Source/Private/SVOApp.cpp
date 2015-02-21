@@ -7,7 +7,7 @@ using namespace RTGI::GUIFramework;
 float SVOApp::RaySegment[6] = { 0.0f, 0.0f, 0.0f, 
                                 0.0f, 0.0f, 0.0f };
 
-#define DEBUG_VOXEL
+//#define DEBUG_VOXEL
 //#define DEBUG_VOXEL_RAY_INTERSECTION
 
 //----------------------------------------------------------------------------
@@ -430,7 +430,7 @@ void SVOApp::FrameFunc()
 
     mTimer->Start();
     unsigned int curLevel = 1;
-    for( ; curLevel < 2/*mSVOMaxLevel*/; ++curLevel )
+    for( ; curLevel < mSVOMaxLevel; ++curLevel )
     {
         // Update SVO uniform buffer.
         mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(unsigned int), (void*)&curLevel);
@@ -618,7 +618,7 @@ void SVOApp::OnButtonClick(System::Object^  sender,
     mtSVORaySegment->AddTechnique(techSVORaySegment);
     Material* material = new Material(mtSVORaySegment);
     mSVORaySegment = new SVORaySegment(material, mMainCamera);
-    mSVORaySegment->LineWidth = 3.0f;
+    mSVORaySegment->LineWidth = 1.0f;
     std::vector<int> temp;
     temp.reserve(1);
     temp.push_back(2);

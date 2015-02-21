@@ -49,8 +49,8 @@ struct SVONode
 {
     uint child;
     uint flag;
+    uint isLeaf;
     uint albedo;
-    uint normals[4];
 
     SVONodeAABB nodeBox;
 };
@@ -87,8 +87,8 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     float sceneMaxT;
     uint isLeaf;
     uint childIndex;
-    uint b;
-    uint c;
+    uint childTileIndex;
+    uint nextNodeIndex;
 
     vec4 sceneBBMin;
     vec4 rayStartPos;
@@ -157,11 +157,6 @@ uint GetSVOChildNodeIndex2(vec3 svoSpaceP, SVONodeAABB nodeBox)
     nodeBoxMax = vec3(UintToIvec3(nodeBox.Max));
     mid = (nodeBoxMin + nodeBoxMax)*0.5;
 
-    // Debug.
-    svoNodeBuffer.nodeBoxMin = vec4(nodeBoxMin, 1.0);
-    svoNodeBuffer.nodeBoxMax = vec4(nodeBoxMax, 1.0);
-    svoNodeBuffer.mid = vec4(mid, 1.0);
-
     uint childIndex = (svoSpaceP.x >= mid.x ? 4 : 0) +
                       (svoSpaceP.y >= mid.y ? 2 : 0) +
                       (svoSpaceP.z >= mid.z ? 1 : 0);
@@ -209,18 +204,15 @@ bool IsSVONodeFlaged(uint nodeIndex)
 //----------------------------------------------------------------------------
 bool IsSVOLeafNode(SVONode node)
 {
-    return (node.flag != SVO_NODE_FLAGED);
+    return (node.isLeaf == 1);
 }
 //----------------------------------------------------------------------------
 void InitSVONode(uint nodeIndex)
 {
     svoNodeBuffer.data[nodeIndex].child = 0;
     svoNodeBuffer.data[nodeIndex].flag = 0;
+    svoNodeBuffer.data[nodeIndex].isLeaf = 1;
     svoNodeBuffer.data[nodeIndex].albedo = 0;
-    svoNodeBuffer.data[nodeIndex].normals[0] = 0;
-    svoNodeBuffer.data[nodeIndex].normals[1] = 0;
-    svoNodeBuffer.data[nodeIndex].normals[2] = 0;
-    svoNodeBuffer.data[nodeIndex].normals[3] = 0;
 }
 //----------------------------------------------------------------------------
 ivec3 WorldToGridPosition(vec3 worldPosition)
