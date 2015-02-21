@@ -86,7 +86,7 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     float maxT;
     float sceneMaxT;
     uint isLeaf;
-    uint a;
+    uint childIndex;
     uint b;
     uint c;
 
@@ -94,6 +94,9 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     vec4 rayStartPos;
     vec4 rayEndPos;
     vec4 rayEntryPos;
+    vec4 nodeBoxMin;
+    vec4 nodeBoxMax;
+    vec4 mid;
 
     // SVO node buffer. Must be big enough to hold all tree nodes.
     SVONode data[];
@@ -147,12 +150,17 @@ uint GetSVOChildNodeIndex(ivec3 voxelGridPos, SVONodeAABB nodeBox)
     return childIndex;
 }
 //----------------------------------------------------------------------------
-uint GetSVOChildNodeIndex(vec3 svoSpaceP, SVONodeAABB nodeBox)
+uint GetSVOChildNodeIndex2(vec3 svoSpaceP, SVONodeAABB nodeBox)
 {
     vec3 nodeBoxMin, nodeBoxMax, mid;
     nodeBoxMin = vec3(UintToIvec3(nodeBox.Min));
     nodeBoxMax = vec3(UintToIvec3(nodeBox.Max));
     mid = (nodeBoxMin + nodeBoxMax)*0.5;
+
+    // Debug.
+    svoNodeBuffer.nodeBoxMin = vec4(nodeBoxMin, 1.0);
+    svoNodeBuffer.nodeBoxMax = vec4(nodeBoxMax, 1.0);
+    svoNodeBuffer.mid = vec4(mid, 1.0);
 
     uint childIndex = (svoSpaceP.x >= mid.x ? 4 : 0) +
                       (svoSpaceP.y >= mid.y ? 2 : 0) +

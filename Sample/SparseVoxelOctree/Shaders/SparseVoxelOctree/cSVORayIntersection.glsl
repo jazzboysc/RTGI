@@ -42,8 +42,8 @@ void main()
         SVO_MAX_LEVEL_DIM, SVO_MAX_LEVEL_DIM));
 
     uint level, childIndex, nextNodeIndex;
-    while( maxT < sceneMaxT )
-    //for( int i = 0; i < 1; ++i )
+    //while( maxT < sceneMaxT )
+    for( int i = 0; i < 1; ++i )
     {
         // Restart traversal from root.
         curNode = root;
@@ -53,28 +53,28 @@ void main()
         rayEntryPos = rayStartPosSVO + rayDirSVO*minT;
 
         // Debug.
-        //svoNodeBuffer.minT = minT;
-        //svoNodeBuffer.maxT = maxT;
-        //svoNodeBuffer.rayEntryPos = vec4(rayEntryPos, 1.0);
+        svoNodeBuffer.minT = minT;
+        svoNodeBuffer.maxT = maxT;
+        svoNodeBuffer.rayEntryPos = vec4(rayEntryPos, 1.0);
 
         // Descend until we meet a leaf node.
         bool isLeaf = IsSVOLeafNode(curNode);
 
         // Debug.
-        if( isLeaf )
-        {
-            svoNodeBuffer.isLeaf = 1;
-        }
-        else
-        {
-            svoNodeBuffer.isLeaf = 0;
-        }
+        //if( isLeaf )
+        //{
+        //    svoNodeBuffer.isLeaf = 1;
+        //}
+        //else
+        //{
+        //    svoNodeBuffer.isLeaf = 0;
+        //}
 
-        while( !isLeaf )
-        //for( int j = 0; j < 1; ++j )
+        //while( !isLeaf )
+        for( int j = 0; j < 1; ++j )
         {
             // Figure out which child node we are in.
-            childIndex = GetSVOChildNodeIndex(rayEntryPos, curNode.nodeBox);
+            childIndex = GetSVOChildNodeIndex2(rayEntryPos, curNode.nodeBox);
 
             // Locate child node for current tree level.
             nextNodeIndex = curNode.child*SVO_NODE_TILE_SIZE + childIndex;
@@ -84,6 +84,17 @@ void main()
 
             isLeaf = IsSVOLeafNode(curNode);
             level++;
+
+            // Debug.
+            svoNodeBuffer.childIndex = childIndex;
+            if( isLeaf )
+            {
+                svoNodeBuffer.isLeaf = 1;
+            }
+            else
+            {
+                svoNodeBuffer.isLeaf = 0;
+            }
         }
 
         // Deal with the leaf node.

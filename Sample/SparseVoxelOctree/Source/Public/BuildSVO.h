@@ -68,7 +68,7 @@ struct SVONodeBufferHead
     float maxT;
     float sceneMaxT;
     unsigned int isLeaf;
-    unsigned int a;
+    unsigned int childIndex;
     unsigned int b;
     unsigned int c;
 
@@ -76,6 +76,9 @@ struct SVONodeBufferHead
     vec4 rayStartPos;
     vec4 rayEndPos;
     vec4 rayEntryPos;
+    vec4 nodeBoxMin;
+    vec4 nodeBoxMax;
+    vec4 mid;
 };
 //----------------------------------------------------------------------------
 
