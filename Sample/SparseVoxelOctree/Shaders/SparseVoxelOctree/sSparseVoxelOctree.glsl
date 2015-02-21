@@ -81,10 +81,19 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     uint curLevelEndIndex;
 
     // Debug.
-    uint value1;
-    uint value2;
-    uint value3;
-    uint value4;
+    uint hit;
+    float minT;
+    float maxT;
+    float sceneMaxT;
+    uint isLeaf;
+    uint a;
+    uint b;
+    uint c;
+
+    vec4 sceneBBMin;
+    vec4 rayStartPos;
+    vec4 rayEndPos;
+    vec4 rayEntryPos;
 
     // SVO node buffer. Must be big enough to hold all tree nodes.
     SVONode data[];
@@ -192,7 +201,7 @@ bool IsSVONodeFlaged(uint nodeIndex)
 //----------------------------------------------------------------------------
 bool IsSVOLeafNode(SVONode node)
 {
-    return (node.flag == SVO_NODE_FLAGED);
+    return (node.flag != SVO_NODE_FLAGED);
 }
 //----------------------------------------------------------------------------
 void InitSVONode(uint nodeIndex)

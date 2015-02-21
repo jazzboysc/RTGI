@@ -17,6 +17,11 @@ void main()
     vec3 rayStartPosSVO = rayStartPoint - sceneBBMin;
     vec3 rayEndPosSVO = rayEndPoint - sceneBBMin;
 
+    // Debug.
+    //svoNodeBuffer.sceneBBMin = vec4(sceneBBMin, 1.0);
+    //svoNodeBuffer.rayStartPos = vec4(rayStartPoint, 1.0);
+    //svoNodeBuffer.rayEndPos = vec4(rayEndPoint, 1.0);
+
     // Initialize sceneMinT, sceneMaxT and ray direction.
     vec3 rayDirSVO = rayEndPosSVO - rayStartPosSVO;
     sceneMinT = 0.0;
@@ -24,7 +29,7 @@ void main()
     rayDirSVO = rayDirSVO / sceneMaxT;
     vec3 rayInvDirSVO = 1.0 / rayDirSVO;
 
-    bool hit = false;
+    uint hit = 0;
     minT = maxT = sceneMinT;
     SVONode curNode, root;
     vec3 rayEntryPos;
@@ -38,6 +43,7 @@ void main()
 
     uint level, childIndex, nextNodeIndex;
     while( maxT < sceneMaxT )
+    //for( int i = 0; i < 1; ++i )
     {
         // Restart traversal from root.
         curNode = root;
@@ -46,8 +52,26 @@ void main()
         level = 0;
         rayEntryPos = rayStartPosSVO + rayDirSVO*minT;
 
+        // Debug.
+        //svoNodeBuffer.minT = minT;
+        //svoNodeBuffer.maxT = maxT;
+        //svoNodeBuffer.rayEntryPos = vec4(rayEntryPos, 1.0);
+
         // Descend until we meet a leaf node.
-        while( !IsSVOLeafNode(curNode) )
+        bool isLeaf = IsSVOLeafNode(curNode);
+
+        // Debug.
+        if( isLeaf )
+        {
+            svoNodeBuffer.isLeaf = 1;
+        }
+        else
+        {
+            svoNodeBuffer.isLeaf = 0;
+        }
+
+        while( !isLeaf )
+        //for( int j = 0; j < 1; ++j )
         {
             // Figure out which child node we are in.
             childIndex = GetSVOChildNodeIndex(rayEntryPos, curNode.nodeBox);
@@ -58,13 +82,14 @@ void main()
             // Update next node to visit.
             curNode = svoNodeBuffer.data[nextNodeIndex];
 
+            isLeaf = IsSVOLeafNode(curNode);
             level++;
         }
 
         // Deal with the leaf node.
-        if( level == SVO_MAX_LEVEL )
+        if( level == 2 )
         {
-            hit = true;
+            hit = 1;
             break;
         }
 
@@ -72,4 +97,6 @@ void main()
         SVORayBoxIntersection(rayStartPosSVO, rayInvDirSVO, minT, maxT, 
             curNode.nodeBox, minT, maxT);
     }
+
+    svoNodeBuffer.hit = hit;
 }

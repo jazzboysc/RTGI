@@ -430,7 +430,7 @@ void SVOApp::FrameFunc()
 
     mTimer->Start();
     unsigned int curLevel = 1;
-    for( ; curLevel < mSVOMaxLevel; ++curLevel )
+    for( ; curLevel < 2/*mSVOMaxLevel*/; ++curLevel )
     {
         // Update SVO uniform buffer.
         mSVOUniformBuffer->UpdateSubData(0, 0, sizeof(unsigned int), (void*)&curLevel);
@@ -530,6 +530,13 @@ void SVOApp::FrameFunc()
         mVoxelFragmentListBuffer->Bind(1);
         mSVOBuffer->Bind(3);
         mSVORayIntersectionTask->DispatchCompute(0, 1, 1, 1);
+#ifdef DEBUG_VOXEL
+        mSVOBuffer->Bind();
+        svoBufferData = mSVOBuffer->Map(BA_Read_Only);
+        svoBufferHeadData = (SVONodeBufferHead*)svoBufferData;
+        svoNodeTileData = (SVONodeTile*)(svoBufferHeadData + 1);
+        mSVOBuffer->Unmap();
+#endif
 
         mSVORaySegment->Render(0, 0);
     }

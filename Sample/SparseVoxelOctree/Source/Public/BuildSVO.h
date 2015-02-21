@@ -63,10 +63,19 @@ struct SVONodeBufferHead
     unsigned int curLevelEndIndex;
 
     // Debug.
-    unsigned int value1;
-    unsigned int value2;
-    unsigned int value3;
-    unsigned int value4;
+    unsigned int hit;
+    float minT;
+    float maxT;
+    float sceneMaxT;
+    unsigned int isLeaf;
+    unsigned int a;
+    unsigned int b;
+    unsigned int c;
+
+    vec4 sceneBBMin;
+    vec4 rayStartPos;
+    vec4 rayEndPos;
+    vec4 rayEntryPos;
 };
 //----------------------------------------------------------------------------
 

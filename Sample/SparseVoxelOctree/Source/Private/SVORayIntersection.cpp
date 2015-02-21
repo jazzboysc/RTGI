@@ -17,8 +17,8 @@ void SVORayIntersection::OnGetShaderConstants()
     ComputePass* p = (ComputePass*)GetPass(0);
     ShaderProgram* program = p->GetShaderProgram();
 
-    program->GetUniformLocation(&mRayStartPointLoc, "RayStartPoint");
-    program->GetUniformLocation(&mRayEndPointLoc, "RayEndPoint");
+    program->GetUniformLocation(&mRayStartPointLoc, "rayStartPoint");
+    program->GetUniformLocation(&mRayEndPointLoc, "rayEndPoint");
 }
 //----------------------------------------------------------------------------
 void SVORayIntersection::OnPreDispatch(unsigned int pass)
