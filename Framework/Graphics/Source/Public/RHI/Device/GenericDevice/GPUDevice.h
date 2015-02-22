@@ -12,28 +12,28 @@
 namespace RTGI
 {
 
-#define GPU_DEVICE_FUNC(device, function) (device->*device->function)
-#define GPU_DEVICE_FUNC_SetUniformValueMat4(uniform, value) \
-    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueMat4) \
-    (&(uniform), &(value))
-#define GPU_DEVICE_FUNC_SetUniformValueVec3(uniform, value) \
-    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueVec3) \
-    (&(uniform), &(value))
-#define GPU_DEVICE_FUNC_SetUniformValueInt(uniform, value) \
-    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueInt) \
-    (&(uniform), value)
-#define GPU_DEVICE_FUNC_SetUniformValueFloat(uniform, value) \
-    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueFloat) \
-    (&(uniform), value)
-#define GPU_DEVICE_FUNC_SetUniformValueFloat2(uniform, value) \
-    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueFloat2) \
-    (&(uniform), value)
-#define GPU_DEVICE_FUNC_GetUniformLocation(program, uniform, name) \
-    GPU_DEVICE_FUNC((program)->GetProgramHandle()->Device, GetUniformLocation) \
-    (program, &(uniform), name)
-#define GPU_DEVICE_FUNC_SetProgramParameterInt(program, pname, value) \
-    GPU_DEVICE_FUNC((program)->GetProgramHandle()->Device, \
-    SetProgramParameterInt)(program, pname, value)
+//#define GPU_DEVICE_FUNC(device, function) (device->*device->function)
+//#define GPU_DEVICE_FUNC_SetUniformValueMat4(uniform, value) \
+//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueMat4) \
+//    (&(uniform), &(value))
+//#define GPU_DEVICE_FUNC_SetUniformValueVec3(uniform, value) \
+//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueVec3) \
+//    (&(uniform), &(value))
+//#define GPU_DEVICE_FUNC_SetUniformValueInt(uniform, value) \
+//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueInt) \
+//    (&(uniform), value)
+//#define GPU_DEVICE_FUNC_SetUniformValueFloat(uniform, value) \
+//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueFloat) \
+//    (&(uniform), value)
+//#define GPU_DEVICE_FUNC_SetUniformValueFloat2(uniform, value) \
+//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueFloat2) \
+//    (&(uniform), value)
+//#define GPU_DEVICE_FUNC_GetUniformLocation(program, uniform, name) \
+//    GPU_DEVICE_FUNC((program)->GetProgramHandle()->Device, GetUniformLocation) \
+//    (program, &(uniform), name)
+//#define GPU_DEVICE_FUNC_SetProgramParameterInt(program, pname, value) \
+//    GPU_DEVICE_FUNC((program)->GetProgramHandle()->Device, \
+//    SetProgramParameterInt)(program, pname, value)
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -176,7 +176,7 @@ typedef void (GPUDevice::*GPUDeviceSetAnisFilterLevel)(int maxAnisFilterLevel);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: inline inline /inline 3/20inline 4
+// Date: 11/29/2014
 //----------------------------------------------------------------------------
 class GPUDevice : public RefObject
 {
@@ -184,87 +184,96 @@ public:
     GPUDevice();
     ~GPUDevice();
 	
-inline 	void Initialize(GPUDeviceDescription* deviceDesc);
-inline 	void Terminate();
-inline 	ShaderHandle* CreateShader(Shader* shader);
-inline 	void DeleteShader(Shader* shader);
-inline 	ShaderProgramHandle* CreateProgram(ShaderProgram* program);
+    inline 	void Initialize(GPUDeviceDescription* deviceDesc);
+    inline 	void Terminate();
+    inline 	ShaderHandle* CreateShader(Shader* shader);
+    inline 	void DeleteShader(Shader* shader);
+    inline 	ShaderProgramHandle* CreateProgram(ShaderProgram* program);
  
-inline 	void DeleteProgram(ShaderProgram* program);
-inline 	void EnableProgram(ShaderProgram* program);
-inline 	void DisableProgram(ShaderProgram* program);
-inline 	PassInfoHandle* CreatePassInfo(PassInfo* passInfo);
-inline 	void DeletePassInfo(PassInfo* passInfo);
-inline 	void GetUniformLocation(ShaderProgram* program,
-	ShaderUniform* uniform, const char* name);
-inline 	void SetUniformValueMat4(ShaderUniform* uniform,
-	const glm::mat4* value);
-inline 	void SetUniformValueVec3(ShaderUniform* uniform,
-	const glm::vec3* value);
-inline 	void SetUniformValueInt(ShaderUniform* uniform,
-	int value);
-inline 	void SetUniformValueFloat(ShaderUniform* uniform, float value);
-inline 	void SetUniformValueFloat2(ShaderUniform* uniform, const float* value);
-inline 	void SetProgramParameterInt(ShaderProgram* program, ShaderProgramParameter pname, int value);
-inline 	void DeleteTexture(Texture* texture);
-inline TextureHandle* Texture1DLoadFromSystemMemory(
- 		Texture* texture, BufferInternalFormat internalFormat, int width,
- 		BufferFormat format, BufferComponentType type, void* pixels);
-inline 	void Texture1DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
-inline 	void TextureBindToImageUnit(Texture* texture, unsigned int unit, BufferAccess access);
-inline 	void TextureBindToSampler(Texture* texture, unsigned int index, SamplerDesc* sampler);
-inline void Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData);
-inline 	TextureHandle* Texture2DLoadFromSystemMemory(
-	 		Texture* texture, BufferInternalFormat internalFormat, int width,
-	 		int height, BufferFormat format, BufferComponentType type, bool mipMap,
-	 		void* pixels);
-inline 	TextureHandle* Texture2DLoadFromTextureBuffer(
-	 		Texture* texture, TextureBuffer* textureBuffer,
-	 		BufferInternalFormat internalFormat);
-inline 	void Texture2DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
-inline 	void Texture2DGetImageData(Texture* texture, void* dstPixels);
-inline 	TextureHandle* Tex2DArrayLoadFromSystemMemory(
-	 		Texture* texture, BufferInternalFormat internalFormat, int width,
-	 		int height, int depth, BufferFormat format, BufferComponentType type,
-	 		void* pixels);
-inline 	TextureHandle* Texture3DLoadFromSystemMemory(
-	 		Texture* texture, BufferInternalFormat internalFormat, int width,
-	 		int height, int depth, BufferFormat format, BufferComponentType type,
-	 		void* pixels);
-inline 	void Texture3DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
-inline 	TextureHandle* TextureCubeLoadFromSystemMemory(
-	 		Texture* texture, BufferInternalFormat internalFormat, int width,
-	 		int height, BufferFormat format, BufferComponentType type, bool mipMap,
-	 		void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY,
-	 		void* pixelsPZ, void* pixelsNZ);
-inline 	FBOHandle* CreateFrameBuffer(FrameBuffer* frameBuffer);
-inline 	void DeleteFrameBuffer(FrameBuffer* frameBuffer);
-inline 	void FrameBufferSetRenderTargets(
-	 		FrameBuffer* frameBuffer, unsigned int colorTextureCount,
-	 		Texture** colorTextures, Texture* depthTexture, Texture* stencilTexture);
-inline 	void FrameBufferEnable(FrameBuffer* frameBuffer);
-inline 	void FrameBufferDisable(FrameBuffer* frameBuffer);
-inline 	void ComputeShaderDispatch(ShaderProgram* program, unsigned int globalX,
-	 		unsigned int globalY, unsigned int globalZ);
-inline 	void DispatchVertex(unsigned int threadCount);
-inline 	void DispatchVertexIndirect(void* indirect);
-inline 	void DeleteBuffer(Buffer* buffer);
-inline 	void* BufferMap(Buffer* buffer, BufferAccess access);
-inline 	void BufferUnmap(Buffer* buffer);
-inline 	void BufferBindIndex(Buffer* buffer, unsigned int index);
-inline 	void BufferBind(Buffer* buffer);
-inline 	void BufferBindToIndirect(Buffer* buffer);
-inline 	void BufferUpdateSubData(Buffer* buffer, int offset, size_t size, void* data);
-inline 	BufferHandle* BufferLoadFromSystemMemory(
-	 		Buffer* buffer, size_t size, void* data, BufferUsage usage);
-inline 	BufferHandle* BufferLoadImmutableFromSystemMemory(Buffer* buffer,
-	 		size_t size, void* data);
-inline 	void BufferClear(Buffer* buffer,
-	 		BufferInternalFormat internalFormat, BufferFormat format,
-	 		BufferComponentType type, void* data);
-inline 	void GetMaxAnisFilterLevel(int* maxAnisFilterLevel);
-inline 	void SetAnisFilterLevel(int maxAnisFilterLevel);
+    inline 	void DeleteProgram(ShaderProgram* program);
+    inline 	void EnableProgram(ShaderProgram* program);
+    inline 	void DisableProgram(ShaderProgram* program);
+    inline 	PassInfoHandle* CreatePassInfo(PassInfo* passInfo);
+    inline 	void DeletePassInfo(PassInfo* passInfo);
+    inline 	void GetUniformLocation(ShaderProgram* program, 
+        ShaderUniform* uniform, const char* name);
+    inline 	void SetUniformValueMat4(ShaderUniform* uniform,
+        const glm::mat4* value);
+    inline 	void SetUniformValueVec3(ShaderUniform* uniform,
+        const glm::vec3* value);
+    inline 	void SetUniformValueInt(ShaderUniform* uniform,
+        int value);
+    inline 	void SetUniformValueFloat(ShaderUniform* uniform, float value);
+    inline 	void SetUniformValueFloat2(ShaderUniform* uniform, 
+        const float* value);
+    inline 	void SetProgramParameterInt(ShaderProgram* program, 
+        ShaderProgramParameter pname, int value);
+    inline 	void DeleteTexture(Texture* texture);
+    inline TextureHandle* Texture1DLoadFromSystemMemory(Texture* texture, 
+        BufferInternalFormat internalFormat, int width, BufferFormat format, 
+        BufferComponentType type, void* pixels);
+    inline 	void Texture1DUpdateFromPixelBuffer(Texture* texture, 
+        PixelBuffer* pixelBuffer);
+    inline 	void TextureBindToImageUnit(Texture* texture, unsigned int unit, 
+        BufferAccess access);
+    inline 	void TextureBindToSampler(Texture* texture, unsigned int index, 
+        SamplerDesc* sampler);
+    inline  void Texture1DGetDataFromGPUMemory(Texture* texture, 
+        void* dstData);
+    inline 	TextureHandle* Texture2DLoadFromSystemMemory(Texture* texture, 
+        BufferInternalFormat internalFormat, int width, int height, 
+        BufferFormat format, BufferComponentType type, bool mipMap, 
+        void* pixels);
+    inline 	TextureHandle* Texture2DLoadFromTextureBuffer(Texture* texture, 
+        TextureBuffer* textureBuffer, BufferInternalFormat internalFormat);
+    inline 	void Texture2DUpdateFromPixelBuffer(Texture* texture, 
+        PixelBuffer* pixelBuffer);
+    inline 	void Texture2DGetImageData(Texture* texture, void* dstPixels);
+    inline 	TextureHandle* Tex2DArrayLoadFromSystemMemory(Texture* texture, 
+        BufferInternalFormat internalFormat, int width, int height, 
+        int depth, BufferFormat format, BufferComponentType type, 
+        void* pixels);
+    inline 	TextureHandle* Texture3DLoadFromSystemMemory(Texture* texture, 
+        BufferInternalFormat internalFormat, int width, int height, 
+        int depth, BufferFormat format, BufferComponentType type, 
+        void* pixels);
+    inline 	void Texture3DUpdateFromPixelBuffer(Texture* texture, 
+        PixelBuffer* pixelBuffer);
+    inline 	TextureHandle* TextureCubeLoadFromSystemMemory(Texture* texture, 
+        BufferInternalFormat internalFormat, int width, int height, 
+        BufferFormat format, BufferComponentType type, bool mipMap,
+        void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY,
+        void* pixelsPZ, void* pixelsNZ);
+    inline 	FBOHandle* CreateFrameBuffer(FrameBuffer* frameBuffer);
+    inline 	void DeleteFrameBuffer(FrameBuffer* frameBuffer);
+    inline 	void FrameBufferSetRenderTargets(FrameBuffer* frameBuffer, 
+        unsigned int colorTextureCount, Texture** colorTextures, 
+        Texture* depthTexture, Texture* stencilTexture);
+    inline 	void FrameBufferEnable(FrameBuffer* frameBuffer);
+    inline 	void FrameBufferDisable(FrameBuffer* frameBuffer);
+    inline 	void ComputeShaderDispatch(ShaderProgram* program, 
+        unsigned int globalX, unsigned int globalY, unsigned int globalZ);
+    inline 	void DispatchVertex(unsigned int threadCount);
+    inline 	void DispatchVertexIndirect(void* indirect);
+    inline 	void DeleteBuffer(Buffer* buffer);
+    inline 	void* BufferMap(Buffer* buffer, BufferAccess access);
+    inline 	void BufferUnmap(Buffer* buffer);
+    inline 	void BufferBindIndex(Buffer* buffer, unsigned int index);
+    inline 	void BufferBind(Buffer* buffer);
+    inline 	void BufferBindToIndirect(Buffer* buffer);
+    inline 	void BufferUpdateSubData(Buffer* buffer, int offset, size_t size, 
+        void* data);
+    inline 	BufferHandle* BufferLoadFromSystemMemory(Buffer* buffer, 
+        size_t size, void* data, BufferUsage usage);
+    inline 	BufferHandle* BufferLoadImmutableFromSystemMemory(Buffer* buffer,
+        size_t size, void* data);
+    inline 	void BufferClear(Buffer* buffer, 
+        BufferInternalFormat internalFormat, BufferFormat format,
+        BufferComponentType type, void* data);
+    inline 	void GetMaxAnisFilterLevel(int* maxAnisFilterLevel);
+    inline 	void SetAnisFilterLevel(int maxAnisFilterLevel);
 
+protected:
     GPUDeviceInitialize                           _Initialize;
     GPUDeviceTerminate                            _Terminate;
     GPUDeviceCreateShader                         _CreateShader;
@@ -322,6 +331,7 @@ inline 	void SetAnisFilterLevel(int maxAnisFilterLevel);
 typedef RefPointer<GPUDevice> GPUDevicePtr;
 
 #include "GPUDevice.inl"
+
 }
 
 #endif
