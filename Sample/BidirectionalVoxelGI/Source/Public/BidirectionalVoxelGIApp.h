@@ -66,7 +66,7 @@ private:
 
     // VPL stuff.
     enum { INTERLEAVED_PATTERN_SIZE = 2 };
-    enum { VPL_SAMPLE_COUNT = 512 };
+    enum { VPL_SAMPLE_COUNT = 256 };
 
     // Visualizer.
     VisualizerPtr mVisualizer;

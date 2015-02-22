@@ -18,17 +18,20 @@ void main()
     vec3 rayStartPosSVO = (rayStartPoint - sceneBBMin)*inv2SceneBBExtension*SVO_MAX_LEVEL_DIM;
     vec3 rayEndPosSVO = (rayEndPoint - sceneBBMin)*inv2SceneBBExtension*SVO_MAX_LEVEL_DIM;
 
-    // Debug.
-    //svoNodeBuffer.sceneBBMin = vec4(sceneBBMin, 1.0);
-    //svoNodeBuffer.rayStartPos = vec4(rayStartPoint, 1.0);
-    //svoNodeBuffer.rayEndPos = vec4(rayEndPoint, 1.0);
-
     // Initialize sceneMinT, sceneMaxT and ray direction.
     vec3 rayDirSVO = rayEndPosSVO - rayStartPosSVO;
     sceneMinT = 0.0;
     sceneMaxT = length(rayDirSVO);
     rayDirSVO = rayDirSVO / sceneMaxT;
     vec3 rayInvDirSVO = 1.0 / rayDirSVO;
+
+    // Debug.
+    //svoNodeBuffer.sceneBBMin = vec4(sceneBBMin, 1.0);
+    //svoNodeBuffer.rayStartPos = vec4(rayStartPoint, 1.0);
+    //svoNodeBuffer.rayEndPos = vec4(rayEndPoint, 1.0);
+    //svoNodeBuffer.rayStartPosSVO = vec4(rayStartPosSVO, 1.0);
+    //svoNodeBuffer.rayEndPosSVO = vec4(rayEndPosSVO, 1.0);
+    //svoNodeBuffer.rayInvDirSVO = vec4(rayInvDirSVO, 0.0);
 
     uint hit = 0;
     minT = maxT = sceneMinT;
@@ -44,7 +47,7 @@ void main()
 
     uint level, childIndex, nextNodeIndex;
     while( maxT < sceneMaxT )
-    //for( int i = 0; i < 1; ++i )
+    //for( int i = 0; i < 5; ++i )
     {
         // Restart traversal from root.
         curNode = root;
@@ -53,9 +56,12 @@ void main()
         rayEntryPos = rayStartPosSVO + rayDirSVO*minT;
 
         // Debug.
-        //svoNodeBuffer.minT = minT;
-        //svoNodeBuffer.maxT = maxT;
-        //svoNodeBuffer.rayEntryPos = vec4(rayEntryPos, 1.0);
+        //if( i == 4 )
+        //{
+        //    svoNodeBuffer.minT = minT;
+        //    svoNodeBuffer.maxT = maxT;
+        //    svoNodeBuffer.rayEntryPos = vec4(rayEntryPos, 1.0);
+        //}
 
         // Descend until we meet a leaf node.
         bool isLeaf = IsSVOLeafNode(curNode);
@@ -106,8 +112,58 @@ void main()
         }
 
         // Find maxT for the current node.
-        SVORayBoxIntersection(rayStartPosSVO, rayInvDirSVO, minT, maxT, 
-            curNode.nodeBox, minT, maxT);
+
+        vec3 nodeBoxMin = vec3(UintToIvec3(curNode.nodeBox.Min));
+        vec3 nodeBoxMax = vec3(UintToIvec3(curNode.nodeBox.Max));
+        vec3 minMinusOrigin = nodeBoxMin - rayStartPosSVO;
+        vec3 maxMinusOrigin = nodeBoxMax - rayStartPosSVO;
+        float t0 = minT, t1 = maxT;
+
+        for( int k = 0; k < 3; ++k )
+        {
+            float tNear = minMinusOrigin[k] * rayInvDirSVO[k];
+            float tFar = maxMinusOrigin[k] * rayInvDirSVO[k];
+
+            // Debug.
+            //if( i == 0 && k == 1 )
+            //{
+            //    svoNodeBuffer.nodeBoxMin = vec4(nodeBoxMin, 1.0);
+            //    svoNodeBuffer.nodeBoxMax = vec4(nodeBoxMax, 1.0);
+            //    svoNodeBuffer.minMinusOriginK = minMinusOrigin[k];
+            //    svoNodeBuffer.maxMinusOriginK = maxMinusOrigin[k];
+            //    svoNodeBuffer.tNear = tNear;
+            //    svoNodeBuffer.tFar = tFar;
+
+            //    if( tNear > tFar )
+            //    {
+            //        svoNodeBuffer.tNearCompareTFar = 1;
+            //    }
+            //    else
+            //    {
+            //        svoNodeBuffer.tNearCompareTFar = 0;
+            //    }
+            //}
+
+            if( tNear > tFar )
+            {
+                // Swap.
+                float temp = tNear;
+                tNear = tFar;
+                tFar = temp;
+            }
+
+            t0 = tNear > t0 ? tNear : t0;
+            t1 = tFar  < t1 ? tFar : t1;
+
+            if( t0 > t1 )
+            {
+                return;
+            }
+        }
+
+        // Update maxT.
+        maxT = t1 + 0.0001;
+
     }
 
     svoNodeBuffer.hit = hit;

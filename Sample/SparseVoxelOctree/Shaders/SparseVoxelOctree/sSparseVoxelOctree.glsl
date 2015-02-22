@@ -89,14 +89,24 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     uint childIndex;
     uint childTileIndex;
     uint nextNodeIndex;
-
+    float tNear;
+    float tFar;
+    float minMinusOriginK;
+    float maxMinusOriginK;
+    uint tNearCompareTFar;
+    uint b;
+    uint c;
+    uint d;
     vec4 sceneBBMin;
     vec4 rayStartPos;
+    vec4 rayStartPosSVO;
     vec4 rayEndPos;
+    vec4 rayEndPosSVO;
     vec4 rayEntryPos;
     vec4 nodeBoxMin;
     vec4 nodeBoxMax;
     vec4 mid;
+    vec4 rayInvDirSVO;
 
     // SVO node buffer. Must be big enough to hold all tree nodes.
     SVONode data[];
@@ -228,42 +238,5 @@ ivec3 WorldToGridPosition(vec3 worldPosition)
     ivec3 res = ivec3(offsets);
 
     return res;
-}
-//----------------------------------------------------------------------------
-bool SVORayBoxIntersection(vec3 rayOrigin, vec3 rayInvDirection, float minT, 
-    float maxT, SVONodeAABB nodeBox, out float hitT0, out float hitT1)
-{
-    vec3 nodeBoxMin = vec3(UintToIvec3(nodeBox.Min));
-    vec3 nodeBoxMax = vec3(UintToIvec3(nodeBox.Max));
-    vec3 minMinusOrigin = nodeBoxMin - rayOrigin;
-    vec3 maxMinusOrigin = nodeBoxMax - rayOrigin;
-
-    float t0 = minT, t1 = maxT;
-    for( int i = 0; i < 3; ++i )
-    {
-        float tNear = minMinusOrigin[i] * rayInvDirection[i];
-        float tFar = maxMinusOrigin[i] * rayInvDirection[i];
-
-        if( tNear > tFar )
-        {
-            // Swap.
-            float temp = tNear;
-            tNear = tFar;
-            tFar = temp;
-        }
-
-        t0 = tNear > t0 ? tNear : t0;
-        t1 = tFar  < t1 ? tFar  : t1;
-
-        if( t0 > t1 )
-        {
-            return false;
-        }
-    }
-
-    hitT0 = t0;
-    hitT1 = t1;
-
-    return true;
 }
 //----------------------------------------------------------------------------
