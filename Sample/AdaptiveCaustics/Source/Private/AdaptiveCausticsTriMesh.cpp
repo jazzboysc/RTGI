@@ -1,4 +1,4 @@
-#include "CausticsTriMesh.h"
+#include "AdaptiveCausticsTriMesh.h"
 
 using namespace RTGI;
 

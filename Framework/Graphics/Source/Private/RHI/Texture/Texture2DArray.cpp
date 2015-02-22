@@ -70,8 +70,8 @@ void Texture2DArray::CreateRenderTarget(GPUDevice* device, int width,
 		break;
 	}
 
-    mTextureHandle = GPU_DEVICE_FUNC(device,
-        Tex2DArrayLoadFromSystemMemory)(this, mInternalFormat, Width, 
+    mTextureHandle = device->Tex2DArrayLoadFromSystemMemory(
+		this, mInternalFormat, Width, 
         Height, Depth, mFormat, mComponentType, 0);
 }
 //--------------------------------------------------------------------------

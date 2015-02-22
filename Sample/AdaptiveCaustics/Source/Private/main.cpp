@@ -1,4 +1,4 @@
-#include "CausticsApp.h"
+#include "AdaptiveCausticsApp.h"
 #include "OpenGLDevice.h"
 
 using namespace RTGI;
@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     OpenGLDevice* gpuDevice = new OpenGLDevice();
 
 	// Initialize application.
-	app = new CausticsApp();
+	app = new AdaptiveCausticsApp();
 	app->RTGI::Application::Initialize(gpuDevice);
 	app->RTGI::Application::Run();
 	app->RTGI::Application::Terminate();

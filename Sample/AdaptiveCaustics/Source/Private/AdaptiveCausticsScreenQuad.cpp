@@ -1,4 +1,4 @@
-#include "CausticsScreenQuad.h"
+#include "AdaptiveCausticsScreenQuad.h"
 
 using namespace RTGI;
 

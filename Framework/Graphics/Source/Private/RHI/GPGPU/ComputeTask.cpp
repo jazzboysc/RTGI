@@ -34,8 +34,8 @@ void ComputeTask::DispatchCompute(unsigned int pass, unsigned int globalX,
     program->Enable();
     OnPreDispatch(pass);
 
-    GPU_DEVICE_FUNC(program->GetProgramHandle()->Device, 
-        ComputeShaderDispatch)(program, globalX, globalY, globalZ);
+    program->GetProgramHandle()->Device->ComputeShaderDispatch(
+		program, globalX, globalY, globalZ);
 
     OnPostDispatch(pass);
     program->Disable();
@@ -58,8 +58,7 @@ void ComputeTask::DispatchVertex(unsigned int pass, unsigned int threadCount)
     program->Enable();
     OnPreDispatch(pass);
 
-    GPU_DEVICE_FUNC(program->GetProgramHandle()->Device, DispatchVertex)(
-        threadCount);
+    program->GetProgramHandle()->Device->DispatchVertex(threadCount);
 
     OnPostDispatch(pass);
     program->Disable();
@@ -78,8 +77,7 @@ void ComputeTask::DispatchVertexIndirect(unsigned int pass,
     OnPreDispatch(pass);
 
     indirectCommandBuffer->BindToIndirect();
-    GPU_DEVICE_FUNC(program->GetProgramHandle()->Device,
-        DispatchVertexIndirect)(indirect);
+    program->GetProgramHandle()->Device->DispatchVertexIndirect(indirect);
 
     OnPostDispatch(pass);
     program->Disable();

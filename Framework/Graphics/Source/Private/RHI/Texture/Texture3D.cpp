@@ -37,7 +37,7 @@ bool Texture3D::LoadFromSystemMemory(GPUDevice* device,
     mFormat = format;
     mComponentType = type;
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture3DLoadFromSystemMemory)(
+    mTextureHandle = device->Texture3DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, Depth, mFormat, mComponentType,
         pixels);
 
@@ -104,7 +104,7 @@ void Texture3D::CreateRenderTarget(GPUDevice* device, int width, int height,
         break;
     }
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture3DLoadFromSystemMemory)(
+    mTextureHandle = device->Texture3DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, Depth, mFormat, mComponentType,
         0);
 }
@@ -112,7 +112,7 @@ void Texture3D::CreateRenderTarget(GPUDevice* device, int width, int height,
 void Texture3D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 {
     assert(mTextureHandle);
-    GPU_DEVICE_FUNC(mTextureHandle->Device, Texture3DUpdateFromPixelBuffer)(
+    mTextureHandle->Device->Texture3DUpdateFromPixelBuffer(
         this, pixelBuffer);
 }
 //--------------------------------------------------------------------------

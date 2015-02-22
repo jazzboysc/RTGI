@@ -27,7 +27,7 @@ IndexableBuffer::~IndexableBuffer()
 void IndexableBuffer::Bind(unsigned int index)
 {
     assert(mBufferHandle);
-    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferBindIndex)(this, index);
+    mBufferHandle->Device->BufferBindIndex(this, index);
 }
 //----------------------------------------------------------------------------
 void IndexableBuffer::UpdateSubData(unsigned int index, int offset, 
@@ -35,7 +35,7 @@ void IndexableBuffer::UpdateSubData(unsigned int index, int offset,
 {
     assert(mBufferHandle);
     Bind(index);
-    GPU_DEVICE_FUNC(mBufferHandle->Device, BufferUpdateSubData)(this, offset,
+    mBufferHandle->Device->BufferUpdateSubData(this, offset,
         size, data);
 }
 //----------------------------------------------------------------------------

@@ -39,7 +39,7 @@ public:
 	static Application* GetInstance();
 
 	GLFWwindow* Window;
-	int Width, Height;
+	int Width = 1024, Height = 768;
 	std::string Title = "Default Application";
 
 protected:

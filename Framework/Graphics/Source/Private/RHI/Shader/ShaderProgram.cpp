@@ -64,7 +64,7 @@ ShaderProgram::~ShaderProgram()
     mTessellationControlShader = 0;
     mTessellationEvaluationShader = 0;
 
-    GPU_DEVICE_FUNC(mProgramHandle->Device, DeleteProgram)(this);
+    mProgramHandle->Device->DeleteProgram(this);
     delete mProgramHandle;
 }
 //----------------------------------------------------------------------------
@@ -75,13 +75,13 @@ void ShaderProgram::CreateDeviceResource(GPUDevice* device)
 		return;
 	}
 
-    mProgramHandle = GPU_DEVICE_FUNC(device, CreateProgram)(this);
+    mProgramHandle = device->CreateProgram(this);
 }
 //----------------------------------------------------------------------------
 void ShaderProgram::GetUniformLocation(ShaderUniform* dstUniform, 
     const char* name)
 {
-    GPU_DEVICE_FUNC_GetUniformLocation(this, *dstUniform, name);
+    this->mProgramHandle->Device->GetUniformLocation(this, dstUniform, name);
 }
 //----------------------------------------------------------------------------
 ShaderProgramHandle* ShaderProgram::GetProgramHandle() const
@@ -122,12 +122,12 @@ TessellationEvaluationShader* ShaderProgram::GetTessellationEvaluationShader(
 //----------------------------------------------------------------------------
 void ShaderProgram::Enable()
 {
-    GPU_DEVICE_FUNC(mProgramHandle->Device, EnableProgram)(this);
+    mProgramHandle->Device->EnableProgram(this);
 }
 //----------------------------------------------------------------------------
 void ShaderProgram::Disable()
 {
-    GPU_DEVICE_FUNC(mProgramHandle->Device, DisableProgram)(this);
+    mProgramHandle->Device->DisableProgram(this);
 }
 //----------------------------------------------------------------------------
 bool ShaderProgram::IsTessellationEnabled() const

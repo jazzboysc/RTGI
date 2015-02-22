@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------
 // Graphics framework for real-time GI study.
-// Che Sun at Worcester Polytechnic Institute, Fall 2013.
+// Che Sun at Worcester Polytechnic Institute, Fall 20inline 3.
 //----------------------------------------------------------------------------
 
 #ifndef RTGI_GPUDevice_H
@@ -37,7 +37,7 @@ namespace RTGI
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: 11/13/2014
+// Date: inline inline /inline 3/20inline 4
 //----------------------------------------------------------------------------
 struct GPUDeviceDescription
 {
@@ -176,7 +176,7 @@ typedef void (GPUDevice::*GPUDeviceSetAnisFilterLevel)(int maxAnisFilterLevel);
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: 11/13/2014
+// Date: inline inline /inline 3/20inline 4
 //----------------------------------------------------------------------------
 class GPUDevice : public RefObject
 {
@@ -184,62 +184,144 @@ public:
     GPUDevice();
     ~GPUDevice();
 	
-    GPUDeviceInitialize                           Initialize;
-    GPUDeviceTerminate                            Terminate;
-    GPUDeviceCreateShader                         CreateShader;
-    GPUDeviceDeleteShader                         DeleteShader;
-    GPUDeviceCreateProgram                        CreateProgram;
-    GPUDeviceDeleteProgram                        DeleteProgram;
-    GPUDeviceEnableProgram                        EnableProgram;
-    GPUDeviceDisableProgram                       DisableProgram;
-    GPUDeviceCreatePassInfo                       CreatePassInfo;
-    GPUDeviceDeletePassInfo                       DeletePassInfo;
-    GPUDeviceGetUniformLocation                   GetUniformLocation;
-    GPUDeviceSetUniformValueMat4                  SetUniformValueMat4;
-    GPUDeviceSetUniformValueVec3                  SetUniformValueVec3;
-    GPUDeviceSetUniformValueInt                   SetUniformValueInt;
-    GPUDeviceSetUniformValueFloat                 SetUniformValueFloat;
-    GPUDeviceSetUniformValueFloat2                SetUniformValueFloat2;
-    GPUDeviceSetProgramParameterInt               SetProgramParameterInt;
-    GPUDeviceDeleteTexture                        DeleteTexture;
-    GPUDeviceTexture1DLoadFromSystemMemory        Texture1DLoadFromSystemMemory;
-    GPUDeviceTexture1DUpdateFromPixelBuffer       Texture1DUpdateFromPixelBuffer;
-    GPUDeviceTextureBindToImageUnit               TextureBindToImageUnit;
-    GPUDeviceTextureBindToSampler                 TextureBindToSampler;
-    GPUDeviceTexture1DGetDataFromGPUMemory        Texture1DGetDataFromGPUMemory;
-    GPUDeviceTexture2DLoadFromSystemMemory        Texture2DLoadFromSystemMemory;
-    GPUDeviceTexture2DLoadFromTextureBuffer       Texture2DLoadFromTextureBuffer;
-    GPUDeviceTexture2DUpdateFromPixelBuffer       Texture2DUpdateFromPixelBuffer;
-    GPUDeviceTexture2DGetImageData                Texture2DGetImageData;
-    GPUDeviceTex2DArrayLoadFromSystemMemory       Tex2DArrayLoadFromSystemMemory;
-    GPUDeviceTexture3DLoadFromSystemMemory        Texture3DLoadFromSystemMemory;
-    GPUDeviceTexture3DUpdateFromPixelBuffer       Texture3DUpdateFromPixelBuffer;
-    GPUDeviceTextureCubeLoadFromSystemMemory      TextureCubeLoadFromSystemMemory;
-    GPUDeviceCreateFrameBuffer                    CreateFrameBuffer;
-    GPUDeviceDeleteFrameBuffer                    DeleteFrameBuffer;
-    GPUDeviceFrameBufferSetRenderTargets          FrameBufferSetRenderTargets;
-    GPUDeviceFrameBufferEnable                    FrameBufferEnable;
-    GPUDeviceFrameBufferDisable                   FrameBufferDisable;
-    GPUDeviceComputeShaderDispatch                ComputeShaderDispatch;
-    GPUDeviceDispatchVertex                       DispatchVertex;
-    GPUDeviceDispatchVertexIndirect               DispatchVertexIndirect;
-    GPUDeviceDeleteBuffer                         DeleteBuffer;
-    GPUDeviceBufferMap                            BufferMap;
-    GPUDeviceBufferUnmap                          BufferUnmap;
-    GPUDeviceBufferBindIndex                      BufferBindIndex;
-    GPUDeviceBufferBind                           BufferBind;
-    GPUDeviceBufferBindToIndirect                 BufferBindToIndirect;
-    GPUDeviceBufferUpdateSubData                  BufferUpdateSubData;
-    GPUDeviceBufferLoadFromSystemMemory           BufferLoadFromSystemMemory;
-    GPUDeviceBufferLoadImmutableFromSystemMemory  BufferLoadImmutableFromSystemMemory;
-    GPUDeviceBufferClear                          BufferClear;
-	GPUDeviceGetMaxAnisFilterLevel				  GetMaxAnisFilterLevel;
-	GPUDeviceSetAnisFilterLevel					  SetAnisFilterLevel;
+inline 	void Initialize(GPUDeviceDescription* deviceDesc);
+inline 	void Terminate();
+inline 	ShaderHandle* CreateShader(Shader* shader);
+inline 	void DeleteShader(Shader* shader);
+inline 	ShaderProgramHandle* CreateProgram(ShaderProgram* program);
+ 
+inline 	void DeleteProgram(ShaderProgram* program);
+inline 	void EnableProgram(ShaderProgram* program);
+inline 	void DisableProgram(ShaderProgram* program);
+inline 	PassInfoHandle* CreatePassInfo(PassInfo* passInfo);
+inline 	void DeletePassInfo(PassInfo* passInfo);
+inline 	void GetUniformLocation(ShaderProgram* program,
+	ShaderUniform* uniform, const char* name);
+inline 	void SetUniformValueMat4(ShaderUniform* uniform,
+	const glm::mat4* value);
+inline 	void SetUniformValueVec3(ShaderUniform* uniform,
+	const glm::vec3* value);
+inline 	void SetUniformValueInt(ShaderUniform* uniform,
+	int value);
+inline 	void SetUniformValueFloat(ShaderUniform* uniform, float value);
+inline 	void SetUniformValueFloat2(ShaderUniform* uniform, const float* value);
+inline 	void SetProgramParameterInt(ShaderProgram* program, ShaderProgramParameter pname, int value);
+inline 	void DeleteTexture(Texture* texture);
+inline TextureHandle* Texture1DLoadFromSystemMemory(
+ 		Texture* texture, BufferInternalFormat internalFormat, int width,
+ 		BufferFormat format, BufferComponentType type, void* pixels);
+inline 	void Texture1DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
+inline 	void TextureBindToImageUnit(Texture* texture, unsigned int unit, BufferAccess access);
+inline 	void TextureBindToSampler(Texture* texture, unsigned int index, SamplerDesc* sampler);
+inline void Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData);
+inline 	TextureHandle* Texture2DLoadFromSystemMemory(
+	 		Texture* texture, BufferInternalFormat internalFormat, int width,
+	 		int height, BufferFormat format, BufferComponentType type, bool mipMap,
+	 		void* pixels);
+inline 	TextureHandle* Texture2DLoadFromTextureBuffer(
+	 		Texture* texture, TextureBuffer* textureBuffer,
+	 		BufferInternalFormat internalFormat);
+inline 	void Texture2DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
+inline 	void Texture2DGetImageData(Texture* texture, void* dstPixels);
+inline 	TextureHandle* Tex2DArrayLoadFromSystemMemory(
+	 		Texture* texture, BufferInternalFormat internalFormat, int width,
+	 		int height, int depth, BufferFormat format, BufferComponentType type,
+	 		void* pixels);
+inline 	TextureHandle* Texture3DLoadFromSystemMemory(
+	 		Texture* texture, BufferInternalFormat internalFormat, int width,
+	 		int height, int depth, BufferFormat format, BufferComponentType type,
+	 		void* pixels);
+inline 	void Texture3DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
+inline 	TextureHandle* TextureCubeLoadFromSystemMemory(
+	 		Texture* texture, BufferInternalFormat internalFormat, int width,
+	 		int height, BufferFormat format, BufferComponentType type, bool mipMap,
+	 		void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY,
+	 		void* pixelsPZ, void* pixelsNZ);
+inline 	FBOHandle* CreateFrameBuffer(FrameBuffer* frameBuffer);
+inline 	void DeleteFrameBuffer(FrameBuffer* frameBuffer);
+inline 	void FrameBufferSetRenderTargets(
+	 		FrameBuffer* frameBuffer, unsigned int colorTextureCount,
+	 		Texture** colorTextures, Texture* depthTexture, Texture* stencilTexture);
+inline 	void FrameBufferEnable(FrameBuffer* frameBuffer);
+inline 	void FrameBufferDisable(FrameBuffer* frameBuffer);
+inline 	void ComputeShaderDispatch(ShaderProgram* program, unsigned int globalX,
+	 		unsigned int globalY, unsigned int globalZ);
+inline 	void DispatchVertex(unsigned int threadCount);
+inline 	void DispatchVertexIndirect(void* indirect);
+inline 	void DeleteBuffer(Buffer* buffer);
+inline 	void* BufferMap(Buffer* buffer, BufferAccess access);
+inline 	void BufferUnmap(Buffer* buffer);
+inline 	void BufferBindIndex(Buffer* buffer, unsigned int index);
+inline 	void BufferBind(Buffer* buffer);
+inline 	void BufferBindToIndirect(Buffer* buffer);
+inline 	void BufferUpdateSubData(Buffer* buffer, int offset, size_t size, void* data);
+inline 	BufferHandle* BufferLoadFromSystemMemory(
+	 		Buffer* buffer, size_t size, void* data, BufferUsage usage);
+inline 	BufferHandle* BufferLoadImmutableFromSystemMemory(Buffer* buffer,
+	 		size_t size, void* data);
+inline 	void BufferClear(Buffer* buffer,
+	 		BufferInternalFormat internalFormat, BufferFormat format,
+	 		BufferComponentType type, void* data);
+inline 	void GetMaxAnisFilterLevel(int* maxAnisFilterLevel);
+inline 	void SetAnisFilterLevel(int maxAnisFilterLevel);
+
+    GPUDeviceInitialize                           _Initialize;
+    GPUDeviceTerminate                            _Terminate;
+    GPUDeviceCreateShader                         _CreateShader;
+    GPUDeviceDeleteShader                         _DeleteShader;
+    GPUDeviceCreateProgram                        _CreateProgram;
+    GPUDeviceDeleteProgram                        _DeleteProgram;
+    GPUDeviceEnableProgram                        _EnableProgram;
+    GPUDeviceDisableProgram                       _DisableProgram;
+    GPUDeviceCreatePassInfo                       _CreatePassInfo;
+    GPUDeviceDeletePassInfo                       _DeletePassInfo;
+    GPUDeviceGetUniformLocation                   _GetUniformLocation;
+    GPUDeviceSetUniformValueMat4                  _SetUniformValueMat4;
+    GPUDeviceSetUniformValueVec3                  _SetUniformValueVec3;
+    GPUDeviceSetUniformValueInt                   _SetUniformValueInt;
+    GPUDeviceSetUniformValueFloat                 _SetUniformValueFloat;
+    GPUDeviceSetUniformValueFloat2                _SetUniformValueFloat2;
+    GPUDeviceSetProgramParameterInt               _SetProgramParameterInt;
+    GPUDeviceDeleteTexture                        _DeleteTexture;
+    GPUDeviceTexture1DLoadFromSystemMemory        _Texture1DLoadFromSystemMemory;
+    GPUDeviceTexture1DUpdateFromPixelBuffer       _Texture1DUpdateFromPixelBuffer;
+    GPUDeviceTextureBindToImageUnit               _TextureBindToImageUnit;
+    GPUDeviceTextureBindToSampler                 _TextureBindToSampler;
+    GPUDeviceTexture1DGetDataFromGPUMemory        _Texture1DGetDataFromGPUMemory;
+    GPUDeviceTexture2DLoadFromSystemMemory        _Texture2DLoadFromSystemMemory;
+    GPUDeviceTexture2DLoadFromTextureBuffer       _Texture2DLoadFromTextureBuffer;
+    GPUDeviceTexture2DUpdateFromPixelBuffer       _Texture2DUpdateFromPixelBuffer;
+    GPUDeviceTexture2DGetImageData                _Texture2DGetImageData;
+    GPUDeviceTex2DArrayLoadFromSystemMemory       _Tex2DArrayLoadFromSystemMemory;
+    GPUDeviceTexture3DLoadFromSystemMemory        _Texture3DLoadFromSystemMemory;
+    GPUDeviceTexture3DUpdateFromPixelBuffer       _Texture3DUpdateFromPixelBuffer;
+    GPUDeviceTextureCubeLoadFromSystemMemory      _TextureCubeLoadFromSystemMemory;
+    GPUDeviceCreateFrameBuffer                    _CreateFrameBuffer;
+    GPUDeviceDeleteFrameBuffer                    _DeleteFrameBuffer;
+    GPUDeviceFrameBufferSetRenderTargets          _FrameBufferSetRenderTargets;
+    GPUDeviceFrameBufferEnable                    _FrameBufferEnable;
+    GPUDeviceFrameBufferDisable                   _FrameBufferDisable;
+    GPUDeviceComputeShaderDispatch                _ComputeShaderDispatch;
+    GPUDeviceDispatchVertex                       _DispatchVertex;
+    GPUDeviceDispatchVertexIndirect               _DispatchVertexIndirect;
+    GPUDeviceDeleteBuffer                         _DeleteBuffer;
+    GPUDeviceBufferMap                            _BufferMap;
+    GPUDeviceBufferUnmap                          _BufferUnmap;
+    GPUDeviceBufferBindIndex                      _BufferBindIndex;
+    GPUDeviceBufferBind                           _BufferBind;
+    GPUDeviceBufferBindToIndirect                 _BufferBindToIndirect;
+    GPUDeviceBufferUpdateSubData                  _BufferUpdateSubData;
+    GPUDeviceBufferLoadFromSystemMemory           _BufferLoadFromSystemMemory;
+    GPUDeviceBufferLoadImmutableFromSystemMemory  _BufferLoadImmutableFromSystemMemory;
+    GPUDeviceBufferClear                          _BufferClear;
+	GPUDeviceGetMaxAnisFilterLevel				  _GetMaxAnisFilterLevel;
+	GPUDeviceSetAnisFilterLevel					  _SetAnisFilterLevel;
 
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;
 
+#include "GPUDevice.inl"
 }
 
 #endif

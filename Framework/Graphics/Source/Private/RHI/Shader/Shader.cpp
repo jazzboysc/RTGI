@@ -23,7 +23,7 @@ Shader::Shader(GLenum type, const std::string& shaderFileName)
 //----------------------------------------------------------------------------
 Shader::~Shader()
 {
-    GPU_DEVICE_FUNC(mShaderHandle->Device, DeleteShader)(this);
+    mShaderHandle->Device->DeleteShader(this);
     delete mShaderHandle;
 }
 //----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ void Shader::CreateDeviceResource(GPUDevice* device)
 		return;
 	}
 
-    mShaderHandle = GPU_DEVICE_FUNC(device, CreateShader)(this);
+    mShaderHandle = device->CreateShader(this);
 }
 //----------------------------------------------------------------------------
 ShaderHandle* Shader::GetShaderHandle() const

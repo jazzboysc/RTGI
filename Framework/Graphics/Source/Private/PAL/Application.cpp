@@ -25,7 +25,7 @@ Application::Application()
 //----------------------------------------------------------------------------
 Application::~Application()
 {
-    GPU_DEVICE_FUNC(mDevice, Terminate)();
+	mDevice->Terminate();
     mDevice = 0;
 }
 //----------------------------------------------------------------------------
@@ -66,12 +66,12 @@ void Application::Initialize(GPUDevice* device)
 	}
 
 	// TODO: should init GL context but we are using GLFW
-    GPU_DEVICE_FUNC(mDevice, Initialize)(0);
+    mDevice->Initialize(0);
 
 	// Anisotropic Filtering
 	GLint maxAnisFilterLevel;
-	GPU_DEVICE_FUNC(mDevice, GetMaxAnisFilterLevel)(&maxAnisFilterLevel);
-	GPU_DEVICE_FUNC(mDevice, SetAnisFilterLevel)(maxAnisFilterLevel);
+	mDevice->GetMaxAnisFilterLevel(&maxAnisFilterLevel);
+	mDevice->SetAnisFilterLevel(maxAnisFilterLevel);
 
 	// some GL default values
 	float color = 0.0f;

@@ -210,9 +210,9 @@ void PolylineGeometry::CreateDeviceResource(GPUDevice* device)
 void PolylineGeometry::OnGetShaderConstants()
 {
     ShaderProgram* program = mMaterial->GetProgram(0, 0);
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mWorldLoc, "World");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mViewLoc, "View");
-    GPU_DEVICE_FUNC_GetUniformLocation(program, mProjLoc, "Proj");
+	program->GetUniformLocation(&mWorldLoc, "World");
+	program->GetUniformLocation(&mViewLoc, "View");
+	program->GetUniformLocation(&mProjLoc, "Proj");
 }
 //----------------------------------------------------------------------------
 void PolylineGeometry::UpdateDeviceResource(GPUDevice* device)
@@ -377,14 +377,14 @@ void PolylineGeometry::OnUpdateShaderConstants(int technique, int pass)
 {
     assert(technique == 0 && pass == 0);
 
-    GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc, mWorldTransform);
+	mWorldLoc.SetValue(mWorldTransform);
     if( mCamera )
     {
         glm::mat4 viewTrans = mCamera->GetViewTransform();
-        GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc, viewTrans);
+		mViewLoc.SetValue(viewTrans);
 
         glm::mat4 projTrans = mCamera->GetProjectionTransform();
-        GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc, projTrans);
+		mProjLoc.SetValue(projTrans);
     }
 }
 //----------------------------------------------------------------------------

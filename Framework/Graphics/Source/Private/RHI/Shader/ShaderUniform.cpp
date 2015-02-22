@@ -22,26 +22,26 @@ ShaderUniform::~ShaderUniform()
 //----------------------------------------------------------------------------
 void ShaderUniform::SetValue(int value)
 {
-    GPU_DEVICE_FUNC_SetUniformValueInt(*this, value);
+	this->mUniformHandle->Device->SetUniformValueInt(this, value);
 }
 //----------------------------------------------------------------------------
 void ShaderUniform::SetValue(float value)
 {
-    GPU_DEVICE_FUNC_SetUniformValueFloat(*this, value);
+	this->mUniformHandle->Device->SetUniformValueFloat(this, value);
 }
 //----------------------------------------------------------------------------
 void ShaderUniform::SetValue(float value[2])
 {
-    GPU_DEVICE_FUNC_SetUniformValueFloat2(*this, value);
+	this->mUniformHandle->Device->SetUniformValueFloat2(this, value);
 }
 //----------------------------------------------------------------------------
 void ShaderUniform::SetValue(const glm::mat4& value)
 {
-    GPU_DEVICE_FUNC_SetUniformValueMat4(*this, value);
+	this->mUniformHandle->Device->SetUniformValueMat4(this, &value);
 }
 //----------------------------------------------------------------------------
 void ShaderUniform::SetValue(const glm::vec3& value)
 {
-    GPU_DEVICE_FUNC_SetUniformValueVec3(*this, value);
+	this->mUniformHandle->Device->SetUniformValueVec3(this, &value);
 }
 //----------------------------------------------------------------------------

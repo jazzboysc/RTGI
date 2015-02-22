@@ -38,12 +38,12 @@ if (!QueryPerformanceCounter(&currentCounter))						\
 }
 
 #define TIME_DIFF(currentCounter, prevCounter)						\
-(currentCounter.QuadPart - prevCounter.QuadPart) / frequency;
+((currentCounter.QuadPart - prevCounter.QuadPart) / frequency)
 
 long int Clock::split(void) const
 {
 	QUERY_TIME();
-	return TIME_DIFF(currentCounter, this->prevCounter);
+	return static_cast<long>(TIME_DIFF(currentCounter, this->prevCounter));
 }
 
 long int Clock::delta(void)

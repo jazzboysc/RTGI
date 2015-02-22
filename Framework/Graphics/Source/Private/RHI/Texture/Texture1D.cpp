@@ -27,7 +27,7 @@ bool Texture1D::LoadFromSystemMemory(GPUDevice* device,
         return false;
     }
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture1DLoadFromSystemMemory)(
+    mTextureHandle = device->Texture1DLoadFromSystemMemory(
         this, internalFormat, width, format, type, pixels);
 
     Width = width;
@@ -40,7 +40,7 @@ bool Texture1D::LoadFromSystemMemory(GPUDevice* device,
 //----------------------------------------------------------------------------
 void Texture1D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 {
-    GPU_DEVICE_FUNC(mTextureHandle->Device, Texture1DUpdateFromPixelBuffer)(
+    mTextureHandle->Device->Texture1DUpdateFromPixelBuffer(
         this, pixelBuffer);
 }
 //--------------------------------------------------------------------------
@@ -86,7 +86,7 @@ void Texture1D::CreateUniformRandomTexture(GPUDevice* device,
         }
     }
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture1DLoadFromSystemMemory)(
+    mTextureHandle = device->Texture1DLoadFromSystemMemory(
         this, mInternalFormat, Width, mFormat, mComponentType, pixels);
 
     delete[] pixels;
@@ -94,7 +94,7 @@ void Texture1D::CreateUniformRandomTexture(GPUDevice* device,
 //--------------------------------------------------------------------------
 void Texture1D::GetDataFromGPUMemory(void* dstData)
 {
-    GPU_DEVICE_FUNC(mTextureHandle->Device, Texture1DGetDataFromGPUMemory)(
+    mTextureHandle->Device->Texture1DGetDataFromGPUMemory(
         this, dstData);
 }
 //--------------------------------------------------------------------------

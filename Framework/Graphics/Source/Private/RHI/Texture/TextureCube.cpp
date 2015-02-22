@@ -57,7 +57,7 @@ bool TextureCube::LoadFromFile(GPUDevice* device, const std::string& pX,
     mInternalFormat = BIF_RGB8;
     mComponentType = BCT_Unsigned_Byte;
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, TextureCubeLoadFromSystemMemory)(
+    mTextureHandle = device->TextureCubeLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
         generateMipMap, pXBitmap.rgb_data, nXBitmap.rgb_data, 
         pYBitmap.rgb_data, nYBitmap.rgb_data, pZBitmap.rgb_data, 

@@ -1,8 +1,8 @@
 #pragma once
-#include "CausticsTriMesh.h"
-#include "VertexGrid.h"
-#include "CausticsCube.h"
-#include "CausticsScreenQuad.h"
+#include "AdaptiveCausticsTriMesh.h"
+#include "AdaptiveVertexGrid.h"
+#include "AdaptiveCausticsCube.h"
+#include "AdaptiveCausticsScreenQuad.h"
 namespace RTGI
 {
 
@@ -10,11 +10,11 @@ namespace RTGI
 // Author: Che Sun
 // Date: 04/22/2014
 //----------------------------------------------------------------------------
-class CausticsApp : public Application
+class AdaptiveCausticsApp : public Application
 {
 public:
-	CausticsApp(int width = 1024, int height = 768);
-	~CausticsApp();
+	AdaptiveCausticsApp(int width = 1024, int height = 768);
+	~AdaptiveCausticsApp();
 
 	void Initialize(GPUDevice* device) override;
 	void ProcessInput() override;
@@ -27,14 +27,15 @@ private:
 	void DrawReceiverCameraPoV();
 	void DrawRefracCameraPoV();
 
-	enum ShowMode
+	struct FBO
 	{
-		SM_Position,
-		SM_Normal,
-		SM_Color,
-		SM_DirectLighting,
-		SM_Random
-	};
+		FrameBufferPtr caustic_BackgroundOBJs;
+		FrameBufferPtr a;
+		FrameBufferPtr a;
+		FrameBufferPtr a;
+		FrameBufferPtr a;
+
+	}mFBO;
 
 	LightPtr mLight;
 

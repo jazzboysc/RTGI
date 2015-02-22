@@ -52,7 +52,7 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device,
     mFormat = BF_RGB;
     mComponentType = BCT_Unsigned_Byte;
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+    mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, bitmap.width, bitmap.height, mFormat, 
         mComponentType, generateMipMap, bitmap.rgb_data);
     HasMipMap = generateMipMap;
@@ -144,7 +144,7 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device,
     mFormat = BF_RGB;
     mComponentType = BCT_Float;
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+    mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
         generateMipMap, pixels);
     HasMipMap = generateMipMap;
@@ -179,7 +179,7 @@ bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
     mFormat = format;
     mComponentType = type;
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+    mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
         generateMipMap, pixels);
     HasMipMap = generateMipMap;
@@ -199,7 +199,7 @@ bool Texture2D::LoadFromTextureBuffer(GPUDevice* device,
 	IsTextureBuffer = true;
 	mInternalFormat = internalFormat;
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromTextureBuffer)(
+    mTextureHandle = device->Texture2DLoadFromTextureBuffer(
         this, textureBuffer, internalFormat);
 
 	return true;
@@ -265,7 +265,7 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 		break;
 	}
 
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+    mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
         false, 0);
 }
@@ -273,8 +273,7 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 {
     assert(mTextureHandle);
-    GPU_DEVICE_FUNC(mTextureHandle->Device, 
-        Texture2DUpdateFromPixelBuffer)(this, pixelBuffer);
+    mTextureHandle->Device->Texture2DUpdateFromPixelBuffer(this, pixelBuffer);
 }
 //--------------------------------------------------------------------------
 void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device, 
@@ -322,7 +321,7 @@ void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device,
     mFormat = BF_RGB;
     mComponentType = BCT_Float;
 	
-    mTextureHandle = GPU_DEVICE_FUNC(device, Texture2DLoadFromSystemMemory)(
+    mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType,
         false, pixels);
 
@@ -332,7 +331,7 @@ void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device,
 void Texture2D::GetImageData(void* dstPixels)
 {
     assert(mTextureHandle);
-    GPU_DEVICE_FUNC(mTextureHandle->Device, Texture2DGetImageData)(this, 
+    mTextureHandle->Device->Texture2DGetImageData(this, 
         dstPixels);
 }
 //--------------------------------------------------------------------------

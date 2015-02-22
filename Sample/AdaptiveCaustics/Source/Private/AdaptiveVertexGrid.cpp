@@ -1,4 +1,4 @@
-#include "VertexGrid.h"
+#include "AdaptiveVertexGrid.h"
 
 using namespace RTGI;
 

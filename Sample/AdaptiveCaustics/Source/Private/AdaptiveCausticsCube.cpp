@@ -1,4 +1,4 @@
-#include "CausticsCube.h"
+#include "AdaptiveCausticsCube.h"
 
 using namespace RTGI;
 

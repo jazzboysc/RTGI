@@ -54,8 +54,8 @@ void SceneMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
     program->GetUniformLocation(&mLightColorLoc, "LightColor");
     program->GetUniformLocation(&mMaterialColorLocRSM, "MaterialColor");
-    GPU_DEVICE_FUNC_SetProgramParameterInt(program, 
-        SPP_Geometry_Vertices_Out,
+    program->GetProgramHandle()->Device->SetProgramParameterInt(
+		program, SPP_Geometry_Vertices_Out,
         BidirectionalVoxelGIApp::RSM_FACE_COUNT * 3);
 }
 //----------------------------------------------------------------------------

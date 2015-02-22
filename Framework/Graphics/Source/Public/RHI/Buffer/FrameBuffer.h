@@ -26,6 +26,9 @@ class FrameBuffer : public RefObject
 public:
     FrameBuffer(GPUDevice* device);
 	~FrameBuffer();
+	
+	FrameBuffer(GPUDevice* device, int numBuffs, GLenum bufferType, int width,
+		int height, BufferFormat format, bool enableAutoMipmaps = false);
 
     FBOHandle* GetFBOHandle();
 

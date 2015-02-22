@@ -1,9 +1,9 @@
-#include "CausticsApp.h"
+#include "AdaptiveCausticsApp.h"
 #include <glfw3.h>
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-CausticsApp::CausticsApp(int width, int height)
+AdaptiveCausticsApp::AdaptiveCausticsApp(int width, int height)
 {
 	mShowMode = SM_Position;
 	Width = width;
@@ -11,12 +11,15 @@ CausticsApp::CausticsApp(int width, int height)
 	Title = "Caustics demo";
 }
 //----------------------------------------------------------------------------
-CausticsApp::~CausticsApp()
+AdaptiveCausticsApp::~AdaptiveCausticsApp()
 {
 }
 //----------------------------------------------------------------------------
-void CausticsApp::Initialize(GPUDevice* device)
+void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 {
+	// Init Scene
+
+	/*
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glFrontFace(GL_CCW);
@@ -266,11 +269,11 @@ void CausticsApp::Initialize(GPUDevice* device)
 	mVertexGrid->CausticsMapTexture = mCausticsMapTexture;
 	mVertexGrid->IntersectionPositionTexture = mIntersectionPositionTexture;
 	mVertexGrid->Light = mLight;
-
+	*/
 }
 
 //----------------------------------------------------------------------------
-void CausticsApp::DrawReceiverLightPoV()
+void AdaptiveCausticsApp::DrawReceiverLightPoV()
 {
 	mGround->SetCamera(mLight->GetProjector());
 	mPool->SetCamera(mLight->GetProjector());
@@ -280,24 +283,24 @@ void CausticsApp::DrawReceiverLightPoV()
 	mPool->SetCamera(mMainCamera);
 }
 
-void CausticsApp::DrawRefracterLightPoV()
+void AdaptiveCausticsApp::DrawRefracterLightPoV()
 {
 	mMesh->SetCamera(mLight->GetProjector());
 	mMesh->Render(0, 0);
 	mMesh->SetCamera(mMainCamera);
 }
 
-void CausticsApp::DrawReceiverCameraPoV()
+void AdaptiveCausticsApp::DrawReceiverCameraPoV()
 {
 	mPool->Render(0, 0);
 }
 
-void CausticsApp::DrawRefracCameraPoV()
+void AdaptiveCausticsApp::DrawRefracCameraPoV()
 {
 	mMesh->Render(0, 0);
 }
 //----------------------------------------------------------------------------
-void CausticsApp::FrameFunc()
+void AdaptiveCausticsApp::FrameFunc()
 {
 	// Draw Receiver to G-buffer from Light's PoV.
 	mRecvGBufferLight->Enable();
@@ -409,7 +412,7 @@ void CausticsApp::FrameFunc()
 	}
 }
 //----------------------------------------------------------------------------
-void CausticsApp::Terminate()
+void AdaptiveCausticsApp::Terminate()
 {
 	// Release all resources.
 
@@ -422,7 +425,7 @@ void CausticsApp::Terminate()
 	mReceiverDepthTexture = 0;
 }
 //----------------------------------------------------------------------------
-void CausticsApp::ProcessInput()
+void AdaptiveCausticsApp::ProcessInput()
 {
 	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
 	{

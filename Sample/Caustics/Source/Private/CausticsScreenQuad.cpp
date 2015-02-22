@@ -72,14 +72,14 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	if (pass == 3)
 	{
-		GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc3, mWorldTransform);
+		mWorldLoc3.SetValue(mWorldTransform);
 		if (mCamera)
 		{
 			glm::mat4 viewTrans = mCamera->GetViewTransform();
-			GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc3, viewTrans);
+			mViewLoc3.SetValue(viewTrans);
 
 			glm::mat4 projTrans = mCamera->GetProjectionTransform();
-			GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc3, projTrans);
+			mProjLoc3.SetValue(projTrans);
 		}
 
 		mLightPositionLoc3.SetValue(Light->GetLocation());
@@ -105,14 +105,14 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	if (pass == 4)
 	{
-		GPU_DEVICE_FUNC_SetUniformValueMat4(mWorldLoc4, mWorldTransform);
+		mWorldLoc4.SetValue(mWorldTransform);
 		if (mCamera)
 		{
 			glm::mat4 viewTrans = mCamera->GetViewTransform();
-			GPU_DEVICE_FUNC_SetUniformValueMat4(mViewLoc4, viewTrans);
+			mViewLoc4.SetValue(viewTrans);
 
 			glm::mat4 projTrans = mCamera->GetProjectionTransform();
-			GPU_DEVICE_FUNC_SetUniformValueMat4(mProjLoc4, projTrans);
+			mProjLoc4.SetValue(projTrans);
 		}
 
 		mRefractionIndexLoc2.SetValue(RefractionIndex);

@@ -23,14 +23,13 @@ Texture::Texture()
 //----------------------------------------------------------------------------
 Texture::~Texture()
 {
-    GPU_DEVICE_FUNC(mTextureHandle->Device, DeleteTexture)(this);
+    mTextureHandle->Device->DeleteTexture(this);
     delete mTextureHandle;
 }
 //----------------------------------------------------------------------------
 void Texture::BindToImageUnit(unsigned int unit, BufferAccess access)
 {
-    GPU_DEVICE_FUNC(mTextureHandle->Device, TextureBindToImageUnit)(this,
-        unit, access);
+    mTextureHandle->Device->TextureBindToImageUnit(this, unit, access);
 }
 //--------------------------------------------------------------------------
 void Texture::BindToSampler(unsigned int index, SamplerDesc* sampler)
@@ -40,7 +39,6 @@ void Texture::BindToSampler(unsigned int index, SamplerDesc* sampler)
         sampler->MinFilter = FT_Linear;
     }
 
-    GPU_DEVICE_FUNC(mTextureHandle->Device, TextureBindToSampler)(this, 
-        index, sampler);
+    mTextureHandle->Device->TextureBindToSampler(this, index, sampler);
 }
 //--------------------------------------------------------------------------

@@ -10,7 +10,7 @@ using namespace RTGI;
 //--------------------------------------------------------------------------
 FrameBuffer::FrameBuffer(GPUDevice* device)
 {
-    mFBO = GPU_DEVICE_FUNC(device, CreateFrameBuffer)(this);
+    mFBO = device->CreateFrameBuffer(this);
     mWidth = 0;
     mHeight = 0;
     mDepth = 0;
@@ -19,10 +19,28 @@ FrameBuffer::FrameBuffer(GPUDevice* device)
 	mDepthTexture = 0;
 	mStencilTexture = 0;
 }
+
+FrameBuffer::FrameBuffer(GPUDevice* device, int numBuffs, GLenum bufferType,
+	int width, int height, BufferFormat format,
+	bool enableAutoMipmaps /*= false*/)
+{
+// 	for (auto i = 0; i < numBuffs; ++i)
+// 	{
+// 		mColorTextures.push_back(new Texture2D());
+// 	}
+// 
+// 	auto pDepthTex = new Texture2D();
+// 	pColorTex->CreateRenderTarget(device, width, height, BF_RGBF);
+// 	pDepthTex->CreateRenderTarget(device, width, height, BF_Depth);
+// 	mReceiverGBuffer = new FrameBuffer(mDevice);
+// 	Texture* receiverColorTextures[3] = { mReceiverPositionTexture, mReceiverNormalTexture, mReceiverColorTexture };
+// 	mReceiverGBuffer->SetRenderTargets(3, receiverColorTextures, mReceiverDepthTexture);
+}
+
 //--------------------------------------------------------------------------
 FrameBuffer::~FrameBuffer()
 {
-    GPU_DEVICE_FUNC(mFBO->Device, DeleteFrameBuffer)(this);
+    mFBO->Device->DeleteFrameBuffer(this);
 	delete[] mColorBuffers;
 }
 //--------------------------------------------------------------------------
@@ -72,17 +90,17 @@ void FrameBuffer::SetRenderTargets(unsigned int colorTextureCount,
         break;
     }
 
-    GPU_DEVICE_FUNC(mFBO->Device, FrameBufferSetRenderTargets)(this, 
+    mFBO->Device->FrameBufferSetRenderTargets(this, 
         colorTextureCount, colorTextures, depthTexture, stencilTexture);
 }
 //--------------------------------------------------------------------------
 void FrameBuffer::Enable()
 {
-    GPU_DEVICE_FUNC(mFBO->Device, FrameBufferEnable)(this);
+    mFBO->Device->FrameBufferEnable(this);
 }
 //--------------------------------------------------------------------------
 void FrameBuffer::Disable()
 {
-    GPU_DEVICE_FUNC(mFBO->Device, FrameBufferDisable)(this);
+    mFBO->Device->FrameBufferDisable(this);
 }
 //--------------------------------------------------------------------------
