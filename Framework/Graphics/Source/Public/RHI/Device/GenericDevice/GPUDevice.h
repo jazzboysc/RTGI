@@ -12,32 +12,9 @@
 namespace RTGI
 {
 
-//#define GPU_DEVICE_FUNC(device, function) (device->*device->function)
-//#define GPU_DEVICE_FUNC_SetUniformValueMat4(uniform, value) \
-//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueMat4) \
-//    (&(uniform), &(value))
-//#define GPU_DEVICE_FUNC_SetUniformValueVec3(uniform, value) \
-//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueVec3) \
-//    (&(uniform), &(value))
-//#define GPU_DEVICE_FUNC_SetUniformValueInt(uniform, value) \
-//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueInt) \
-//    (&(uniform), value)
-//#define GPU_DEVICE_FUNC_SetUniformValueFloat(uniform, value) \
-//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueFloat) \
-//    (&(uniform), value)
-//#define GPU_DEVICE_FUNC_SetUniformValueFloat2(uniform, value) \
-//    GPU_DEVICE_FUNC((uniform).mUniformHandle->Device, SetUniformValueFloat2) \
-//    (&(uniform), value)
-//#define GPU_DEVICE_FUNC_GetUniformLocation(program, uniform, name) \
-//    GPU_DEVICE_FUNC((program)->GetProgramHandle()->Device, GetUniformLocation) \
-//    (program, &(uniform), name)
-//#define GPU_DEVICE_FUNC_SetProgramParameterInt(program, pname, value) \
-//    GPU_DEVICE_FUNC((program)->GetProgramHandle()->Device, \
-//    SetProgramParameterInt)(program, pname, value)
-
 //----------------------------------------------------------------------------
 // Author: Che Sun
-// Date: inline inline /inline 3/20inline 4
+// Date: 11/29/2014
 //----------------------------------------------------------------------------
 struct GPUDeviceDescription
 {
