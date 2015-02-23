@@ -1,4 +1,5 @@
 #include "SVOCubeMesh.h"
+#include "SVOApp.h"
 
 using namespace RTGI;
 
@@ -29,7 +30,7 @@ void SVOCubeMesh::OnUpdateShaderConstants(int technique, int pass)
 
     vec3 sceneBBMin = SceneBB->Min;
     vec3 voxelExtension = (SceneBB->Max - SceneBB->Min);
-    voxelExtension /= 128;
+    voxelExtension /= SVOApp::VOXEL_DIMENSION;
 
     mSceneBBMinLoc.SetValue(sceneBBMin);
     mVoxelExtensionLoc.SetValue(voxelExtension);
