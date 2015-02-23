@@ -1,7 +1,10 @@
 #define SVO_NODE_TILE_SIZE 8
-#define SVO_NODE_FLAGED 1234
 #define SVO_MAX_LEVEL 7
 #define SVO_MAX_LEVEL_DIM 128
+
+#define SVO_NODE_LEAF_MASK         0x80000000
+#define SVO_NODE_FLAG_MASK         0x40000000
+#define SVO_NODE_CHILDREN_ID_MASK  0x3FFFFFFF
 
 //----------------------------------------------------------------------------
 // SVO Voxel Fragment List
@@ -47,11 +50,8 @@ struct SVONodeAABB
 
 struct SVONode
 {
-    uint child;
-    uint flag;
-    uint isLeaf;
-    uint albedo;
-
+    uint info; // 31 : leaf bit, 30 : flag bit, 29 - 0 : children id.
+    uint userData;
     SVONodeAABB nodeBox;
 };
 
@@ -160,7 +160,7 @@ uint GetSVOChildNodeIndex(ivec3 voxelGridPos, SVONodeAABB nodeBox)
     return childIndex;
 }
 //----------------------------------------------------------------------------
-uint GetSVOChildNodeIndex2(vec3 svoSpaceP, SVONodeAABB nodeBox)
+uint GetSVOChildNodeIndex(vec3 svoSpaceP, SVONodeAABB nodeBox)
 {
     vec3 nodeBoxMin, nodeBoxMax, mid;
     nodeBoxMin = vec3(UintToIvec3(nodeBox.Min));
@@ -204,25 +204,34 @@ SVONodeAABB GetSVOChildNodeBox(uint childIndex, SVONodeAABB nodeBox)
 //----------------------------------------------------------------------------
 void FlagSVONode(uint nodeIndex)
 {
-    svoNodeBuffer.data[nodeIndex].flag = SVO_NODE_FLAGED;
+    svoNodeBuffer.data[nodeIndex].info |= SVO_NODE_FLAG_MASK;
 }
 //----------------------------------------------------------------------------
 bool IsSVONodeFlaged(uint nodeIndex)
 {
-    return (svoNodeBuffer.data[nodeIndex].flag == SVO_NODE_FLAGED);
+    return ((svoNodeBuffer.data[nodeIndex].info & SVO_NODE_FLAG_MASK) != 0);
+}
+//----------------------------------------------------------------------------
+bool IsSVONodeFlaged(SVONode node)
+{
+    return ((node.info & SVO_NODE_FLAG_MASK) != 0);
+}
+//----------------------------------------------------------------------------
+void SVONodeSetLeaf(uint nodeIndex)
+{
+    svoNodeBuffer.data[nodeIndex].info |= SVO_NODE_LEAF_MASK;
 }
 //----------------------------------------------------------------------------
 bool IsSVOLeafNode(SVONode node)
 {
-    return (node.isLeaf == 1);
+    return ((node.info & SVO_NODE_LEAF_MASK) != 0);
 }
 //----------------------------------------------------------------------------
 void InitSVONode(uint nodeIndex)
 {
-    svoNodeBuffer.data[nodeIndex].child = 0;
-    svoNodeBuffer.data[nodeIndex].flag = 0;
-    svoNodeBuffer.data[nodeIndex].isLeaf = 1;
-    svoNodeBuffer.data[nodeIndex].albedo = 0;
+    // Make it an unflagged leaf node.
+    svoNodeBuffer.data[nodeIndex].info = SVO_NODE_LEAF_MASK;
+    svoNodeBuffer.data[nodeIndex].userData = 0;
 }
 //----------------------------------------------------------------------------
 ivec3 WorldToGridPosition(vec3 worldPosition)

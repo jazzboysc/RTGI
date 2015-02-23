@@ -55,7 +55,7 @@ vec4 FetchColorFromSVO(ivec3 gridPosition)
         }
 
         // Update node tile index to visit.
-        nodeTileIndex = svoNodeBuffer.data[nextNodeIndex].child;
+        nodeTileIndex = (svoNodeBuffer.data[nextNodeIndex].info & SVO_NODE_CHILDREN_ID_MASK);
 
         // Update node AABB to visit.
         nodeBox = svoNodeBuffer.data[nextNodeIndex].nodeBox;
@@ -66,7 +66,7 @@ vec4 FetchColorFromSVO(ivec3 gridPosition)
         return vec4(0.0, 0.0, 0.0, 1.0);
     }
 
-    color = UintToVec4(svoNodeBuffer.data[nextNodeIndex].albedo);
+    color = UintToVec4(svoNodeBuffer.data[nextNodeIndex].userData);
     color.xyz /= 255.0;
     color.w = 1.0;
 

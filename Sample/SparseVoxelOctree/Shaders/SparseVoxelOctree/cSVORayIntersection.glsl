@@ -39,8 +39,7 @@ void main()
     vec3 rayEntryPos;
 
     // Initialize root node.
-    root.child = 0;
-    root.flag = SVO_NODE_FLAGED;
+    root.info = SVO_NODE_FLAG_MASK;
     root.nodeBox.Min = Ivec3ToUint(ivec3(0, 0, 0));
     root.nodeBox.Max = Ivec3ToUint(ivec3(SVO_MAX_LEVEL_DIM,
         SVO_MAX_LEVEL_DIM, SVO_MAX_LEVEL_DIM));
@@ -69,10 +68,11 @@ void main()
         //for( int j = 0; j < 2; ++j )
         {
             // Figure out which child node we are in.
-            childIndex = GetSVOChildNodeIndex2(rayEntryPos, curNode.nodeBox);
+            childIndex = GetSVOChildNodeIndex(rayEntryPos, curNode.nodeBox);
 
             // Locate child node for current tree level.
-            nextNodeIndex = curNode.child*SVO_NODE_TILE_SIZE + childIndex;
+            uint childrenID = (curNode.info & SVO_NODE_CHILDREN_ID_MASK);
+            nextNodeIndex = childrenID*SVO_NODE_TILE_SIZE + childIndex;
 
             // Debug.
             //if( j == 1 )
@@ -86,7 +86,7 @@ void main()
             //    svoNodeBuffer.nodeBoxMax = vec4(nodeBoxMax, 1.0);
             //    svoNodeBuffer.mid = vec4(mid, 1.0);
             //    svoNodeBuffer.childIndex = childIndex;
-            //    svoNodeBuffer.childTileIndex = curNode.child;
+            //    svoNodeBuffer.childTileIndex = (curNode.info & SVO_NODE_CHILDREN_ID_MASK);
             //    svoNodeBuffer.nextNodeIndex = nextNodeIndex;
 
             //    if( isLeaf )
@@ -105,7 +105,7 @@ void main()
         }
 
         // Deal with the leaf node.
-        if( curNode.flag == SVO_NODE_FLAGED )
+        if( IsSVONodeFlaged(curNode) )
         {
             hit = 1;
             break;

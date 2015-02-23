@@ -25,7 +25,7 @@ void main()
         nextNodeIndex = nodeTileIndex*SVO_NODE_TILE_SIZE + childIndex;
 
         // Update node tile index to visit.
-        nodeTileIndex = svoNodeBuffer.data[nextNodeIndex].child;
+        nodeTileIndex = (svoNodeBuffer.data[nextNodeIndex].info & SVO_NODE_CHILDREN_ID_MASK);
 
         // Update node AABB to visit.
         nodeBox = svoNodeBuffer.data[nextNodeIndex].nodeBox;
@@ -35,5 +35,5 @@ void main()
     FlagSVONode(nextNodeIndex);
 
     // Splat voxel fragment albedo.
-    atomicMax(svoNodeBuffer.data[nextNodeIndex].albedo, voxelFrag.albedo);
+    atomicMax(svoNodeBuffer.data[nextNodeIndex].userData, voxelFrag.albedo);
 }

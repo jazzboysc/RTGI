@@ -24,11 +24,8 @@ struct SVONodeAABB
 //----------------------------------------------------------------------------
 struct SVONode
 {
-    unsigned int child;
-    unsigned int flag;
-    unsigned int isLeaf;
-    unsigned int albedo;
-
+    unsigned int info; // 31 : leaf bit, 30 : flag bit, 29 - 0 : children id.
+    unsigned int userData;
     SVONodeAABB nodeBox;
 };
 //----------------------------------------------------------------------------
