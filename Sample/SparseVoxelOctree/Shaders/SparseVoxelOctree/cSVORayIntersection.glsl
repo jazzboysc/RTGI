@@ -162,7 +162,7 @@ void main()
         }
 
         // Update maxT.
-        maxT = t1 + 0.0001;
+        maxT = t1 + SVO_RAY_T_EPSILON;
 
     }
 

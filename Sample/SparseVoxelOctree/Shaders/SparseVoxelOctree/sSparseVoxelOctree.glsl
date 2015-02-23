@@ -1,6 +1,7 @@
 #define SVO_NODE_TILE_SIZE 8
 #define SVO_MAX_LEVEL 7
 #define SVO_MAX_LEVEL_DIM 128
+#define SVO_RAY_T_EPSILON 0.0001
 
 #define SVO_NODE_LEAF_MASK         0x80000000
 #define SVO_NODE_FLAG_MASK         0x40000000
