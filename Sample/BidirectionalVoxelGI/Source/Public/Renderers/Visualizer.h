@@ -2,7 +2,7 @@
 #define RTGI_Visualizer_H
 
 #include "GraphicsFrameworkHeader.h"
-#include "Voxelizer.h"
+#include "GridVoxelizer.h"
 #include "ShadowMapRenderer.h"
 #include "RSMRenderer.h"
 #include "DirectLightingRenderer.h"
@@ -132,7 +132,7 @@ public:
     Visualizer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~Visualizer();
 
-    void Initialize(GPUDevice* device, Voxelizer* voxelizer, 
+    void Initialize(GPUDevice* device, GridVoxelizer* voxelizer, 
         ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer,
         RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer, 
         IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 

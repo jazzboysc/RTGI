@@ -76,6 +76,8 @@
 #include "RendererOutput.h"
 #include "SubRenderer.h"
 #include "GBufferRenderer.h"
+#include "ShadowMapRenderer.h"
+#include "Voxelizer.h"
 #include "PipelineStateBlock.h"
 #include "GPUDevice.h"
 #include "GPUResource.h"

@@ -181,7 +181,7 @@ Visualizer::~Visualizer()
     mVoxelCubeModel = 0;
 }
 //----------------------------------------------------------------------------
-void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
+void Visualizer::Initialize(GPUDevice* device, GridVoxelizer* voxelizer,
     ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer, 
     RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer,
     IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 

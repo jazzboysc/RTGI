@@ -86,7 +86,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mtScene->AddTechnique(techScene);
 
     // Create scene voxelizer.
-    mVoxelizer = new Voxelizer(mDevice);
+    mVoxelizer = new GridVoxelizer(mDevice);
     mVoxelizer->Initialize(mDevice, VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM, &mSceneBB);
     mVoxelizer->RasterizerDimBias = 0;
 

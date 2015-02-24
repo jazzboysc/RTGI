@@ -1,7 +1,8 @@
-#ifndef RTGI_Voxelizer_H
-#define RTGI_Voxelizer_H
+#ifndef RTGI_GridVoxelizer_H
+#define RTGI_GridVoxelizer_H
 
 #include "GraphicsFrameworkHeader.h"
+#include "Voxelizer.h"
 
 namespace RTGI
 {
@@ -30,11 +31,11 @@ typedef RefPointer<ResetVoxelBuffer> ResetVoxelBufferPtr;
 // Author: Che Sun
 // Date: 12/05/2014
 //----------------------------------------------------------------------------
-class Voxelizer : public SubRenderer
+class GridVoxelizer : public Voxelizer
 {
 public:
-    Voxelizer(GPUDevice* device, RenderSet* renderSet = 0);
-    virtual ~Voxelizer();
+    GridVoxelizer(GPUDevice* device, RenderSet* renderSet = 0);
+    virtual ~GridVoxelizer();
 
     void Initialize(GPUDevice* device, int voxelGridDim, 
         int voxelGridLocalGroupDim, AABB* sceneBB);
@@ -42,11 +43,6 @@ public:
 
     // Implement base class interface.
     void OnRender(int technique, int pass, Camera* camera);
-
-    int GetVoxelGridDim() const;
-    int GetVoxelGridLocalGroupDim() const;
-
-    int RasterizerDimBias;
 
 private:
     int mVoxelGridDim;
@@ -59,7 +55,7 @@ private:
     ResetVoxelBufferPtr mResetVoxelBufferTask;
 };
 
-typedef RefPointer<Voxelizer> VoxelizerPtr;
+typedef RefPointer<GridVoxelizer> GridVoxelizerPtr;
 
 }
 

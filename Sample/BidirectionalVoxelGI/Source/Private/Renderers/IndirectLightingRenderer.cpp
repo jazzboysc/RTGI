@@ -67,7 +67,7 @@ IndirectLightingRenderer::~IndirectLightingRenderer()
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer, 
-    VPLGenerator* vplBuffer, Voxelizer* voxelBuffer)
+    VPLGenerator* vplBuffer, GridVoxelizer* voxelBuffer)
 {
     RendererInputDataView view;
     view.Type = RDT_Texture;

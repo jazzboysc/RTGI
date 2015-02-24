@@ -1,4 +1,4 @@
-#include "Voxelizer.h"
+#include "GridVoxelizer.h"
 
 using namespace RTGI;
 
@@ -26,25 +26,24 @@ void ResetVoxelBuffer::OnPostDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-Voxelizer::Voxelizer(GPUDevice* device, RenderSet* renderSet)
+GridVoxelizer::GridVoxelizer(GPUDevice* device, RenderSet* renderSet)
     :
-    SubRenderer(device, renderSet)
+    Voxelizer(device, renderSet)
 {
     mSceneBBMaxLength = 0.0f;
-    RasterizerDimBias = 0;
 }
 //----------------------------------------------------------------------------
-Voxelizer::~Voxelizer()
+GridVoxelizer::~GridVoxelizer()
 {
     mResetVoxelBufferTask = 0;
 }
 //----------------------------------------------------------------------------
-void Voxelizer::Initialize(GPUDevice* device, int voxelGridDim, 
+void GridVoxelizer::Initialize(GPUDevice* device, int voxelGridDim, 
     int voxelGridLocalGroupDim, AABB* sceneBB)
 {
-    mVoxelGridDim = voxelGridDim;
+    VoxelGridDim = voxelGridDim;
     mVoxelGridLocalGroupDim = voxelGridLocalGroupDim;
-    mGlobalDim = mVoxelGridDim / mVoxelGridLocalGroupDim;
+    mGlobalDim = VoxelGridDim / mVoxelGridLocalGroupDim;
     mSceneBB = sceneBB;
 
     GLint globalX, globalY, globalZ;
@@ -66,20 +65,20 @@ void Voxelizer::Initialize(GPUDevice* device, int voxelGridDim,
     mResetVoxelBufferTask->CreateDeviceResource(device);
 
     // Create scene voxel buffer.
-    int voxelCount = mVoxelGridDim * mVoxelGridDim * mVoxelGridDim;
+    int voxelCount = VoxelGridDim * VoxelGridDim * VoxelGridDim;
     int bufferSize = voxelCount * sizeof(unsigned int) * 4;
     AddGenericBufferTarget(RTGI_Voxelizer_VoxelBuffer_Name, RDT_StructuredBuffer,
         bufferSize, BU_Dynamic_Copy, BF_BindIndex, 0);
 }
 //----------------------------------------------------------------------------
-void Voxelizer::Render(int technique, int pass)
+void GridVoxelizer::Render(int technique, int pass)
 {
     SubRenderer::Render(technique, pass, SRO_GenericBuffer, 0);
 }
 //----------------------------------------------------------------------------
 static GLint oldViewport[4];
 //----------------------------------------------------------------------------
-void Voxelizer::OnRender(int technique, int pass, Camera*)
+void GridVoxelizer::OnRender(int technique, int pass, Camera*)
 {
     // Cache old viewport values and set new values.
     glGetIntegerv(GL_VIEWPORT, oldViewport);
@@ -106,7 +105,7 @@ void Voxelizer::OnRender(int technique, int pass, Camera*)
         TriangleMesh* mesh = (TriangleMesh*)mRenderSet->GetRenderObject(i);
         float triangleDim = mesh->GetTriangleMaxEdgeLength();
         float ratio = triangleDim / mSceneBBMaxLength;
-        int rasterizerDim = (int)ceilf(ratio * (float)mVoxelGridDim) + 
+        int rasterizerDim = (int)ceilf(ratio * (float)VoxelGridDim) + 
             RasterizerDimBias;
 
         glViewport(0, 0, rasterizerDim, rasterizerDim);
@@ -119,15 +118,5 @@ void Voxelizer::OnRender(int technique, int pass, Camera*)
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glViewport(oldViewport[0], oldViewport[1], oldViewport[2],
         oldViewport[3]);
-}
-//----------------------------------------------------------------------------
-int Voxelizer::GetVoxelGridDim() const
-{
-    return mVoxelGridDim;
-}
-//----------------------------------------------------------------------------
-int Voxelizer::GetVoxelGridLocalGroupDim() const
-{
-    return mVoxelGridLocalGroupDim;
 }
 //----------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 #include "VPLGenerator.h"
 #include "DirectLightingRenderer.h"
 #include "IndirectLightingRenderer.h"
-#include "Voxelizer.h"
+#include "GridVoxelizer.h"
 #include "Visualizer.h"
 #include "FormEventListener.h"
 
@@ -41,9 +41,9 @@ private:
     Camera* mLightProjector;
 
     // Scene voxelization.
-    enum { VOXEL_DIMENSION = 64 };
+    enum { VOXEL_DIMENSION = 128 };
     enum { VOXEL_LOCAL_GROUP_DIM = 8 };
-    VoxelizerPtr mVoxelizer;
+    GridVoxelizerPtr mVoxelizer;
 
     // G-buffer.
     GBufferRendererPtr mGBufferRenderer;
@@ -66,7 +66,7 @@ private:
 
     // VPL stuff.
     enum { INTERLEAVED_PATTERN_SIZE = 2 };
-    enum { VPL_SAMPLE_COUNT = 256 };
+    enum { VPL_SAMPLE_COUNT = 512 };
 
     // Visualizer.
     VisualizerPtr mVisualizer;
