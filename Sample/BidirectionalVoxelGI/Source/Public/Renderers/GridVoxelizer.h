@@ -45,7 +45,6 @@ public:
     void OnRender(int technique, int pass, Camera* camera);
 
 private:
-    int mVoxelGridDim;
     int mVoxelGridLocalGroupDim;
     int mGlobalDim;
 

@@ -30,6 +30,7 @@ GridVoxelizer::GridVoxelizer(GPUDevice* device, RenderSet* renderSet)
     :
     Voxelizer(device, renderSet)
 {
+    mVoxelizerType = VT_Grid;
     mSceneBBMaxLength = 0.0f;
 }
 //----------------------------------------------------------------------------

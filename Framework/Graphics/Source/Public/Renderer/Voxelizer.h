@@ -11,6 +11,12 @@
 namespace RTGI
 {
 
+enum VoxelizerType
+{
+    VT_Grid,
+    VT_SVO
+};
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 02/23/2015
@@ -23,9 +29,16 @@ public:
 
     int RasterizerDimBias;
     int VoxelGridDim;
+
+    inline VoxelizerType GetVoxelizerType() const;
+
+protected:
+    VoxelizerType mVoxelizerType;
 };
 
 typedef RefPointer<Voxelizer> VoxelizerPtr;
+
+#include "Voxelizer.inl"
 
 }
 
