@@ -233,13 +233,15 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
         (Texture2D*)indirectLightingRenderer->GetFrameBufferTextureByName(
         RTGI_IndirectLightingRenderer_IndirectLighting_Name);
 
-    if( mVoxelizerType == VT_Grid )
+    if( mVoxelizerType == Voxelizer::VT_Grid )
     {
         ShaderProgramInfo showVoxelGridProgramInfo;
-        showVoxelGridProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShowVoxelGrid.glsl";
-        showVoxelGridProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fShowVoxelGrid.glsl";
+        showVoxelGridProgramInfo.VShaderFileName = 
+            "BidirectionalVoxelGI/vShowVoxelGrid.glsl";
+        showVoxelGridProgramInfo.FShaderFileName = 
+            "BidirectionalVoxelGI/fShowVoxelGrid.glsl";
         showVoxelGridProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-            ShaderType::ST_Fragment;
+                                                   ShaderType::ST_Fragment;
         Pass* passShowVoxelGrid = new Pass(showVoxelGridProgramInfo);
 
         Technique* techShowVoxelGrid = new Technique();
@@ -323,7 +325,7 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    if( mVoxelizerType == VT_Grid && mShowMode == SM_VoxelGrid )
+    if( mVoxelizerType == Voxelizer::VT_Grid && mShowMode == SM_VoxelGrid )
     {
         mVoxelBuffer->Bind(0);
 
@@ -334,7 +336,7 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
         // Show voxel grid.
         mVoxelCubeModel->Render(0, 0);
     }
-    else if( mVoxelizerType == VT_SVO )
+    else if( mVoxelizerType == Voxelizer::VT_SVO && mShowMode == SM_SVOGrid )
     {
         assert(false);
     }

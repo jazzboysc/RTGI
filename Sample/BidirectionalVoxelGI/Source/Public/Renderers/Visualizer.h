@@ -148,7 +148,7 @@ public:
     void SetShowMode(ShowMode mode);
 
 private:
-    VoxelizerType mVoxelizerType;
+    Voxelizer::VoxelizerType mVoxelizerType;
     int mVoxelGridDim;
     int mVoxelGridLocalGroupDim;
     int mGlobalDim;

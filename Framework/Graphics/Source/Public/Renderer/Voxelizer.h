@@ -12,12 +12,6 @@
 namespace RTGI
 {
 
-enum VoxelizerType
-{
-    VT_Grid,
-    VT_SVO
-};
-
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 02/23/2015
@@ -25,6 +19,13 @@ enum VoxelizerType
 class Voxelizer : public SubRenderer
 {
 public:
+    enum VoxelizerType
+    {
+        VT_Grid = 0,
+        VT_SVO,
+        VT_Unknown
+    };
+
     Voxelizer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~Voxelizer();
 

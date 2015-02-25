@@ -10,7 +10,8 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 Voxelizer::Voxelizer(GPUDevice* device, RenderSet* renderSet)
     :
-    SubRenderer(device, renderSet)
+    SubRenderer(device, renderSet),
+    mVoxelizerType(VT_Unknown)
 {
     RasterizerDimBias = 0;
     VoxelGridDim = 0;

@@ -4,7 +4,7 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-VoxelizerType Voxelizer::GetVoxelizerType() const
+Voxelizer::VoxelizerType Voxelizer::GetVoxelizerType() const
 {
     return mVoxelizerType;
 }

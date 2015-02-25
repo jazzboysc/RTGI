@@ -13,7 +13,7 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	Title = "Bidirectional Voxel GI";
     mIsRotatingModel = false;
     mIsWireframe = false;
-    mVoxelizerType = VT_Grid;
+    mVoxelizerType = Voxelizer::VT_SVO;
 }
 //----------------------------------------------------------------------------
 BidirectionalVoxelGIApp::~BidirectionalVoxelGIApp()
@@ -45,11 +45,11 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     ShaderProgramInfo voxelizationProgramInfo;
     voxelizationProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vVoxelization.glsl";
     voxelizationProgramInfo.GShaderFileName = "BidirectionalVoxelGI/gVoxelization.glsl";
-    if( mVoxelizerType == VT_Grid )
+    if( mVoxelizerType == Voxelizer::VT_Grid )
     {
         voxelizationProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fVoxelization.glsl";
     }
-    else if( mVoxelizerType == VT_SVO )
+    else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
         voxelizationProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fSVOVoxelization.glsl";
     }
@@ -98,13 +98,13 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mtSceneModel->AddTechnique(techSceneModel);
 
     // Create scene voxelizer.
-    if( mVoxelizerType == VT_Grid )
+    if( mVoxelizerType == Voxelizer::VT_Grid )
     {
         mVoxelizer = new GridVoxelizer(mDevice);
         ((GridVoxelizer*)(Voxelizer*)mVoxelizer)->Initialize(mDevice, 
             VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM, &mSceneBB);
     }
-    else if( mVoxelizerType == VT_SVO )
+    else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
         mVoxelizer = new SVOVoxelizer(mDevice);
         ((SVOVoxelizer*)(Voxelizer*)mVoxelizer)->Initialize(mDevice, 
@@ -281,11 +281,11 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     infoStartY = 20;
     InformationPanel::GetInstance()->AddRadioButton("Voxel Buffer", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
-    if( mVoxelizerType == VT_Grid )
+    if( mVoxelizerType == Voxelizer::VT_Grid )
     {
         InformationPanel::GetInstance()->AddRadioButton("Voxel Grid", 16, infoStartY, 60, 20, false);
     }
-    else if( mVoxelizerType == VT_SVO )
+    else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
         InformationPanel::GetInstance()->AddRadioButton("SVO Grid", 16, infoStartY, 60, 20, false);
     }

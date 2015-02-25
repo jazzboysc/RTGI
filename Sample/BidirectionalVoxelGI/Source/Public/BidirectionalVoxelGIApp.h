@@ -44,7 +44,7 @@ private:
     // Scene voxelization.
     enum { VOXEL_DIMENSION = 128 };
     enum { VOXEL_LOCAL_GROUP_DIM = 8 };
-    VoxelizerType mVoxelizerType;
+    Voxelizer::VoxelizerType mVoxelizerType;
     VoxelizerPtr mVoxelizer;
 
     // G-buffer.

@@ -71,17 +71,17 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     AABB* sceneBB, int voxelGridDim, GBufferRenderer* gbufferRenderer,
     VPLGenerator* vplGenerator, Voxelizer* voxelizer)
 {
-    VoxelizerType vt = voxelizer->GetVoxelizerType();
+    Voxelizer::VoxelizerType vt = voxelizer->GetVoxelizerType();
 
     ShaderProgramInfo indirectLightingProgramInfo;
     indirectLightingProgramInfo.VShaderFileName = 
         "BidirectionalVoxelGI/vIndirectLighting.glsl";
-    if( vt == VT_Grid )
+    if( vt == Voxelizer::VT_Grid )
     {
         indirectLightingProgramInfo.FShaderFileName =
             "BidirectionalVoxelGI/fGridIndirectLighting.glsl";
     }
-    else if( vt == VT_SVO )
+    else if( vt == Voxelizer::VT_SVO )
     {
         indirectLightingProgramInfo.FShaderFileName =
             "BidirectionalVoxelGI/fSVOIndirectLighting.glsl";
@@ -138,7 +138,7 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     view.BindingSlot = 0;
     AddInputDependency(vplGenerator, RTGI_VPLGenerator_VPLBuffer_Name, &view);
 
-    if( vt == VT_Grid )
+    if( vt == Voxelizer::VT_Grid )
     {
         view.Type = RDT_StructuredBuffer;
         view.BindingType = BF_BindIndex;
@@ -146,7 +146,7 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
         AddInputDependency(voxelizer, RTGI_GridVoxelizer_VoxelBuffer_Name,
             &view);
     }
-    else if( vt == VT_SVO )
+    else if( vt == Voxelizer::VT_SVO )
     {
         assert(false);
     }
