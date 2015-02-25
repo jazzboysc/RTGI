@@ -68,8 +68,8 @@ void GridVoxelizer::Initialize(GPUDevice* device, int voxelGridDim,
     // Create scene voxel buffer.
     int voxelCount = VoxelGridDim * VoxelGridDim * VoxelGridDim;
     int bufferSize = voxelCount * sizeof(unsigned int) * 4;
-    AddGenericBufferTarget(RTGI_Voxelizer_VoxelBuffer_Name, RDT_StructuredBuffer,
-        bufferSize, BU_Dynamic_Copy, BF_BindIndex, 0);
+    AddGenericBufferTarget(RTGI_GridVoxelizer_VoxelBuffer_Name, 
+        RDT_StructuredBuffer, bufferSize, BU_Dynamic_Copy, BF_BindIndex, 0);
 }
 //----------------------------------------------------------------------------
 static GLint oldViewport[4];

@@ -62,9 +62,9 @@ public:
 
     void Initialize(GPUDevice* device, int width, int height, 
         BufferFormat format, int vplCount, int patternSize, 
-        AABB* sceneBB, int voxelGridDim);
-    void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer, 
-        Voxelizer* voxelizer);
+        AABB* sceneBB, int voxelGridDim, GBufferRenderer* gbufferRenderer, 
+        VPLGenerator* vplGenerator, Voxelizer* voxelizer);
+
     void Render();
 
     void VPLVisibilityTest(bool value);

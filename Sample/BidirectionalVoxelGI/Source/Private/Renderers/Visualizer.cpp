@@ -249,7 +249,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     {
         // Cache grid voxelizer's voxel buffer.
         mVoxelBuffer = (StructuredBuffer*)voxelizer->GetGenericBufferByName(
-            RTGI_Voxelizer_VoxelBuffer_Name);
+            RTGI_GridVoxelizer_VoxelBuffer_Name);
 
         // Create gather voxel buffer task.
         ShaderProgramInfo gatherVoxelBufferProgramInfo;

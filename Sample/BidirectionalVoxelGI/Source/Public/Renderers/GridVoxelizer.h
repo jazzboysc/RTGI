@@ -7,7 +7,7 @@
 namespace RTGI
 {
 
-#define RTGI_Voxelizer_VoxelBuffer_Name "VoxelBuffer"
+#define RTGI_GridVoxelizer_VoxelBuffer_Name "VoxelBuffer"
 
 //----------------------------------------------------------------------------
 // Author: Che Sun

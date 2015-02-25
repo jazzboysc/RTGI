@@ -45,7 +45,18 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     ShaderProgramInfo voxelizationProgramInfo;
     voxelizationProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vVoxelization.glsl";
     voxelizationProgramInfo.GShaderFileName = "BidirectionalVoxelGI/gVoxelization.glsl";
-    voxelizationProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fVoxelization.glsl";
+    if( mVoxelizerType == VT_Grid )
+    {
+        voxelizationProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fVoxelization.glsl";
+    }
+    else if( mVoxelizerType == VT_SVO )
+    {
+        voxelizationProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fSVOVoxelization.glsl";
+    }
+    else
+    {
+        assert(false);
+    }
     voxelizationProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
                                               ShaderType::ST_Geometry |
                                               ShaderType::ST_Fragment;
@@ -78,13 +89,13 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
                                      ShaderType::ST_Fragment;
     Pass* passRSM = new Pass(rsmProgramInfo);
 
-	Technique* techScene = new Technique();
-    techScene->AddPass(passVoxelization);
-    techScene->AddPass(passShadow);
-    techScene->AddPass(passGBuffer);
-    techScene->AddPass(passRSM);
-	MaterialTemplate* mtScene = new MaterialTemplate();
-    mtScene->AddTechnique(techScene);
+	Technique* techSceneModel = new Technique();
+    techSceneModel->AddPass(passVoxelization);
+    techSceneModel->AddPass(passShadow);
+    techSceneModel->AddPass(passGBuffer);
+    techSceneModel->AddPass(passRSM);
+	MaterialTemplate* mtSceneModel = new MaterialTemplate();
+    mtSceneModel->AddTechnique(techSceneModel);
 
     // Create scene voxelizer.
     if( mVoxelizerType == VT_Grid )
@@ -130,9 +141,9 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer(mDevice);
-    mIndirectLightingRenderer->SetInputs(mGBufferRenderer, mVPLGenerator, mVoxelizer);
     mIndirectLightingRenderer->Initialize(mDevice, Width, Height, BF_RGBAF, 
-        VPL_SAMPLE_COUNT, INTERLEAVED_PATTERN_SIZE, &mSceneBB, VOXEL_DIMENSION);
+        VPL_SAMPLE_COUNT, INTERLEAVED_PATTERN_SIZE, &mSceneBB, VOXEL_DIMENSION, 
+        mGBufferRenderer, mVPLGenerator, mVoxelizer);
 
     // Create visualizer.
     mVisualizer = new Visualizer(mDevice);
@@ -160,7 +171,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mRSMRenderer->SetRenderSet(mSceneObjects);
 
 	mat4 rotM;
-    material = new Material(mtScene);
+    material = new Material(mtSceneModel);
 	mModel = new SceneMesh(material, mMainCamera);
 	mModel->LoadFromFile("dragon_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(60.0f));
@@ -174,7 +185,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
-    material = new Material(mtScene);
+    material = new Material(mtSceneModel);
 	mGround = new SceneMesh(material, mMainCamera);
 	mGround->LoadFromFile("square.ply");
 	mGround->GenerateNormals();
@@ -185,7 +196,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
-    material = new Material(mtScene);
+    material = new Material(mtSceneModel);
 	mCeiling = new SceneMesh(material, mMainCamera);
 	mCeiling->LoadFromFile("square.ply");
 	mCeiling->GenerateNormals();
@@ -199,7 +210,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mCeiling->SceneBB = &mSceneBB;
     mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
-    material = new Material(mtScene);
+    material = new Material(mtSceneModel);
 	mBackWall = new SceneMesh(material, mMainCamera);
 	mBackWall->LoadFromFile("square.ply");
 	mBackWall->GenerateNormals();
@@ -213,7 +224,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mBackWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
-    material = new Material(mtScene);
+    material = new Material(mtSceneModel);
 	mLeftWall = new SceneMesh(material, mMainCamera);
 	mLeftWall->LoadFromFile("square.ply");
 	mLeftWall->GenerateNormals();
@@ -227,7 +238,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mLeftWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
-    material = new Material(mtScene);
+    material = new Material(mtSceneModel);
 	mRightWall = new SceneMesh(material, mMainCamera);
 	mRightWall->LoadFromFile("square.ply");
 	mRightWall->GenerateNormals();

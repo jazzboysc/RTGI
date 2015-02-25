@@ -66,48 +66,32 @@ IndirectLightingRenderer::~IndirectLightingRenderer()
     mPSB = 0;
 }
 //----------------------------------------------------------------------------
-void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer, 
-    VPLGenerator* vplBuffer, Voxelizer* voxelizer)
-{
-    RendererInputDataView view;
-    view.Type = RDT_Texture;
-    view.BindingType = BF_BindIndex;
-    view.Sampler.MinFilter = FT_Nearest;
-    view.Sampler.MagFilter = FT_Nearest;
-    view.Sampler.WrapS = WT_Clamp;
-    view.Sampler.WrapT = WT_Clamp;
-
-    ClearInputDependency();
-
-    view.BindingSlot = 0;
-    AddInputDependency(gbuffer, RTGI_GBuffer_Position_Name, &view);
-
-    view.BindingSlot = 1;
-    AddInputDependency(gbuffer, RTGI_GBuffer_Normal_Name, &view);
-
-    view.BindingSlot = 2;
-    AddInputDependency(gbuffer, RTGI_GBuffer_Albedo_Name, &view);
-
-    view.Type = RDT_StructuredBuffer;
-    view.BindingType = BF_BindIndex;
-    view.BindingSlot = 0;
-    AddInputDependency(vplBuffer, RTGI_VPLGenerator_VPLBuffer_Name, &view);
-
-    view.Type = RDT_StructuredBuffer;
-    view.BindingType = BF_BindIndex;
-    view.BindingSlot = 1;
-    AddInputDependency(voxelizer, RTGI_Voxelizer_VoxelBuffer_Name, &view);
-}
-//----------------------------------------------------------------------------
 void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, 
     int height, BufferFormat format, int vplCount, int patternSize, 
-    AABB* sceneBB, int voxelGridDim)
+    AABB* sceneBB, int voxelGridDim, GBufferRenderer* gbufferRenderer,
+    VPLGenerator* vplGenerator, Voxelizer* voxelizer)
 {
+    VoxelizerType vt = voxelizer->GetVoxelizerType();
+
     ShaderProgramInfo indirectLightingProgramInfo;
-    indirectLightingProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vIndirectLighting.glsl";
-    indirectLightingProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fIndirectLighting.glsl";
+    indirectLightingProgramInfo.VShaderFileName = 
+        "BidirectionalVoxelGI/vIndirectLighting.glsl";
+    if( vt == VT_Grid )
+    {
+        indirectLightingProgramInfo.FShaderFileName =
+            "BidirectionalVoxelGI/fGridIndirectLighting.glsl";
+    }
+    else if( vt == VT_SVO )
+    {
+        indirectLightingProgramInfo.FShaderFileName =
+            "BidirectionalVoxelGI/fSVOIndirectLighting.glsl";
+    }
+    else
+    {
+        assert(false);
+    }
     indirectLightingProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-        ShaderType::ST_Fragment;
+                                                  ShaderType::ST_Fragment;
     Pass* passIndirectLighting = new Pass(indirectLightingProgramInfo);
 
     Technique* techIndirectLighting = new Technique();
@@ -127,6 +111,49 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     mIndirectLightingScreenQuad->PatternSize = patternSize;
     mIndirectLightingScreenQuad->SceneBB = sceneBB;
     mIndirectLightingScreenQuad->VoxelGridDim = voxelGridDim;
+
+    // Setup inputs.
+
+    RendererInputDataView view;
+    view.Type = RDT_Texture;
+    view.BindingType = BF_BindIndex;
+    view.Sampler.MinFilter = FT_Nearest;
+    view.Sampler.MagFilter = FT_Nearest;
+    view.Sampler.WrapS = WT_Clamp;
+    view.Sampler.WrapT = WT_Clamp;
+
+    ClearInputDependency();
+
+    view.BindingSlot = 0;
+    AddInputDependency(gbufferRenderer, RTGI_GBuffer_Position_Name, &view);
+
+    view.BindingSlot = 1;
+    AddInputDependency(gbufferRenderer, RTGI_GBuffer_Normal_Name, &view);
+
+    view.BindingSlot = 2;
+    AddInputDependency(gbufferRenderer, RTGI_GBuffer_Albedo_Name, &view);
+
+    view.Type = RDT_StructuredBuffer;
+    view.BindingType = BF_BindIndex;
+    view.BindingSlot = 0;
+    AddInputDependency(vplGenerator, RTGI_VPLGenerator_VPLBuffer_Name, &view);
+
+    if( vt == VT_Grid )
+    {
+        view.Type = RDT_StructuredBuffer;
+        view.BindingType = BF_BindIndex;
+        view.BindingSlot = 1;
+        AddInputDependency(voxelizer, RTGI_GridVoxelizer_VoxelBuffer_Name,
+            &view);
+    }
+    else if( vt == VT_SVO )
+    {
+        assert(false);
+    }
+    else
+    {
+        assert(false);
+    }
 
     // Create output.
     AddFrameBufferTarget(RTGI_IndirectLightingRenderer_IndirectLighting_Name,
