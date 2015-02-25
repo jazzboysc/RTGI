@@ -5,7 +5,7 @@ in vec3 vNormal;
 
 out vec4 boxColor;
 
-#include "SparseVoxelOctree/sSparseVoxelOctree.glsl"
+#include "BidirectionalVoxelGI/sSparseVoxelOctree.glsl"
 
 uniform mat4 View;
 uniform mat4 Proj;

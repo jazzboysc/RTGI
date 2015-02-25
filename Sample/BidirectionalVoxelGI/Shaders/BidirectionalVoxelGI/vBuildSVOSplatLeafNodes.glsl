@@ -1,6 +1,6 @@
 #version 430 core
 
-#include "SparseVoxelOctree/sSparseVoxelOctree.glsl"
+#include "BidirectionalVoxelGI/sSparseVoxelOctree.glsl"
 
 void main()
 {

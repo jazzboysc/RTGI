@@ -289,6 +289,14 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
             RTGI_Visualizer_IndirectCommandBuffer_Name), 0);
         mVoxelCubeModel->CreateDeviceResource(device);
     }
+    else if( mVoxelizerType == Voxelizer::VT_SVO )
+    {
+        assert(false);
+    }
+    else
+    {
+        assert(false);
+    }
 
     // Create screen quad.
     Material* material = new Material(mtScreenQuad);

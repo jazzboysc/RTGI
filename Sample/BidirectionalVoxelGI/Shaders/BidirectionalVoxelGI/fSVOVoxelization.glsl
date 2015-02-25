@@ -3,7 +3,7 @@
 in vec4 gPositionWorld;
 in vec4 gNormalWorld;
 
-#include "SparseVoxelOctree/sSparseVoxelOctree.glsl"
+#include "BidirectionalVoxelGI/sSparseVoxelOctree.glsl"
 
 uniform vec3 MaterialColor;
 

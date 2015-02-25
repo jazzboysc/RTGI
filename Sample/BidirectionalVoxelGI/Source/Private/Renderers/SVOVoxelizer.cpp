@@ -352,3 +352,13 @@ void SVOVoxelizer::OnRender(int technique, int pass, Camera*)
         oldViewport[3]);
 }
 //----------------------------------------------------------------------------
+StructuredBuffer* SVOVoxelizer::GetVoxelFragmentListBuffer() const
+{
+    return mVoxelFragmentListBuffer;
+}
+//----------------------------------------------------------------------------
+StructuredBuffer* SVOVoxelizer::GetSVOBuffer() const
+{
+    return mSVOBuffer;
+}
+//----------------------------------------------------------------------------

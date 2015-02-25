@@ -173,6 +173,9 @@ public:
     // Implement base class interface.
     void OnRender(int technique, int pass, Camera* camera);
 
+    StructuredBuffer* GetVoxelFragmentListBuffer() const;
+    StructuredBuffer* GetSVOBuffer() const;
+
 private:
     AtomicCounterBufferPtr mAtomicCounterBuffer;
     GatherVoxelFragmentListInfoPtr mGatherVoxelFragmentListInfoTask;

@@ -72,6 +72,9 @@ public:
 private:
     PipelineStateBlockPtr mPSB;
     IndirectLightingScreenQuadPtr mIndirectLightingScreenQuad;
+
+    StructuredBufferPtr mVoxelFragmentListBuffer;
+    StructuredBufferPtr mSVOBuffer;
 };
 
 typedef RefPointer<IndirectLightingRenderer> IndirectLightingRendererPtr;

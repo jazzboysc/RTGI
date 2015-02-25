@@ -148,7 +148,10 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     }
     else if( vt == Voxelizer::VT_SVO )
     {
-        assert(false);
+        // Cache SVO buffers.
+        mVoxelFragmentListBuffer = ((SVOVoxelizer*)(
+            Voxelizer*)voxelizer)->GetVoxelFragmentListBuffer();
+        mSVOBuffer = ((SVOVoxelizer*)(Voxelizer*)voxelizer)->GetSVOBuffer();
     }
     else
     {
