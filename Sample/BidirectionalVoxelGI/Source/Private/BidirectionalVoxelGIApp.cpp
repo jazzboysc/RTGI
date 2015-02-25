@@ -13,6 +13,7 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	Title = "Bidirectional Voxel GI";
     mIsRotatingModel = false;
     mIsWireframe = false;
+    mVoxelizerType = VT_Grid;
 }
 //----------------------------------------------------------------------------
 BidirectionalVoxelGIApp::~BidirectionalVoxelGIApp()
@@ -86,8 +87,22 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mtScene->AddTechnique(techScene);
 
     // Create scene voxelizer.
-    mVoxelizer = new GridVoxelizer(mDevice);
-    mVoxelizer->Initialize(mDevice, VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM, &mSceneBB);
+    if( mVoxelizerType == VT_Grid )
+    {
+        mVoxelizer = new GridVoxelizer(mDevice);
+        ((GridVoxelizer*)(Voxelizer*)mVoxelizer)->Initialize(mDevice, 
+            VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM, &mSceneBB);
+    }
+    else if( mVoxelizerType == VT_SVO )
+    {
+        mVoxelizer = new SVOVoxelizer(mDevice);
+        ((SVOVoxelizer*)(Voxelizer*)mVoxelizer)->Initialize(mDevice, 
+            VOXEL_DIMENSION, &mSceneBB);
+    }
+    else
+    {
+        assert(false);
+    }
     mVoxelizer->RasterizerDimBias = 0;
 
     // Create G-buffer renderer.

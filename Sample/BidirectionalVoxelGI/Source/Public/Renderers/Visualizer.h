@@ -3,6 +3,7 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "GridVoxelizer.h"
+#include "SVOVoxelizer.h"
 #include "ShadowMapRenderer.h"
 #include "RSMRenderer.h"
 #include "DirectLightingRenderer.h"
@@ -132,7 +133,7 @@ public:
     Visualizer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~Visualizer();
 
-    void Initialize(GPUDevice* device, GridVoxelizer* voxelizer, 
+    void Initialize(GPUDevice* device, Voxelizer* voxelizer, 
         ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer,
         RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer, 
         IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
@@ -154,7 +155,6 @@ private:
 
     VisualizerScreenQuadPtr mScreenQuad;
 
-    StructuredBufferPtr mVoxelBuffer;
     Texture2DPtr mShadowMapTexture;
     Texture2DPtr mGBufferPositionTexture;
     Texture2DPtr mGBufferNormalTexture;
@@ -165,6 +165,8 @@ private:
     Texture2DPtr mDirectLightingTexture;
     Texture2DPtr mIndirectLightingTexture;
 
+    // Grid Voxelizer visualization.
+    StructuredBufferPtr mVoxelBuffer;
     VoxelCubeTriMeshPtr mVoxelCubeModel;
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
 };

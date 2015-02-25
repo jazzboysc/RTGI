@@ -67,7 +67,7 @@ IndirectLightingRenderer::~IndirectLightingRenderer()
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer, 
-    VPLGenerator* vplBuffer, GridVoxelizer* voxelBuffer)
+    VPLGenerator* vplBuffer, Voxelizer* voxelizer)
 {
     RendererInputDataView view;
     view.Type = RDT_Texture;
@@ -96,7 +96,7 @@ void IndirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
     view.Type = RDT_StructuredBuffer;
     view.BindingType = BF_BindIndex;
     view.BindingSlot = 1;
-    AddInputDependency(voxelBuffer, RTGI_Voxelizer_VoxelBuffer_Name, &view);
+    AddInputDependency(voxelizer, RTGI_Voxelizer_VoxelBuffer_Name, &view);
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, 

@@ -169,12 +169,9 @@ public:
     virtual ~SVOVoxelizer();
 
     void Initialize(GPUDevice* device, int voxelGridDim, AABB* sceneBB);
-    void Render(int technique, int pass);
 
     // Implement base class interface.
     void OnRender(int technique, int pass, Camera* camera);
-
-    void VoxelizeScene(int technique, int pass);
 
 private:
     AtomicCounterBufferPtr mAtomicCounterBuffer;
@@ -184,8 +181,6 @@ private:
     StructuredBufferPtr mSVOBuffer;
     UniformBufferPtr mSVOUniformBuffer;
 
-    AABB* mSceneBB;
-    float mSceneBBMaxLength;
     unsigned int mSVONodeMaxCount;
     unsigned int mSVOMaxLevel;
 };

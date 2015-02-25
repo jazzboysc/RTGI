@@ -181,7 +181,7 @@ Visualizer::~Visualizer()
     mVoxelCubeModel = 0;
 }
 //----------------------------------------------------------------------------
-void Visualizer::Initialize(GPUDevice* device, GridVoxelizer* voxelizer,
+void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer, 
     RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer,
     IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
@@ -216,9 +216,6 @@ void Visualizer::Initialize(GPUDevice* device, GridVoxelizer* voxelizer,
     mtShowVoxelGrid->AddTechnique(techShowVoxelGrid);
 
     // Cache temp buffer and textures needed for visualization.
-    mVoxelBuffer = 
-        (StructuredBuffer*)voxelizer->GetGenericBufferByName(
-        RTGI_Voxelizer_VoxelBuffer_Name);
     mShadowMapTexture = 
         (Texture2D*)shadowMapRenderer->GetFrameBufferTextureByName(
         RTGI_ShadowMapRenderer_ShadowMap_Name);
@@ -247,44 +244,52 @@ void Visualizer::Initialize(GPUDevice* device, GridVoxelizer* voxelizer,
         (Texture2D*)indirectLightingRenderer->GetFrameBufferTextureByName(
         RTGI_IndirectLightingRenderer_IndirectLighting_Name);
 
-    // Create gather voxel buffer task.
-    ShaderProgramInfo gatherVoxelBufferProgramInfo;
-    gatherVoxelBufferProgramInfo.CShaderFileName =
-        "BidirectionalVoxelGI/cGatherVoxelBuffer.glsl";
-    gatherVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-    ComputePass* passGatherVoxelBuffer = 
-        new ComputePass(gatherVoxelBufferProgramInfo);
-    mGatherVoxelBufferTask = new GatherVoxelBuffer();
-    mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
-    mGatherVoxelBufferTask->CreateDeviceResource(device);
-    mGatherVoxelBufferTask->SceneBB = sceneBB;
+    VoxelizerType vt = voxelizer->GetVoxelizerType();
+    if( vt == VT_Grid )
+    {
+        // Cache grid voxelizer's voxel buffer.
+        mVoxelBuffer = (StructuredBuffer*)voxelizer->GetGenericBufferByName(
+            RTGI_Voxelizer_VoxelBuffer_Name);
 
-    // Create indirect command buffer.
-    int voxelCount = voxelGridDim * voxelGridDim * voxelGridDim;
-    int bufferSize = sizeof(unsigned int) * 5 + sizeof(float) * 35
-        + voxelCount*sizeof(float) * 4;
-    AddGenericBufferTarget(RTGI_Visualizer_IndirectCommandBuffer_Name, 
-        RDT_StructuredBuffer, bufferSize, BU_Dynamic_Copy, 
-        BF_BindIndexToIndirect, 1);
+        // Create gather voxel buffer task.
+        ShaderProgramInfo gatherVoxelBufferProgramInfo;
+        gatherVoxelBufferProgramInfo.CShaderFileName =
+            "BidirectionalVoxelGI/cGatherVoxelBuffer.glsl";
+        gatherVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
+        ComputePass* passGatherVoxelBuffer =
+            new ComputePass(gatherVoxelBufferProgramInfo);
+        mGatherVoxelBufferTask = new GatherVoxelBuffer();
+        mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
+        mGatherVoxelBufferTask->CreateDeviceResource(device);
+        mGatherVoxelBufferTask->SceneBB = sceneBB;
 
-    // Create gathered voxel GPU memory allocator counter.
-    bufferSize = sizeof(unsigned int);
-    AddGenericBufferTarget("GPUMemoryAllocatorCounter",
-        RDT_AtomicCounterBuffer, bufferSize, BU_Dynamic_Copy, BF_BindIndex,
-        0, true, 0);
+        // Create indirect command buffer.
+        int voxelCount = voxelGridDim * voxelGridDim * voxelGridDim;
+        int bufferSize = sizeof(unsigned int) * 5 + sizeof(float) * 35
+            + voxelCount*sizeof(float) * 4;
+        AddGenericBufferTarget(RTGI_Visualizer_IndirectCommandBuffer_Name,
+            RDT_StructuredBuffer, bufferSize, BU_Dynamic_Copy,
+            BF_BindIndexToIndirect, 1);
 
-    // Create voxel cube model.
-    Material* material = new Material(mtShowVoxelGrid);
-    mVoxelCubeModel = new VoxelCubeTriMesh(material, mainCamera);
-    mVoxelCubeModel->LoadFromFile("box.ply");
-    mVoxelCubeModel->GenerateNormals();
-    mVoxelCubeModel->SetIndirectCommandBuffer(
-        (StructuredBuffer*)GetGenericBufferByName(
-        RTGI_Visualizer_IndirectCommandBuffer_Name), 0);
-    mVoxelCubeModel->CreateDeviceResource(device);
+        // Create gathered voxel GPU memory allocator counter.
+        bufferSize = sizeof(unsigned int);
+        AddGenericBufferTarget("GPUMemoryAllocatorCounter",
+            RDT_AtomicCounterBuffer, bufferSize, BU_Dynamic_Copy, BF_BindIndex,
+            0, true, 0);
+
+        // Create voxel cube model.
+        Material* material = new Material(mtShowVoxelGrid);
+        mVoxelCubeModel = new VoxelCubeTriMesh(material, mainCamera);
+        mVoxelCubeModel->LoadFromFile("box.ply");
+        mVoxelCubeModel->GenerateNormals();
+        mVoxelCubeModel->SetIndirectCommandBuffer(
+            (StructuredBuffer*)GetGenericBufferByName(
+            RTGI_Visualizer_IndirectCommandBuffer_Name), 0);
+        mVoxelCubeModel->CreateDeviceResource(device);
+    }
 
     // Create screen quad.
-    material = new Material(mtScreenQuad);
+    Material* material = new Material(mtScreenQuad);
     mScreenQuad = new VisualizerScreenQuad(material);
     mScreenQuad->LoadFromFile("screenquad.ply");
     mScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));

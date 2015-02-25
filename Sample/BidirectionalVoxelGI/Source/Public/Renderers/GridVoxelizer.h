@@ -39,7 +39,6 @@ public:
 
     void Initialize(GPUDevice* device, int voxelGridDim, 
         int voxelGridLocalGroupDim, AABB* sceneBB);
-    void Render(int technique, int pass);
 
     // Implement base class interface.
     void OnRender(int technique, int pass, Camera* camera);
@@ -47,10 +46,6 @@ public:
 private:
     int mVoxelGridLocalGroupDim;
     int mGlobalDim;
-
-    AABB* mSceneBB;
-    float mSceneBBMaxLength;
-
     ResetVoxelBufferPtr mResetVoxelBufferTask;
 };
 

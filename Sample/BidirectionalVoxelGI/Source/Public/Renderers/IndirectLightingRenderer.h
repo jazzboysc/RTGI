@@ -7,6 +7,7 @@
 #include "StructuredBuffer.h"
 #include "VPLGenerator.h"
 #include "GridVoxelizer.h"
+#include "SVOVoxelizer.h"
 
 namespace RTGI
 {
@@ -63,7 +64,7 @@ public:
         BufferFormat format, int vplCount, int patternSize, 
         AABB* sceneBB, int voxelGridDim);
     void SetInputs(GBufferRenderer* gbuffer, VPLGenerator* vplBuffer, 
-        GridVoxelizer* voxelBuffer);
+        Voxelizer* voxelizer);
     void Render();
 
     void VPLVisibilityTest(bool value);

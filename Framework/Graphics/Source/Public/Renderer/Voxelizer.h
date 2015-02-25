@@ -7,6 +7,7 @@
 #define RTGI_Voxelizer_H
 
 #include "SubRenderer.h"
+#include "AABB.h"
 
 namespace RTGI
 {
@@ -27,13 +28,19 @@ public:
     Voxelizer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~Voxelizer();
 
+    void Render(int technique, int pass);
+
     int RasterizerDimBias;
     int VoxelGridDim;
 
     inline VoxelizerType GetVoxelizerType() const;
 
 protected:
+    void VoxelizeScene(int technique, int pass);
+
     VoxelizerType mVoxelizerType;
+    AABB* mSceneBB;
+    float mSceneBBMaxLength;
 };
 
 typedef RefPointer<Voxelizer> VoxelizerPtr;

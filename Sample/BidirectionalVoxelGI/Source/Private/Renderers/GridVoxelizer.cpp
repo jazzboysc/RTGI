@@ -72,21 +72,12 @@ void GridVoxelizer::Initialize(GPUDevice* device, int voxelGridDim,
         bufferSize, BU_Dynamic_Copy, BF_BindIndex, 0);
 }
 //----------------------------------------------------------------------------
-void GridVoxelizer::Render(int technique, int pass)
-{
-    SubRenderer::Render(technique, pass, SRO_GenericBuffer, 0);
-}
-//----------------------------------------------------------------------------
 static GLint oldViewport[4];
 //----------------------------------------------------------------------------
 void GridVoxelizer::OnRender(int technique, int pass, Camera*)
 {
     // Cache old viewport values and set new values.
     glGetIntegerv(GL_VIEWPORT, oldViewport);
-
-    vec3 sceneBBLen = mSceneBB->GetExtension() * 2.0f;
-    mSceneBBMaxLength = RTGI_MAX(sceneBBLen.x, 
-        RTGI_MAX(sceneBBLen.y, sceneBBLen.z));
 
     // Reset voxel buffer pass.
     mResetVoxelBufferTask->DispatchCompute(0, mGlobalDim, mGlobalDim, 
@@ -97,21 +88,7 @@ void GridVoxelizer::OnRender(int technique, int pass, Camera*)
     glDisable(GL_CULL_FACE);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
-    assert(mRenderSet);
-    int renderObjectCount = mRenderSet->GetRenderObjectCount();
-    for( int i = 0; i < renderObjectCount; ++i )
-    {
-        // TODO:
-        // Only support trangle mesh for now.
-        TriangleMesh* mesh = (TriangleMesh*)mRenderSet->GetRenderObject(i);
-        float triangleDim = mesh->GetTriangleMaxEdgeLength();
-        float ratio = triangleDim / mSceneBBMaxLength;
-        int rasterizerDim = (int)ceilf(ratio * (float)VoxelGridDim) + 
-            RasterizerDimBias;
-
-        glViewport(0, 0, rasterizerDim, rasterizerDim);
-        mesh->Render(technique, pass, this);
-    }
+    VoxelizeScene(technique, pass);
 
     // Restore device states.
     glEnable(GL_DEPTH_TEST);

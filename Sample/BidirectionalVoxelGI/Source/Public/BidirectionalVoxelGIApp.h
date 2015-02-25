@@ -9,6 +9,7 @@
 #include "DirectLightingRenderer.h"
 #include "IndirectLightingRenderer.h"
 #include "GridVoxelizer.h"
+#include "SVOVoxelizer.h"
 #include "Visualizer.h"
 #include "FormEventListener.h"
 
@@ -43,7 +44,8 @@ private:
     // Scene voxelization.
     enum { VOXEL_DIMENSION = 128 };
     enum { VOXEL_LOCAL_GROUP_DIM = 8 };
-    GridVoxelizerPtr mVoxelizer;
+    VoxelizerType mVoxelizerType;
+    VoxelizerPtr mVoxelizer;
 
     // G-buffer.
     GBufferRendererPtr mGBufferRenderer;
