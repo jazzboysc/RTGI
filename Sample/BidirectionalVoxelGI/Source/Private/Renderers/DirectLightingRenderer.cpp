@@ -73,7 +73,8 @@ DirectLightingRenderer::~DirectLightingRenderer()
 }
 //----------------------------------------------------------------------------
 void DirectLightingRenderer::Initialize(GPUDevice* device, int width, 
-    int height, BufferFormat format, Camera* lightProjector)
+    int height, BufferFormat format, Camera* lightProjector, 
+    GBufferRenderer* gbufferRenderer, ShadowMapRenderer* shadowMapRenderer)
 {
     ShaderProgramInfo directLightingProgramInfo;
     directLightingProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vDirectLighting.glsl";
@@ -97,15 +98,8 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
     mDirectLightingScreenQuad->CreateDeviceResource(device);
     mDirectLightingScreenQuad->LightProjector = lightProjector;
 
-    // Create output.
-    AddFrameBufferTarget(RTGI_DirectLightingRenderer_DirectLighting_Name, 
-        width, height, 0, TT_Texture2D, format);
-    CreateFrameBuffer(width, height, 0, TT_Texture2D);
-}
-//----------------------------------------------------------------------------
-void DirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer, 
-    ShadowMapRenderer* shadowMap)
-{
+    // Setup inputs.
+
     RendererInputDataView view;
     view.Type = RDT_Texture;
     view.BindingType = BF_BindIndex;
@@ -117,16 +111,21 @@ void DirectLightingRenderer::SetInputs(GBufferRenderer* gbuffer,
     ClearInputDependency();
 
     view.BindingSlot = 0;
-    AddInputDependency(gbuffer, "Position", &view);
+    AddInputDependency(gbufferRenderer, "Position", &view);
 
     view.BindingSlot = 1;
-    AddInputDependency(gbuffer, "Normal", &view);
+    AddInputDependency(gbufferRenderer, "Normal", &view);
 
     view.BindingSlot = 2;
-    AddInputDependency(gbuffer, "Albedo", &view);
+    AddInputDependency(gbufferRenderer, "Albedo", &view);
 
     view.BindingSlot = 3;
-    AddInputDependency(shadowMap, "ShadowMap", &view);
+    AddInputDependency(shadowMapRenderer, "ShadowMap", &view);
+
+    // Create output.
+    AddFrameBufferTarget(RTGI_DirectLightingRenderer_DirectLighting_Name, 
+        width, height, 0, TT_Texture2D, format);
+    CreateFrameBuffer(width, height, 0, TT_Texture2D);
 }
 //----------------------------------------------------------------------------
 void DirectLightingRenderer::Render()

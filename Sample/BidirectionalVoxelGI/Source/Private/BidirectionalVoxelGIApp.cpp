@@ -135,9 +135,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 
     // Create direct lighting renderer.
     mDirectLightingRenderer = new DirectLightingRenderer(mDevice);
-    mDirectLightingRenderer->SetInputs(mGBufferRenderer, mShadowMapRenderer);
     mDirectLightingRenderer->Initialize(mDevice, Width, Height, BF_RGBAF, 
-        mLightProjector);
+        mLightProjector, mGBufferRenderer, mShadowMapRenderer);
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer(mDevice);
@@ -282,7 +281,18 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     infoStartY = 20;
     InformationPanel::GetInstance()->AddRadioButton("Voxel Buffer", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
-    InformationPanel::GetInstance()->AddRadioButton("Voxel Grid", 16, infoStartY, 60, 20, false);
+    if( mVoxelizerType == VT_Grid )
+    {
+        InformationPanel::GetInstance()->AddRadioButton("Voxel Grid", 16, infoStartY, 60, 20, false);
+    }
+    else if( mVoxelizerType == VT_SVO )
+    {
+        InformationPanel::GetInstance()->AddRadioButton("SVO Grid", 16, infoStartY, 60, 20, false);
+    }
+    else
+    {
+        assert(false);
+    }
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("Scene Shadow Map", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
@@ -439,6 +449,11 @@ void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^ sender, System:
     if( radioButton->Name == "Voxel Grid" )
     {
         mVisualizer->SetShowMode(Visualizer::SM_VoxelGrid);
+    }
+
+    if( radioButton->Name == "SVO Grid" )
+    {
+        mVisualizer->SetShowMode(Visualizer::SM_SVOGrid);
     }
 
     if( radioButton->Name == "Scene Shadow Map" )

@@ -116,6 +116,7 @@ public:
     {
         SM_VoxelBuffer,
         SM_VoxelGrid,
+        SM_SVOGrid,
         SM_Shadow,
         SM_VPLShadow,
         SM_GBufferPosition,
@@ -147,6 +148,7 @@ public:
     void SetShowMode(ShowMode mode);
 
 private:
+    VoxelizerType mVoxelizerType;
     int mVoxelGridDim;
     int mVoxelGridLocalGroupDim;
     int mGlobalDim;
