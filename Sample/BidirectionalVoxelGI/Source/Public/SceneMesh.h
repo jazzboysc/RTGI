@@ -29,7 +29,7 @@ public:
 
 private:
     // Scene voxelization pass.
-    ShaderUniform mWorldLocSV, mViewLocSV, mProjLocSV;
+    ShaderUniform mWorldLocSV;
     ShaderUniform mSceneBBCenterLocSV;
     ShaderUniform mSceneBBExtensionLocSV;
     ShaderUniform mMaterialColorLocSV;

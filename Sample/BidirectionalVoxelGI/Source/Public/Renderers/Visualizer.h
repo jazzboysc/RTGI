@@ -107,6 +107,29 @@ typedef RefPointer<VoxelCubeTriMesh> VoxelCubeTriMeshPtr;
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
+// Date: 02/02/2015
+//----------------------------------------------------------------------------
+class SVOCubeMesh : public QuadMesh
+{
+public:
+    SVOCubeMesh(Material* material, Camera* camera);
+    virtual ~SVOCubeMesh();
+
+    // Implement base class interface.
+    virtual void OnGetShaderConstants();
+    virtual void OnUpdateShaderConstants(int technique, int pass);
+
+    AABB* SceneBB;
+
+private:
+    ShaderUniform mSceneBBMinLoc;
+    ShaderUniform mVoxelExtensionLoc;
+};
+
+typedef RefPointer<SVOCubeMesh> SVOCubeMeshPtr;
+
+//----------------------------------------------------------------------------
+// Author: Che Sun
 // Date: 12/05/2014
 //----------------------------------------------------------------------------
 class Visualizer : public SubRenderer
@@ -175,6 +198,7 @@ private:
     // SVO voxelizer visualization.
     StructuredBufferPtr mVoxelFragmentListBuffer;
     StructuredBufferPtr mSVOBuffer;
+    SVOCubeMeshPtr mSVONodeCubeModel;
 };
 
 typedef RefPointer<Visualizer> VisualizerPtr;

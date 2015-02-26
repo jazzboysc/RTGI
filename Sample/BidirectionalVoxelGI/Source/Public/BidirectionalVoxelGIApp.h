@@ -35,6 +35,7 @@ public:
 
 private:
     friend class SceneMesh;
+    friend class SVOCubeMesh;
 
     bool mIsRotatingModel;
     bool mIsWireframe;

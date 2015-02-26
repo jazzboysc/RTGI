@@ -9,8 +9,6 @@ in vec4 vNormalWorld[];
 out vec4 gPositionWorld;
 out vec4 gNormalWorld;
 
-uniform mat4 Proj;
-
 const vec3 X = vec3(1.0, 0.0, 0.0);
 const vec3 Y = vec3(0.0, 1.0, 0.0);
 const vec3 Z = vec3(0.0, 0.0, 1.0);

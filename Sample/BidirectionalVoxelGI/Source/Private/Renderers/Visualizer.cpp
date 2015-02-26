@@ -1,4 +1,5 @@
 #include "Visualizer.h"
+#include "BidirectionalVoxelGIApp.h"
 
 using namespace RTGI;
 
@@ -157,6 +158,40 @@ void VoxelCubeTriMesh::OnUpdateShaderConstants(int technique, int pass)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
+SVOCubeMesh::SVOCubeMesh(Material* material, Camera* camera)
+    :
+    QuadMesh(material, camera)
+{
+    SceneBB = 0;
+}
+//----------------------------------------------------------------------------
+SVOCubeMesh::~SVOCubeMesh()
+{
+}
+//----------------------------------------------------------------------------
+void SVOCubeMesh::OnGetShaderConstants()
+{
+    QuadMesh::OnGetShaderConstants();
+
+    ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
+    program->GetUniformLocation(&mVoxelExtensionLoc, "VoxelExtension");
+}
+//----------------------------------------------------------------------------
+void SVOCubeMesh::OnUpdateShaderConstants(int technique, int pass)
+{
+    QuadMesh::OnUpdateShaderConstants(technique, pass);
+
+    vec3 sceneBBMin = SceneBB->Min;
+    vec3 voxelExtension = (SceneBB->Max - SceneBB->Min);
+    voxelExtension /= BidirectionalVoxelGIApp::VOXEL_DIMENSION;
+
+    mSceneBBMinLoc.SetValue(sceneBBMin);
+    mVoxelExtensionLoc.SetValue(voxelExtension);
+}
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
 Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
     :
     SubRenderer(device, renderSet)
@@ -169,6 +204,7 @@ Visualizer::~Visualizer()
 
     mVoxelFragmentListBuffer = 0;
     mSVOBuffer = 0;
+    mSVONodeCubeModel = 0;
 
     mShadowMapTexture = 0;
     mGBufferPositionTexture = 0;
@@ -297,6 +333,50 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
         // Cache SVO buffers.
         mVoxelFragmentListBuffer = ((SVOVoxelizer*)voxelizer
             )->GetVoxelFragmentListBuffer();
+        mSVOBuffer = ((SVOVoxelizer*)voxelizer)->GetSVOBuffer();
+
+        ShaderProgramInfo showSVOProgramInfo;
+        showSVOProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShowSVO.glsl";
+        showSVOProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fShowSVO.glsl";
+        showSVOProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                             ShaderType::ST_Fragment;
+        Pass* passShowSVO = new Pass(showSVOProgramInfo);
+
+        Technique* techShowSVO = new Technique();
+        techShowSVO->AddPass(passShowSVO);
+        MaterialTemplate* mtShowSVO = new MaterialTemplate();
+        mtShowSVO->AddTechnique(techShowSVO);
+
+        // Create SVO node cube model.
+        std::vector<vec3> svoCubeVertices;
+        svoCubeVertices.reserve(8);
+        svoCubeVertices.push_back(vec3(-1.0f, 1.0f, 1.0f));
+        svoCubeVertices.push_back(vec3(1.0f, 1.0f, 1.0f));
+        svoCubeVertices.push_back(vec3(1.0f, 1.0f, -1.0f));
+        svoCubeVertices.push_back(vec3(-1.0f, 1.0f, -1.0f));
+        svoCubeVertices.push_back(vec3(-1.0f, -1.0f, 1.0f));
+        svoCubeVertices.push_back(vec3(1.0f, -1.0f, 1.0f));
+        svoCubeVertices.push_back(vec3(1.0f, -1.0f, -1.0f));
+        svoCubeVertices.push_back(vec3(-1.0f, -1.0f, -1.0f));
+        std::vector<unsigned short> svoCubeIndices;
+        svoCubeIndices.reserve(24);
+        static unsigned short indices[] = { 0, 1, 2, 3,
+            0, 4, 5, 1,
+            0, 3, 7, 4,
+            2, 6, 7, 3,
+            1, 5, 6, 2,
+            4, 7, 6, 5 };
+        for( int i = 0; i < 24; ++i )
+        {
+            svoCubeIndices.push_back(indices[i]);
+        }
+
+        Material* material = new Material(mtShowSVO);
+        mSVONodeCubeModel = new SVOCubeMesh(material, mainCamera);
+        mSVONodeCubeModel->LoadFromSystemMemory(svoCubeVertices, svoCubeIndices);
+        mSVONodeCubeModel->SetIndirectCommandBuffer(mSVOBuffer, 16);
+        mSVONodeCubeModel->CreateDeviceResource(device);
+        mSVONodeCubeModel->SceneBB = sceneBB;
     }
     else
     {
@@ -351,7 +431,11 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
     }
     else if( mVoxelizerType == Voxelizer::VT_SVO && mShowMode == SM_SVOGrid )
     {
-        assert(false);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        mSVOBuffer->BindToIndirect();
+        mSVONodeCubeModel->Render(0, 0);
     }
     else
     {

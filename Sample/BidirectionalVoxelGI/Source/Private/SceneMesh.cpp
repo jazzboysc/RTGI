@@ -25,11 +25,10 @@ void SceneMesh::OnGetShaderConstants()
     // Get scene voxelization pass uniform locations.
     program = mMaterial->GetProgram(0, BidirectionalVoxelGIApp::SMP_Voxelization);
     program->GetUniformLocation(&mWorldLocSV, "World");
-    program->GetUniformLocation(&mViewLocSV, "View");
-    program->GetUniformLocation(&mProjLocSV, "Proj");
+    program->GetUniformLocation(&mMaterialColorLocSV, "MaterialColor");
+    // No need to do these for SVO voxelizer, but it's OK.
     program->GetUniformLocation(&mSceneBBCenterLocSV, "SceneBBCenter");
     program->GetUniformLocation(&mSceneBBExtensionLocSV, "SceneBBExtension");
-    program->GetUniformLocation(&mMaterialColorLocSV, "MaterialColor");
     program->GetUniformLocation(&mDimLocSV, "dim");
     program->GetUniformLocation(&mInv2SceneBBExtensionLocSV, "Inv2SceneBBExtension");
 
@@ -65,6 +64,9 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == BidirectionalVoxelGIApp::SMP_Voxelization )
     {
         mWorldLocSV.SetValue(mWorldTransform);
+        mMaterialColorLocSV.SetValue(MaterialColor);
+
+        // No need to do these for SVO voxelizer, but it's OK.
 
         vec3 center = SceneBB->GetBoxCenter();
         vec3 extension = SceneBB->GetExtension();
@@ -72,7 +74,6 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
 
         mSceneBBCenterLocSV.SetValue(center);
         mSceneBBExtensionLocSV.SetValue(extension);
-        mMaterialColorLocSV.SetValue(MaterialColor);
         mDimLocSV.SetValue(BidirectionalVoxelGIApp::VOXEL_DIMENSION);
         mInv2SceneBBExtensionLocSV.SetValue(inv2extension);
     }
