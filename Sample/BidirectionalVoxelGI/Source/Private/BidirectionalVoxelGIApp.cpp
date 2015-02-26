@@ -102,11 +102,11 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     material = new Material(mtSceneModel);
     mModel = new SceneMesh(material, mMainCamera);
     mModel->LoadFromFile("dragon_s.ply");
-    mat4 scale = glm::scale(mat4(), vec3(60.0f));
+    mat4 scale = glm::scale(mat4(), vec3(45.0f));
     mModel->UpdateModelSpaceVertices(scale);
     mModel->GenerateNormals();
     mModel->CreateDeviceResource(mDevice);
-    mModel->SetWorldTranslation(vec3(0.0f, 4.4f, 3.0f));
+    mModel->SetWorldTranslation(vec3(-4.0f, 3.2f, 3.0f));
     mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
     mModel->SceneBB = &mSceneBB;

@@ -30,7 +30,7 @@ layout(std430, binding = 0)  buffer _VPLBuffer
     VPL vpls[];
 } VPLBuffer;
 
-bool SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
+uint SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
 {
     float minT, maxT, sceneMinT, sceneMaxT;
 
@@ -49,7 +49,7 @@ bool SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
     rayEndPosSVO = rayEndPosSVO - rayDirSVO*2.5;
     vec3 rayInvDirSVO = 1.0 / rayDirSVO;
 
-    bool hit = false;
+    uint hit = 0;
     minT = maxT = sceneMinT;
     SVONode curNode, root;
     vec3 rayEntryPos;
@@ -89,7 +89,7 @@ bool SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
         // Deal with the leaf node.
         if( IsSVONodeFlaged(curNode) )
         {
-            hit = true;
+            hit = 1;
             break;
         }
 
@@ -119,7 +119,7 @@ bool SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
 
             if( t0 > t1 )
             {
-                return false;
+                return 0;
             }
         }
 
@@ -153,14 +153,7 @@ void main()
     {
         VPL vpl = VPLBuffer.vpls[vplBufferIndex + i];
 
-        if( VPLVisibilityTest )
-        {
-            bool isInShadow = SVOIntersectionTest(PositionWorld.xyz, vpl.WorldPosition.xyz);
-            if( isInShadow )
-            {
-                continue;
-            }
-        }
+        uint vTerm = SVOIntersectionTest(PositionWorld.xyz, vpl.WorldPosition.xyz);
 
         vpl.WorldNormal = vpl.WorldNormal*2.0 - 1.0;
 
@@ -172,9 +165,9 @@ void main()
         float cos1 = max(0.0, dot(incidentDir, vpl.WorldNormal.xyz));
         float geometricTerm = cos0 * cos1 / max(len*len, BounceSingularity);
 
-        indirectColor += MaterialColor.rgb * vpl.Flux.rgb * geometricTerm;
+        indirectColor += vpl.Flux.rgb * geometricTerm * (1 - vTerm);
     }
 
-    indirectColor = indirectColor * 2 * PI;
+    indirectColor = MaterialColor.rgb * indirectColor * 2 * PI;
     gl_FragData[0] = vec4(indirectColor, 1.0);
 }
