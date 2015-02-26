@@ -13,6 +13,8 @@ if not defined CMakePath (
 	IF NOT EXIST %~dp0\CMake\bin\cmake.exe (
 		echo Purify is cloning a portable CMake from GitHub...
 		echo.
+		mkdir CMake
+		Attrib +h +s +r CMake
 		%Git% clone https://github.com/piaoasd123/PortableCMake-Win32.git CMake
 		echo.
 	)
@@ -21,6 +23,8 @@ if not defined CMakePath (
 
 rem ## Find Purify or clone from Git
 IF NOT EXIST %~dp0\Purify (
+		mkdir Purify
+		Attrib +h +s +r Purify
 		echo Purify is cloning itself from GitHub...
 		echo.
 		"%Git%" clone https://github.com/piaoasd123/CMake.git Purify
@@ -68,6 +72,7 @@ call "%VsComnToolsPath%/../../VC/bin/x86_amd64/vcvarsx86_amd64.bat" >NUL
 :ReadyToBuild
 echo Purify is setting up project files...
 2>NUL mkdir Build
+Attrib +h +s +r Build
 pushd %~dp0\Build
 1>Nul 2>Nul "%CMakePath%" -G %CMakeArg% %~dp0
 popd
