@@ -55,6 +55,7 @@ IndirectLightingRenderer::IndirectLightingRenderer(GPUDevice* device,
     :
     SubRenderer(device, renderSet)
 {
+    mVoxelizerType = Voxelizer::VT_Unknown;
     mPSB = new PipelineStateBlock();
     mPSB->Flag |= PB_OutputMerger;
     mPSB->OutputMerger.Flag |= OMB_Clear;
@@ -75,17 +76,17 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     AABB* sceneBB, int voxelGridDim, GBufferRenderer* gbufferRenderer,
     VPLGenerator* vplGenerator, Voxelizer* voxelizer)
 {
-    Voxelizer::VoxelizerType vt = voxelizer->GetVoxelizerType();
+    mVoxelizerType = voxelizer->GetVoxelizerType();
 
     ShaderProgramInfo indirectLightingProgramInfo;
     indirectLightingProgramInfo.VShaderFileName = 
         "BidirectionalVoxelGI/vIndirectLighting.glsl";
-    if( vt == Voxelizer::VT_Grid )
+    if( mVoxelizerType == Voxelizer::VT_Grid )
     {
         indirectLightingProgramInfo.FShaderFileName =
             "BidirectionalVoxelGI/fGridIndirectLighting.glsl";
     }
-    else if( vt == Voxelizer::VT_SVO )
+    else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
         indirectLightingProgramInfo.FShaderFileName =
             "BidirectionalVoxelGI/fSVOIndirectLighting.glsl";
@@ -142,7 +143,7 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     view.BindingSlot = 0;
     AddInputDependency(vplGenerator, RTGI_VPLGenerator_VPLBuffer_Name, &view);
 
-    if( vt == Voxelizer::VT_Grid )
+    if( mVoxelizerType == Voxelizer::VT_Grid )
     {
         view.Type = RDT_StructuredBuffer;
         view.BindingType = BF_BindIndex;
@@ -150,7 +151,7 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
         AddInputDependency(voxelizer, RTGI_GridVoxelizer_VoxelBuffer_Name,
             &view);
     }
-    else if( vt == Voxelizer::VT_SVO )
+    else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
         // Cache SVO buffers.
         mVoxelFragmentListBuffer = ((SVOVoxelizer*)(
@@ -170,6 +171,12 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Render()
 {
+    if( mVoxelizerType == Voxelizer::VT_SVO )
+    {
+        mVoxelFragmentListBuffer->Bind(1);
+        mSVOBuffer->Bind(3);
+    }
+
     SubRenderer::RenderSingle(mIndirectLightingScreenQuad, 0, 0,
         SRO_FrameBuffer, mPSB, 0);
 }

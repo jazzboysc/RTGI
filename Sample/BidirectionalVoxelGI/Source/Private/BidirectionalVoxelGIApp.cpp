@@ -220,7 +220,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     {
         assert(false);
     }
-    mVoxelizer->RasterizerDimBias = 0;
+    mVoxelizer->RasterizerDimBias = -1;
     mVoxelizer->SetRenderSet(mVoxelizedObjects);
 
     // Create G-buffer renderer.
