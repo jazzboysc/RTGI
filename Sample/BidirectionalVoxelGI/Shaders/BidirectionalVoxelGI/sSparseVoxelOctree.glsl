@@ -82,34 +82,6 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     uint curLevelStartIndex;
     uint curLevelEndIndex;
 
-    // Debug.
-    uint hit;
-    float minT;
-    float maxT;
-    float sceneMaxT;
-    uint isLeaf;
-    uint childIndex;
-    uint childTileIndex;
-    uint nextNodeIndex;
-    float tNear;
-    float tFar;
-    float minMinusOriginK;
-    float maxMinusOriginK;
-    uint tNearCompareTFar;
-    uint b;
-    uint c;
-    uint d;
-    vec4 sceneBBMin;
-    vec4 rayStartPos;
-    vec4 rayStartPosSVO;
-    vec4 rayEndPos;
-    vec4 rayEndPosSVO;
-    vec4 rayEntryPos;
-    vec4 nodeBoxMin;
-    vec4 nodeBoxMax;
-    vec4 mid;
-    vec4 rayInvDirSVO;
-
     // SVO node buffer. Must be big enough to hold all tree nodes.
     SVONode data[];
 } svoNodeBuffer;

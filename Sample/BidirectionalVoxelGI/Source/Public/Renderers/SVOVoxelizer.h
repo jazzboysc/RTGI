@@ -62,34 +62,6 @@ struct SVONodeBufferHead
     unsigned int rootChild;
     unsigned int curLevelStartIndex;
     unsigned int curLevelEndIndex;
-
-    // Debug.
-    unsigned int _hit;
-    float _minT;
-    float _maxT;
-    float _sceneMaxT;
-    unsigned int _isLeaf;
-    unsigned int _childIndex;
-    unsigned int _childTileIndex;
-    unsigned int _nextNodeIndex;
-    float _tNear;
-    float _tFar;
-    float _minMinusOriginK;
-    float _maxMinusOriginK;
-    uint _tNearCompareTFar;
-    uint _b;
-    uint _c;
-    uint _d;
-    vec4 _sceneBBMin;
-    vec4 _rayStartPos;
-    vec4 _rayStartPosSVO;
-    vec4 _rayEndPos;
-    vec4 _rayEndPosSVO;
-    vec4 _rayEntryPos;
-    vec4 _nodeBoxMin;
-    vec4 _nodeBoxMax;
-    vec4 _mid;
-    vec4 _rayInvDirSVO;
 };
 //----------------------------------------------------------------------------
 
