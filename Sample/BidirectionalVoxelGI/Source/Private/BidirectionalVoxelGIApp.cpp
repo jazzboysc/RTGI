@@ -101,16 +101,31 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mat4 rotM;
     material = new Material(mtSceneModel);
     mModel = new SceneMesh(material, mMainCamera);
-    mModel->LoadFromFile("dragon_s.ply");
+    mModel->LoadFromFile("happy_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(45.0f));
     mModel->UpdateModelSpaceVertices(scale);
     mModel->GenerateNormals();
     mModel->CreateDeviceResource(mDevice);
-    mModel->SetWorldTranslation(vec3(-4.0f, 3.2f, 3.0f));
+    mModel->SetWorldTranslation(vec3(-4.0f, 4.2f, 1.0f));
     mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
+
+    material = new Material(mtSceneModel);
+    mModel2 = new SceneMesh(material, mMainCamera);
+    mModel2->LoadFromFile("dragon_s.ply");
+    scale = glm::scale(mat4(), vec3(45.0f));
+    mModel2->UpdateModelSpaceVertices(scale);
+    mModel2->GenerateNormals();
+    mModel2->CreateDeviceResource(mDevice);
+    rotM = rotate(mat4(), radians(-60.0f), vec3(0, 1, 0));
+    mModel2->SetWorldTransform(rotM);
+    mModel2->SetWorldTranslation(vec3(3.2f, 3.2f, 2.4f));
+    mModel2->MaterialColor = vec3(0.8f, 1.0f, 2.0f);
+    mModel2->LightProjector = mLightProjector;
+    mModel2->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mModel2->GetWorldSpaceBB());
 
     material = new Material(mtSceneModel);
     mGround = new SceneMesh(material, mMainCamera);
@@ -177,6 +192,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     // Create scene renderset.
     mSceneObjects = new RenderSet();
     mSceneObjects->AddRenderObject(mModel);
+    mSceneObjects->AddRenderObject(mModel2);
     mSceneObjects->AddRenderObject(mGround);
     mSceneObjects->AddRenderObject(mCeiling);
     mSceneObjects->AddRenderObject(mBackWall);
@@ -188,6 +204,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     if( mVoxelizerType == Voxelizer::VT_Grid )
     {
         mVoxelizedObjects->AddRenderObject(mModel);
+        mVoxelizedObjects->AddRenderObject(mModel2);
         mVoxelizedObjects->AddRenderObject(mGround);
         mVoxelizedObjects->AddRenderObject(mCeiling);
         mVoxelizedObjects->AddRenderObject(mBackWall);
@@ -197,6 +214,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
         mVoxelizedObjects->AddRenderObject(mModel);
+        mVoxelizedObjects->AddRenderObject(mModel2);
     }
     else
     {
@@ -437,6 +455,7 @@ void BidirectionalVoxelGIApp::Terminate()
 	mLeftWall = 0;
 	mRightWall = 0;
 	mModel = 0;
+    mModel2 = 0;
     mSceneObjects = 0;
     mVoxelizedObjects = 0;
 
