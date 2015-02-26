@@ -204,6 +204,7 @@ Visualizer::~Visualizer()
 
     mVoxelFragmentListBuffer = 0;
     mSVOBuffer = 0;
+    mSVOUniformBuffer = 0;
     mSVONodeCubeModel = 0;
 
     mShadowMapTexture = 0;
@@ -334,6 +335,8 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
         mVoxelFragmentListBuffer = ((SVOVoxelizer*)voxelizer
             )->GetVoxelFragmentListBuffer();
         mSVOBuffer = ((SVOVoxelizer*)voxelizer)->GetSVOBuffer();
+        mSVOUniformBuffer = ((SVOVoxelizer*)voxelizer
+            )->GetSVOUniformBuffer();
 
         ShaderProgramInfo showSVOProgramInfo;
         showSVOProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShowSVO.glsl";
@@ -434,6 +437,10 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        mSVOUniformBuffer->Bind(0);
+        mVoxelFragmentListBuffer->Bind(1);
+        mSVOBuffer->Bind(3);
         mSVOBuffer->BindToIndirect();
         mSVONodeCubeModel->Render(0, 0);
     }

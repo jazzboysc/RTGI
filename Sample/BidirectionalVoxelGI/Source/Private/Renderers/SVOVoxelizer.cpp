@@ -362,3 +362,8 @@ StructuredBuffer* SVOVoxelizer::GetSVOBuffer() const
     return mSVOBuffer;
 }
 //----------------------------------------------------------------------------
+UniformBuffer* SVOVoxelizer::GetSVOUniformBuffer() const
+{
+    return mSVOUniformBuffer;
+}
+//----------------------------------------------------------------------------

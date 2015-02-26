@@ -198,6 +198,7 @@ private:
     // SVO voxelizer visualization.
     StructuredBufferPtr mVoxelFragmentListBuffer;
     StructuredBufferPtr mSVOBuffer;
+    UniformBufferPtr mSVOUniformBuffer;
     SVOCubeMeshPtr mSVONodeCubeModel;
 };
 

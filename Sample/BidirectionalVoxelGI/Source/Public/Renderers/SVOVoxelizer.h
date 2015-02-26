@@ -175,6 +175,7 @@ public:
 
     StructuredBuffer* GetVoxelFragmentListBuffer() const;
     StructuredBuffer* GetSVOBuffer() const;
+    UniformBuffer* GetSVOUniformBuffer() const;
 
 private:
     AtomicCounterBufferPtr mAtomicCounterBuffer;
