@@ -30,7 +30,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     
     // Create scene camera.
 	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width/(float)Height, 0.01f, 150.0f);
-	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 33.2f), vec3(0.0f, 10.0f, 0.0f),
+	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
     // Create light projector.
@@ -97,6 +97,112 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	MaterialTemplate* mtSceneModel = new MaterialTemplate();
     mtSceneModel->AddTechnique(techSceneModel);
 
+    // Create scene.
+    mat4 rotM;
+    material = new Material(mtSceneModel);
+    mModel = new SceneMesh(material, mMainCamera);
+    mModel->LoadFromFile("dragon_s.ply");
+    mat4 scale = glm::scale(mat4(), vec3(60.0f));
+    mModel->UpdateModelSpaceVertices(scale);
+    mModel->GenerateNormals();
+    mModel->CreateDeviceResource(mDevice);
+    mModel->SetWorldTranslation(vec3(0.0f, 4.4f, 3.0f));
+    mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
+    mModel->LightProjector = mLightProjector;
+    mModel->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mModel->GetWorldSpaceBB());
+
+    material = new Material(mtSceneModel);
+    mGround = new SceneMesh(material, mMainCamera);
+    mGround->LoadFromFile("square.ply");
+    mGround->GenerateNormals();
+    mGround->CreateDeviceResource(mDevice);
+    mGround->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
+    mGround->LightProjector = mLightProjector;
+    mGround->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mGround->GetWorldSpaceBB());
+
+    material = new Material(mtSceneModel);
+    mCeiling = new SceneMesh(material, mMainCamera);
+    mCeiling->LoadFromFile("square.ply");
+    mCeiling->GenerateNormals();
+    mCeiling->CreateDeviceResource(mDevice);
+    rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
+    mCeiling->SetWorldTransform(rotM);
+    mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
+    mCeiling->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
+    mCeiling->LightProjector = mLightProjector;
+    mCeiling->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
+
+    material = new Material(mtSceneModel);
+    mBackWall = new SceneMesh(material, mMainCamera);
+    mBackWall->LoadFromFile("square.ply");
+    mBackWall->GenerateNormals();
+    mBackWall->CreateDeviceResource(mDevice);
+    rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
+    mBackWall->SetWorldTransform(rotM);
+    mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
+    mBackWall->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
+    mBackWall->LightProjector = mLightProjector;
+    mBackWall->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
+
+    material = new Material(mtSceneModel);
+    mLeftWall = new SceneMesh(material, mMainCamera);
+    mLeftWall->LoadFromFile("square.ply");
+    mLeftWall->GenerateNormals();
+    mLeftWall->CreateDeviceResource(mDevice);
+    rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
+    mLeftWall->SetWorldTransform(rotM);
+    mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
+    mLeftWall->MaterialColor = vec3(1.0f, 0.2f, 0.2f);
+    mLeftWall->LightProjector = mLightProjector;
+    mLeftWall->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
+
+    material = new Material(mtSceneModel);
+    mRightWall = new SceneMesh(material, mMainCamera);
+    mRightWall->LoadFromFile("square.ply");
+    mRightWall->GenerateNormals();
+    mRightWall->CreateDeviceResource(mDevice);
+    rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
+    mRightWall->SetWorldTransform(rotM);
+    mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
+    mRightWall->MaterialColor = vec3(0.2f, 1.0f, 0.2f);
+    mRightWall->LightProjector = mLightProjector;
+    mRightWall->SceneBB = &mSceneBB;
+    mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
+
+    // Create scene renderset.
+    mSceneObjects = new RenderSet();
+    mSceneObjects->AddRenderObject(mModel);
+    mSceneObjects->AddRenderObject(mGround);
+    mSceneObjects->AddRenderObject(mCeiling);
+    mSceneObjects->AddRenderObject(mBackWall);
+    mSceneObjects->AddRenderObject(mLeftWall);
+    mSceneObjects->AddRenderObject(mRightWall);
+
+    // Create voxelizer renderset.
+    mVoxelizedObjects = new RenderSet();
+    if( mVoxelizerType == Voxelizer::VT_Grid )
+    {
+        mVoxelizedObjects->AddRenderObject(mModel);
+        mVoxelizedObjects->AddRenderObject(mGround);
+        mVoxelizedObjects->AddRenderObject(mCeiling);
+        mVoxelizedObjects->AddRenderObject(mBackWall);
+        mVoxelizedObjects->AddRenderObject(mLeftWall);
+        mVoxelizedObjects->AddRenderObject(mRightWall);
+    }
+    else if( mVoxelizerType == Voxelizer::VT_SVO )
+    {
+        mVoxelizedObjects->AddRenderObject(mModel);
+    }
+    else
+    {
+        assert(false);
+    }
+
     // Create scene voxelizer.
     if( mVoxelizerType == Voxelizer::VT_Grid )
     {
@@ -115,18 +221,22 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
         assert(false);
     }
     mVoxelizer->RasterizerDimBias = 0;
+    mVoxelizer->SetRenderSet(mVoxelizedObjects);
 
     // Create G-buffer renderer.
     mGBufferRenderer = new GBufferRenderer(mDevice);
     mGBufferRenderer->CreateGBuffer(Width, Height, BF_RGBAF);
+    mGBufferRenderer->SetRenderSet(mSceneObjects);
 
     // Create shadow map renderer.
     mShadowMapRenderer = new ShadowMapRenderer(mDevice);
     mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBAF);
+    mShadowMapRenderer->SetRenderSet(mSceneObjects);
 
     // Create RSM renderer.
     mRSMRenderer = new RSMRenderer(mDevice);
     mRSMRenderer->CreateRSM(256, 256, RSM_FACE_COUNT, BF_RGBAF);
+    mRSMRenderer->SetRenderSet(mSceneObjects);
 
     // Create VPL generator.
     mVPLGenerator = new VPLGenerator(mDevice);
@@ -161,114 +271,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mDirectLightingRenderer->SetTimer(mTimer);
     mIndirectLightingRenderer->SetTimer(mTimer);
     mVisualizer->SetTimer(mTimer);
-
-	// Create scene.
-    mSceneObjects = new RenderSet();
-    mShadowMapRenderer->SetRenderSet(mSceneObjects);
-    mGBufferRenderer->SetRenderSet(mSceneObjects);
-    mRSMRenderer->SetRenderSet(mSceneObjects);
-    mVoxelizedObjects = new RenderSet();
-    mVoxelizer->SetRenderSet(mVoxelizedObjects);
-
-	mat4 rotM;
-    material = new Material(mtSceneModel);
-	mModel = new SceneMesh(material, mMainCamera);
-	mModel->LoadFromFile("dragon_s.ply");
-    mat4 scale = glm::scale(mat4(), vec3(60.0f));
-    mModel->UpdateModelSpaceVertices(scale);
-	mModel->GenerateNormals();
-	mModel->CreateDeviceResource(mDevice);
-	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
-	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
-    mModel->LightProjector = mLightProjector;
-    mModel->SceneBB = &mSceneBB;
-    mSceneBB.Merge(mModel->GetWorldSpaceBB());
-
-    material = new Material(mtSceneModel);
-	mGround = new SceneMesh(material, mMainCamera);
-	mGround->LoadFromFile("square.ply");
-	mGround->GenerateNormals();
-	mGround->CreateDeviceResource(mDevice);
-    mGround->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
-    mGround->LightProjector = mLightProjector;
-    mGround->SceneBB = &mSceneBB;
-    mSceneBB.Merge(mGround->GetWorldSpaceBB());
-
-    material = new Material(mtSceneModel);
-	mCeiling = new SceneMesh(material, mMainCamera);
-	mCeiling->LoadFromFile("square.ply");
-	mCeiling->GenerateNormals();
-	mCeiling->CreateDeviceResource(mDevice);
-	rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
-	mCeiling->SetWorldTransform(rotM);
-	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
-    mCeiling->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
-    mCeiling->LightProjector = mLightProjector;
-    mCeiling->SceneBB = &mSceneBB;
-    mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
-
-    material = new Material(mtSceneModel);
-	mBackWall = new SceneMesh(material, mMainCamera);
-	mBackWall->LoadFromFile("square.ply");
-	mBackWall->GenerateNormals();
-	mBackWall->CreateDeviceResource(mDevice);
-    rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
-	mBackWall->SetWorldTransform(rotM);
-	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
-    mBackWall->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
-    mBackWall->LightProjector = mLightProjector;
-    mBackWall->SceneBB = &mSceneBB;
-    mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
-
-    material = new Material(mtSceneModel);
-	mLeftWall = new SceneMesh(material, mMainCamera);
-	mLeftWall->LoadFromFile("square.ply");
-	mLeftWall->GenerateNormals();
-	mLeftWall->CreateDeviceResource(mDevice);
-    rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
-	mLeftWall->SetWorldTransform(rotM);
-	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
-    mLeftWall->MaterialColor = vec3(1.0f, 0.2f, 0.2f);
-    mLeftWall->LightProjector = mLightProjector;
-    mLeftWall->SceneBB = &mSceneBB;
-    mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
-
-    material = new Material(mtSceneModel);
-	mRightWall = new SceneMesh(material, mMainCamera);
-	mRightWall->LoadFromFile("square.ply");
-	mRightWall->GenerateNormals();
-	mRightWall->CreateDeviceResource(mDevice);
-    rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
-	mRightWall->SetWorldTransform(rotM);
-	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
-    mRightWall->MaterialColor = vec3(0.2f, 1.0f, 0.2f);
-    mRightWall->LightProjector = mLightProjector;
-    mRightWall->SceneBB = &mSceneBB;
-    mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
-
-    mSceneObjects->AddRenderObject(mModel);
-    mSceneObjects->AddRenderObject(mGround);
-    mSceneObjects->AddRenderObject(mCeiling);
-    mSceneObjects->AddRenderObject(mBackWall);
-    mSceneObjects->AddRenderObject(mLeftWall);
-    mSceneObjects->AddRenderObject(mRightWall);
-    if( mVoxelizerType == Voxelizer::VT_Grid )
-    {
-        mVoxelizedObjects->AddRenderObject(mModel);
-        mVoxelizedObjects->AddRenderObject(mGround);
-        mVoxelizedObjects->AddRenderObject(mCeiling);
-        mVoxelizedObjects->AddRenderObject(mBackWall);
-        mVoxelizedObjects->AddRenderObject(mLeftWall);
-        mVoxelizedObjects->AddRenderObject(mRightWall);
-    }
-    else if( mVoxelizerType == Voxelizer::VT_SVO )
-    {
-        mVoxelizedObjects->AddRenderObject(mModel);
-    }
-    else
-    {
-        assert(false);
-    }
 
 	// Create information panel.
 	int screenX, screenY;
