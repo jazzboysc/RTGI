@@ -167,6 +167,9 @@ Visualizer::~Visualizer()
 {
     mVoxelBuffer = 0;
 
+    mVoxelFragmentListBuffer = 0;
+    mSVOBuffer = 0;
+
     mShadowMapTexture = 0;
     mGBufferPositionTexture = 0;
     mGBufferNormalTexture = 0;
@@ -291,7 +294,9 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     }
     else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
-        assert(false);
+        // Cache SVO buffers.
+        mVoxelFragmentListBuffer = ((SVOVoxelizer*)voxelizer
+            )->GetVoxelFragmentListBuffer();
     }
     else
     {

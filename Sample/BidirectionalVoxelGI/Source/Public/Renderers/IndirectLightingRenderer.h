@@ -73,6 +73,7 @@ private:
     PipelineStateBlockPtr mPSB;
     IndirectLightingScreenQuadPtr mIndirectLightingScreenQuad;
 
+    // SVO voxelizer.
     StructuredBufferPtr mVoxelFragmentListBuffer;
     StructuredBufferPtr mSVOBuffer;
 };

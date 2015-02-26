@@ -90,6 +90,7 @@ private:
     SceneMeshPtr mRightWall;
     SceneMeshPtr mModel;
     RenderSetPtr mSceneObjects;
+    RenderSetPtr mVoxelizedObjects;
 
     AABB mSceneBB;
 

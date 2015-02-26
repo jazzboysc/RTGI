@@ -64,6 +64,10 @@ IndirectLightingRenderer::IndirectLightingRenderer(GPUDevice* device,
 IndirectLightingRenderer::~IndirectLightingRenderer()
 {
     mPSB = 0;
+    mIndirectLightingScreenQuad = 0;
+
+    mVoxelFragmentListBuffer = 0;
+    mSVOBuffer = 0;
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, 

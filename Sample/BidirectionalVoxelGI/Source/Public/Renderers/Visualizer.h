@@ -167,10 +167,14 @@ private:
     Texture2DPtr mDirectLightingTexture;
     Texture2DPtr mIndirectLightingTexture;
 
-    // Grid Voxelizer visualization.
+    // Grid voxelizer visualization.
     StructuredBufferPtr mVoxelBuffer;
     VoxelCubeTriMeshPtr mVoxelCubeModel;
     GatherVoxelBufferPtr mGatherVoxelBufferTask;
+
+    // SVO voxelizer visualization.
+    StructuredBufferPtr mVoxelFragmentListBuffer;
+    StructuredBufferPtr mSVOBuffer;
 };
 
 typedef RefPointer<Visualizer> VisualizerPtr;

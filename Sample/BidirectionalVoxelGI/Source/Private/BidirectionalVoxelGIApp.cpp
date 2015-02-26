@@ -13,7 +13,7 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	Title = "Bidirectional Voxel GI";
     mIsRotatingModel = false;
     mIsWireframe = false;
-    mVoxelizerType = Voxelizer::VT_SVO;
+    mVoxelizerType = Voxelizer::VT_Grid;
 }
 //----------------------------------------------------------------------------
 BidirectionalVoxelGIApp::~BidirectionalVoxelGIApp()
@@ -164,10 +164,11 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 
 	// Create scene.
     mSceneObjects = new RenderSet();
-    mVoxelizer->SetRenderSet(mSceneObjects);
     mShadowMapRenderer->SetRenderSet(mSceneObjects);
     mGBufferRenderer->SetRenderSet(mSceneObjects);
     mRSMRenderer->SetRenderSet(mSceneObjects);
+    mVoxelizedObjects = new RenderSet();
+    mVoxelizer->SetRenderSet(mVoxelizedObjects);
 
 	mat4 rotM;
     material = new Material(mtSceneModel);
@@ -180,7 +181,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mModel->SetWorldTranslation(vec3(0.0f, 4.0f, 3.0f));
 	mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLightProjector;
-    mSceneObjects->AddRenderObject(mModel);
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
@@ -191,7 +191,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
     mGround->LightProjector = mLightProjector;
-    mSceneObjects->AddRenderObject(mGround);
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
@@ -205,7 +204,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
     mCeiling->LightProjector = mLightProjector;
-    mSceneObjects->AddRenderObject(mCeiling);
     mCeiling->SceneBB = &mSceneBB;
     mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
@@ -219,7 +217,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
     mBackWall->LightProjector = mLightProjector;
-    mSceneObjects->AddRenderObject(mBackWall);
     mBackWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
@@ -233,7 +230,6 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(1.0f, 0.2f, 0.2f);
     mLeftWall->LightProjector = mLightProjector;
-    mSceneObjects->AddRenderObject(mLeftWall);
     mLeftWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
@@ -247,9 +243,32 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.2f, 1.0f, 0.2f);
     mRightWall->LightProjector = mLightProjector;
-    mSceneObjects->AddRenderObject(mRightWall);
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
+
+    mSceneObjects->AddRenderObject(mModel);
+    mSceneObjects->AddRenderObject(mGround);
+    mSceneObjects->AddRenderObject(mCeiling);
+    mSceneObjects->AddRenderObject(mBackWall);
+    mSceneObjects->AddRenderObject(mLeftWall);
+    mSceneObjects->AddRenderObject(mRightWall);
+    if( mVoxelizerType == Voxelizer::VT_Grid )
+    {
+        mVoxelizedObjects->AddRenderObject(mModel);
+        mVoxelizedObjects->AddRenderObject(mGround);
+        mVoxelizedObjects->AddRenderObject(mCeiling);
+        mVoxelizedObjects->AddRenderObject(mBackWall);
+        mVoxelizedObjects->AddRenderObject(mLeftWall);
+        mVoxelizedObjects->AddRenderObject(mRightWall);
+    }
+    else if( mVoxelizerType == Voxelizer::VT_SVO )
+    {
+        mVoxelizedObjects->AddRenderObject(mModel);
+    }
+    else
+    {
+        assert(false);
+    }
 
 	// Create information panel.
 	int screenX, screenY;
@@ -417,6 +436,7 @@ void BidirectionalVoxelGIApp::Terminate()
 	mRightWall = 0;
 	mModel = 0;
     mSceneObjects = 0;
+    mVoxelizedObjects = 0;
 
     mTimer = 0;
 }
