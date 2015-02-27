@@ -42,6 +42,14 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	InformationPanel^ infoPanel = gcnew InformationPanel();
 	infoPanel->Show();
 	infoPanel->SetDesktopLocation(screenX + Width + 12, screenY - 30);
+	// Create GUI elements.
+	InformationPanel::GetInstance()->AddListener(this);
+	int infoStartY = 20;
+	int infoIncY = 20;
+	InformationPanel::GetInstance()->AddTimingLabel("Scene Voxelization Pass", 16, infoStartY);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, infoStartY);
+	infoStartY += infoIncY;
 
 	/*
 	glEnable(GL_DEPTH_TEST);

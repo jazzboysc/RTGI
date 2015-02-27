@@ -24,16 +24,6 @@ FrameBuffer::~FrameBuffer()
 {
     mFBO->Device->DeleteFrameBuffer(this);
 	delete[] mColorBuffers;
-	if (mDepthTexture)
-	{
-		delete mDepthTexture;
-		mDepthTexture = 0;
-	}
-	if (mStencilTexture)
-	{
-		delete mStencilTexture;
-		mStencilTexture = 0;
-	}
 }
 //--------------------------------------------------------------------------
 FBOHandle* FrameBuffer::GetFBOHandle()
