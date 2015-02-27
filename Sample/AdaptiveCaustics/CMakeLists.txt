@@ -8,6 +8,7 @@ find_package(OpenGL REQUIRED)
 SET( MACROS
 	FBXSDK_SHARED
 	GLEW_STATIC
+	GLM_FORCE_PURE
 )
 # Can include project name and directory
 SET( INCLUDE
@@ -45,6 +46,14 @@ SET( LINK
 	assimp
 )
 
+SET( VS_DOTNET_REFERENCES
+	System
+	System.Data
+	System.Drawing
+	System.Windows.Forms
+)
+
 # Create project -- DO NOT EDIT ANYTHING BELOW THIS LINE --
 # mode can be set to DYNAMIC, STATIC, CONSOLE, or WIN32
 create_project(CONSOLE "${MACROS}" "${INCLUDE}" "${LINK}")
+AddDotNetReferences("${VS_DOTNET_REFERENCES}")

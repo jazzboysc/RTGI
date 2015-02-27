@@ -19,29 +19,21 @@ FrameBuffer::FrameBuffer(GPUDevice* device)
 	mDepthTexture = 0;
 	mStencilTexture = 0;
 }
-
-FrameBuffer::FrameBuffer(GPUDevice* device, int numBuffs, GLenum bufferType,
-	int width, int height, BufferFormat format,
-	bool enableAutoMipmaps /*= false*/)
-{
-// 	for (auto i = 0; i < numBuffs; ++i)
-// 	{
-// 		mColorTextures.push_back(new Texture2D());
-// 	}
-// 
-// 	auto pDepthTex = new Texture2D();
-// 	pColorTex->CreateRenderTarget(device, width, height, BF_RGBF);
-// 	pDepthTex->CreateRenderTarget(device, width, height, BF_Depth);
-// 	mReceiverGBuffer = new FrameBuffer(mDevice);
-// 	Texture* receiverColorTextures[3] = { mReceiverPositionTexture, mReceiverNormalTexture, mReceiverColorTexture };
-// 	mReceiverGBuffer->SetRenderTargets(3, receiverColorTextures, mReceiverDepthTexture);
-}
-
 //--------------------------------------------------------------------------
 FrameBuffer::~FrameBuffer()
 {
     mFBO->Device->DeleteFrameBuffer(this);
 	delete[] mColorBuffers;
+	if (mDepthTexture)
+	{
+		delete mDepthTexture;
+		mDepthTexture = 0;
+	}
+	if (mStencilTexture)
+	{
+		delete mStencilTexture;
+		mStencilTexture = 0;
+	}
 }
 //--------------------------------------------------------------------------
 FBOHandle* FrameBuffer::GetFBOHandle()

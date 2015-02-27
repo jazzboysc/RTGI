@@ -55,6 +55,13 @@ void Application::Initialize(GPUDevice* device)
 		glfwTerminate();
 		return;
 	}
+
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	glfwSetWindowPos(Window, (mode->width - Width) / 2, (mode->height - Height) / 2);
+
+	HWND hWnd = GetConsoleWindow();
+	MoveWindow(hWnd, (mode->width - Width) / 2 - 617, (mode->height - Height) / 2 - 29, 600, 800, TRUE);
+
 	glfwMakeContextCurrent(Window);
 	glfwSetKeyCallback(Window, Application::KeyboardCallbackWrapper);
 	// Initialize GLEW

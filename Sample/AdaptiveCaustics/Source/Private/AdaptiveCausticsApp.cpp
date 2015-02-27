@@ -1,23 +1,47 @@
 #include "AdaptiveCausticsApp.h"
+#include "InformationPanel.h"
 #include <glfw3.h>
+
 using namespace RTGI;
+using namespace RTGI::GUIFramework;
 
 //----------------------------------------------------------------------------
 AdaptiveCausticsApp::AdaptiveCausticsApp(int width, int height)
 {
-	mShowMode = SM_Position;
 	Width = width;
 	Height = height;
-	Title = "Caustics demo";
+	Title = "Adaptive Caustics demo";
 }
 //----------------------------------------------------------------------------
 AdaptiveCausticsApp::~AdaptiveCausticsApp()
 {
 }
 //----------------------------------------------------------------------------
+void AdaptiveCausticsApp::InitializeTextures()
+{
+	//mTextures.mReceiverPositionTexture;
+}
+//----------------------------------------------------------------------------
+void AdaptiveCausticsApp::InitializeScene()
+{
+
+}
+//----------------------------------------------------------------------------
+void AdaptiveCausticsApp::InitializeFBO()
+{
+
+}
+//----------------------------------------------------------------------------
 void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 {
-	// Init Scene
+	mFBO.backgroundObjectsPositionLightSpace;
+	mFBO.refractorNormalFrontBackLightSpace;
+	// Create information panel.
+	int screenX, screenY;
+	glfwGetWindowPos(Window, &screenX, &screenY);
+	InformationPanel^ infoPanel = gcnew InformationPanel();
+	infoPanel->Show();
+	infoPanel->SetDesktopLocation(screenX + Width + 12, screenY - 30);
 
 	/*
 	glEnable(GL_DEPTH_TEST);
@@ -273,177 +297,22 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 }
 
 //----------------------------------------------------------------------------
-void AdaptiveCausticsApp::DrawReceiverLightPoV()
-{
-	mGround->SetCamera(mLight->GetProjector());
-	mPool->SetCamera(mLight->GetProjector());
-	//mGround->Render(0, 0);
-	mPool->Render(0, 0);
-	mGround->SetCamera(mMainCamera);
-	mPool->SetCamera(mMainCamera);
-}
-
-void AdaptiveCausticsApp::DrawRefracterLightPoV()
-{
-	mMesh->SetCamera(mLight->GetProjector());
-	mMesh->Render(0, 0);
-	mMesh->SetCamera(mMainCamera);
-}
-
-void AdaptiveCausticsApp::DrawReceiverCameraPoV()
-{
-	mPool->Render(0, 0);
-}
-
-void AdaptiveCausticsApp::DrawRefracCameraPoV()
-{
-	mMesh->Render(0, 0);
-}
-//----------------------------------------------------------------------------
 void AdaptiveCausticsApp::FrameFunc()
 {
-	// Draw Receiver to G-buffer from Light's PoV.
-	mRecvGBufferLight->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glFrontFace(GL_CCW);
-	DrawReceiverLightPoV();
-	mRecvGBufferLight->Disable();
 
-	// Draw Refractive object to G-buffer from Light's PoV.
-	mRefracGBufferLight->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glFrontFace(GL_CCW);
-	DrawRefracterLightPoV();
-	mRefracGBufferLight->Disable();
-	
-	// Draw Receiver Camera pov
-	mReceiverGBuffer->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glFrontFace(GL_CCW);
-	DrawReceiverCameraPoV();
-	mReceiverGBuffer->Disable();
-
-	// Draw Refractive obj Camera pov
-	mRefracGBuffer->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glFrontFace(GL_CCW);
-	DrawRefracCameraPoV();
-	mRefracGBuffer->Disable();
-
-	glFrontFace(GL_CCW);
-
-	// Draw intersection points
-
-	GLuint occlusionQuery = 0;
-	unsigned int numPixels = 0;
-	glGenQueries(1, &occlusionQuery);
-
-	glBeginQuery(GL_SAMPLES_PASSED, occlusionQuery);
-	mIntersectionGBuffer->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mCausticsScreenQuad->Render(0, 0);
-	mIntersectionGBuffer->Disable();
-	glEndQuery(GL_SAMPLES_PASSED);
-	glGetQueryObjectuiv(occlusionQuery, GL_QUERY_RESULT, &numPixels);
-	mVertexGrid->CausticsMapsResolution = numPixels;
-
-	//*
-	// Draw Caustics Map
-	//glBeginQuery(GL_PRIMITIVES_GENERATED, occlusionQuery);
-	mCausticsMapGBuffer->Enable();
-	mCausticsDebugBuffer->Bind(3);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	mVertexGrid->Render(0, 0);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_DEPTH_TEST);
-	mCausticsDebugBuffer->Bind();
-	mCausticsMapGBuffer->Disable();
-	//glEndQuery(GL_PRIMITIVES_GENERATED);
-	//glGetQueryObjectuiv(occlusionQuery, GL_QUERY_RESULT, &numPixels);
-	//printf("GL_PRIMITIVES_GENERATED: %i\n", numPixels);
-	//*/
-
-	/*
-	void* bufferData = mCausticsDebugBuffer->Map(BA_Read_Only);
-	auto dataPtr = (CausticsDebugBuffer*)bufferData;
-	auto dataPtr2 = (vec3*)(dataPtr + 1);
-	mCausticsDebugBuffer->Unmap();
-	*/
-
-	//*
-	// Blur caustics map
-	mBlurredCausticsMapGBuffer->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mCausticsScreenQuad->Render(0, 1);
-	mBlurredCausticsMapGBuffer->Disable();
-	//*/
-	//*
-	mBlurredCausticsMapGBuffer2->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mCausticsScreenQuad->Render(0, 2);
-	mBlurredCausticsMapGBuffer2->Disable();
-	//*/
-
-	//*
-	// Draw final image
-	//mGBufferFinal->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mCausticsScreenQuad->Render(0, 3);
-	mCausticsScreenQuad->Render(0, 4);
-	//mGBufferFinal->Disable();
-	//*/
-
-	/* Debug g buffer
-	// Draw Receiver Camera pov
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glFrontFace(GL_CCW);
-	DrawReceiverCameraPoV();
-	glFrontFace(GL_CW);
-	DrawRefracCameraPoV();
-	//*/
-
-	//dealloc
-	if (occlusionQuery)
-	{
-		glDeleteQueries(1, &occlusionQuery);
-	}
 }
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::Terminate()
 {
 	// Release all resources.
-
 	mLight = 0;
-
-	mReceiverGBuffer = 0;
-	mReceiverNormalTexture = 0;
-	mReceiverPositionTexture = 0;
-	mReceiverColorTexture = 0;
-	mReceiverDepthTexture = 0;
 }
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::ProcessInput()
 {
 	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		mCausticsScreenQuad->RefractionIndex -= 0.01f;
 // 		mSSDOTempResultQuad->TempTexture = mSSDOTexture;
 // 		mShowMode = SM_SSDO;
-	}
-
-	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
-	{
-		mCausticsScreenQuad->RefractionIndex += 0.01f;
-		// 		mSSDOTempResultQuad->TempTexture = mSSDOTexture;
-		// 		mShowMode = SM_SSDO;
-	}
-	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
-	{
-		mCausticsScreenQuad->RefractionIndex = 0.95f;
-		// 		mSSDOTempResultQuad->TempTexture = mSSDOTexture;
-		// 		mShowMode = SM_SSDO;
 	}
 }
