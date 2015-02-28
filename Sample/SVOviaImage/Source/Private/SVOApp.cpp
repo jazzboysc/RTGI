@@ -150,10 +150,14 @@ void SVOApp::Initialize(GPUDevice* device)
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create SVO buffer.
+    GLint maxTextureBufferSize;
+    glGetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE, &maxTextureBufferSize);
     mSVOMaxLevel = (unsigned int)glm::log2((float)VOXEL_DIMENSION);
     mSVOBuffer = new StructuredBuffer();
     mSVONodeCount = unsigned int((float)voxelCount*(0.143f + 0.05f)); // interior node ratio (1/7, fixed) and leaf node ratio.
-    bufferSize = sizeof(SVONodeBufferHead) + mSVONodeCount*sizeof(SVONode);
+    assert((int)mSVONodeCount <= maxTextureBufferSize);
+    size_t nodeSize = sizeof(SVONode);
+    bufferSize = sizeof(SVONodeBufferHead) + mSVONodeCount*nodeSize;
     mSVOBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
     // Create SVO uniform buffer.

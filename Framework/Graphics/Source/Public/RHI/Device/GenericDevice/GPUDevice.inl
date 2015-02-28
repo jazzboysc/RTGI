@@ -114,6 +114,13 @@ TextureHandle* GPUDevice::TextureCubeLoadFromSystemMemory(Texture* texture,
         pixelsNY, pixelsPZ, pixelsNZ);
 }
 //----------------------------------------------------------------------------
+TextureHandle* GPUDevice::BufferTextureLoadFromTextureBuffer(Texture* texture,
+    TextureBuffer* textureBuffer, BufferInternalFormat internalFormat)
+{
+    return (this->*_BufferTextureLoadFromTextureBuffer)(texture, 
+        textureBuffer, internalFormat);
+}
+//----------------------------------------------------------------------------
 void GPUDevice::Texture3DUpdateFromPixelBuffer(Texture* texture, 
     PixelBuffer* pixelBuffer)
 {

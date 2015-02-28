@@ -83,7 +83,8 @@ GLenum gsTextureTargets[TextureType_Max] =
     GL_TEXTURE_2D,
     GL_TEXTURE_3D,
     GL_TEXTURE_CUBE_MAP,
-    GL_TEXTURE_2D_ARRAY
+    GL_TEXTURE_2D_ARRAY,
+    GL_TEXTURE_BUFFER
 };
 
 GLenum gsFilterType[FilterType_Max] =
@@ -886,6 +887,29 @@ TextureHandle* OpenGLDevice::__TextureCubeLoadFromSystemMemory(
     return textureHandle;
 }
 //----------------------------------------------------------------------------
+TextureHandle* OpenGLDevice::__BufferTextureLoadFromTextureBuffer(
+    Texture* texture, TextureBuffer* textureBuffer, 
+    BufferInternalFormat internalFormat)
+{
+    OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
+    textureHandle->Device = this;
+
+    GLuint buffer =
+        ((OpenGLBufferHandle*)textureBuffer->GetBufferHandle())->mBuffer;
+    glGenTextures(1, &textureHandle->mTexture);
+    glBindTexture(GL_TEXTURE_BUFFER, textureHandle->mTexture);
+    glTexBuffer(GL_TEXTURE_BUFFER, 
+        gsBufferInternalFormat[(int)internalFormat], buffer);
+    glBindTexture(GL_TEXTURE_BUFFER, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+
+    return textureHandle;
+}
+//----------------------------------------------------------------------------
 FBOHandle* OpenGLDevice::__CreateFrameBuffer(FrameBuffer* frameBuffer)
 {
     OpenGLFBOHandle* fboHandle = new OpenGLFBOHandle();
@@ -1190,6 +1214,7 @@ OpenGLDevice::OpenGLDevice()
     _Texture3DLoadFromSystemMemory = (GPUDeviceTexture3DLoadFromSystemMemory)&OpenGLDevice::__Texture3DLoadFromSystemMemory;
     _Texture3DUpdateFromPixelBuffer = (GPUDeviceTexture3DUpdateFromPixelBuffer)&OpenGLDevice::__Texture3DUpdateFromPixelBuffer;
     _TextureCubeLoadFromSystemMemory = (GPUDeviceTextureCubeLoadFromSystemMemory)&OpenGLDevice::__TextureCubeLoadFromSystemMemory;
+    _BufferTextureLoadFromTextureBuffer = (GPUDeviceBufferTextureLoadFromTextureBuffer)&OpenGLDevice::__BufferTextureLoadFromTextureBuffer;
     _CreateFrameBuffer = (GPUDeviceCreateFrameBuffer)&OpenGLDevice::__CreateFrameBuffer;
     _DeleteFrameBuffer = (GPUDeviceDeleteFrameBuffer)&OpenGLDevice::__DeleteFrameBuffer;
     _FrameBufferSetRenderTargets = (GPUDeviceFrameBufferSetRenderTargets)&OpenGLDevice::__FrameBufferSetRenderTargets;

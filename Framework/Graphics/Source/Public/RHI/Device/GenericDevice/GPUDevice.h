@@ -114,6 +114,9 @@ typedef TextureHandle* (GPUDevice::*GPUDeviceTextureCubeLoadFromSystemMemory)(
     int height, BufferFormat format, BufferComponentType type, bool mipMap,
     void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY, 
     void* pixelsPZ, void* pixelsNZ);
+typedef TextureHandle* (GPUDevice::*GPUDeviceBufferTextureLoadFromTextureBuffer)(
+    Texture* texture, TextureBuffer* textureBuffer, 
+    BufferInternalFormat internalFormat);
 typedef FBOHandle* (GPUDevice::*GPUDeviceCreateFrameBuffer)(
     FrameBuffer* frameBuffer);
 typedef void (GPUDevice::*GPUDeviceDeleteFrameBuffer)(
@@ -221,6 +224,9 @@ public:
         BufferFormat format, BufferComponentType type, bool mipMap,
         void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY,
         void* pixelsPZ, void* pixelsNZ);
+    inline  TextureHandle* BufferTextureLoadFromTextureBuffer(
+        Texture* texture, TextureBuffer* textureBuffer,
+        BufferInternalFormat internalFormat);
     inline 	FBOHandle* CreateFrameBuffer(FrameBuffer* frameBuffer);
     inline 	void DeleteFrameBuffer(FrameBuffer* frameBuffer);
     inline 	void FrameBufferSetRenderTargets(FrameBuffer* frameBuffer, 
@@ -282,6 +288,7 @@ protected:
     GPUDeviceTexture3DLoadFromSystemMemory        _Texture3DLoadFromSystemMemory;
     GPUDeviceTexture3DUpdateFromPixelBuffer       _Texture3DUpdateFromPixelBuffer;
     GPUDeviceTextureCubeLoadFromSystemMemory      _TextureCubeLoadFromSystemMemory;
+    GPUDeviceBufferTextureLoadFromTextureBuffer   _BufferTextureLoadFromTextureBuffer;
     GPUDeviceCreateFrameBuffer                    _CreateFrameBuffer;
     GPUDeviceDeleteFrameBuffer                    _DeleteFrameBuffer;
     GPUDeviceFrameBufferSetRenderTargets          _FrameBufferSetRenderTargets;

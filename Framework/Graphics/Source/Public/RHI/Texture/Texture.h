@@ -20,6 +20,7 @@ enum TextureType
     TT_Texture3D,
     TT_TextureCube,
     TT_Texture2DArray,
+    TT_BufferTexture,
     TextureType_Max
 };
 

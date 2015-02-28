@@ -81,6 +81,8 @@ private:
         BufferFormat format, BufferComponentType type, bool mipMap, 
         void* pixelsPX, void* pixelsNX, void* pixelsPY, void* pixelsNY,
         void* pixelsPZ, void* pixelsNZ);
+    TextureHandle* __BufferTextureLoadFromTextureBuffer(Texture* texture, 
+        TextureBuffer* textureBuffer, BufferInternalFormat internalFormat);
 
     // FrameBuffer.
     FBOHandle* __CreateFrameBuffer(FrameBuffer* frameBuffer);
