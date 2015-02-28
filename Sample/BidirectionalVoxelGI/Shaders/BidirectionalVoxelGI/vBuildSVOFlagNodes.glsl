@@ -28,10 +28,7 @@ void main()
         nodeTileIndex = (svoNodeBuffer.data[nextNodeIndex].info & SVO_NODE_CHILDREN_ID_MASK);
 
         // Update node AABB to visit.
-        // Depending on voxel fragment count, computing nodeBox on the fly may be a little faster 
-        // than fetching it from the buffer on my GTX 980.
         nodeBox = svoNodeBuffer.data[nextNodeIndex].nodeBox;
-        //nodeBox = GetSVOChildNodeBox(childIndex, nodeBox);
     }
     
     FlagSVONode(nextNodeIndex);
