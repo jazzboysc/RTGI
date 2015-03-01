@@ -223,9 +223,9 @@ ivec3 WorldToGridPosition(vec3 worldPosition)
     return res;
 }
 //----------------------------------------------------------------------------
-uint SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
+uint SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint, SVONode root)
 {
-    float minT, maxT, sceneMinT, sceneMaxT;
+    float minT, maxT, sceneMaxT;
 
     // Transform world space ray to SVO space.
     vec3 sceneBBMin = voxelFragmentBuffer.SceneBBMin.xyz;
@@ -237,7 +237,6 @@ uint SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
 
     // Initialize sceneMinT, sceneMaxT and ray direction.
     vec3 rayDirSVO = rayEndPosSVO - rayStartPosSVO;
-    sceneMinT = 0.0;
     sceneMaxT = length(rayDirSVO);
     rayDirSVO = rayDirSVO / sceneMaxT;
     rayStartPosSVO = rayStartPosSVO + rayDirSVO*SVO_RAY_ENDPOINT_BIAS;
@@ -245,15 +244,9 @@ uint SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
     vec3 rayInvDirSVO = 1.0 / rayDirSVO;
 
     uint hit = 0;
-    minT = maxT = sceneMinT;
-    SVONode curNode, root;
+    minT = maxT = 0.0;
+    SVONode curNode;
     vec3 rayEntryPos;
-
-    // Initialize root node.
-    root.info = SVO_NODE_FLAG_MASK;
-    root.nodeBox.Min = Ivec3ToUint(ivec3(0, 0, 0));
-    root.nodeBox.Max = Ivec3ToUint(ivec3(SVO_MAX_LEVEL_DIM,
-        SVO_MAX_LEVEL_DIM, SVO_MAX_LEVEL_DIM));
 
     uint level, childIndex, nextNodeIndex;
     while( maxT < sceneMaxT )
@@ -295,26 +288,30 @@ uint SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint)
         vec3 maxMinusOrigin = nodeBoxMax - rayStartPosSVO;
         float t0 = minT, t1 = maxT;
 
-        for( int k = 0; k < 3; ++k )
+        vec3 tNear = minMinusOrigin * rayInvDirSVO;
+        vec3 tFar = maxMinusOrigin * rayInvDirSVO;
+        vec3 tNearP = min(tNear, tFar);
+        vec3 tFarP = max(tNear, tFar);
+
+        t0 = max(tNearP[0], t0);
+        t1 = min(tFarP[0], t1);
+        if( t0 > t1 )
         {
-            float tNear = minMinusOrigin[k] * rayInvDirSVO[k];
-            float tFar = maxMinusOrigin[k] * rayInvDirSVO[k];
+            return 0;
+        }
 
-            if( tNear > tFar )
-            {
-                // Swap.
-                float temp = tNear;
-                tNear = tFar;
-                tFar = temp;
-            }
+        t0 = max(tNearP[1], t0);
+        t1 = min(tFarP[1], t1);
+        if( t0 > t1 )
+        {
+            return 0;
+        }
 
-            t0 = tNear > t0 ? tNear : t0;
-            t1 = tFar  < t1 ? tFar : t1;
-
-            if( t0 > t1 )
-            {
-                return 0;
-            }
+        t0 = max(tNearP[2], t0);
+        t1 = min(tFarP[2], t1);
+        if( t0 > t1 )
+        {
+            return 0;
         }
 
         // Update maxT.
