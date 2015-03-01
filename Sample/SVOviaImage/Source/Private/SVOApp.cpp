@@ -149,16 +149,21 @@ void SVOApp::Initialize(GPUDevice* device)
     GLuint bufferSize = sizeof(VoxelFragmentBufferHead) + voxelFragmentCount*sizeof(VoxelFragment);
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
-    // Create SVO buffer.
+    // Create SVO buffers and texture.
     GLint maxTextureBufferSize;
     glGetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE, &maxTextureBufferSize);
     mSVOMaxLevel = (unsigned int)glm::log2((float)VOXEL_DIMENSION);
-    mSVOBuffer = new StructuredBuffer();
+    mSVONodeBuffer = new TextureBuffer();
     mSVONodeCount = unsigned int((float)voxelCount*(0.143f + 0.05f)); // interior node ratio (1/7, fixed) and leaf node ratio.
     assert((int)mSVONodeCount <= maxTextureBufferSize);
     size_t nodeSize = sizeof(SVONode);
-    bufferSize = sizeof(SVONodeBufferHead) + mSVONodeCount*nodeSize;
-    mSVOBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
+    bufferSize = mSVONodeCount*nodeSize;
+    mSVONodeBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
+    mSVOCommandBuffer = new StructuredBuffer();
+    bufferSize = sizeof(SVOCommandBuffer);
+    mSVOCommandBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
+    mSVONodeBufferTexture = new BufferTexture();
+    mSVONodeBufferTexture->LoadFromTextureBuffer(mDevice, mSVONodeBuffer, BIF_RGBA32UI);
 
     // Create SVO uniform buffer.
     mSVOUniformBuffer = new UniformBuffer();
@@ -286,7 +291,7 @@ void SVOApp::Initialize(GPUDevice* device)
     material = new Material(mtShowSVO);
     mSVONodeCubeModel = new SVOCubeMesh(material, mMainCamera);
     mSVONodeCubeModel->LoadFromSystemMemory(svoCubeVertices, svoCubeIndices);
-    mSVONodeCubeModel->SetIndirectCommandBuffer(mSVOBuffer, 16);
+    mSVONodeCubeModel->SetIndirectCommandBuffer(mSVOCommandBuffer, 16);
     mSVONodeCubeModel->CreateDeviceResource(mDevice);
     mSVONodeCubeModel->SceneBB = &mSceneBB;
 
@@ -419,7 +424,8 @@ void SVOApp::FrameFunc()
     // Build SVO init root pass.
     mSVOUniformBuffer->Bind(0);
     mVoxelFragmentListBuffer->Bind(1);
-    mSVOBuffer->Bind(3);
+    mSVOCommandBuffer->Bind(3);
+    mSVONodeBufferTexture->BindToImageUnit(0, BA_Read_Write);
     mTimer->Start();
     mBuildSVOTask->DispatchVertex(BUILD_SVO_INIT_ROOT_PASS, 1);
     mTimer->Stop();
@@ -446,7 +452,8 @@ void SVOApp::FrameFunc()
 
         // Flag SVO nodes pass.
         mVoxelFragmentListBuffer->Bind(1);
-        mSVOBuffer->Bind(3);
+        mSVOCommandBuffer->Bind(3);
+        mSVONodeBufferTexture->BindToImageUnit(0, BA_Read_Write);
         mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_FLAG_NODES_PASS, 
             mVoxelFragmentListBuffer, 0);
 #ifdef DEBUG_VOXEL
@@ -459,7 +466,7 @@ void SVOApp::FrameFunc()
 
         // Allocate SVO nodes pass.
         mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_ALLOC_NODES_PASS, 
-            mSVOBuffer, 0);
+            mSVOCommandBuffer, 0);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
         svoBufferData = mSVOBuffer->Map(BA_Read_Only);
@@ -473,7 +480,7 @@ void SVOApp::FrameFunc()
 
         // Init SVO nodes pass.
         mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_INIT_NODES_PASS, 
-            mSVOBuffer, 0);
+            mSVOCommandBuffer, 0);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
         svoBufferData = mSVOBuffer->Map(BA_Read_Only);
@@ -489,7 +496,8 @@ void SVOApp::FrameFunc()
     // Splat SVO leaf nodes pass.
     mTimer->Start();
     mVoxelFragmentListBuffer->Bind(1);
-    mSVOBuffer->Bind(3);
+    mSVOCommandBuffer->Bind(3);
+    mSVONodeBufferTexture->BindToImageUnit(0, BA_Read_Write);
     mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_SPLAT_LEAF_NODES_PASS,
         mVoxelFragmentListBuffer, 0);
     mTimer->Stop();
@@ -515,7 +523,9 @@ void SVOApp::FrameFunc()
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        mSVOBuffer->BindToIndirect();
+
+        mSVOCommandBuffer->BindToIndirect();
+        mSVONodeBufferTexture->BindToImageUnit(0, BA_Read_Write);
         mSVONodeCubeModel->Render(0, 0);
     }
 
@@ -533,7 +543,9 @@ void SVOApp::FrameFunc()
     if( mSVORaySegment )
     {
         mVoxelFragmentListBuffer->Bind(1);
-        mSVOBuffer->Bind(3);
+        mSVOCommandBuffer->Bind(3);
+        mSVONodeBufferTexture->BindToImageUnit(0, BA_Read_Only);
+
         mTimer->Start();
         mSVORayIntersectionTask->DispatchCompute(0, 1, 1, 1);
         mTimer->Stop();
@@ -557,7 +569,9 @@ void SVOApp::Terminate()
 
     mAtomicCounterBuffer = 0;
     mVoxelFragmentListBuffer = 0;
-    mSVOBuffer = 0;
+    mSVOCommandBuffer = 0;
+    mSVONodeBuffer = 0;
+    mSVONodeBufferTexture = 0;
     mSVOUniformBuffer = 0;
 
     mGatherVoxelFragmentListInfoTask = 0;

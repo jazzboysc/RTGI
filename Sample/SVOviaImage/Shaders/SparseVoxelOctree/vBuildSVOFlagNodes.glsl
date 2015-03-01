@@ -25,13 +25,12 @@ void main()
         nextNodeIndex = nodeTileIndex*SVO_NODE_TILE_SIZE + childIndex;
 
         // Update node tile index to visit.
-        nodeTileIndex = (svoNodeBuffer.data[nextNodeIndex].info & SVO_NODE_CHILDREN_ID_MASK);
+        uvec4 nodeData = imageLoad(svoNodeBuffer, int(nextNodeIndex));
+        nodeTileIndex = (nodeData.x & SVO_NODE_CHILDREN_ID_MASK);
 
         // Update node AABB to visit.
-        // Depending on voxel fragment count, computing nodeBox on the fly may be a little faster 
-        // than fetching it from the buffer on my GTX 980.
-        nodeBox = svoNodeBuffer.data[nextNodeIndex].nodeBox;
-        //nodeBox = GetSVOChildNodeBox(childIndex, nodeBox);
+        nodeBox.Max = nodeData.z;
+        nodeBox.Min = nodeData.w;
     }
     
     FlagSVONode(nextNodeIndex);

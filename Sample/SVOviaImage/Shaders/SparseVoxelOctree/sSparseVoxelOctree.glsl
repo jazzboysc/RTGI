@@ -56,7 +56,7 @@ struct SVONode
     SVONodeAABB nodeBox;
 };
 
-layout(std430, binding = 3)  buffer _svoNodeBuffer
+layout(std430, binding = 3)  buffer _svoCommandBuffer
 {
     // Indirect command buffer data for allocation of SVO node tile pass.
     uint  allocThreadCountForCurLevel;
@@ -108,10 +108,9 @@ layout(std430, binding = 3)  buffer _svoNodeBuffer
     vec4 nodeBoxMax;
     vec4 mid;
     vec4 rayInvDirSVO;
+} svoCommandBuffer;
 
-    // SVO node buffer. Must be big enough to hold all tree nodes.
-    SVONode data[];
-} svoNodeBuffer;
+layout (binding = 0, rgba32ui) uniform uimageBuffer svoNodeBuffer;
 
 layout(std140, binding = 0) uniform _svoUniformBuffer
 {
@@ -205,12 +204,15 @@ SVONodeAABB GetSVOChildNodeBox(uint childIndex, SVONodeAABB nodeBox)
 //----------------------------------------------------------------------------
 void FlagSVONode(uint nodeIndex)
 {
-    svoNodeBuffer.data[nodeIndex].info |= SVO_NODE_FLAG_MASK;
+    uvec4 nodeData = imageLoad(svoNodeBuffer, int(nodeIndex));
+    nodeData.x |= SVO_NODE_FLAG_MASK;
+    imageStore(svoNodeBuffer, int(nodeIndex), nodeData);
 }
 //----------------------------------------------------------------------------
 bool IsSVONodeFlaged(uint nodeIndex)
 {
-    return ((svoNodeBuffer.data[nodeIndex].info & SVO_NODE_FLAG_MASK) != 0);
+    uvec4 nodeData = imageLoad(svoNodeBuffer, int(nodeIndex));
+    return ((nodeData.x & SVO_NODE_FLAG_MASK) != 0);
 }
 //----------------------------------------------------------------------------
 bool IsSVONodeFlaged(SVONode node)
@@ -220,19 +222,14 @@ bool IsSVONodeFlaged(SVONode node)
 //----------------------------------------------------------------------------
 void SVONodeSetLeaf(uint nodeIndex)
 {
-    svoNodeBuffer.data[nodeIndex].info |= SVO_NODE_LEAF_MASK;
+    uvec4 nodeData = imageLoad(svoNodeBuffer, int(nodeIndex));
+    nodeData.x |= SVO_NODE_LEAF_MASK;
+    imageStore(svoNodeBuffer, int(nodeIndex), nodeData);
 }
 //----------------------------------------------------------------------------
 bool IsSVOLeafNode(SVONode node)
 {
     return ((node.info & SVO_NODE_LEAF_MASK) != 0);
-}
-//----------------------------------------------------------------------------
-void InitSVONode(uint nodeIndex)
-{
-    // Make it an unflagged leaf node.
-    svoNodeBuffer.data[nodeIndex].info = SVO_NODE_LEAF_MASK;
-    svoNodeBuffer.data[nodeIndex].userData = 0;
 }
 //----------------------------------------------------------------------------
 ivec3 WorldToGridPosition(vec3 worldPosition)

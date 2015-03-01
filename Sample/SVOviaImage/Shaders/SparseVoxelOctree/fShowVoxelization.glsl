@@ -55,10 +55,12 @@ vec4 FetchColorFromSVO(ivec3 gridPosition)
         }
 
         // Update node tile index to visit.
-        nodeTileIndex = (svoNodeBuffer.data[nextNodeIndex].info & SVO_NODE_CHILDREN_ID_MASK);
+        uvec4 nodeData = imageLoad(svoNodeBuffer, int(nextNodeIndex));
+        nodeTileIndex = (nodeData.x & SVO_NODE_CHILDREN_ID_MASK);
 
         // Update node AABB to visit.
-        nodeBox = svoNodeBuffer.data[nextNodeIndex].nodeBox;
+        nodeBox.Max = nodeData.z;
+        nodeBox.Min = nodeData.w;
     }
 
     if( !IsSVONodeFlaged(nextNodeIndex) )
@@ -66,7 +68,8 @@ vec4 FetchColorFromSVO(ivec3 gridPosition)
         return vec4(0.0, 0.0, 0.0, 1.0);
     }
 
-    color = UintToVec4(svoNodeBuffer.data[nextNodeIndex].userData);
+    uvec4 nodeData = imageLoad(svoNodeBuffer, int(nextNodeIndex));
+    color = UintToVec4(nodeData.y);
     color.xyz /= 255.0;
     color.w = 1.0;
 

@@ -8,6 +8,7 @@
 #include "GPUTimer.h"
 #include "GatherVoxelFragmentListInfo.h"
 #include "BuildSVO.h"
+#include "BufferTexture.h"
 #include "InformationPanel.h"
 #include "FormEventListener.h"
 
@@ -57,7 +58,9 @@ private:
     GatherVoxelFragmentListInfoPtr mGatherVoxelFragmentListInfoTask;
     BuildSVOPtr mBuildSVOTask;
     StructuredBufferPtr mVoxelFragmentListBuffer;
-    StructuredBufferPtr mSVOBuffer;
+    StructuredBufferPtr mSVOCommandBuffer;
+    TextureBufferPtr mSVONodeBuffer;
+    BufferTexturePtr mSVONodeBufferTexture;
     UniformBufferPtr mSVOUniformBuffer;
     SVORayIntersectionPtr mSVORayIntersectionTask;
 

@@ -34,7 +34,7 @@ struct SVONodeTile
     SVONode children[8];
 };
 //----------------------------------------------------------------------------
-struct SVONodeBufferHead
+struct SVOCommandBuffer
 {
     // Indirect command buffer data for allocation of SVO node tile pass.
     unsigned int  allocThreadCountForCurLevel;

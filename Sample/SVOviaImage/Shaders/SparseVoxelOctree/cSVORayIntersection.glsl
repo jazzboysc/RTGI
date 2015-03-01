@@ -26,12 +26,12 @@ void main()
     vec3 rayInvDirSVO = 1.0 / rayDirSVO;
 
     // Debug.
-    //svoNodeBuffer.sceneBBMin = vec4(sceneBBMin, 1.0);
-    //svoNodeBuffer.rayStartPos = vec4(rayStartPoint, 1.0);
-    //svoNodeBuffer.rayEndPos = vec4(rayEndPoint, 1.0);
-    //svoNodeBuffer.rayStartPosSVO = vec4(rayStartPosSVO, 1.0);
-    //svoNodeBuffer.rayEndPosSVO = vec4(rayEndPosSVO, 1.0);
-    //svoNodeBuffer.rayInvDirSVO = vec4(rayInvDirSVO, 0.0);
+    //svoCommandBuffer.sceneBBMin = vec4(sceneBBMin, 1.0);
+    //svoCommandBuffer.rayStartPos = vec4(rayStartPoint, 1.0);
+    //svoCommandBuffer.rayEndPos = vec4(rayEndPoint, 1.0);
+    //svoCommandBuffer.rayStartPosSVO = vec4(rayStartPosSVO, 1.0);
+    //svoCommandBuffer.rayEndPosSVO = vec4(rayEndPosSVO, 1.0);
+    //svoCommandBuffer.rayInvDirSVO = vec4(rayInvDirSVO, 0.0);
 
     uint hit = 0;
     minT = maxT = sceneMinT;
@@ -57,9 +57,9 @@ void main()
         // Debug.
         //if( i == 4 )
         //{
-        //    svoNodeBuffer.minT = minT;
-        //    svoNodeBuffer.maxT = maxT;
-        //    svoNodeBuffer.rayEntryPos = vec4(rayEntryPos, 1.0);
+        //    svoCommandBuffer.minT = minT;
+        //    svoCommandBuffer.maxT = maxT;
+        //    svoCommandBuffer.rayEntryPos = vec4(rayEntryPos, 1.0);
         //}
 
         // Descend until we meet a leaf node.
@@ -82,25 +82,30 @@ void main()
             //    nodeBoxMax = vec3(UintToIvec3(curNode.nodeBox.Max));
             //    mid = (nodeBoxMin + nodeBoxMax)*0.5;
 
-            //    svoNodeBuffer.nodeBoxMin = vec4(nodeBoxMin, 1.0);
-            //    svoNodeBuffer.nodeBoxMax = vec4(nodeBoxMax, 1.0);
-            //    svoNodeBuffer.mid = vec4(mid, 1.0);
-            //    svoNodeBuffer.childIndex = childIndex;
-            //    svoNodeBuffer.childTileIndex = (curNode.info & SVO_NODE_CHILDREN_ID_MASK);
-            //    svoNodeBuffer.nextNodeIndex = nextNodeIndex;
+            //    svoCommandBuffer.nodeBoxMin = vec4(nodeBoxMin, 1.0);
+            //    svoCommandBuffer.nodeBoxMax = vec4(nodeBoxMax, 1.0);
+            //    svoCommandBuffer.mid = vec4(mid, 1.0);
+            //    svoCommandBuffer.childIndex = childIndex;
+            //    svoCommandBuffer.childTileIndex = (curNode.info & SVO_NODE_CHILDREN_ID_MASK);
+            //    svoCommandBuffer.nextNodeIndex = nextNodeIndex;
 
             //    if( isLeaf )
             //    {
-            //        svoNodeBuffer.isLeaf = 1;
+            //        svoCommandBuffer.isLeaf = 1;
             //    }
             //    else
             //    {
-            //        svoNodeBuffer.isLeaf = 0;
+            //        svoCommandBuffer.isLeaf = 0;
             //    }
             //}
 
             // Update next node to visit.
-            curNode = svoNodeBuffer.data[nextNodeIndex];
+            uvec4 nodeData = imageLoad(svoNodeBuffer, int(nextNodeIndex));
+            curNode.info = nodeData.x;
+            curNode.userData = nodeData.y;
+            curNode.nodeBox.Min = nodeData.z;
+            curNode.nodeBox.Max = nodeData.w;
+
             isLeaf = IsSVOLeafNode(curNode);
         }
 
@@ -127,20 +132,20 @@ void main()
             // Debug.
             //if( i == 0 && k == 1 )
             //{
-            //    svoNodeBuffer.nodeBoxMin = vec4(nodeBoxMin, 1.0);
-            //    svoNodeBuffer.nodeBoxMax = vec4(nodeBoxMax, 1.0);
-            //    svoNodeBuffer.minMinusOriginK = minMinusOrigin[k];
-            //    svoNodeBuffer.maxMinusOriginK = maxMinusOrigin[k];
-            //    svoNodeBuffer.tNear = tNear;
-            //    svoNodeBuffer.tFar = tFar;
+            //    svoCommandBuffer.nodeBoxMin = vec4(nodeBoxMin, 1.0);
+            //    svoCommandBuffer.nodeBoxMax = vec4(nodeBoxMax, 1.0);
+            //    svoCommandBuffer.minMinusOriginK = minMinusOrigin[k];
+            //    svoCommandBuffer.maxMinusOriginK = maxMinusOrigin[k];
+            //    svoCommandBuffer.tNear = tNear;
+            //    svoCommandBuffer.tFar = tFar;
 
             //    if( tNear > tFar )
             //    {
-            //        svoNodeBuffer.tNearCompareTFar = 1;
+            //        svoCommandBuffer.tNearCompareTFar = 1;
             //    }
             //    else
             //    {
-            //        svoNodeBuffer.tNearCompareTFar = 0;
+            //        svoCommandBuffer.tNearCompareTFar = 0;
             //    }
             //}
 
@@ -166,5 +171,5 @@ void main()
 
     }
 
-    svoNodeBuffer.hit = hit;
+    svoCommandBuffer.hit = hit;
 }

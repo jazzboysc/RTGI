@@ -4,20 +4,28 @@
 
 void main()
 {
-    uint curNodeID = svoNodeBuffer.curLevelStartIndex*SVO_NODE_TILE_SIZE + gl_VertexID;
+    uint curNodeID = svoCommandBuffer.curLevelStartIndex*SVO_NODE_TILE_SIZE + gl_VertexID;
     if( IsSVONodeFlaged(curNodeID) )
     {
         // Allocate children tile.
         uint childrenID = atomicCounterIncrement(svoNodeAllocator);
-        svoNodeBuffer.data[curNodeID].info |= childrenID;
-        svoNodeBuffer.data[curNodeID].info &= ~SVO_NODE_LEAF_MASK;
+        uvec4 nodeData = imageLoad(svoNodeBuffer, int(curNodeID));
+        nodeData.x |= childrenID;
+        nodeData.x &= ~SVO_NODE_LEAF_MASK;
+        imageStore(svoNodeBuffer, int(curNodeID), nodeData);
 
         // Create next level node boxes for the children tile.
-        uint childrenStartIndex = (svoNodeBuffer.data[curNodeID].info & SVO_NODE_CHILDREN_ID_MASK) * SVO_NODE_TILE_SIZE;
+        SVONodeAABB nodeBox;
+        nodeBox.Max = nodeData.z;
+        nodeBox.Min = nodeData.w;
+        uint childrenStartIndex = (nodeData.x & SVO_NODE_CHILDREN_ID_MASK) * SVO_NODE_TILE_SIZE;
         for( uint i = 0; i < SVO_NODE_TILE_SIZE; ++i )
         {
-            svoNodeBuffer.data[childrenStartIndex + i].nodeBox = 
-                GetSVOChildNodeBox(i, svoNodeBuffer.data[curNodeID].nodeBox);
+            SVONodeAABB childNodeBox = GetSVOChildNodeBox(i, nodeBox);
+            uvec4 childNodeData = imageLoad(svoNodeBuffer, int(childrenStartIndex + i));
+            childNodeData.z = childNodeBox.Max;
+            childNodeData.w = childNodeBox.Min;
+            imageStore(svoNodeBuffer, int(childrenStartIndex + i), childNodeData);
         }
     }
 }

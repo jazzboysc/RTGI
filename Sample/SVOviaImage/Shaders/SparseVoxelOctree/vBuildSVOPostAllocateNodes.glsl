@@ -5,14 +5,13 @@
 void main()
 {
     // Update current level node tile range.
-    svoNodeBuffer.curLevelStartIndex = svoNodeBuffer.curLevelEndIndex;
-    svoNodeBuffer.curLevelEndIndex = atomicCounter(svoNodeAllocator);
+    svoCommandBuffer.curLevelStartIndex = svoCommandBuffer.curLevelEndIndex;
+    svoCommandBuffer.curLevelEndIndex = atomicCounter(svoNodeAllocator);
 
     // Update indirect command buffer for SVO allocate nodes pass.
-    svoNodeBuffer.allocThreadCountForCurLevel = 
-        (svoNodeBuffer.curLevelEndIndex - svoNodeBuffer.curLevelStartIndex)*SVO_NODE_TILE_SIZE;
+    svoCommandBuffer.allocThreadCountForCurLevel =
+        (svoCommandBuffer.curLevelEndIndex - svoCommandBuffer.curLevelStartIndex)*SVO_NODE_TILE_SIZE;
 
     // Update indirect command buffer for SVO visualization pass.
-    svoNodeBuffer.ic2PrimCount = svoNodeBuffer.curLevelEndIndex*SVO_NODE_TILE_SIZE;
-    //svoNodeBuffer.ic2PrimCount = svoNodeBuffer.curLevelStartIndex*SVO_NODE_TILE_SIZE;
+    svoCommandBuffer.ic2PrimCount = svoCommandBuffer.curLevelEndIndex*SVO_NODE_TILE_SIZE;
 }

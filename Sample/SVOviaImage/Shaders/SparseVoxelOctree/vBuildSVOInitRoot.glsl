@@ -7,19 +7,19 @@ void main()
     if( voxelFragmentBuffer.count > 0 )
     {
         // Flag root and allocate children nodes for it.
-        svoNodeBuffer.rootFlag = 1234;
-        svoNodeBuffer.rootChild = atomicCounterIncrement(svoNodeAllocator);
+        svoCommandBuffer.rootFlag = 1234;
+        svoCommandBuffer.rootChild = atomicCounterIncrement(svoNodeAllocator);
 
         // Update current level node tile range.
-        svoNodeBuffer.curLevelStartIndex = svoNodeBuffer.rootChild;
-        svoNodeBuffer.curLevelEndIndex = atomicCounter(svoNodeAllocator);
+        svoCommandBuffer.curLevelStartIndex = svoCommandBuffer.rootChild;
+        svoCommandBuffer.curLevelEndIndex = atomicCounter(svoNodeAllocator);
 
         // Update indirect command buffer for SVO allocate nodes pass.
-        svoNodeBuffer.allocThreadCountForCurLevel = 
-            (svoNodeBuffer.curLevelEndIndex - svoNodeBuffer.curLevelStartIndex)*SVO_NODE_TILE_SIZE;
-        svoNodeBuffer.instanceCount = 1;
-        svoNodeBuffer.first = 0;
-        svoNodeBuffer.baseInstance = 0;
+        svoCommandBuffer.allocThreadCountForCurLevel =
+            (svoCommandBuffer.curLevelEndIndex - svoCommandBuffer.curLevelStartIndex)*SVO_NODE_TILE_SIZE;
+        svoCommandBuffer.instanceCount = 1;
+        svoCommandBuffer.first = 0;
+        svoCommandBuffer.baseInstance = 0;
 
         // Create SVO root node bound.
         SVONodeAABB nodeBox;
@@ -31,13 +31,18 @@ void main()
         uint childID;
         for( uint i = 0; i < SVO_NODE_TILE_SIZE; ++i )
         {
-            childID = svoNodeBuffer.rootChild*SVO_NODE_TILE_SIZE + i;
-            svoNodeBuffer.data[childID].nodeBox = GetSVOChildNodeBox(i, nodeBox);
-            InitSVONode(childID);
+            childID = svoCommandBuffer.rootChild*SVO_NODE_TILE_SIZE + i;
+            SVONodeAABB childNodeBox = GetSVOChildNodeBox(i, nodeBox);
+            uvec4 nodeData;
+            nodeData.x = SVO_NODE_LEAF_MASK;
+            nodeData.y = 0;
+            nodeData.z = childNodeBox.Max;
+            nodeData.w = childNodeBox.Min;
+            imageStore(svoNodeBuffer, int(childID), nodeData);
         }
     }
     else
     {
-        svoNodeBuffer.rootFlag = 0;
+        svoCommandBuffer.rootFlag = 0;
     }
 }

@@ -37,16 +37,13 @@ mat4 GetSVONodeWorldTransform(SVONode node)
 
 void main()
 {
-    SVONode node = svoNodeBuffer.data[gl_InstanceID];
-    if( node.userData > 0 )
-    {
-        boxColor = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-    else
-    {
-        boxColor = vec4(0.0, 1.0, 0.0, 1.0);
-    }
-
+    uvec4 nodeData = imageLoad(svoNodeBuffer, int(gl_InstanceID));
+    SVONode node;
+    node.info = nodeData.x;
+    node.userData = nodeData.y;
+    node.nodeBox.Max = nodeData.z;
+    node.nodeBox.Min = nodeData.w;
+    boxColor = vec4(0.0, 1.0, 0.0, 1.0);
     mat4 World = GetSVONodeWorldTransform(node);
     gl_Position = Proj * View * World * vPosition;
 }

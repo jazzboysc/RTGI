@@ -4,7 +4,7 @@
 
 void main()
 {
-    if( svoNodeBuffer.hit > 0 )
+    if( svoCommandBuffer.hit > 0 )
     {
         gl_FragData[0] = vec4(1.0, 0.0, 0.0, 1.0);
     }
