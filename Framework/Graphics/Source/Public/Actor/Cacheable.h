@@ -30,19 +30,25 @@ public:
     virtual ~Cacheable();
 
     void SetCacheFlag(CacheFlag flag);
-    inline CacheFlag GetCacheFlag() const { return mCacheFlag; }
-    inline unsigned int GetCacheSize() const { return mCacheSize; }
+
+    inline CacheFlag GetCacheFlag() const;
+    inline unsigned int GetCacheSize() const;
+    inline glm::mat4* GetWorldCache() const;
+    inline glm::mat4* GetViewCache() const;
+    inline glm::mat4* GetProjCache() const;
 
 protected:
     CacheFlag mCacheFlag;
     unsigned int mCacheSize;
-    glm::mat4* mWorld;
-    glm::mat4* mView;
-    glm::mat4* mProj;
+    glm::mat4* mWorldCache;
+    glm::mat4* mViewCache;
+    glm::mat4* mProjCache;
     unsigned char* mCache;
 };
 
 typedef RefPointer<Cacheable> CacheablePtr;
+
+#include "Cacheable.inl"
 
 }
 

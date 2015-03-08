@@ -71,6 +71,8 @@
 #include "RenderSet.h"
 #include "QuadMesh.h"
 #include "Cacheable.h"
+#include "SpatialInfo.h"
+#include "GeometryInfo.h"
 
 // Renderers
 #include "BufferBase.h"
@@ -91,7 +93,6 @@
 // L-System
 #include "Expression.h"
 #include "LSystem.h"
-#include "PolyCylinder.h"
 #include "Token.h"
 
 // Utils

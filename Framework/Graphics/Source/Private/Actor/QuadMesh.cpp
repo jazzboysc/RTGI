@@ -15,12 +15,12 @@ QuadMesh::QuadMesh(Material* material, Camera* camera)
 	RenderObject(material),
 	mVertexCount(0),
 	mFaceCount(0),
-	mVertexComponentCount(0),
-	mWorldScale(1.0f, 1.0f, 1.0f)
+	mVertexComponentCount(0)
 {
     mIsIndirect = false;
     mCommandOffset = 0;
     SetCamera(camera);
+    mSpatialInfo = new SpatialInfo();
 }
 //----------------------------------------------------------------------------
 QuadMesh::~QuadMesh()
@@ -83,7 +83,7 @@ void QuadMesh::OnUpdateShaderConstants(int technique, int pass)
 {
     assert( technique == 0 && pass == 0 );
     
-    mWorldLoc.SetValue(mWorldTransform);
+    mWorldLoc.SetValue(mSpatialInfo->GetWorldTransform());
 	if( mCamera )
 	{
 		glm::mat4 viewTrans = mCamera->GetViewTransform();
@@ -147,60 +147,6 @@ void QuadMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mProjLoc, "Proj");
 }
 //----------------------------------------------------------------------------
-void QuadMesh::SetWorldTransform(const glm::mat4& worldTrans)
-{
-	mWorldTransform = worldTrans * Offset;
-}
-//----------------------------------------------------------------------------
-glm::mat4 QuadMesh::GetWorldTransform() const
-{
-	return mWorldTransform;
-}
-//----------------------------------------------------------------------------
-void QuadMesh::SetWorldTranslation(const glm::vec3& translation)
-{
-	mWorldTransform[3][0] = translation.x;
-	mWorldTransform[3][1] = translation.y;
-	mWorldTransform[3][2] = translation.z;
-}
-//----------------------------------------------------------------------------
-glm::vec3 QuadMesh::GetWorldTranslation() const
-{
-	glm::vec3 res;
-	res.x = mWorldTransform[3][0];
-	res.y = mWorldTransform[3][1];
-	res.z = mWorldTransform[3][2];
-	return res;
-}
-//----------------------------------------------------------------------------
-void QuadMesh::SetWorldScale(const glm::vec3& scale)
-{
-	mWorldTransform[0][0] /= mWorldScale[0];
-	mWorldTransform[0][1] /= mWorldScale[1];
-	mWorldTransform[0][2] /= mWorldScale[2];
-	mWorldTransform[1][0] /= mWorldScale[0];
-	mWorldTransform[1][1] /= mWorldScale[1];
-	mWorldTransform[1][2] /= mWorldScale[2];
-	mWorldTransform[2][0] /= mWorldScale[0];
-	mWorldTransform[2][1] /= mWorldScale[1];
-	mWorldTransform[2][2] /= mWorldScale[2];
-	mWorldTransform[0][0] *= scale[0];
-	mWorldTransform[0][1] *= scale[1];
-	mWorldTransform[0][2] *= scale[2];
-	mWorldTransform[1][0] *= scale[0];
-	mWorldTransform[1][1] *= scale[1];
-	mWorldTransform[1][2] *= scale[2];
-	mWorldTransform[2][0] *= scale[0];
-	mWorldTransform[2][1] *= scale[1];
-	mWorldTransform[2][2] *= scale[2];
-	mWorldScale = scale;
-}
-//----------------------------------------------------------------------------
-glm::vec3 QuadMesh::GetWorldScale() const
-{
-	return mWorldScale;
-}
-//----------------------------------------------------------------------------
 int QuadMesh::GetVertexCount() const
 {
 	return mVertexCount;
@@ -210,7 +156,8 @@ glm::vec3 QuadMesh::GetWorldVertex(int i) const
 {
 	assert( (int)mVertexData.size() > i );
 	glm::vec4 temp = glm::vec4(mVertexData[i], 1.0f);
-	temp = mWorldTransform * temp;
+    glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
+	temp = worldTrans * temp;
 	glm::vec3 res;
 	res.x = temp.x;
 	res.y = temp.y;
@@ -227,10 +174,11 @@ AABB QuadMesh::GetWorldSpaceBB() const
 {
 	AABB res;
 	glm::vec4 tempV;
+    glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
 	for( int i = 0; i < mVertexCount; ++i )
 	{
 		tempV = glm::vec4(mVertexData[i], 1.0f);
-		tempV = mWorldTransform * tempV;
+		tempV = worldTrans * tempV;
 		res.Min.x = RTGI_MIN(res.Min.x, tempV.x);
 		res.Min.y = RTGI_MIN(res.Min.y, tempV.y);
 		res.Min.z = RTGI_MIN(res.Min.z, tempV.z);

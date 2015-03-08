@@ -12,9 +12,9 @@ Cacheable::Cacheable()
     :
     mCacheFlag(CF_Nothing),
     mCacheSize(0),
-    mWorld(0),
-    mView(0),
-    mProj(0),
+    mWorldCache(0),
+    mViewCache(0),
+    mProjCache(0),
     mCache(0)
 {
 }
@@ -57,17 +57,17 @@ void Cacheable::SetCacheFlag(Cacheable::CacheFlag flag)
         glm::mat4* data = (glm::mat4*)mCache;
         if( mCacheFlag & Cacheable::CacheFlag::CF_WorldTransform )
         {
-            mWorld = data++;
+            mWorldCache = data++;
         }
 
         if( mCacheFlag & Cacheable::CacheFlag::CF_ViewTransform )
         {
-            mView = data++;
+            mViewCache = data++;
         }
 
         if( mCacheFlag & Cacheable::CacheFlag::CF_ProjTransform )
         {
-            mProj = data++;
+            mProjCache = data++;
         }
     }
 }

@@ -3,41 +3,29 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#include "RenderObject.h"
-
-using namespace RTGI;
-
 //----------------------------------------------------------------------------
-RenderObject::RenderObject(Material* material)
-    :
-    mVBO(0)
+Cacheable::CacheFlag Cacheable::GetCacheFlag() const
 {
-    assert( material );
-    mMaterial = material;
-
-    // Material object cannot be shared between render objects.
-    assert( !material->mRenderObject );
-    mMaterial->mRenderObject = this;
-
-    Cacheable::CacheFlag flag = Cacheable::CacheFlag(
-        Cacheable::CacheFlag::CF_WorldTransform);
-    SetCacheFlag(flag);
+    return mCacheFlag;
 }
 //----------------------------------------------------------------------------
-RenderObject::~RenderObject()
+unsigned int Cacheable::GetCacheSize() const
 {
-    mSpatialInfo = 0;
-	delete mMaterial;
-	mMaterial = 0;
+    return mCacheSize;
 }
 //----------------------------------------------------------------------------
-void RenderObject::SetCamera(Camera* camera)
+glm::mat4* Cacheable::GetWorldCache() const
 {
-    mCamera = camera;
+    return mWorldCache;
 }
 //----------------------------------------------------------------------------
-Camera* RenderObject::GetCamera() const
+glm::mat4* Cacheable::GetViewCache() const
 {
-    return mCamera;
+    return mViewCache;
+}
+//----------------------------------------------------------------------------
+glm::mat4* Cacheable::GetProjCache() const
+{
+    return mProjCache;
 }
 //----------------------------------------------------------------------------

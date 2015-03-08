@@ -40,13 +40,6 @@ public:
     void CreateDeviceResource(GPUDevice* device);
 	virtual void OnGetShaderConstants();
 
-	void SetWorldTransform(const glm::mat4& worldTrans);
-	glm::mat4 GetWorldTransform() const;
-	void SetWorldTranslation(const glm::vec3& translation);
-	glm::vec3 GetWorldTranslation() const;
-	void SetWorldScale(const glm::vec3& scale);
-	glm::vec3 GetWorldScale() const;
-
 	int GetVertexCount() const;
 	glm::vec3 GetWorldVertex(int i) const;
 	
@@ -76,9 +69,6 @@ protected:
 	int mVertexComponentCount;
 	std::vector<glm::vec3> mVertexData;
 	std::vector<unsigned short> mIndexData;
-
-	glm::mat4 mWorldTransform;
-	glm::vec3 mWorldScale;
 
 	GLuint mIBO;
     ShaderUniform mWorldLoc;

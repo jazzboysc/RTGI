@@ -60,10 +60,12 @@ void SceneMesh::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
 {
+    glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
+
     // Update scene voxelization pass uniform data.
     if( pass == BidirectionalVoxelGIApp::SMP_Voxelization )
     {
-        mWorldLocSV.SetValue(mWorldTransform);
+        mWorldLocSV.SetValue(worldTrans);
         mMaterialColorLocSV.SetValue(MaterialColor);
 
         // No need to do these for SVO voxelizer, but it's OK.
@@ -81,7 +83,7 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update shadow map pass uniform data.
     if( pass == BidirectionalVoxelGIApp::SMP_ShadowMap )
     {
-        mWorldLocShadowMap.SetValue(mWorldTransform);
+        mWorldLocShadowMap.SetValue(worldTrans);
 
         if( mCamera )
         {
@@ -100,7 +102,7 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update G-buffer pass uniform data.
     if( pass == BidirectionalVoxelGIApp::SMP_GBuffer )
     {
-        mWorldLocGBuffer.SetValue(mWorldTransform);
+        mWorldLocGBuffer.SetValue(worldTrans);
         mMaterialColorLocGBuffer.SetValue(MaterialColor);
 
         if( mCamera )
@@ -116,7 +118,7 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update RSM pass uniform data.
     if( pass == BidirectionalVoxelGIApp::SMP_RSM )
     {
-        mWorldLocRSM.SetValue(mWorldTransform);
+        mWorldLocRSM.SetValue(worldTrans);
         mLightColorLoc.SetValue(LightColor);
         mMaterialColorLocRSM.SetValue(MaterialColor);
 

@@ -9,6 +9,8 @@
 #include "Cacheable.h"
 #include "Material.h"
 #include "Camera.h"
+#include "SpatialInfo.h"
+#include "GeometryInfo.h"
 #include "Pass.h"
 #include "ShaderUniform.h"
 
@@ -30,6 +32,16 @@ public:
     void SetCamera(Camera* camera);
     Camera* GetCamera() const;
 
+    // Spatial information delegate interface.
+    inline void SetSpatialInfo(SpatialInfo* spatialInfo);
+    inline SpatialInfo* GetSpatialInfo();
+    inline void SetWorldTransform(const glm::mat4& worldTrans);
+    inline glm::mat4 GetWorldTransform() const;
+    inline void SetWorldTranslation(const glm::vec3& translation);
+    inline glm::vec3 GetWorldTranslation() const;
+    inline void SetWorldScale(const glm::vec3& scale);
+    inline glm::vec3 GetWorldScale() const;
+
 	virtual void Render(int technique, int pass, 
         SubRenderer* subRenderer = 0) = 0;
 	virtual void OnUpdateShaderConstants(int technique, int pass) = 0;
@@ -40,11 +52,13 @@ public:
 protected:
 	Material* mMaterial;
     Camera* mCamera;
-
+    SpatialInfoPtr mSpatialInfo;
 	GLuint mVBO;
 };
 
 typedef RefPointer<RenderObject> RenderObjectPtr;
+
+#include "RenderObject.inl"
 
 }
 

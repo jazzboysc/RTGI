@@ -43,13 +43,6 @@ public:
     void CreateDeviceResource(GPUDevice* device);
 	virtual void OnGetShaderConstants();
 
-	void SetWorldTransform(const glm::mat4& worldTrans);
-	glm::mat4 GetWorldTransform() const;
-	void SetWorldTranslation(const glm::vec3& translation);
-	glm::vec3 GetWorldTranslation() const;
-	void SetWorldScale(const glm::vec3& scale);
-	glm::vec3 GetWorldScale() const;
-
 	void GenerateNormals();
 	virtual void OnGenerateNormals();
 
@@ -69,8 +62,6 @@ public:
     // TODO:
     // Modify TriangleMesh to support quad mesh and change the name to Mesh.
     bool IsQuad;
-
-	glm::mat4 Offset;
 
     unsigned int InstanceCount;
 
@@ -100,9 +91,6 @@ protected:
 
 	bool mHasTCoord;
 	bool mHasNormal;
-
-	glm::mat4 mWorldTransform;
-	glm::vec3 mWorldScale;
 
 	GLuint mIBO;
     ShaderUniform mWorldLoc;
