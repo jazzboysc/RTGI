@@ -6,6 +6,8 @@
 #ifndef RTGI_Camera_H
 #define RTGI_Camera_H
 
+#include "Cacheable.h"
+
 namespace RTGI
 {
 
@@ -13,7 +15,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 09/29/2013
 //----------------------------------------------------------------------------
-class Camera
+class Camera : public Cacheable
 {
 public:
 	Camera(bool IsPerspective = true);

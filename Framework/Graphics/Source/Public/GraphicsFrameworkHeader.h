@@ -70,6 +70,7 @@
 #include "GeometryAttributes.h"
 #include "RenderSet.h"
 #include "QuadMesh.h"
+#include "Cacheable.h"
 
 // Renderers
 #include "BufferBase.h"

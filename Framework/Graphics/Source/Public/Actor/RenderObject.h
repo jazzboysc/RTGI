@@ -6,7 +6,7 @@
 #ifndef RTGI_RenderObject_H
 #define RTGI_RenderObject_H
 
-#include "RefObject.h"
+#include "Cacheable.h"
 #include "Material.h"
 #include "Camera.h"
 #include "Pass.h"
@@ -21,7 +21,7 @@ class SubRenderer;
 // Author: Che Sun
 // Date: 09/14/2013
 //----------------------------------------------------------------------------
-class RenderObject : public RefObject
+class RenderObject : public Cacheable
 {
 public:
 	RenderObject(Material* material);

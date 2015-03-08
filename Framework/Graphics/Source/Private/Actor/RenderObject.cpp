@@ -18,6 +18,12 @@ RenderObject::RenderObject(Material* material)
 	// Material object cannot be shared between render objects.
 	assert( !material->mRenderObject );
 	mMaterial->mRenderObject = this;
+
+    Cacheable::CacheFlag flag = Cacheable::CacheFlag(
+        Cacheable::CacheFlag::CF_WorldTransform |
+        Cacheable::CacheFlag::CF_ViewTransform |
+        Cacheable::CacheFlag::CF_ProjTransform);
+    SetCacheFlag(flag);
 }
 //----------------------------------------------------------------------------
 RenderObject::~RenderObject()

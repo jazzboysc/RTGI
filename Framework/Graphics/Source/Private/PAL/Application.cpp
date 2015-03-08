@@ -218,8 +218,7 @@ void Application::FrameFunc()
 void Application::Terminate()
 {
 	this->Terminate();
-	delete mMainCamera;
-	mMainCamera = nullptr;
+	mMainCamera = 0;
 	glfwTerminate();
 }
 //----------------------------------------------------------------------------
@@ -228,7 +227,8 @@ Application* Application::GetInstance()
     return mInstance;
 }
 //----------------------------------------------------------------------------
-void Application::KeyboardCallbackWrapper(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Application::KeyboardCallbackWrapper(GLFWwindow* window, int key, 
+    int scancode, int action, int mods)
 {
 	//mInstance->Application::ProcessInput(key, scancode, action, mods);
 }
@@ -237,3 +237,4 @@ void Application::ProcessInput(int key, int scancode, int action, int mods)
 {
 
 }
+//----------------------------------------------------------------------------
