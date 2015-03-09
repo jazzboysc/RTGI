@@ -2,7 +2,9 @@
 
 in vec4 boxColor;
 
+out vec4 Output;
+
 void main()
 {
-    gl_FragData[0] = boxColor;
+    Output = boxColor;
 }

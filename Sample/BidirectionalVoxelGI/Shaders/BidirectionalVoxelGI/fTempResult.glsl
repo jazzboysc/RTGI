@@ -3,6 +3,8 @@
 
 in vec2 pTCoord;
 
+out vec4 Output;
+
 struct Voxel
 {
     uint value1;
@@ -55,12 +57,12 @@ void main()
 {
     if( ShowMode == 0 )
     {
-        gl_FragData[0] = texture(tempSampler, pTCoord);
+        Output = texture(tempSampler, pTCoord);
         
     }
     else if( ShowMode == 1 )
     {
-        gl_FragData[0] = texture(tempSamplerArray, vec3(pTCoord, TextureArrayIndex));
+        Output = texture(tempSamplerArray, vec3(pTCoord, TextureArrayIndex));
     }
     else if( ShowMode == 2 )
     {
@@ -74,7 +76,7 @@ void main()
         // Skip undefined pixels.
         if( length(normal) == 0.0 )
         {
-            gl_FragData[0] = vec4(0.0);
+            Output = vec4(0.0);
             return;
         }
 
@@ -124,7 +126,7 @@ void main()
         result.rgb = (mappedRadiance / greyRadiance) * result.rgb;
         result.a = 1.0;
 
-        gl_FragData[0] = result;
+        Output = result;
     }
     else if( ShowMode == 3 )
     {
@@ -135,7 +137,7 @@ void main()
         }
 
         vec3 normalizedPosition = (worldPosition.xyz - SceneBBMin) / (2.0*SceneBBExtension);
-        gl_FragData[0] = vec4(normalizedPosition, 1.0);
+        Output = vec4(normalizedPosition, 1.0);
     }
     else if( ShowMode == 4 )
     {
@@ -151,7 +153,7 @@ void main()
         color.xyz /= 255.0;
         color.w = 1.0;
         
-        gl_FragData[0] = color;
+        Output = color;
     }
     else if( ShowMode == 5 )
     {
@@ -165,7 +167,7 @@ void main()
         // Skip undefined pixels.
         if( length(normal) == 0.0 )
         {
-            gl_FragData[0] = vec4(0.0);
+            Output = vec4(0.0);
             return;
         }
 
@@ -207,6 +209,6 @@ void main()
             result.rgb = radiance.rgb / float((2 * kernelSize + 1) * (2 * kernelSize + 1));    // simple average if weightSum == 0
         }
 
-        gl_FragData[0] = result;
+        Output = result;
     }
 }

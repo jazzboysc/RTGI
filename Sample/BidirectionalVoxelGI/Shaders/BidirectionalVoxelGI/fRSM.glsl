@@ -3,6 +3,8 @@
 in vec4 gPositionWorld;
 in vec4 gNormalWorld;
 
+out vec4[3] Output;
+
 uniform vec3 LightColor;
 uniform vec3 LightPositionWorld;
 uniform vec3 MaterialColor;
@@ -15,7 +17,7 @@ void main()
     float d = max(0.0, dot(lightDir, normal));
 
     normal.xyz = (normal.xyz + 1.0) * 0.5;
-    gl_FragData[0] = gPositionWorld;
-    gl_FragData[1] = vec4(normal, 0.0);
-    gl_FragData[2] = vec4(d*MaterialColor*LightColor, 1.0);
+    Output[0] = gPositionWorld;
+    Output[1] = vec4(normal, 0.0);
+    Output[2] = vec4(d*MaterialColor*LightColor, 1.0);
 }

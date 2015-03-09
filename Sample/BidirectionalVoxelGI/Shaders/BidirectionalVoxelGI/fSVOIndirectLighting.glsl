@@ -4,6 +4,8 @@
 
 in vec2 pTCoord;
 
+out vec4 Output;
+
 #define PI 3.141593
 
 uniform int VPLCount;
@@ -78,5 +80,5 @@ void main()
     }
 
     indirectColor = MaterialColor.rgb * indirectColor * 2 * PI;
-    gl_FragData[0] = vec4(indirectColor, 1.0);
+    Output = vec4(indirectColor, 1.0);
 }

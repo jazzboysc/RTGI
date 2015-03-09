@@ -2,6 +2,8 @@
 
 in vec2 pTCoord;
 
+out vec4 Output;
+
 uniform mat4 LightProjectorView;
 uniform vec3 LightPositionWorld;
 uniform vec3 LightColor;
@@ -49,7 +51,7 @@ void main()
     if( currDepth - depth > 0.01 && !skipShadow && ShowShadow )
     {
         // Shadow.
-        gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0);
+        Output = vec4(0.0, 0.0, 0.0, 1.0);
     }
     else
     {
@@ -59,6 +61,6 @@ void main()
         lightDir = lightDir / len;
         float d = max(0.0, dot(lightDir, NormalWorld));
         vec3 color = MaterialColor.rgb * LightColor * d;
-        gl_FragData[0] = vec4(color, 1.0);
+        Output = vec4(color, 1.0);
     }
 }
