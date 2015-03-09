@@ -1,6 +1,7 @@
 #pragma once
 #include "AdaptiveCausticsTriMesh.h"
 #include "AdaptiveCausticsCube.h"
+#include "GPUTimer.h"
 #include "FormEventListener.h"
 
 namespace RTGI
@@ -68,6 +69,7 @@ private:
 	TextureCubePtr mCubeMap;
 
 	StructuredBufferPtr mCausticsDebugBuffer;
+	GPUTimerPtr mTimer;
 };
 
 }

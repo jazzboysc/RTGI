@@ -69,6 +69,16 @@ struct ShaderProgramInfo
 			FShaderFileName = shaderName;
 			ShaderStageFlag |= ShaderType::ST_Geometry;
 		}
+		else if (fileExt == "ctrl")
+		{
+			TCShaderFileName = shaderName;
+			ShaderStageFlag |= ShaderType::ST_TessellationControl;
+		}
+		else if (fileExt == "eval")
+		{
+			TEShaderFileName = shaderName;
+			ShaderStageFlag |= ShaderType::ST_TessellationEvaluation;
+		}
 		return *this;
 	}
 

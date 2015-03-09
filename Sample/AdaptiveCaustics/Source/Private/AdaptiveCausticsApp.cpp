@@ -51,6 +51,13 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, infoStartY);
 	infoStartY += infoIncY;
 
+	infoStartY = 20;
+	InformationPanel::GetInstance()->AddRadioButton("Voxel Buffer", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
+
+	// Create GPU timer.
+	mTimer = new GPUTimer();
 	/*
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
