@@ -28,7 +28,10 @@ public:
     void SetWorldScale(const glm::vec3& scale);
     inline glm::vec3 GetWorldScale() const;
 
+    glm::mat4 Offset;
+
 private:
+    friend class RenderCache;
     glm::mat4 mWorldTransform;
     glm::vec3 mWorldScale;
 };

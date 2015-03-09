@@ -4,27 +4,27 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-Cacheable::CacheFlag Cacheable::GetCacheFlag() const
+RenderCache::CacheFlag RenderCache::GetCacheFlag() const
 {
     return mCacheFlag;
 }
 //----------------------------------------------------------------------------
-unsigned int Cacheable::GetCacheSize() const
+unsigned int RenderCache::GetCacheSize() const
 {
     return mCacheSize;
 }
 //----------------------------------------------------------------------------
-glm::mat4* Cacheable::GetWorldCache() const
+glm::mat4* RenderCache::GetWorldCache() const
 {
     return mWorldCache;
 }
 //----------------------------------------------------------------------------
-glm::mat4* Cacheable::GetViewCache() const
+glm::mat4* RenderCache::GetViewCache() const
 {
     return mViewCache;
 }
 //----------------------------------------------------------------------------
-glm::mat4* Cacheable::GetProjCache() const
+glm::mat4* RenderCache::GetProjCache() const
 {
     return mProjCache;
 }

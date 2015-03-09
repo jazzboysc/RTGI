@@ -32,3 +32,11 @@ RenderObject* RenderSet::GetRenderObject(int i) const
     return mRenderObjects[i];
 }
 //----------------------------------------------------------------------------
+void RenderSet::UpdateRenderCache()
+{
+    for( int i = 0; i < (int)mRenderObjects.size(); ++i )
+    {
+        mRenderObjects[i]->UpdateRenderCache();
+    }
+}
+//----------------------------------------------------------------------------

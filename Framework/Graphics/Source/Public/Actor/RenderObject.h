@@ -6,7 +6,7 @@
 #ifndef RTGI_RenderObject_H
 #define RTGI_RenderObject_H
 
-#include "Cacheable.h"
+#include "RenderCache.h"
 #include "Material.h"
 #include "Camera.h"
 #include "SpatialInfo.h"
@@ -23,7 +23,7 @@ class SubRenderer;
 // Author: Che Sun
 // Date: 09/14/2013
 //----------------------------------------------------------------------------
-class RenderObject : public Cacheable
+class RenderObject : public RefObject
 {
 public:
 	RenderObject(Material* material);
@@ -32,7 +32,7 @@ public:
     void SetCamera(Camera* camera);
     Camera* GetCamera() const;
 
-    // Spatial information delegate interface.
+    // Spatial information delegate functions.
     inline void SetSpatialInfo(SpatialInfo* spatialInfo);
     inline SpatialInfo* GetSpatialInfo();
     inline void SetWorldTransform(const glm::mat4& worldTrans);
@@ -41,6 +41,11 @@ public:
     inline glm::vec3 GetWorldTranslation() const;
     inline void SetWorldScale(const glm::vec3& scale);
     inline glm::vec3 GetWorldScale() const;
+
+    // Render cache delegate functions.
+    inline void SetRenderCache(RenderCache* renderCache);
+    inline RenderCache* GetRenderCache();
+    inline void UpdateRenderCache();
 
 	virtual void Render(int technique, int pass, 
         SubRenderer* subRenderer = 0) = 0;
@@ -53,6 +58,7 @@ protected:
 	Material* mMaterial;
     Camera* mCamera;
     SpatialInfoPtr mSpatialInfo;
+    RenderCachePtr mRenderCache;
 	GLuint mVBO;
 };
 

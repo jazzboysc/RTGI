@@ -50,3 +50,19 @@ glm::vec3 RenderObject::GetWorldScale() const
     return mSpatialInfo->GetWorldScale();
 }
 //----------------------------------------------------------------------------
+void RenderObject::SetRenderCache(RenderCache* renderCache)
+{
+    mRenderCache = renderCache;
+}
+//----------------------------------------------------------------------------
+RenderCache* RenderObject::GetRenderCache()
+{
+    return mRenderCache;
+}
+//----------------------------------------------------------------------------
+void RenderObject::UpdateRenderCache()
+{
+    assert(mRenderCache && mSpatialInfo);
+    mRenderCache->Update(mSpatialInfo);
+}
+//----------------------------------------------------------------------------

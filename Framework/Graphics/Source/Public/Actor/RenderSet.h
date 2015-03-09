@@ -27,6 +27,8 @@ public:
     int GetRenderObjectCount() const;
     RenderObject* GetRenderObject(int i) const;
 
+    void UpdateRenderCache();
+
 protected:
     std::vector<RenderObjectPtr> mRenderObjects;
 };

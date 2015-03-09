@@ -198,6 +198,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mSceneObjects->AddRenderObject(mBackWall);
     mSceneObjects->AddRenderObject(mLeftWall);
     mSceneObjects->AddRenderObject(mRightWall);
+    mSceneObjects->UpdateRenderCache();
 
     // Create voxelizer renderset.
     mVoxelizedObjects = new RenderSet();
@@ -369,6 +370,7 @@ void BidirectionalVoxelGIApp::FrameFunc()
         mat4 rot;
         rot = rotate(mat4(), radians(angle), vec3(0, 1, 0));
         vec3 trans = mModel->GetWorldTranslation();
+        mModel->UpdateRenderCache();
         mModel->SetWorldTransform(rot);
         mModel->SetWorldTranslation(trans);
     }

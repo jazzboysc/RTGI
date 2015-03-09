@@ -3,12 +3,12 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#include "Cacheable.h"
+#include "RenderCache.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-Cacheable::Cacheable()
+RenderCache::RenderCache()
     :
     mCacheFlag(CF_Nothing),
     mCacheSize(0),
@@ -19,12 +19,12 @@ Cacheable::Cacheable()
 {
 }
 //----------------------------------------------------------------------------
-Cacheable::~Cacheable()
+RenderCache::~RenderCache()
 {
     delete[] mCache;
 }
 //----------------------------------------------------------------------------
-void Cacheable::SetCacheFlag(Cacheable::CacheFlag flag)
+void RenderCache::SetCacheFlag(RenderCache::CacheFlag flag)
 {
     if( mCache )
     {
@@ -34,17 +34,17 @@ void Cacheable::SetCacheFlag(Cacheable::CacheFlag flag)
     }
 
     mCacheFlag = flag;
-    if( mCacheFlag & Cacheable::CacheFlag::CF_WorldTransform )
+    if( mCacheFlag & RenderCache::CacheFlag::CF_WorldTransform )
     {
         mCacheSize += sizeof(glm::mat4);
     }
 
-    if( mCacheFlag & Cacheable::CacheFlag::CF_ViewTransform )
+    if( mCacheFlag & RenderCache::CacheFlag::CF_ViewTransform )
     {
         mCacheSize += sizeof(glm::mat4);
     }
 
-    if( mCacheFlag & Cacheable::CacheFlag::CF_ProjTransform )
+    if( mCacheFlag & RenderCache::CacheFlag::CF_ProjTransform )
     {
         mCacheSize += sizeof(glm::mat4);
     }
@@ -55,20 +55,25 @@ void Cacheable::SetCacheFlag(Cacheable::CacheFlag flag)
         memset(mCache, 0, mCacheSize);
 
         glm::mat4* data = (glm::mat4*)mCache;
-        if( mCacheFlag & Cacheable::CacheFlag::CF_WorldTransform )
+        if( mCacheFlag & RenderCache::CacheFlag::CF_WorldTransform )
         {
             mWorldCache = data++;
         }
 
-        if( mCacheFlag & Cacheable::CacheFlag::CF_ViewTransform )
+        if( mCacheFlag & RenderCache::CacheFlag::CF_ViewTransform )
         {
             mViewCache = data++;
         }
 
-        if( mCacheFlag & Cacheable::CacheFlag::CF_ProjTransform )
+        if( mCacheFlag & RenderCache::CacheFlag::CF_ProjTransform )
         {
             mProjCache = data++;
         }
     }
+}
+//----------------------------------------------------------------------------
+void RenderCache::Update(SpatialInfo* spatialInfo)
+{
+    *mWorldCache = spatialInfo->mWorldTransform;
 }
 //----------------------------------------------------------------------------

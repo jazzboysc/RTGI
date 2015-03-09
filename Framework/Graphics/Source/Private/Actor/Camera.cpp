@@ -26,9 +26,9 @@ Camera::Camera(bool IsPerspective)
 		SetOrthogonalFrustum(1.0f, 1.0f, 0.01f, 100.0f);
 	}
 
-    Cacheable::CacheFlag flag = Cacheable::CacheFlag(
-        Cacheable::CacheFlag::CF_ViewTransform |
-        Cacheable::CacheFlag::CF_ProjTransform);
+    RenderCache::CacheFlag flag = RenderCache::CacheFlag(
+        RenderCache::CacheFlag::CF_ViewTransform |
+        RenderCache::CacheFlag::CF_ProjTransform);
     SetCacheFlag(flag);
 }
 //----------------------------------------------------------------------------

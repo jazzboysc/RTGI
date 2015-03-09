@@ -3,10 +3,11 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#ifndef RTGI_Cacheable_H
-#define RTGI_Cacheable_H
+#ifndef RTGI_RenderCache_H
+#define RTGI_RenderCache_H
 
 #include "RefObject.h"
+#include "SpatialInfo.h"
 
 namespace RTGI
 {
@@ -15,7 +16,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 03/07/2015
 //----------------------------------------------------------------------------
-class Cacheable : public RefObject
+class RenderCache : public RefObject
 {
 public:
     enum CacheFlag
@@ -26,8 +27,8 @@ public:
         CF_ProjTransform  = 4
     };
 
-    Cacheable();
-    virtual ~Cacheable();
+    RenderCache();
+    virtual ~RenderCache();
 
     void SetCacheFlag(CacheFlag flag);
 
@@ -36,6 +37,8 @@ public:
     inline glm::mat4* GetWorldCache() const;
     inline glm::mat4* GetViewCache() const;
     inline glm::mat4* GetProjCache() const;
+
+    void Update(SpatialInfo* spatialInfo);
 
 protected:
     CacheFlag mCacheFlag;
@@ -46,9 +49,9 @@ protected:
     unsigned char* mCache;
 };
 
-typedef RefPointer<Cacheable> CacheablePtr;
+typedef RefPointer<RenderCache> RenderCachePtr;
 
-#include "Cacheable.inl"
+#include "RenderCache.inl"
 
 }
 

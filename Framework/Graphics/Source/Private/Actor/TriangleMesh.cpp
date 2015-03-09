@@ -25,7 +25,13 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
     mIsIndirect = false;
     mCommandOffset = 0;
     SetCamera(camera);
+
+    // Create delegates.
     mSpatialInfo = new SpatialInfo();
+    mRenderCache = new RenderCache();
+    RenderCache::CacheFlag flag = RenderCache::CacheFlag(
+        RenderCache::CacheFlag::CF_WorldTransform);
+    mRenderCache->SetCacheFlag(flag);
 }
 //----------------------------------------------------------------------------
 TriangleMesh::~TriangleMesh()
