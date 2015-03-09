@@ -15,7 +15,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 09/29/2013
 //----------------------------------------------------------------------------
-class Camera : public RenderCache
+class Camera
 {
 public:
 	Camera(bool IsPerspective = true);
@@ -69,17 +69,29 @@ public:
         VF_UMAX     = 3,  // top
         VF_RMIN     = 4,  // left
         VF_RMAX     = 5,  // right
-        VF_COUNT = 6
+        VF_COUNT    = 6
     };
 
-private:
+    // Render cache delegate functions.
+    inline void SetRenderCache(RenderCache* renderCache);
+    inline RenderCache* GetRenderCache();
+    inline void UpdateRenderCache();
+
+protected:
+    // Camera space stuff.
 	glm::fquat mRot;
 	glm::vec3 mLocation, mRight, mUp, mDirection;
+
+    // Projection space stuff.
     float mFrustum[VF_COUNT];  // near, far, bottom, top, left, right
 	float mUpFovDegrees, mAspectRatio;
-
     bool mIsPerspective;
+
+    // Camera render cache.
+    RenderCachePtr mRenderCache;
 };
+
+#include "Camera.inl"
 
 }
 

@@ -77,3 +77,10 @@ void RenderCache::Update(SpatialInfo* spatialInfo)
     *mWorldCache = spatialInfo->mWorldTransform;
 }
 //----------------------------------------------------------------------------
+void RenderCache::Update(Camera* camera)
+{
+    assert(camera);
+    *mViewCache = camera->GetViewTransform();
+    *mProjCache = camera->GetProjectionTransform();
+}
+//----------------------------------------------------------------------------

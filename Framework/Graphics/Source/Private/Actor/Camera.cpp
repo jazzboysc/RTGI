@@ -29,11 +29,13 @@ Camera::Camera(bool IsPerspective)
     RenderCache::CacheFlag flag = RenderCache::CacheFlag(
         RenderCache::CacheFlag::CF_ViewTransform |
         RenderCache::CacheFlag::CF_ProjTransform);
-    SetCacheFlag(flag);
+    mRenderCache = new RenderCache();
+    mRenderCache->SetCacheFlag(flag);
 }
 //----------------------------------------------------------------------------
 Camera::~Camera()
 {
+    mRenderCache = 0;
 }
 //----------------------------------------------------------------------------
 void Camera::SetLookAt(const glm::vec3& location, const glm::vec3& lookAt, 
@@ -217,3 +219,4 @@ void Camera::Rotate(glm::vec3 _rotation)
 	mDirection.y = res[1][2];
 	mDirection.z = res[2][2];
 }
+//----------------------------------------------------------------------------

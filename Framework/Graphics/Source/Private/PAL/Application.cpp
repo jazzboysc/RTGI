@@ -105,6 +105,9 @@ void Application::UpdateMainCamera()
 	static auto mouseStartPos = glm::vec2(0, 0);
 	const float mouseSpeed = 0.15f;
 
+    // Cache camera's last frame view and projection transformations.
+    mMainCamera->UpdateRenderCache();
+
 	auto camDir = mMainCamera->GetDirection();
 	auto camPos = mMainCamera->GetLocation();
 	auto camSpeed = 5.0f;
@@ -218,7 +221,7 @@ void Application::FrameFunc()
 void Application::Terminate()
 {
 	this->Terminate();
-	mMainCamera = 0;
+	delete mMainCamera;
 	glfwTerminate();
 }
 //----------------------------------------------------------------------------

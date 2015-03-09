@@ -12,6 +12,7 @@
 namespace RTGI
 {
 
+class Camera;
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 03/07/2015
@@ -39,6 +40,7 @@ public:
     inline glm::mat4* GetProjCache() const;
 
     void Update(SpatialInfo* spatialInfo);
+    void Update(Camera* camera);
 
 protected:
     CacheFlag mCacheFlag;
