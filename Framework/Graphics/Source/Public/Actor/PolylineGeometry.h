@@ -49,7 +49,6 @@ public:
     void UpdateDeviceResource(GPUDevice* device);
 
 	// Data accessors.
-	GLuint GetVertexBuffer() const;
 	int GetPolylineCount() const;
 	int GetTotalVertexCount() const;
     void AttachPoint(GPUDevice* device, GLfloat x, GLfloat y);
@@ -64,7 +63,7 @@ public:
     GLfloat LineWidth;
 
 protected:
-    void CreateVertexBufferDeviceResource();
+    void CreateVertexBufferDeviceResource(GPUDevice* device);
 	void Reset();
 
 	GLenum mPolylineType;

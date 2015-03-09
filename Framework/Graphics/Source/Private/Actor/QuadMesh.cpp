@@ -26,9 +26,6 @@ QuadMesh::QuadMesh(Material* material, Camera* camera)
 QuadMesh::~QuadMesh()
 {
     mIndirectCommandBuffer = 0;
-
-	glDeleteBuffers(1, &mVBO);
-	glDeleteBuffers(1, &mIBO);
 }
 //----------------------------------------------------------------------------
 void QuadMesh::Render(int technique, int pass, SubRenderer* subRenderer)
@@ -107,13 +104,12 @@ void QuadMesh::LoadFromSystemMemory(std::vector<glm::vec3>& vertexData,
 void QuadMesh::CreateDeviceResource(GPUDevice* device)
 {
 	// Create VBO and IBO.
-	CreateIndexBufferDeviceResource();
-	CreateVertexBufferDeviceResource();
+	CreateIndexBufferDeviceResource(device);
+	CreateVertexBufferDeviceResource(device);
 
 	// Create shader programs.
 	GeometryAttributes attributes;
-	attributes.VBO = mVBO;
-	attributes.IBO = mIBO;
+    attributes.Prim = mPrimitive;
 	attributes.HasNormal = false;
 	attributes.HasTCoord = false;
 	attributes.VertexComponentCount = mVertexComponentCount;
@@ -213,47 +209,31 @@ void QuadMesh::UpdateModelSpaceVertices(const glm::mat4& trans)
 	mModelSpaceBB.Max.z = tempV.z;
 }
 //----------------------------------------------------------------------------
-void QuadMesh::CreateVertexBufferDeviceResource()
+void QuadMesh::CreateVertexBufferDeviceResource(GPUDevice* device)
 {
-    glGenBuffers(1, &mVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-
     size_t bufferSize = sizeof(float) * mVertexCount * mVertexComponentCount;
+    mPrimitive->VB = new VertexBuffer();
     if( mVertexData.size() > 0 )
     {
-        glBufferData(GL_ARRAY_BUFFER, bufferSize, (GLvoid*)&mVertexData[0], 
-            GL_STATIC_DRAW);
+        mPrimitive->VB->LoadFromSystemMemory(device, bufferSize,
+            (void*)&mVertexData[0], BU_Static_Draw);
     }
     else
     {
-        glBufferData(GL_ARRAY_BUFFER, bufferSize, 0, GL_STATIC_DRAW);
+        mPrimitive->VB->ReserveImmutableDeviceResource(device, bufferSize);
     }
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
 }
 //----------------------------------------------------------------------------
-void QuadMesh::CreateIndexBufferDeviceResource()
+void QuadMesh::CreateIndexBufferDeviceResource(GPUDevice* device)
 {
 	assert( mIndexData.size() > 0 );
 	if( mIndexData.size() > 0 )
 	{
-		glGenBuffers(1, &mIBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
-			sizeof(unsigned short)*mIndexData.size(), (GLvoid*)&mIndexData[0],
-			GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        size_t bufferSize = sizeof(unsigned short)*mIndexData.size();
+        mPrimitive->IB = new IndexBuffer();
+        mPrimitive->IB->LoadFromSystemMemory(device, bufferSize,
+            (void*)&mIndexData[0], BU_Static_Draw);
 	}
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
 }
 //----------------------------------------------------------------------------
 void QuadMesh::SetIndirectCommandBuffer(

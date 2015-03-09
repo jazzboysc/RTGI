@@ -3,34 +3,18 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#ifndef RTGI_PassInfo_H
-#define RTGI_PassInfo_H
+#include "IndexBuffer.h"
 
-#include "Primitive.h"
-
-namespace RTGI
-{
+using namespace RTGI;
 
 //----------------------------------------------------------------------------
-// Author: Che Sun
-// Date: 08/09/2014
-//----------------------------------------------------------------------------
-class PassInfo
+IndexBuffer::IndexBuffer()
+	:
+    Buffer(BT_Index)
 {
-public:
-	PassInfo();
-	~PassInfo();
-
-	void Create(GLuint program, Primitive* primitive, bool hasNormal, 
-		bool hasTCoord, int vertexComponentCount);
-
-	void Enable();
-	void Disable();
-
-private:
-	GLuint mVAO;
-};
-
 }
-
-#endif
+//----------------------------------------------------------------------------
+IndexBuffer::~IndexBuffer()
+{
+}
+//----------------------------------------------------------------------------

@@ -6,6 +6,8 @@
 #ifndef RTGI_GeometryAttributes_H
 #define RTGI_GeometryAttributes_H
 
+#include "Primitive.h"
+
 namespace RTGI
 {
 
@@ -19,8 +21,7 @@ public:
 	GeometryAttributes();
 	~GeometryAttributes();
 
-	GLuint VBO;
-	GLuint IBO;
+    Primitive* Prim;
 	bool HasNormal;
 	bool HasTCoord;
 	int VertexComponentCount;

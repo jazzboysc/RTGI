@@ -22,7 +22,9 @@ GLenum gsBufferTargets[BufferType_Max] =
     GL_PIXEL_UNPACK_BUFFER,
     GL_SHADER_STORAGE_BUFFER,
     GL_TEXTURE_BUFFER,
-    GL_UNIFORM_BUFFER
+    GL_UNIFORM_BUFFER,
+    GL_ARRAY_BUFFER,
+    GL_ELEMENT_ARRAY_BUFFER
 };
 
 GLenum gsBufferFormat[BufferFormat_Max] =

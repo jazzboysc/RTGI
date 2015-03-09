@@ -37,9 +37,6 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
 TriangleMesh::~TriangleMesh()
 {
     mIndirectCommandBuffer = 0;
-
-	glDeleteBuffers(1, &mVBO);
-	glDeleteBuffers(1, &mIBO);
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::Render(int technique, int pass, SubRenderer* subRenderer)
@@ -331,13 +328,12 @@ void TriangleMesh::OnLoadFromFile()
 void TriangleMesh::CreateDeviceResource(GPUDevice* device)
 {
 	// Create VBO and IBO.
-	CreateIndexBufferDeviceResource();
-	CreateVertexBufferDeviceResource();
+	CreateIndexBufferDeviceResource(device);
+	CreateVertexBufferDeviceResource(device);
 
 	// Create shader programs.
 	GeometryAttributes attributes;
-	attributes.VBO = mVBO;
-	attributes.IBO = mIBO;
+    attributes.Prim = mPrimitive;
 	attributes.HasNormal = mHasNormal;
 	attributes.HasTCoord = mHasTCoord;
 	attributes.VertexComponentCount = mVertexComponentCount;
@@ -520,7 +516,7 @@ void TriangleMesh::UpdateModelSpaceVertices(const glm::mat4& trans)
 	GenerateNormals();
 }
 //----------------------------------------------------------------------------
-void TriangleMesh::CreateVertexBufferDeviceResource()
+void TriangleMesh::CreateVertexBufferDeviceResource(GPUDevice* device)
 {
 	mVertexComponentCount = 3;
 	if( mHasTCoord )
@@ -534,9 +530,6 @@ void TriangleMesh::CreateVertexBufferDeviceResource()
 	std::vector<float> tempVB;
 	if( mVertexData.size() > 0 )
 	{
-		glGenBuffers(1, &mVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-
 		for( int i = 0; i < mVertexCount; ++i )
 		{
 			tempVB.push_back(mVertexData[i].x);
@@ -557,35 +550,23 @@ void TriangleMesh::CreateVertexBufferDeviceResource()
 			}
 		}
 
-		glBufferData(GL_ARRAY_BUFFER, 
-			sizeof(GLfloat)*mVertexCount*mVertexComponentCount, 
-			(GLvoid*)&tempVB[0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+        size_t bufferSize = sizeof(float)*mVertexCount*mVertexComponentCount;
+        mPrimitive->VB = new VertexBuffer();
+        mPrimitive->VB->LoadFromSystemMemory(device, bufferSize,
+            (void*)&tempVB[0], BU_Static_Draw);
 	}
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
 }
 //----------------------------------------------------------------------------
-void TriangleMesh::CreateIndexBufferDeviceResource()
+void TriangleMesh::CreateIndexBufferDeviceResource(GPUDevice* device)
 {
 	assert( mIndexData.size() > 0 );
 	if( mIndexData.size() > 0 )
 	{
-		glGenBuffers(1, &mIBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
-			sizeof(unsigned short)*mIndexData.size(), (GLvoid*)&mIndexData[0],
-			GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        size_t bufferSize = sizeof(unsigned short)*mIndexData.size();
+        mPrimitive->IB = new IndexBuffer();
+        mPrimitive->IB->LoadFromSystemMemory(device, bufferSize,
+            (void*)&mIndexData[0], BU_Static_Draw);
 	}
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::SetIndirectCommandBuffer(

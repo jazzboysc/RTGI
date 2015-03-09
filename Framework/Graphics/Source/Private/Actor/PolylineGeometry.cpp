@@ -29,7 +29,6 @@ PolylineGeometry::PolylineGeometry(Material* material, Camera* camera,
 //----------------------------------------------------------------------------
 PolylineGeometry::~PolylineGeometry()
 {
-	glDeleteBuffers(1, &mVBO);
 }
 //----------------------------------------------------------------------------
 void PolylineGeometry::Render(int technique, int pass, 
@@ -176,28 +175,26 @@ void PolylineGeometry::LoadFromMemory(int polylineCount,
 	}
 }
 //----------------------------------------------------------------------------
-void PolylineGeometry::CreateVertexBufferDeviceResource()
+void PolylineGeometry::CreateVertexBufferDeviceResource(GPUDevice* device)
 {
     // Create a VBO for this object.
     if( mVertexData.size() > 0 )
     {
-    	glGenBuffers(1, &mVBO);
-    	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-    	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*mVertexData.size(), 
-    		(GLvoid*)&mVertexData[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        size_t bufferSize = sizeof(float)*mVertexData.size();
+        mPrimitive->VB = new VertexBuffer();
+        mPrimitive->VB->LoadFromSystemMemory(device, bufferSize,
+            (void*)&mVertexData[0], BU_Static_Draw);
     }
 }
 //----------------------------------------------------------------------------
 void PolylineGeometry::CreateDeviceResource(GPUDevice* device)
 {
     // Create VBO.
-    CreateVertexBufferDeviceResource();
+    CreateVertexBufferDeviceResource(device);
 
     // Create shader programs.
     GeometryAttributes attributes;
-    attributes.VBO = mVBO;
-    attributes.IBO = 0;
+    attributes.Prim = mPrimitive;
     attributes.HasNormal = false;
     attributes.HasTCoord = false;
     attributes.VertexComponentCount = 3;
@@ -217,13 +214,7 @@ void PolylineGeometry::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 void PolylineGeometry::UpdateDeviceResource(GPUDevice* device)
 {
-	glDeleteBuffers(1, &mVBO);
 	CreateDeviceResource(device);
-}
-//----------------------------------------------------------------------------
-GLuint PolylineGeometry::GetVertexBuffer() const
-{
-	return mVBO;
 }
 //----------------------------------------------------------------------------
 int PolylineGeometry::GetPolylineCount() const

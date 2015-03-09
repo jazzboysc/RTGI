@@ -9,9 +9,9 @@ using namespace RTGI;
 
 //----------------------------------------------------------------------------
 RenderObject::RenderObject(Material* material)
-    :
-    mVBO(0)
 {
+    mPrimitive = new Primitive();
+
     assert( material );
     mMaterial = material;
 
@@ -22,6 +22,7 @@ RenderObject::RenderObject(Material* material)
 //----------------------------------------------------------------------------
 RenderObject::~RenderObject()
 {
+    delete mPrimitive;
 	delete mMaterial;
 	mMaterial = 0;
     mSpatialInfo = 0;

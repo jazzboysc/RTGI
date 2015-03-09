@@ -19,15 +19,21 @@ PassInfo::~PassInfo()
 	glDeleteVertexArrays(1, &mVAO);
 }
 //----------------------------------------------------------------------------
-void PassInfo::Create(GLuint program, GLuint vbo, GLuint ibo, bool hasNormal, 
+void PassInfo::Create(GLuint program, Primitive* primitive, bool hasNormal,
 	bool hasTCoord, int vertexComponentCount)
 {
 	// Create VAO for this object.
 	glGenVertexArrays(1, &mVAO);
 	glBindVertexArray(mVAO);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    if( primitive->IB )
+    {
+        primitive->IB->Bind();
+    }
+    if( primitive->VB )
+    {
+        primitive->VB->Bind();
+    }
 
 	// Specify vertex attributes.
 	if( !hasNormal && !hasTCoord )

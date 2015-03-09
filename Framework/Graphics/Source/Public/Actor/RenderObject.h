@@ -10,7 +10,7 @@
 #include "Material.h"
 #include "Camera.h"
 #include "SpatialInfo.h"
-#include "GeometryInfo.h"
+#include "Primitive.h"
 #include "Pass.h"
 #include "ShaderUniform.h"
 
@@ -55,11 +55,11 @@ public:
 	virtual void OnDisableBuffers(){};
 
 protected:
+    Primitive* mPrimitive;
 	Material* mMaterial;
     Camera* mCamera;
     SpatialInfoPtr mSpatialInfo;
     RenderCachePtr mRenderCache;
-	GLuint mVBO;
 };
 
 typedef RefPointer<RenderObject> RenderObjectPtr;

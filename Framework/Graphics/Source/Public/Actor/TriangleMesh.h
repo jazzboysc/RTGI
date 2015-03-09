@@ -70,8 +70,8 @@ public:
     bool IsIndirect() const;
 
 protected:
-	void CreateVertexBufferDeviceResource();
-	void CreateIndexBufferDeviceResource();
+	void CreateVertexBufferDeviceResource(GPUDevice* device);
+    void CreateIndexBufferDeviceResource(GPUDevice* device);
 
     bool mIsIndirect;
     StructuredBufferPtr mIndirectCommandBuffer;

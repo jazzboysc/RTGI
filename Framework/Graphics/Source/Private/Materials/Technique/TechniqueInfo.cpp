@@ -32,8 +32,7 @@ void TechniqueInfo::CreatePassInfo(Technique* technique,
 		PassInfo* passInfo = new PassInfo();
 		passInfo->Create(
             programHandle->mProgram,
-			geometryAttr->VBO,
-			geometryAttr->IBO,
+			geometryAttr->Prim,
 			geometryAttr->HasNormal,
 			geometryAttr->HasTCoord,
 			geometryAttr->VertexComponentCount);

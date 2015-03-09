@@ -20,6 +20,8 @@ enum BufferType
     BT_Structured,
     BT_Texture,
     BT_Uniform,
+    BT_Vertex,
+    BT_Index,
     BufferType_Max
 };
 

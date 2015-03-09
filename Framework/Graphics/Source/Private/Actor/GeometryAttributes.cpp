@@ -10,8 +10,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 GeometryAttributes::GeometryAttributes()
 {
-	VBO = 0;
-	IBO = 0;
+    Prim = 0;
 	HasNormal = false;
 	HasTCoord = false;
 	VertexComponentCount = false;

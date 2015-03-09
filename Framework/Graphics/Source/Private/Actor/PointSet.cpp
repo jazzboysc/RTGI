@@ -18,7 +18,6 @@ PointSet::PointSet(Material* material)
 //----------------------------------------------------------------------------
 PointSet::~PointSet()
 {
-	glDeleteBuffers(1, &mVBO);
 }
 //----------------------------------------------------------------------------
 void PointSet::Render(int technique, int pass, SubRenderer* subRenderer)
@@ -36,31 +35,21 @@ void PointSet::OnRender(Pass*, PassInfo*)
 //----------------------------------------------------------------------------
 void PointSet::CreateDeviceResource(GPUDevice* device)
 {
-    glGenBuffers(1, &mVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-
+    size_t bufferSize = sizeof(float)*mPointCount*mComponent;
+    mPrimitive->VB = new VertexBuffer();
     if( mVertexData.size() > 0 )
     {
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mPointCount*mComponent,
-            (GLvoid*)&mVertexData[0], GL_STATIC_DRAW);
+        mPrimitive->VB->LoadFromSystemMemory(device, bufferSize,
+            (void*)&mVertexData[0], BU_Static_Draw);
     }
     else
     {
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float)*mPointCount*mComponent, 0, 
-            GL_STATIC_DRAW);
+        mPrimitive->VB->ReserveImmutableDeviceResource(device, bufferSize);
     }
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
 
     // Create shader programs.
     GeometryAttributes attributes;
-    attributes.VBO = mVBO;
-    attributes.IBO = 0;
+    attributes.Prim = mPrimitive;
     attributes.HasNormal = false;
     attributes.HasTCoord = false;
     attributes.VertexComponentCount = mComponent;

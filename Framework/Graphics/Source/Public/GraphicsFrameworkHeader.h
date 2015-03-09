@@ -35,6 +35,8 @@
 #include "StructuredBuffer.h"
 #include "DispatchIndirectBuffer.h"
 #include "UniformBuffer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 // Material
 #include "Shader.h"
@@ -72,7 +74,7 @@
 #include "QuadMesh.h"
 #include "RenderCache.h"
 #include "SpatialInfo.h"
-#include "GeometryInfo.h"
+#include "Primitive.h"
 
 // Renderers
 #include "BufferBase.h"
