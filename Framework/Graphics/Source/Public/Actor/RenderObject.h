@@ -32,6 +32,12 @@ public:
     void SetCamera(Camera* camera);
     Camera* GetCamera() const;
 
+    // Primitive access.
+    inline Primitive* GetPrimitive() const;
+
+    // Material access.
+    inline Material* GetMaterial() const;
+
     // Spatial information delegate functions.
     inline void SetSpatialInfo(SpatialInfo* spatialInfo);
     inline SpatialInfo* GetSpatialInfo();

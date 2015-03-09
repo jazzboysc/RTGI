@@ -4,6 +4,16 @@
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
+Primitive* RenderObject::GetPrimitive() const
+{
+    return mPrimitive;
+}
+//----------------------------------------------------------------------------
+Material* RenderObject::GetMaterial() const
+{
+    return mMaterial;
+}
+//----------------------------------------------------------------------------
 void RenderObject::SetSpatialInfo(SpatialInfo* spatialInfo)
 {
     mSpatialInfo = spatialInfo;
