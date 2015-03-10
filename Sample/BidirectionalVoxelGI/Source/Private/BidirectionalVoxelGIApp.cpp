@@ -243,8 +243,14 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mVoxelizer->SetRenderSet(mVoxelizedObjects);
 
     // Create G-buffer renderer.
+    GBufferDesc gbufferDesc;
+    gbufferDesc.Width = Width;
+    gbufferDesc.Height = Height;
+    gbufferDesc.PositionFormat = BF_RGBAF;
+    gbufferDesc.NormalFormat = BF_RGBAF;
+    gbufferDesc.AlbedoFormat = BF_RGBAF;
     mGBufferRenderer = new GBufferRenderer(mDevice);
-    mGBufferRenderer->CreateGBuffer(Width, Height, BF_RGBAF);
+    mGBufferRenderer->CreateGBuffer(&gbufferDesc);
     mGBufferRenderer->SetRenderSet(mSceneObjects);
 
     // Create shadow map renderer.

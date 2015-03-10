@@ -54,7 +54,8 @@ public:
 
     // FrameBuffer stuff.
     void AddFrameBufferTarget(const std::string& name, int width, int height, 
-        int depth, TextureType type, BufferFormat format);
+        int depth, TextureType type, BufferFormat format, 
+        bool generateMipmap = false);
     int GetFrameBufferTargetCount() const;
     RendererOutput* GetFrameBufferTarget(int i) const;
     RendererOutput* GetFrameBufferTargetByName(const std::string& name) const;
@@ -85,6 +86,7 @@ public:
         Camera* camera = 0);
     virtual void OnRender(int technique, int pass, Camera* camera);
 
+    // Timer stuff.
     void SetTimer(GPUTimer* timer);
     GPUTimer* GetTimer() const;
     double GetTimeElapsed() const;

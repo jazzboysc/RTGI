@@ -107,7 +107,8 @@ RenderSet* SubRenderer::GetRenderSet() const
 }
 //----------------------------------------------------------------------------
 void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
-    int height, int depth, TextureType type, BufferFormat format)
+    int height, int depth, TextureType type, BufferFormat format, 
+    bool generateMipmap)
 {
     assert(GetFrameBufferTargetByName(name) == 0);
     assert(GetGenericBufferTargetByName(name) == 0);
@@ -116,8 +117,11 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     switch( type )
     {
     case TT_Texture2D:
+        // TODO:
+        // Only support Texture2D mipmap for now.
         texture = new Texture2D();
-        ((Texture2D*)texture)->CreateRenderTarget(mDevice, width, height, format);
+        ((Texture2D*)texture)->CreateRenderTarget(mDevice, width, height, 
+            format, generateMipmap);
         break;
     case TT_Texture2DArray:
         texture = new Texture2DArray();

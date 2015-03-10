@@ -23,16 +23,18 @@ GBufferRenderer::~GBufferRenderer()
     mPSB = 0;
 }
 //----------------------------------------------------------------------------
-void GBufferRenderer::CreateGBuffer(int width, int height, 
-    BufferFormat format)
+void GBufferRenderer::CreateGBuffer(GBufferDesc* desc)
 {
-    AddFrameBufferTarget(RTGI_GBuffer_Position_Name, width, height, 0, 
-        TT_Texture2D, format);
-    AddFrameBufferTarget(RTGI_GBuffer_Normal_Name, width, height, 0, 
-        TT_Texture2D, format);
-    AddFrameBufferTarget(RTGI_GBuffer_Albedo_Name, width, height, 0, 
-        TT_Texture2D, format);
-    CreateFrameBuffer(width, height, 0, TT_Texture2D);
+    assert(desc);
+
+    AddFrameBufferTarget(RTGI_GBuffer_Position_Name, desc->Width, 
+        desc->Height, 0, TT_Texture2D, desc->PositionFormat, 
+        desc->PositionMipmap);
+    AddFrameBufferTarget(RTGI_GBuffer_Normal_Name, desc->Width, desc->Height, 
+        0, TT_Texture2D, desc->NormalFormat, desc->NormalMipmap);
+    AddFrameBufferTarget(RTGI_GBuffer_Albedo_Name, desc->Width, desc->Height, 
+        0, TT_Texture2D, desc->AlbedoFormat, desc->AlbedoMipmap);
+    CreateFrameBuffer(desc->Width, desc->Height, 0, TT_Texture2D);
 }
 //----------------------------------------------------------------------------
 void GBufferRenderer::Render(int technique, int pass, Camera* camera)
