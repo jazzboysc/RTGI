@@ -42,3 +42,9 @@ void Texture::BindToSampler(unsigned int index, SamplerDesc* sampler)
     mTextureHandle->Device->TextureBindToSampler(this, index, sampler);
 }
 //--------------------------------------------------------------------------
+void Texture::GenerateMipmap()
+{
+    assert(HasMipMap);
+
+}
+//--------------------------------------------------------------------------

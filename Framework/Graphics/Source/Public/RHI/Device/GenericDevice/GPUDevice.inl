@@ -180,6 +180,11 @@ void GPUDevice::TextureBindToSampler(Texture* texture, unsigned int index,
     (this->*_TextureBindToSampler)(texture, index, sampler);
 }
 //----------------------------------------------------------------------------
+void GPUDevice::TextureGenerateMipmap(Texture* texture)
+{
+    (this->*_TextureGenerateMipmap)(texture);
+}
+//----------------------------------------------------------------------------
 void GPUDevice::TextureBindToImageUnit(Texture* texture, unsigned int unit, 
     BufferAccess access)
 {

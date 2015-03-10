@@ -86,6 +86,7 @@ typedef void (GPUDevice::*GPUDeviceTextureBindToImageUnit)(Texture* texture,
     unsigned int unit, BufferAccess access);
 typedef void (GPUDevice::*GPUDeviceTextureBindToSampler)(Texture* texture, 
     unsigned int index, SamplerDesc* sampler);
+typedef void (GPUDevice::*GPUDeviceTextureGenerateMipmap)(Texture* texture);
 typedef void (GPUDevice::*GPUDeviceTexture1DGetDataFromGPUMemory)(
     Texture* texture, void* dstData);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture2DLoadFromSystemMemory)(
@@ -198,6 +199,7 @@ public:
         BufferAccess access);
     inline 	void TextureBindToSampler(Texture* texture, unsigned int index, 
         SamplerDesc* sampler);
+    inline void TextureGenerateMipmap(Texture* texture);
     inline  void Texture1DGetDataFromGPUMemory(Texture* texture, 
         void* dstData);
     inline 	TextureHandle* Texture2DLoadFromSystemMemory(Texture* texture, 
@@ -279,6 +281,7 @@ protected:
     GPUDeviceTexture1DUpdateFromPixelBuffer       _Texture1DUpdateFromPixelBuffer;
     GPUDeviceTextureBindToImageUnit               _TextureBindToImageUnit;
     GPUDeviceTextureBindToSampler                 _TextureBindToSampler;
+    GPUDeviceTextureGenerateMipmap                _TextureGenerateMipmap;
     GPUDeviceTexture1DGetDataFromGPUMemory        _Texture1DGetDataFromGPUMemory;
     GPUDeviceTexture2DLoadFromSystemMemory        _Texture2DLoadFromSystemMemory;
     GPUDeviceTexture2DLoadFromTextureBuffer       _Texture2DLoadFromTextureBuffer;

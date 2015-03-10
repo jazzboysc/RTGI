@@ -47,6 +47,8 @@ public:
     void BindToImageUnit(unsigned int unit, BufferAccess access);
     void BindToSampler(unsigned int index, SamplerDesc* sampler);
 
+    void GenerateMipmap();
+
 protected:
     Texture();
 

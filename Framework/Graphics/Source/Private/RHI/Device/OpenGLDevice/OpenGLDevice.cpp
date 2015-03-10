@@ -644,6 +644,24 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
     }
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__TextureGenerateMipmap(Texture* texture)
+{
+    OpenGLTextureHandle* textureHandle =
+        (OpenGLTextureHandle*)texture->GetTextureHandle();
+    assert(textureHandle);
+
+    TextureType type = texture->GetType();
+    GLenum target = gsTextureTargets[(int)type];
+    glBindTexture(target, textureHandle->mTexture);
+    glGenerateMipmap(target);
+    glBindTexture(target, 0);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
 void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture, 
     void* dstData)
 {
@@ -1207,6 +1225,7 @@ OpenGLDevice::OpenGLDevice()
     _Texture1DUpdateFromPixelBuffer = (GPUDeviceTexture1DUpdateFromPixelBuffer)&OpenGLDevice::__Texture1DUpdateFromPixelBuffer;
     _TextureBindToImageUnit = (GPUDeviceTextureBindToImageUnit)&OpenGLDevice::__TextureBindToImageUnit;
     _TextureBindToSampler = (GPUDeviceTextureBindToSampler)&OpenGLDevice::__TextureBindToSampler;
+    _TextureGenerateMipmap = (GPUDeviceTextureGenerateMipmap)&OpenGLDevice::__TextureGenerateMipmap;
     _Texture1DGetDataFromGPUMemory = (GPUDeviceTexture1DGetDataFromGPUMemory)&OpenGLDevice::__Texture1DGetDataFromGPUMemory;
     _Texture2DLoadFromSystemMemory = (GPUDeviceTexture2DLoadFromSystemMemory)&OpenGLDevice::__Texture2DLoadFromSystemMemory;
     _Texture2DLoadFromTextureBuffer = (GPUDeviceTexture2DLoadFromTextureBuffer)&OpenGLDevice::__Texture2DLoadFromTextureBuffer;

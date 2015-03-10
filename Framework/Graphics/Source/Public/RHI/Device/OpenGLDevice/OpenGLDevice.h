@@ -61,6 +61,7 @@ private:
     void __Texture1DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
     void __TextureBindToImageUnit(Texture* texture, unsigned int unit, BufferAccess access);
     void __TextureBindToSampler(Texture* texture, unsigned int index, SamplerDesc* sampler);
+    void __TextureGenerateMipmap(Texture* texture);
     void __Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData);
     TextureHandle* __Texture2DLoadFromSystemMemory(Texture* texture, 
         BufferInternalFormat internalFormat, int width, int height, 
