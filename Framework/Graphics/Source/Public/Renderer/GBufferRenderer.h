@@ -14,17 +14,22 @@ namespace RTGI
 #define RTGI_GBuffer_Position_Name "Position"
 #define RTGI_GBuffer_Normal_Name   "Normal"
 #define RTGI_GBuffer_Albedo_Name   "Albedo"
+#define RTGI_GBuffer_RPC_Name      "RPC"
 
 struct GBufferDesc
 {
     int Width;
     int Height;
+
     BufferFormat PositionFormat;
     BufferFormat NormalFormat;
     BufferFormat AlbedoFormat;
+    BufferFormat RPCFormat;
+
     bool PositionMipmap;
     bool NormalMipmap;
     bool AlbedoMipmap;
+    bool RPCMipmap;
 
     GBufferDesc()
     {
@@ -33,9 +38,11 @@ struct GBufferDesc
         PositionFormat = BF_Unknown;
         NormalFormat = BF_Unknown;
         AlbedoFormat = BF_Unknown;
+        RPCFormat = BF_Unknown;
         PositionMipmap = false;
         NormalMipmap = false;
         AlbedoMipmap = false;
+        RPCMipmap = false;
     }
 };
 

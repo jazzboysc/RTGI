@@ -34,6 +34,12 @@ void GBufferRenderer::CreateGBuffer(GBufferDesc* desc)
         0, TT_Texture2D, desc->NormalFormat, desc->NormalMipmap);
     AddFrameBufferTarget(RTGI_GBuffer_Albedo_Name, desc->Width, desc->Height, 
         0, TT_Texture2D, desc->AlbedoFormat, desc->AlbedoMipmap);
+    if( desc->RPCFormat != BF_Unknown )
+    {
+        AddFrameBufferTarget(RTGI_GBuffer_RPC_Name, desc->Width, desc->Height,
+            0, TT_Texture2D, desc->RPCFormat, desc->RPCMipmap);
+    }
+
     CreateFrameBuffer(desc->Width, desc->Height, 0, TT_Texture2D);
 }
 //----------------------------------------------------------------------------

@@ -58,6 +58,9 @@ public:
 	glm::mat4 GetViewTransform();
 	glm::mat4 GetProjectionTransform();
 
+    inline glm::mat4 GetViewCacheTransform();
+    inline glm::mat4 GetProjectionCacheTransform();
+
 	bool IsPerspective() const;
 
     // View frustum.

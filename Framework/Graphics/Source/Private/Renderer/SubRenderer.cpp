@@ -110,6 +110,7 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     int height, int depth, TextureType type, BufferFormat format, 
     bool generateMipmap)
 {
+    assert(width > 0 && format != BF_Unknown);
     assert(GetFrameBufferTargetByName(name) == 0);
     assert(GetGenericBufferTargetByName(name) == 0);
 

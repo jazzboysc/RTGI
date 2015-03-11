@@ -42,6 +42,9 @@ private:
 
     Camera* mLightProjector;
 
+    // GI temporal coherence.
+    bool mUseTC;
+
     // Scene voxelization.
     enum { VOXEL_DIMENSION = 128 };
     enum { VOXEL_LOCAL_GROUP_DIM = 8 };

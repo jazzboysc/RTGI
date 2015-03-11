@@ -42,6 +42,7 @@ private:
 
     // G-buffer pass.
     ShaderUniform mWorldLocGBuffer, mViewLocGBuffer, mProjLocGBuffer;
+    ShaderUniform mWorldCacheLocGBuffer, mViewCacheLocGBuffer, mProjCacheLocGBuffer;
     ShaderUniform mMaterialColorLocGBuffer;
 
     // RSM pass.

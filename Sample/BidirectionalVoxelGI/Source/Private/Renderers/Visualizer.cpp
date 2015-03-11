@@ -211,6 +211,7 @@ Visualizer::~Visualizer()
     mGBufferPositionTexture = 0;
     mGBufferNormalTexture = 0;
     mGBufferAlbedoTexture = 0;
+    mGBufferRPCTexture = 0;
     mRSMPositionTextureArray = 0;
     mRSMNormalTextureArray = 0;
     mRSMFluxTextureArray = 0;
@@ -257,6 +258,9 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mGBufferAlbedoTexture = 
         (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
         RTGI_GBuffer_Albedo_Name);
+    mGBufferRPCTexture =
+        (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
+        RTGI_GBuffer_RPC_Name);
     mRSMPositionTextureArray = 
         (Texture2DArray*)rsmRenderer->GetFrameBufferTextureByName(
         RTGI_RSMRenderer_RSMPosition_Name);
@@ -487,6 +491,11 @@ void Visualizer::SetShowMode(ShowMode mode)
     case SM_GBufferAlbedo:
         mScreenQuad->ShowMode = 0;
         mScreenQuad->TempTexture = mGBufferAlbedoTexture;
+        break;
+
+    case SM_GBufferRPC:
+        mScreenQuad->ShowMode = 0;
+        mScreenQuad->TempTexture = mGBufferRPCTexture;
         break;
 
     case SM_RSMPosition:

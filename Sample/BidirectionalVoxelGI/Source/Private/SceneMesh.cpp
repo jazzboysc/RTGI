@@ -44,6 +44,9 @@ void SceneMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mWorldLocGBuffer, "World");
     program->GetUniformLocation(&mViewLocGBuffer, "View");
     program->GetUniformLocation(&mProjLocGBuffer, "Proj");
+    program->GetUniformLocation(&mWorldCacheLocGBuffer, "WorldCache");
+    program->GetUniformLocation(&mViewCacheLocGBuffer, "ViewCache");
+    program->GetUniformLocation(&mProjCacheLocGBuffer, "ProjCache");
     program->GetUniformLocation(&mMaterialColorLocGBuffer, "MaterialColor");
 
     // Get RSM pass uniform locations.
@@ -105,6 +108,9 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
         mWorldLocGBuffer.SetValue(worldTrans);
         mMaterialColorLocGBuffer.SetValue(MaterialColor);
 
+        glm::mat4 worldCacheTrans = *mRenderCache->GetWorldCache();
+        mWorldCacheLocGBuffer.SetValue(worldCacheTrans);
+
         if( mCamera )
         {
             mat4 viewTrans = mCamera->GetViewTransform();
@@ -112,6 +118,12 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
 
             mat4 projTrans = mCamera->GetProjectionTransform();
             mProjLocGBuffer.SetValue(projTrans);
+
+            mat4 viewCacheTrans = mCamera->GetViewCacheTransform();
+            mViewCacheLocGBuffer.SetValue(viewCacheTrans);
+
+            mat4 projCacheTrans = mCamera->GetProjectionCacheTransform();
+            mProjCacheLocGBuffer.SetValue(projCacheTrans);
         }
     }
 

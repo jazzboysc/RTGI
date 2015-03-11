@@ -13,6 +13,7 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	Title = "Bidirectional Voxel GI";
     mIsRotatingModel = false;
     mIsWireframe = false;
+    mUseTC = true;
     mVoxelizerType = Voxelizer::VT_SVO;
 }
 //----------------------------------------------------------------------------
@@ -74,10 +75,18 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     Pass* passShadow = new Pass(shadowProgramInfo);
 
     ShaderProgramInfo gbufferProgramInfo;
-    gbufferProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vGBuffer.glsl";
-    gbufferProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fGBuffer.glsl";
+    if( mUseTC )
+    {
+        gbufferProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vGBufferRPC.glsl";
+        gbufferProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fGBufferRPC.glsl";
+    }
+    else
+    {
+        gbufferProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vGBuffer.glsl";
+        gbufferProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fGBuffer.glsl";
+    }
     gbufferProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-        ShaderType::ST_Fragment;
+                                         ShaderType::ST_Fragment;
     Pass* passGBuffer = new Pass(gbufferProgramInfo);
 
     ShaderProgramInfo rsmProgramInfo;
@@ -249,6 +258,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     gbufferDesc.PositionFormat = BF_RGBAF;
     gbufferDesc.NormalFormat = BF_RGBAF;
     gbufferDesc.AlbedoFormat = BF_RGBAF;
+    gbufferDesc.RPCFormat = BF_RGBAF;
     mGBufferRenderer = new GBufferRenderer(mDevice);
     mGBufferRenderer->CreateGBuffer(&gbufferDesc);
     mGBufferRenderer->SetRenderSet(mSceneObjects);
@@ -347,6 +357,11 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddRadioButton("G-Buffer Normal", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("G-Buffer Albedo", 16, infoStartY, 60, 20, false);
+    if( mUseTC )
+    {
+        infoStartY += infoIncY;
+        InformationPanel::GetInstance()->AddRadioButton("G-Buffer RPC", 16, infoStartY, 60, 20, false);
+    }
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("RSM Position", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
@@ -523,6 +538,11 @@ void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^ sender, System:
     if( radioButton->Name == "G-Buffer Albedo" )
     {
         mVisualizer->SetShowMode(Visualizer::SM_GBufferAlbedo);
+    }
+
+    if( radioButton->Name == "G-Buffer RPC" )
+    {
+        mVisualizer->SetShowMode(Visualizer::SM_GBufferRPC);
     }
 
     if( radioButton->Name == "RSM Position" )

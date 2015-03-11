@@ -145,6 +145,7 @@ public:
         SM_GBufferPosition,
         SM_GBufferNormal,
         SM_GBufferAlbedo,
+        SM_GBufferRPC,
         SM_RSMPosition,
         SM_RSMNormal,
         SM_RSMFlux,
@@ -184,6 +185,7 @@ private:
     Texture2DPtr mGBufferPositionTexture;
     Texture2DPtr mGBufferNormalTexture;
     Texture2DPtr mGBufferAlbedoTexture;
+    Texture2DPtr mGBufferRPCTexture;
     Texture2DArrayPtr mRSMPositionTextureArray;
     Texture2DArrayPtr mRSMNormalTextureArray;
     Texture2DArrayPtr mRSMFluxTextureArray;
