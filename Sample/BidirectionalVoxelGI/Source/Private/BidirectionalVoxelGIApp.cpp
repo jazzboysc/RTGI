@@ -5,6 +5,8 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
+//#define SHOW_TIMING
+
 //----------------------------------------------------------------------------
 BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 {
@@ -315,9 +317,12 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 	infoPanel->SetDesktopLocation(screenX + Width + 12, screenY - 30);
 
     // Create GUI elements.
+
     InformationPanel::GetInstance()->AddListener(this);
+
     int infoStartY = 20;
     int infoIncY = 20;
+#ifdef SHOW_TIMING
     InformationPanel::GetInstance()->AddTimingLabel("Scene Voxelization Pass", 16, infoStartY);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, infoStartY);
@@ -332,7 +337,10 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddTimingLabel("Indirect Lighting Pass", 16, infoStartY);
     infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddTimingLabel("Visualizer Pass", 16, infoStartY);
+    infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddTimingLabel("Total", 16, infoStartY);
+#endif
 
     infoStartY = 20;
     InformationPanel::GetInstance()->AddRadioButton("Voxel Buffer", 16, infoStartY, 60, 20, false);
@@ -406,57 +414,77 @@ void BidirectionalVoxelGIApp::FrameFunc()
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+#ifdef SHOW_TIMING
     InformationPanel^ infoPanel = InformationPanel::GetInstance();
     static double workLoad;
     static double totalWorkLoad;
     totalWorkLoad = 0.0;
+#endif
 
     // Scene voxelization pass.
     mVoxelizer->Render(0, SMP_Voxelization);
+#ifdef SHOW_TIMING
     workLoad = mVoxelizer->GetTimeElapsed();
     totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Scene Voxelization Pass", workLoad);
+#endif
 
     // Scene shadow pass.
     mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);
+#ifdef SHOW_TIMING
     workLoad = mShadowMapRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Scene Shadow Pass", workLoad);
+#endif
 
     // Scene G-buffer pass.
     mGBufferRenderer->Render(0, SMP_GBuffer, mMainCamera);
+#ifdef SHOW_TIMING
     workLoad = mGBufferRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Scene G-buffer Pass", workLoad);
+#endif
 
     // Scene light RSM pass.
     mRSMRenderer->Render(0, SMP_RSM, 0);
+#ifdef SHOW_TIMING
     workLoad = mRSMRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("RSM Pass", workLoad);
+#endif
 
     // Sample RSM pass (VPL generation).
     mVPLGenerator->Run();
-    workLoad = mTimer->GetTimeElapsed();
+#ifdef SHOW_TIMING
+    workLoad = mVPLGenerator->GetTimeElapsed();
     totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("VPL Creation Pass", workLoad);
+#endif
 
     // Deferred direct illumination pass.
     mDirectLightingRenderer->Render();
-    workLoad = mTimer->GetTimeElapsed();
+#ifdef SHOW_TIMING
+    workLoad = mDirectLightingRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Direct Lighting Pass", workLoad);
+#endif
 
     // Deferred indirect illumination pass.
     mIndirectLightingRenderer->Render();
-    workLoad = mTimer->GetTimeElapsed();
+#ifdef SHOW_TIMING
+    workLoad = mIndirectLightingRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Indirect Lighting Pass", workLoad);
-
-    infoPanel->SetTimingLabelValue("Total", totalWorkLoad);
+#endif
 
     // Show rendering result.
     mVisualizer->Render(0, 0);
+#ifdef SHOW_TIMING
+    workLoad = mVisualizer->GetTimeElapsed();
+    totalWorkLoad += workLoad;
+    infoPanel->SetTimingLabelValue("Visualizer Pass", workLoad);
+    infoPanel->SetTimingLabelValue("Total", totalWorkLoad);
+#endif
 }
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::Terminate()
