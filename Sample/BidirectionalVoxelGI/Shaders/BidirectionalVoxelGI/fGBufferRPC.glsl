@@ -12,12 +12,12 @@ uniform vec3 MaterialColor;
 void main()
 {
     vec3 vNormal = normalize(vNormalWorld.xyz);
-	vNormal.xyz = (vNormal.xyz + 1.0) * 0.5;
+	vNormal.xyz = (vNormal.xyz + 1.0)*0.5;
 
     vec3 vNDC = vPositionNDC.xyz / vPositionNDC.w;
     vec3 vRPC = vPositionNDCCache.xyz / vPositionNDCCache.w;
     vec3 difference = vNDC - vRPC;
-    difference = difference*200.0;
+    difference = (difference*200.0 + 1.0)*0.5;
 
     Output[0] = vPositionWorld;
     Output[1] = vec4(vNormal, 0.0);

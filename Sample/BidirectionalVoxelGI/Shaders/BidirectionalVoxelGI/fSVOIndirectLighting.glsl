@@ -1,5 +1,6 @@
 #version 430 core
 
+#include "BidirectionalVoxelGI/sVirtualPointLight.glsl"
 #include "BidirectionalVoxelGI/sSparseVoxelOctree.glsl"
 
 in vec2 pTCoord;
@@ -17,19 +18,6 @@ uniform sampler2D GBufferAlbedoSampler;
 uniform vec3 SceneBBCenter;
 uniform vec3 SceneBBExtension;
 uniform int dim;
-
-struct VPL
-{
-    vec4 WorldPosition;
-    vec4 WorldNormal;
-    vec4 Flux;
-    mat4 View;
-};
-
-layout(std430, binding = 0)  buffer _VPLBuffer
-{
-    VPL vpls[];
-} VPLBuffer;
 
 void main()
 {
