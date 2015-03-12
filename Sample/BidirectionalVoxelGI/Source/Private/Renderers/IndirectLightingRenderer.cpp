@@ -74,7 +74,7 @@ IndirectLightingRenderer::~IndirectLightingRenderer()
 void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, 
     int height, BufferFormat format, int vplCount, int patternSize, 
     AABB* sceneBB, int voxelGridDim, GBufferRenderer* gbufferRenderer,
-    VPLGenerator* vplGenerator, Voxelizer* voxelizer)
+    VPLGenerator* vplGenerator, Voxelizer* voxelizer, bool useTC)
 {
     mVoxelizerType = voxelizer->GetVoxelizerType();
 
@@ -88,8 +88,16 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     }
     else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
-        indirectLightingProgramInfo.FShaderFileName =
-            "BidirectionalVoxelGI/fSVOIndirectLighting.glsl";
+        if( useTC )
+        {
+            indirectLightingProgramInfo.FShaderFileName =
+                "BidirectionalVoxelGI/fSVOIndirectLightingTC.glsl";
+        }
+        else
+        {
+            indirectLightingProgramInfo.FShaderFileName =
+                "BidirectionalVoxelGI/fSVOIndirectLighting.glsl";
+        }
     }
     else
     {

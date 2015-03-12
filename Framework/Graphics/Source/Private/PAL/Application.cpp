@@ -15,12 +15,12 @@ Application* Application::mInstance = 0;
 //----------------------------------------------------------------------------
 Application::Application()
 {
+    FrameCounter = 0;
 	mOpenGLContext = wglGetCurrentContext();
 	mWindowsDeviceContext = wglGetCurrentDC();
 
     assert( mInstance == 0 );
     mInstance = this;
-
 }
 //----------------------------------------------------------------------------
 Application::~Application()
@@ -212,7 +212,11 @@ void Application::Run()
 //----------------------------------------------------------------------------
 void Application::FrameFunc()
 {
+    // Update frame status.
+    ++FrameCounter;
+
 	this->FrameFunc();
+
 	// Swap buffers
 	glfwSwapBuffers(Window);
 	glfwPollEvents();

@@ -289,7 +289,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     mIndirectLightingRenderer = new IndirectLightingRenderer(mDevice);
     mIndirectLightingRenderer->Initialize(mDevice, Width, Height, BF_RGBAF, 
         VPL_SAMPLE_COUNT, INTERLEAVED_PATTERN_SIZE, &mSceneBB, VOXEL_DIMENSION, 
-        mGBufferRenderer, mVPLGenerator, mVoxelizer);
+        mGBufferRenderer, mVPLGenerator, mVoxelizer, mUseTC);
 
     // Create visualizer.
     mVisualizer = new Visualizer(mDevice);
@@ -340,6 +340,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddTimingLabel("Visualizer Pass", 16, infoStartY);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddTimingLabel("Total", 16, infoStartY);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddTimingLabel("Frame Counter", 16, infoStartY);
 #endif
 
     infoStartY = 20;
@@ -484,6 +486,7 @@ void BidirectionalVoxelGIApp::FrameFunc()
     totalWorkLoad += workLoad;
     infoPanel->SetTimingLabelValue("Visualizer Pass", workLoad);
     infoPanel->SetTimingLabelValue("Total", totalWorkLoad);
+    infoPanel->SetTimingLabelValue("Frame Counter", FrameCounter);
 #endif
 }
 //----------------------------------------------------------------------------

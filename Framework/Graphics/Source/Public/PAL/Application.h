@@ -41,6 +41,7 @@ public:
 	GLFWwindow* Window;
 	int Width = 1024, Height = 768;
 	std::string Title = "Default Application";
+    unsigned int FrameCounter;
 
 protected:
 	GPUDevicePtr mDevice;

@@ -44,7 +44,7 @@ void main()
         SVO_MAX_LEVEL_DIM, SVO_MAX_LEVEL_DIM));
 
     vec3 indirectColor = vec3(0.0, 0.0, 0.0);
-    for( int i = 0; i < sampleVPLCount; ++i )
+    for( int i = 0; i < sampleVPLCount/4; ++i )
     {
         // Fetch VPL.
         VPL vpl = VPLBuffer.vpls[vplBufferIndex + i];
