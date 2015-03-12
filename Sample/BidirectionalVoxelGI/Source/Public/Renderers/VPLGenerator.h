@@ -13,6 +13,14 @@ namespace RTGI
 
 #define RTGI_VPLGenerator_VPLBuffer_Name "VPLBuffer"
 
+struct VPL
+{
+    vec4 WorldPosition;
+    vec4 WorldNormal;
+    vec4 Flux;
+    mat4 View;
+};
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/29/2014

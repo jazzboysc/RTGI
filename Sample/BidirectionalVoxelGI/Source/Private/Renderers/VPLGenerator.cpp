@@ -101,7 +101,7 @@ void VPLGenerator::Initialize(GPUDevice* device, int vplCount)
         BF_RGBA, BCT_Float, 0);
 
     // Create VPL buffer.
-    GLuint vplBufferSize = (sizeof(vec4) * 3 + sizeof(mat4)) * mVPLCount;
+    GLuint vplBufferSize = sizeof(VPL) * mVPLCount;
     AddGenericBufferTarget(RTGI_VPLGenerator_VPLBuffer_Name, 
         RDT_StructuredBuffer, vplBufferSize, BU_Dynamic_Copy, BF_BindIndex, 0);
 
