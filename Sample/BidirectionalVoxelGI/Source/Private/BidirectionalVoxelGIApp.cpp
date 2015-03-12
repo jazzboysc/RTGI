@@ -384,6 +384,8 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::FrameFunc()
 {
+    mModel->UpdateRenderCache();
+
     static float angle = 0.0f;
     if( mIsRotatingModel )
     {
@@ -391,7 +393,6 @@ void BidirectionalVoxelGIApp::FrameFunc()
         mat4 rot;
         rot = rotate(mat4(), radians(angle), vec3(0, 1, 0));
         vec3 trans = mModel->GetWorldTranslation();
-        mModel->UpdateRenderCache();
         mModel->SetWorldTransform(rot);
         mModel->SetWorldTranslation(trans);
     }

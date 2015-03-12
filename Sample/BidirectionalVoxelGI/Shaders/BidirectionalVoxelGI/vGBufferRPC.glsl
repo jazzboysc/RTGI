@@ -5,6 +5,7 @@ in vec3 vNormal;
 
 out vec4 vNormalWorld;
 out vec4 vPositionWorld;
+out vec4 vPositionNDC;
 out vec4 vPositionNDCCache;
 
 uniform mat4 World;
@@ -16,8 +17,9 @@ uniform mat4 ProjCache;
 
 void main()
 {
-    vPositionNDCCache = ProjCache * ViewCache * WorldCache * vPosition;
     vPositionWorld = World * vPosition;
+    vPositionNDC = Proj * View * vPositionWorld;
+    vPositionNDCCache = ProjCache * ViewCache * WorldCache * vPosition;
     vNormalWorld = World * vec4(vNormal, 0.0);
-    gl_Position = Proj * View * vPositionWorld;
+    gl_Position = vPositionNDC;
 }
