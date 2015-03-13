@@ -10,7 +10,7 @@ SceneMesh::SceneMesh(Material* material, Camera* camera)
 	TriangleMesh(material, camera)
 {
     MaterialColor = vec3(0.75f, 0.75f, 0.75f);
-    LightColor = vec3(0.9686f, 0.9333f, 0.8392f)*2.8f;
+    LightColor = vec3(0.9686f, 0.9333f, 0.8392f)*1.8f;
     LightProjector = 0;
 }
 //----------------------------------------------------------------------------

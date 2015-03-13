@@ -33,7 +33,8 @@ void main()
     vec4 MaterialColor = texture(GBufferAlbedoSampler, pTCoord);
 
     int patternIndex = int(gl_FragCoord.x) % PatternSize + (int(gl_FragCoord.y) % PatternSize) * PatternSize;
-    int sampleVPLCount = VPLCount / (PatternSize*PatternSize);
+    int patternLen = PatternSize*PatternSize;
+    int sampleVPLCount = VPLCount / patternLen;
     int vplBufferIndex = sampleVPLCount * patternIndex;
 
     // Initialize SVO root node.
@@ -44,10 +45,10 @@ void main()
         SVO_MAX_LEVEL_DIM, SVO_MAX_LEVEL_DIM));
 
     vec3 indirectColor = vec3(0.0, 0.0, 0.0);
-    for( int i = 0; i < sampleVPLCount/4; ++i )
+    for( int i = 0; i < sampleVPLCount / patternLen; ++i )
     {
         // Fetch VPL.
-        VPL vpl = VPLBuffer.vpls[vplBufferIndex + i];
+        VPL vpl = VPLBuffer.vpls[vplBufferIndex + i*patternLen];
 
         // VPL visibility test.
         uint vTerm = SVOIntersectionTest(PositionWorld.xyz, vpl.WorldPosition.xyz, root);
