@@ -25,7 +25,8 @@ enum SubRendererOutput
     SRO_Unknown       = 0,
     SRO_FrameBuffer   = 1,
     SRO_GenericBuffer = 2,
-    SRO_BackBuffer    = 4
+    SRO_GenericImage  = 4,
+    SRO_BackBuffer    = 8
 };
 
 typedef BufferBase* (*SubRendererCreateRendererData)(GPUDevice* device, 
@@ -97,6 +98,9 @@ protected:
     void ApplyPipelineStateBlock(PipelineStateBlock* psb);
 
     GPUDevice* mDevice;
+
+    // InOuts.
+
 
     // Buffer inputs.
     std::vector<RendererInputPtr> mInputs;

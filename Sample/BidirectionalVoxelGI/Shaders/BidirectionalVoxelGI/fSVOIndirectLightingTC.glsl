@@ -5,9 +5,7 @@
 
 in vec2 pTCoord;
 
-out vec4 Output;
-
-#define PI 3.141593
+layout(binding = 0, rgba32f) uniform image2D IndirectLightingBuffer;
 
 uniform int VPLCount;
 uniform int PatternSize;
@@ -24,7 +22,8 @@ void main()
     vec4 PositionWorld = texture(GBufferPositionSampler, pTCoord);
     if( PositionWorld.w == 0.0 )
     {
-        discard;
+        imageStore(IndirectLightingBuffer, ivec2(int(gl_FragCoord.x), int(gl_FragCoord.y)), vec4(0.0, 0.0, 0.0, 1.0));
+        return;
     }
 
     vec3 NormalWorld = texture(GBufferNormalSampler, pTCoord).rgb;
@@ -69,5 +68,5 @@ void main()
     }
 
     indirectColor = MaterialColor.rgb * indirectColor * 2 * PI;
-    Output = vec4(indirectColor, 1.0);
+    imageStore(IndirectLightingBuffer, ivec2(int(gl_FragCoord.x), int(gl_FragCoord.y)), vec4(indirectColor, 1.0));
 }

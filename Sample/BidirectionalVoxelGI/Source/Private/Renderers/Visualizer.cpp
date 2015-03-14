@@ -274,9 +274,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mDirectLightingTexture = 
         (Texture2D*)directLightingRenderer->GetFrameBufferTextureByName(
         RTGI_DirectLightingRenderer_DirectLighting_Name);
-    mIndirectLightingTexture = 
-        (Texture2D*)indirectLightingRenderer->GetFrameBufferTextureByName(
-        RTGI_IndirectLightingRenderer_IndirectLighting_Name);
+    mIndirectLightingTexture = indirectLightingRenderer->IndirectLightingTexture;
 
     if( mVoxelizerType == Voxelizer::VT_Grid )
     {

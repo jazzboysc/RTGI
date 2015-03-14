@@ -69,6 +69,8 @@ public:
 
     void VPLVisibilityTest(bool value);
 
+    Texture2DPtr IndirectLightingTexture;
+
 private:
     PipelineStateBlockPtr mPSB;
     IndirectLightingScreenQuadPtr mIndirectLightingScreenQuad;
@@ -78,6 +80,8 @@ private:
     // SVO voxelizer.
     StructuredBufferPtr mVoxelFragmentListBuffer;
     StructuredBufferPtr mSVOBuffer;
+
+    bool mUseTC;
 };
 
 typedef RefPointer<IndirectLightingRenderer> IndirectLightingRendererPtr;

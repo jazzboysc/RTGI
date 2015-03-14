@@ -56,6 +56,8 @@ IndirectLightingRenderer::IndirectLightingRenderer(GPUDevice* device,
     SubRenderer(device, renderSet)
 {
     mVoxelizerType = Voxelizer::VT_Unknown;
+    mUseTC = true;
+
     mPSB = new PipelineStateBlock();
     mPSB->Flag |= PB_OutputMerger;
     mPSB->OutputMerger.Flag |= OMB_Clear;
@@ -69,6 +71,8 @@ IndirectLightingRenderer::~IndirectLightingRenderer()
 
     mVoxelFragmentListBuffer = 0;
     mSVOBuffer = 0;
+
+    IndirectLightingTexture = 0;
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Initialize(GPUDevice* device, int width, 
@@ -77,6 +81,7 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     VPLGenerator* vplGenerator, Voxelizer* voxelizer, bool useTC)
 {
     mVoxelizerType = voxelizer->GetVoxelizerType();
+    mUseTC = useTC;
 
     ShaderProgramInfo indirectLightingProgramInfo;
     indirectLightingProgramInfo.VShaderFileName = 
@@ -88,7 +93,7 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     }
     else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
-        if( useTC )
+        if( mUseTC )
         {
             indirectLightingProgramInfo.FShaderFileName =
                 "BidirectionalVoxelGI/fSVOIndirectLightingTC.glsl";
@@ -172,9 +177,21 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     }
 
     // Create output.
-    AddFrameBufferTarget(RTGI_IndirectLightingRenderer_IndirectLighting_Name,
-        width, height, 0, TT_Texture2D, format);
-    CreateFrameBuffer(width, height, 0, TT_Texture2D);
+    if( mUseTC )
+    {
+        IndirectLightingTexture = new Texture2D();
+        IndirectLightingTexture->CreateRenderTarget(mDevice, width, height,
+            format, false);
+    }
+    else
+    {
+        AddFrameBufferTarget(
+            RTGI_IndirectLightingRenderer_IndirectLighting_Name, width, 
+            height, 0, TT_Texture2D, format);
+        CreateFrameBuffer(width, height, 0, TT_Texture2D);
+        IndirectLightingTexture = (Texture2D*)GetFrameBufferTextureByName(
+            RTGI_IndirectLightingRenderer_IndirectLighting_Name);
+    }
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::Render()
@@ -185,8 +202,17 @@ void IndirectLightingRenderer::Render()
         mSVOBuffer->Bind(3);
     }
 
-    SubRenderer::RenderSingle(mIndirectLightingScreenQuad, 0, 0,
-        SRO_FrameBuffer, mPSB, 0);
+    if( mUseTC )
+    {
+        IndirectLightingTexture->BindToImageUnit(0, BA_Read_Write);
+        SubRenderer::RenderSingle(mIndirectLightingScreenQuad, 0, 0,
+            SRO_GenericImage, mPSB, 0);
+    }
+    else
+    {
+        SubRenderer::RenderSingle(mIndirectLightingScreenQuad, 0, 0,
+            SRO_FrameBuffer, mPSB, 0);
+    }
 }
 //----------------------------------------------------------------------------
 void IndirectLightingRenderer::VPLVisibilityTest(bool value)

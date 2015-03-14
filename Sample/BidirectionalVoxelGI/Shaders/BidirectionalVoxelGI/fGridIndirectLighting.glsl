@@ -6,8 +6,6 @@ in vec2 pTCoord;
 
 out vec4 Output;
 
-#define PI 3.141593
-
 uniform int VPLCount;
 uniform int PatternSize;
 uniform float BounceSingularity;
