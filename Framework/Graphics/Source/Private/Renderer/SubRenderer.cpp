@@ -279,8 +279,8 @@ void SubRenderer::AddGenericBufferTarget(const std::string& name,
     BufferBase* genericBufferTarget = msFactoryFunctions[functionIndex](
         mDevice, size, usage);
 
-    RendererOutput* ro = new RendererOutput(name, genericBufferTarget, false, 
-        flag, binding, reset, resetValue);
+    RendererOutput* ro = new RendererOutput(name, genericBufferTarget, 
+        ROT_Buffer, flag, binding, reset, resetValue);
     mGenericBufferTargets.push_back(ro);
 }
 //----------------------------------------------------------------------------

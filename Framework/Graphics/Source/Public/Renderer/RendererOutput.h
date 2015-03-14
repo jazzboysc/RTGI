@@ -13,6 +13,12 @@
 namespace RTGI
 {
 
+enum RendererOutputType
+{
+    ROT_Buffer = 0,
+    ROT_Texture
+};
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/29/2014
@@ -21,8 +27,9 @@ class RendererOutput : public RefObject
 {
 public:
     RendererOutput(const std::string& name, BufferBase* outputBuffer, 
-        bool isTexture = true, BindingFlag flag = BF_Bindless, 
-        unsigned int binding = 0, bool reset = false, int resetValue = 0);
+        RendererOutputType outputType = ROT_Texture, 
+        BindingFlag flag = BF_Bindless, unsigned int binding = 0, 
+        bool reset = false, int resetValue = 0);
     virtual ~RendererOutput();
 
     void Enable();
@@ -30,7 +37,7 @@ public:
 
     std::string Name;
     BufferBasePtr OutputBuffer;
-    bool IsTexture;
+    RendererOutputType OutputType;
     BindingFlag Flag;
     unsigned int Binding;
     bool Reset;

@@ -45,10 +45,10 @@ void main()
         SVO_MAX_LEVEL_DIM, SVO_MAX_LEVEL_DIM));
 
     vec3 indirectColor = vec3(0.0, 0.0, 0.0);
-    for( int i = 0; i < sampleVPLCount / patternLen; ++i )
+    for( int i = 0; i < sampleVPLCount; ++i )
     {
         // Fetch VPL.
-        VPL vpl = VPLBuffer.vpls[vplBufferIndex + i*patternLen];
+        VPL vpl = VPLBuffer.vpls[vplBufferIndex + i];
 
         // VPL visibility test.
         uint vTerm = SVOIntersectionTest(PositionWorld.xyz, vpl.WorldPosition.xyz, root);

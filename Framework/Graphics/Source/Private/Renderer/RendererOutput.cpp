@@ -13,12 +13,12 @@ RendererOutput::RendererOutput()
 }
 //----------------------------------------------------------------------------
 RendererOutput::RendererOutput(const std::string& name, 
-    BufferBase* outputBuffer, bool isTexture, BindingFlag flag, 
+    BufferBase* outputBuffer, RendererOutputType outputType, BindingFlag flag,
     unsigned int binding, bool reset, int resetValue)
 {
     Name = name;
     OutputBuffer = outputBuffer;
-    IsTexture = isTexture;
+    OutputType = outputType;
     Flag = flag;
     Binding = binding;
     Reset = reset;
@@ -32,7 +32,7 @@ RendererOutput::~RendererOutput()
 //----------------------------------------------------------------------------
 void RendererOutput::Enable()
 {
-    assert(!IsTexture);
+    assert(OutputType == ROT_Buffer);
     Buffer* buffer = (Buffer*)(BufferBase*)OutputBuffer;
     switch( Flag )
     {
