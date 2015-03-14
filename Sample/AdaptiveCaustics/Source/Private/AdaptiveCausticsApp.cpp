@@ -54,7 +54,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mLightProjector->SetLookAt(vec3(-0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
 
 	mLight = new Light;
-	mLight->SetProjector(\mLightProjector);
+	mLight->SetProjector(mLightProjector);
 	mLight->Color = vec3(0.9f, 0.9f, 0.7f);
 
 	mTimer = new GPUTimer();
@@ -141,10 +141,6 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mScene.refractor = new RenderSet();
 	mScene.refractor->AddRenderObject(mScene.mesh);
 
-
-	mFBO.backgroundObjectsPositionLightSpace;
-	mFBO.refractorNormalFrontBackLightSpace;
-
 	// Create information panel.
 	int screenX, screenY;
 	glfwGetWindowPos(Window, &screenX, &screenY);
@@ -155,13 +151,19 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	InformationPanel::GetInstance()->AddListener(this);
 	int infoStartY = 20;
 	int infoIncY = 20;
-	InformationPanel::GetInstance()->AddTimingLabel("Resource Gathering Pass", 16, infoStartY);
+	InformationPanel::GetInstance()->AddTimingLabel("Receiver Light Space Position Pass", 16, infoStartY);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddTimingLabel("Debug B", 16, infoStartY);
+	InformationPanel::GetInstance()->AddTimingLabel("Refractor Light Space Front Normal Pass", 16, infoStartY);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddTimingLabel("Refractor Light Space Back Normal Pass", 16, infoStartY);
 	infoStartY += infoIncY;
 
 	infoStartY = 20;
-	InformationPanel::GetInstance()->AddRadioButton("Voxel Buffer", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Receiver Light Space Position", 16, infoStartY, 60, 20, true);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddRadioButton("Refractor Light Space Front Normal", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddRadioButton("Refractor Light Space Back Normal", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
 
@@ -171,20 +173,36 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 
 	
-	mCausticsResourceRenderer = new CausticsResourceRenderer(
-		device, mScene.receiver, mScene.refractor);
-	CausticsResourceDesc causticsResDesc;
-	causticsResDesc.Height = this->Height;
-	causticsResDesc.Width = this->Width;
-	causticsResDesc.ReceiverPositionFormat = BF_RGBAF;
-	causticsResDesc.RefractorBackNormalFormat = BF_RGBAF;
-	causticsResDesc.RefractorFrontNormalFormat = BF_RGBAF;
-	causticsResDesc.ReceiverPositionMipmap = false;
-	causticsResDesc.RefractorBackNormalMipmap = false;
-	causticsResDesc.RefractorFrontNormalMipmap = false;
-	//causticsResDesc.RefractorAlbedoFormat = this->Height;
-	mCausticsResourceRenderer->CreateCausticsResource(&causticsResDesc);
-	mCausticsResourceRenderer->SetTimer(mTimer);
+	mReceiverResourceRenderer = new ReceiverResourceRenderer(device, mScene.receiver);
+	ReceiverResourceDesc receiverResourceDesc;
+	receiverResourceDesc.Width = this->Width;
+	receiverResourceDesc.Height = this->Height;
+	receiverResourceDesc.ReceiverPositionFormat = BF_RGBAF;
+	mReceiverResourceRenderer->CreateCausticsResource(&receiverResourceDesc);
+	mReceiverResourceRenderer->SetTimer(mTimer);
+
+	mRefractorResourceRenderer = new RefractorResourceRenderer(device, mScene.refractor);
+	RefractorResourceDesc refractorResourceDesc;
+	refractorResourceDesc.Width = this->Width;
+	refractorResourceDesc.Height = this->Height;
+	refractorResourceDesc.RefractorFrontNormalFormat = BF_RGBAF;
+	mRefractorResourceRenderer->CreateCausticsResource(&refractorResourceDesc);
+	mRefractorResourceRenderer->SetTimer(mTimer);
+
+	mRefractorResourceRendererBack = new RefractorResourceRendererBack(device, mScene.refractor);
+	RefractorResourceDescBack refractorResourceDescBack;
+	refractorResourceDescBack.Width = this->Width;
+	refractorResourceDescBack.Height = this->Height;
+	refractorResourceDescBack.RefractorBackNormalFormat = BF_RGBAF;
+	mRefractorResourceRendererBack->CreateCausticsResource(&refractorResourceDescBack);
+	mRefractorResourceRendererBack->SetTimer(mTimer);
+
+	mVisualizer = new Visualizer(device);
+	mVisualizer->Initialize(device, mReceiverResourceRenderer,
+		mRefractorResourceRenderer,
+		mRefractorResourceRendererBack,
+		mMainCamera);
+	mVisualizer->SetTimer(mTimer);
 
 	/*
 	glEnable(GL_DEPTH_TEST);
@@ -448,10 +466,20 @@ void AdaptiveCausticsApp::FrameFunc()
 	totalWorkLoad = 0.0;
 
 	// Resource gathering pass
-	mCausticsResourceRenderer->Render(0, SMP_Resource, mLightProjector);
-	workLoad = mCausticsResourceRenderer->GetTimeElapsed();
+	mReceiverResourceRenderer->Render(0, SMP_Resource, mLightProjector);
+	workLoad = mReceiverResourceRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
-	infoPanel->SetTimingLabelValue("Resource Gathering Pass", workLoad);
+	infoPanel->SetTimingLabelValue("Receiver Light Space Position Pass", workLoad);
+
+	mRefractorResourceRenderer->Render(0, SMP_Resource, mLightProjector);
+	workLoad = mRefractorResourceRenderer->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("Refractor Light Space Front Normal Pass", workLoad);
+
+	mRefractorResourceRendererBack->Render(0, SMP_Resource, mLightProjector);
+	workLoad = mRefractorResourceRendererBack->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("Refractor Light Space Back Normal Pass", workLoad);
 
 	// Show rendering result.
 	mVisualizer->Render(0, 0);
@@ -462,6 +490,44 @@ void AdaptiveCausticsApp::Terminate()
 	// Release all resources.
 	mLight = 0;
 }
+
+void AdaptiveCausticsApp::OnRadioButtonClick(System::Object^ sender, System::EventArgs^ e)
+{
+	RadioButton^ radioButton = (RadioButton^)sender;
+	if (!mVisualizer)
+	{
+		return;
+	}
+
+	if (radioButton->Name == "Receiver Light Space Position")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_ReceiverLightSpacePosition);
+	}
+
+	if (radioButton->Name == "Refractor Light Space Front Normal")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_RefractorLightSpaceFrontNorm);
+	}
+
+	if (radioButton->Name == "Refractor Light Space Back Normal")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_RefractorLightSpaceBackNorm);
+	}
+
+}
+
+//----------------------------------------------------------------------------
+void AdaptiveCausticsApp::OnCheckBoxClick(System::Object^ sender, System::EventArgs^ e)
+{
+	CheckBox^ checkBox = (CheckBox^)sender;
+
+	if (checkBox->Name == "Show Direct Shadow")
+	{
+	}
+
+	//mIndirectLightingRenderer->VPLVisibilityTest(checkBox->Checked);
+}
+
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::ProcessInput()
 {

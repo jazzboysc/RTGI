@@ -8,25 +8,16 @@ VisualizerScreenQuad::VisualizerScreenQuad(Material* material)
     ScreenQuad(material, 0)
 {
     ShowMode = 0;
-    TextureArrayIndex = 0;
-    SceneBB = 0;
 }
 //----------------------------------------------------------------------------
 VisualizerScreenQuad::~VisualizerScreenQuad()
 {
-    TempTexture = 0;
-    TempTexture2 = 0;
-    GBufferPositionTexture = 0;
-    GBufferNormalTexture = 0;
-    TempTextureArray = 0;
-    VoxelBuffer = 0;
+    DisplayTexture = 0;
 }
 //----------------------------------------------------------------------------
 void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
 {
     mShowModeLoc.SetValue(ShowMode);
-    mTextureArrayIndexLoc.SetValue(TextureArrayIndex);
-    mDimLoc.SetValue(VoxelGridDim);
 
     SamplerDesc sampler;
     sampler.MinFilter = FT_Nearest;
@@ -35,9 +26,9 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
     sampler.WrapT = WT_Clamp;
 
     mTempSamplerLoc.SetValue(0);
-    if( TempTexture )
+    if( DisplayTexture )
     {
-        TempTexture->BindToSampler(0, &sampler);
+        DisplayTexture->BindToSampler(0, &sampler);
     }
 }
 //----------------------------------------------------------------------------
@@ -45,19 +36,7 @@ void VisualizerScreenQuad::OnGetShaderConstants()
 {
     ShaderProgram* program = mMaterial->GetProgram(0, 0);
     program->GetUniformLocation(&mTempSamplerLoc, "tempSampler");
-    program->GetUniformLocation(&mTempSampler2Loc, "tempSampler2");
-    program->GetUniformLocation(&mTempSamplerArrayLoc, "tempSamplerArray");
     program->GetUniformLocation(&mShowModeLoc, "ShowMode");
-    program->GetUniformLocation(&mTextureArrayIndexLoc, "TextureArrayIndex");
-    program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
-    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
-    program->GetUniformLocation(&mDimLoc, "dim");
-    program->GetUniformLocation(&mPositionSamplerLoc, "positionSampler");
-    program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
-    program->GetUniformLocation(&mPositionThresholdLoc, "positionThreshold");
-    program->GetUniformLocation(&mNormalThresholdLoc, "normalThreshold");
-    program->GetUniformLocation(&mMaxRadianceLoc, "maxRadiance");
-    program->GetUniformLocation(&mKernelSizeLoc, "kernelSize");
 }
 //----------------------------------------------------------------------------
 
@@ -70,7 +49,6 @@ Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
 //----------------------------------------------------------------------------
 Visualizer::~Visualizer()
 {
-
     mReceiverPositionTexture = 0;
     mRefractorFrontNormalTexture = 0;
     mRefractorBackNormalTexture = 0;
@@ -79,25 +57,27 @@ Visualizer::~Visualizer()
 }
 //----------------------------------------------------------------------------
 void Visualizer::Initialize(GPUDevice* device,
-	CausticsResourceRenderer* resourceRenderer,
+	ReceiverResourceRenderer* receiverResourceRenderer,
+	RefractorResourceRenderer* refractorResourceRenderer,
+	RefractorResourceRendererBack* refractorResourceRendererBack,
 	Camera* mainCamera)
 {
     ShaderProgramInfo visualizerProgramInfo;
-    visualizerProgramInfo << "AdaptiveCaustics/TempResult.vert";
-    visualizerProgramInfo << "AdaptiveCaustics/TempResult.frag";
+    visualizerProgramInfo << "AdaptiveCaustics/DisplayTexture.vert";
+    visualizerProgramInfo << "AdaptiveCaustics/DisplayTexture.frag";
     MaterialTemplate* mtScreenQuad =
 		new MaterialTemplate(new Technique(
 		new Pass(visualizerProgramInfo)));
 
 	// Cache temp buffer and textures needed for visualization.
 	mReceiverPositionTexture =
-		(Texture2D*)resourceRenderer->GetFrameBufferTextureByName(
+		(Texture2D*)receiverResourceRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_ReceiverPosition_Name);
 	mRefractorFrontNormalTexture =
-		(Texture2D*)resourceRenderer->GetFrameBufferTextureByName(
+		(Texture2D*)refractorResourceRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_RefractorFrontNormal_Name);
 	mRefractorBackNormalTexture =
-		(Texture2D*)resourceRenderer->GetFrameBufferTextureByName(
+		(Texture2D*)refractorResourceRendererBack->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_RefractorBackNormal_Name);
 
     // Create screen quad.
@@ -110,7 +90,7 @@ void Visualizer::Initialize(GPUDevice* device,
     mScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mScreenQuad->CreateDeviceResource(device);
 
-    SetShowMode(SM_Final);
+	SetShowMode(eSM_ReceiverLightSpacePosition);
 }
 //----------------------------------------------------------------------------
 void Visualizer::Render(int technique, int pass)
@@ -135,10 +115,15 @@ void Visualizer::SetShowMode(ShowMode mode)
 	mScreenQuad->ShowMode = mShowMode;
     switch( mShowMode )
     {
-    case SM_Final:
-        mScreenQuad->TempTexture = mIndirectLightingTexture;
-        mScreenQuad->TempTexture2 = mDirectLightingTexture;
+	case eSM_ReceiverLightSpacePosition:
+		mScreenQuad->DisplayTexture = mReceiverPositionTexture;
         break;
+	case eSM_RefractorLightSpaceFrontNorm:
+		mScreenQuad->DisplayTexture = mRefractorFrontNormalTexture;
+		break;
+	case eSM_RefractorLightSpaceBackNorm:
+		mScreenQuad->DisplayTexture = mRefractorBackNormalTexture;
+		break;
 
     default:
         assert(false);

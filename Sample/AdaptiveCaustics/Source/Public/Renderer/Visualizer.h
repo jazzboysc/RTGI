@@ -2,8 +2,9 @@
 #define RTGI_Visualizer_H
 
 #include "GraphicsFrameworkHeader.h"
-#include "CausticsResourceRenderer.h"
-
+#include "ReceiverResourceRenderer.h"
+#include "RefractorResourceRenderer.h"
+#include "RefractorResourceRendererBack.h"
 namespace RTGI
 {
 //----------------------------------------------------------------------------
@@ -22,8 +23,7 @@ public:
 
 	int ShowMode;
 
-    Texture2DPtr TempTexture;
-    Texture2DPtr TempTexture2;
+    Texture2DPtr DisplayTexture;
 
 private:
     ShaderUniform mShowModeLoc;
@@ -45,14 +45,16 @@ public:
 		eSM_RefractorLightSpaceFrontNorm,
 		eSM_RefractorLightSpaceBackNorm,
 		eSM_RefractorShadow,
-		SM_Final
+		eSM_Final
     };
 
     Visualizer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~Visualizer();
 
     void Initialize(GPUDevice* device,
-		CausticsResourceRenderer* resourceRenderer,
+		ReceiverResourceRenderer* receiverResourceRenderer,
+		RefractorResourceRenderer* refractorResourceRenderer,
+		RefractorResourceRendererBack* refractorResourceRendererBack,
         Camera* mainCamera);
 
     void Render(int technique, int pass);

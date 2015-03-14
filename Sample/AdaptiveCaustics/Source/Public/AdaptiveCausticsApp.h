@@ -2,7 +2,9 @@
 #include "AdaptiveCausticsTriMesh.h"
 #include "AdaptiveCausticsCube.h"
 
-#include "CausticsResourceRenderer.h"
+#include "ReceiverResourceRenderer.h"
+#include "RefractorResourceRenderer.h"
+#include "RefractorResourceRendererBack.h"
 #include "Visualizer.h"
 
 #include "GPUTimer.h"
@@ -26,12 +28,17 @@ public:
 	void FrameFunc() override;
 	void Terminate() override;
 
+	void OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e) override;
+	void OnCheckBoxClick(System::Object^  sender, System::EventArgs^  e) override;
+
 private:
 	void InitializeTextures();
 	void InitializeScene();
 	void InitializeFBO();
 
-	CausticsResourceRendererPtr mCausticsResourceRenderer;
+	ReceiverResourceRendererPtr mReceiverResourceRenderer;
+	RefractorResourceRendererPtr mRefractorResourceRenderer;
+	RefractorResourceRendererBackPtr mRefractorResourceRendererBack;
 	VisualizerPtr mVisualizer;
 
 	struct DebugBuffer
@@ -69,16 +76,6 @@ private:
 		SMP_ShadowMap,
 		SMP_AdaptiveCaustics
 	};
-
-	struct FBO
-	{
-		FrameBufferPtr backgroundObjectsPositionLightSpace;
-		FrameBufferPtr refractorNormalFrontBackLightSpace;
-		FrameBufferPtr a;
-		FrameBufferPtr b;
-		FrameBufferPtr c;
-
-	} mFBO;
 
 	Camera* mLightProjector;
 	LightPtr mLight;
