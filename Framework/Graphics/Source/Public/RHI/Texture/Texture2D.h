@@ -45,7 +45,7 @@ public:
 #endif
 
     void CreateRenderTarget(GPUDevice* device, int width, int height, 
-        BufferFormat format, bool generateMipMap = false);
+        BufferFormat format, bool generateMipMap = false, void* initData = 0);
 
 	// Update a render target from pixel buffer.
 	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);

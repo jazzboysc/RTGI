@@ -207,7 +207,7 @@ bool Texture2D::LoadFromTextureBuffer(GPUDevice* device,
 #endif
 //----------------------------------------------------------------------------
 void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
-    BufferFormat format, bool generateMipMap)
+    BufferFormat format, bool generateMipMap, void* initData)
 {
     if( mTextureHandle )
     {
@@ -267,7 +267,7 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
-        generateMipMap, 0);
+        generateMipMap, initData);
     HasMipMap = generateMipMap;
 }
 //--------------------------------------------------------------------------
