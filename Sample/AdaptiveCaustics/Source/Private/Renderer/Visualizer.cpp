@@ -3,38 +3,6 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-GatherVoxelBuffer::GatherVoxelBuffer()
-{
-}
-//----------------------------------------------------------------------------
-GatherVoxelBuffer::~GatherVoxelBuffer()
-{
-}
-//----------------------------------------------------------------------------
-void GatherVoxelBuffer::OnGetShaderConstants()
-{
-    ComputePass* p = (ComputePass*)GetPass(0);
-    ShaderProgram* program = p->GetShaderProgram();
-
-    program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
-    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
-}
-//----------------------------------------------------------------------------
-void GatherVoxelBuffer::OnPreDispatch(unsigned int pass)
-{
-    vec3 min = SceneBB->Min;
-    vec3 extension = SceneBB->GetExtension();
-    mSceneBBMinLoc.SetValue(min);
-    mSceneBBExtensionLoc.SetValue(extension);
-}
-//----------------------------------------------------------------------------
-void GatherVoxelBuffer::OnPostDispatch(unsigned int pass)
-{
-    glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
-}
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 VisualizerScreenQuad::VisualizerScreenQuad(Material* material)
     :
     ScreenQuad(material, 0)
@@ -71,46 +39,6 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
     {
         TempTexture->BindToSampler(0, &sampler);
     }
-
-    mTempSampler2Loc.SetValue(1);
-    if( TempTexture2 )
-    {
-        TempTexture2->BindToSampler(1, &sampler);
-    }
-
-    mTempSamplerArrayLoc.SetValue(2);
-    if( TempTextureArray )
-    {
-        TempTextureArray->BindToSampler(2, &sampler);
-    }
-
-    mPositionSamplerLoc.SetValue(3);
-    if( GBufferPositionTexture )
-    {
-        GBufferPositionTexture->BindToSampler(3, &sampler);
-    }
-
-    mNormalSamplerLoc.SetValue(4);
-    if( GBufferNormalTexture )
-    {
-        GBufferNormalTexture->BindToSampler(4, &sampler);
-    }
-
-    mPositionThresholdLoc.SetValue(PositionThreshold);
-    mNormalThresholdLoc.SetValue(NormalThreshold);
-    mMaxRadianceLoc.SetValue(MaxRadiance);
-    mKernelSizeLoc.SetValue(KernelSize);
-
-    if( SceneBB )
-    {
-        mSceneBBMinLoc.SetValue(SceneBB->Min);
-        mSceneBBExtensionLoc.SetValue(SceneBB->GetExtension());
-    }
-
-    if( VoxelBuffer )
-    {
-        VoxelBuffer->Bind(0);
-    }
 }
 //----------------------------------------------------------------------------
 void VisualizerScreenQuad::OnGetShaderConstants()
@@ -134,63 +62,6 @@ void VisualizerScreenQuad::OnGetShaderConstants()
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-VoxelCubeTriMesh::VoxelCubeTriMesh(Material* material, Camera* camera)
-    :
-    TriangleMesh(material, camera),
-    MaterialColor(0.75f, 0.75f, 0.75f)
-{
-}
-//----------------------------------------------------------------------------
-VoxelCubeTriMesh::~VoxelCubeTriMesh()
-{
-}
-//----------------------------------------------------------------------------
-void VoxelCubeTriMesh::OnGetShaderConstants()
-{
-    TriangleMesh::OnGetShaderConstants();
-}
-//----------------------------------------------------------------------------
-void VoxelCubeTriMesh::OnUpdateShaderConstants(int technique, int pass)
-{
-    TriangleMesh::OnUpdateShaderConstants(technique, pass);
-}
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
-SVOCubeMesh::SVOCubeMesh(Material* material, Camera* camera)
-    :
-    QuadMesh(material, camera)
-{
-    SceneBB = 0;
-}
-//----------------------------------------------------------------------------
-SVOCubeMesh::~SVOCubeMesh()
-{
-}
-//----------------------------------------------------------------------------
-void SVOCubeMesh::OnGetShaderConstants()
-{
-    QuadMesh::OnGetShaderConstants();
-
-    ShaderProgram* program = mMaterial->GetProgram(0, 0);
-    program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
-    program->GetUniformLocation(&mVoxelExtensionLoc, "VoxelExtension");
-}
-//----------------------------------------------------------------------------
-void SVOCubeMesh::OnUpdateShaderConstants(int technique, int pass)
-{
-    QuadMesh::OnUpdateShaderConstants(technique, pass);
-
-    vec3 sceneBBMin = SceneBB->Min;
-    vec3 voxelExtension = (SceneBB->Max - SceneBB->Min);
-    voxelExtension /= 128;
-
-    mSceneBBMinLoc.SetValue(sceneBBMin);
-    mVoxelExtensionLoc.SetValue(voxelExtension);
-}
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
     :
     SubRenderer(device, renderSet)
@@ -199,171 +70,35 @@ Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
 //----------------------------------------------------------------------------
 Visualizer::~Visualizer()
 {
-    mVoxelBuffer = 0;
 
-    mVoxelFragmentListBuffer = 0;
-    mSVOBuffer = 0;
-    mSVOUniformBuffer = 0;
-    mSVONodeCubeModel = 0;
-
-    mShadowMapTexture = 0;
-    mGBufferPositionTexture = 0;
-    mGBufferNormalTexture = 0;
-    mGBufferAlbedoTexture = 0;
-    mRSMPositionTextureArray = 0;
-    mRSMNormalTextureArray = 0;
-    mRSMFluxTextureArray = 0;
-    mDirectLightingTexture = 0;
-    mIndirectLightingTexture = 0;
+    mReceiverPositionTexture = 0;
+    mRefractorFrontNormalTexture = 0;
+    mRefractorBackNormalTexture = 0;
 
     mScreenQuad = 0;
-    mVoxelCubeModel = 0;
 }
 //----------------------------------------------------------------------------
-void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
-    ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer, 
-    DirectLightingRenderer* directLightingRenderer, AABB* sceneBB, 
-    int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera)
+void Visualizer::Initialize(GPUDevice* device,
+	CausticsResourceRenderer* resourceRenderer,
+	Camera* mainCamera)
 {
-    mVoxelizerType = voxelizer->GetVoxelizerType();
-    mVoxelGridDim = voxelGridDim;
-    mVoxelGridLocalGroupDim = voxelGridLocalGroupDim;
-    mGlobalDim = mVoxelGridDim / mVoxelGridLocalGroupDim;
-
     ShaderProgramInfo visualizerProgramInfo;
-    visualizerProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vTempResult.glsl";
-    visualizerProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fTempResult.glsl";
-    visualizerProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                            ShaderType::ST_Fragment;
-    Pass* passScreenQuad = new Pass(visualizerProgramInfo);
+    visualizerProgramInfo << "AdaptiveCaustics/TempResult.vert";
+    visualizerProgramInfo << "AdaptiveCaustics/TempResult.frag";
+    MaterialTemplate* mtScreenQuad =
+		new MaterialTemplate(new Technique(
+		new Pass(visualizerProgramInfo)));
 
-    Technique* techScreenQuad = new Technique();
-    techScreenQuad->AddPass(passScreenQuad);
-    MaterialTemplate* mtScreenQuad = new MaterialTemplate();
-    mtScreenQuad->AddTechnique(techScreenQuad);
-
-    // Cache temp buffer and textures needed for visualization.
-    mShadowMapTexture = 
-        (Texture2D*)shadowMapRenderer->GetFrameBufferTextureByName(
-        RTGI_ShadowMapRenderer_ShadowMap_Name);
-    mGBufferPositionTexture = 
-        (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
-        RTGI_GBuffer_Position_Name);
-    mGBufferNormalTexture = 
-        (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
-        RTGI_GBuffer_Normal_Name);
-    mGBufferAlbedoTexture = 
-        (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
-        RTGI_GBuffer_Albedo_Name);
-    mDirectLightingTexture = 
-        (Texture2D*)directLightingRenderer->GetFrameBufferTextureByName(
-        RTGI_DirectLightingRenderer_DirectLighting_Name);
-
-    if( mVoxelizerType == Voxelizer::VT_Grid )
-    {
-        ShaderProgramInfo showVoxelGridProgramInfo;
-        showVoxelGridProgramInfo.VShaderFileName = 
-            "BidirectionalVoxelGI/vShowVoxelGrid.glsl";
-        showVoxelGridProgramInfo.FShaderFileName = 
-            "BidirectionalVoxelGI/fShowVoxelGrid.glsl";
-        showVoxelGridProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                                   ShaderType::ST_Fragment;
-        Pass* passShowVoxelGrid = new Pass(showVoxelGridProgramInfo);
-
-        Technique* techShowVoxelGrid = new Technique();
-        techShowVoxelGrid->AddPass(passShowVoxelGrid);
-        MaterialTemplate* mtShowVoxelGrid = new MaterialTemplate();
-        mtShowVoxelGrid->AddTechnique(techShowVoxelGrid);
-
-        // Cache grid voxelizer's voxel buffer.
-
-        // Create gather voxel buffer task.
-        ShaderProgramInfo gatherVoxelBufferProgramInfo;
-        gatherVoxelBufferProgramInfo.CShaderFileName =
-            "BidirectionalVoxelGI/cGatherVoxelBuffer.glsl";
-        gatherVoxelBufferProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-        ComputePass* passGatherVoxelBuffer =
-            new ComputePass(gatherVoxelBufferProgramInfo);
-        mGatherVoxelBufferTask = new GatherVoxelBuffer();
-        mGatherVoxelBufferTask->AddPass(passGatherVoxelBuffer);
-        mGatherVoxelBufferTask->CreateDeviceResource(device);
-        mGatherVoxelBufferTask->SceneBB = sceneBB;
-
-        // Create indirect command buffer.
-        int voxelCount = voxelGridDim * voxelGridDim * voxelGridDim;
-        int bufferSize = sizeof(unsigned int) * 5 + sizeof(float) * 35
-            + voxelCount*sizeof(float) * 4;
-        AddGenericBufferTarget(RTGI_Visualizer_IndirectCommandBuffer_Name,
-            RDT_StructuredBuffer, bufferSize, BU_Dynamic_Copy,
-            BF_BindIndexToIndirect, 1);
-
-        // Create gathered voxel GPU memory allocator counter.
-        bufferSize = sizeof(unsigned int);
-        AddGenericBufferTarget("GPUMemoryAllocatorCounter",
-            RDT_AtomicCounterBuffer, bufferSize, BU_Dynamic_Copy, BF_BindIndex,
-            0, true, 0);
-
-        // Create voxel cube model.
-        Material* material = new Material(mtShowVoxelGrid);
-        mVoxelCubeModel = new VoxelCubeTriMesh(material, mainCamera);
-        mVoxelCubeModel->LoadFromFile("box.ply");
-        mVoxelCubeModel->GenerateNormals();
-        mVoxelCubeModel->SetIndirectCommandBuffer(
-            (StructuredBuffer*)GetGenericBufferByName(
-            RTGI_Visualizer_IndirectCommandBuffer_Name), 0);
-        mVoxelCubeModel->CreateDeviceResource(device);
-    }
-    else if( mVoxelizerType == Voxelizer::VT_SVO )
-    {
-        // Cache SVO buffers.
-
-        ShaderProgramInfo showSVOProgramInfo;
-        showSVOProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShowSVO.glsl";
-        showSVOProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fShowSVO.glsl";
-        showSVOProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                             ShaderType::ST_Fragment;
-        Pass* passShowSVO = new Pass(showSVOProgramInfo);
-
-        Technique* techShowSVO = new Technique();
-        techShowSVO->AddPass(passShowSVO);
-        MaterialTemplate* mtShowSVO = new MaterialTemplate();
-        mtShowSVO->AddTechnique(techShowSVO);
-
-        // Create SVO node cube model.
-        std::vector<vec3> svoCubeVertices;
-        svoCubeVertices.reserve(8);
-        svoCubeVertices.push_back(vec3(-1.0f, 1.0f, 1.0f));
-        svoCubeVertices.push_back(vec3(1.0f, 1.0f, 1.0f));
-        svoCubeVertices.push_back(vec3(1.0f, 1.0f, -1.0f));
-        svoCubeVertices.push_back(vec3(-1.0f, 1.0f, -1.0f));
-        svoCubeVertices.push_back(vec3(-1.0f, -1.0f, 1.0f));
-        svoCubeVertices.push_back(vec3(1.0f, -1.0f, 1.0f));
-        svoCubeVertices.push_back(vec3(1.0f, -1.0f, -1.0f));
-        svoCubeVertices.push_back(vec3(-1.0f, -1.0f, -1.0f));
-        std::vector<unsigned short> svoCubeIndices;
-        svoCubeIndices.reserve(24);
-        static unsigned short indices[] = { 0, 1, 2, 3,
-            0, 4, 5, 1,
-            0, 3, 7, 4,
-            2, 6, 7, 3,
-            1, 5, 6, 2,
-            4, 7, 6, 5 };
-        for( int i = 0; i < 24; ++i )
-        {
-            svoCubeIndices.push_back(indices[i]);
-        }
-
-        Material* material = new Material(mtShowSVO);
-        mSVONodeCubeModel = new SVOCubeMesh(material, mainCamera);
-        mSVONodeCubeModel->LoadFromSystemMemory(svoCubeVertices, svoCubeIndices);
-        mSVONodeCubeModel->SetIndirectCommandBuffer(mSVOBuffer, 16);
-        mSVONodeCubeModel->CreateDeviceResource(device);
-        mSVONodeCubeModel->SceneBB = sceneBB;
-    }
-    else
-    {
-        assert(false);
-    }
+	// Cache temp buffer and textures needed for visualization.
+	mReceiverPositionTexture =
+		(Texture2D*)resourceRenderer->GetFrameBufferTextureByName(
+		RTGI_CausticsBuffer_ReceiverPosition_Name);
+	mRefractorFrontNormalTexture =
+		(Texture2D*)resourceRenderer->GetFrameBufferTextureByName(
+		RTGI_CausticsBuffer_RefractorFrontNormal_Name);
+	mRefractorBackNormalTexture =
+		(Texture2D*)resourceRenderer->GetFrameBufferTextureByName(
+		RTGI_CausticsBuffer_RefractorBackNormal_Name);
 
     // Create screen quad.
     Material* material = new Material(mtScreenQuad);
@@ -374,15 +109,6 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mScreenQuad->CreateDeviceResource(device);
-    mScreenQuad->SceneBB = sceneBB;
-    mScreenQuad->VoxelBuffer = mVoxelBuffer;
-    mScreenQuad->VoxelGridDim = voxelGridDim;
-    mScreenQuad->GBufferPositionTexture = mGBufferPositionTexture;
-    mScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;
-    mScreenQuad->PositionThreshold = 5.5f;
-    mScreenQuad->NormalThreshold = 0.3f;
-    mScreenQuad->MaxRadiance = 4.5f;
-    mScreenQuad->KernelSize = 2;
 
     SetShowMode(SM_Final);
 }
@@ -399,107 +125,17 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
     glEnable(GL_CULL_FACE);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    if( mVoxelizerType == Voxelizer::VT_Grid && mShowMode == SM_VoxelGrid )
-    {
-        mVoxelBuffer->Bind(0);
-
-        // Gather voxel buffer pass.
-        mGatherVoxelBufferTask->DispatchCompute(0, mGlobalDim, mGlobalDim, 
-            mGlobalDim);
-
-        // Show voxel grid.
-        mVoxelCubeModel->Render(0, 0);
-    }
-    else if( mVoxelizerType == Voxelizer::VT_SVO && mShowMode == SM_SVOGrid )
-    {
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-        mSVOUniformBuffer->Bind(0);
-        mVoxelFragmentListBuffer->Bind(1);
-        mSVOBuffer->Bind(3);
-        mSVOBuffer->BindToIndirect();
-        mSVONodeCubeModel->Render(0, 0);
-    }
-    else
-    {
-        mScreenQuad->Render(technique, pass);
-    }
+	
+	mScreenQuad->Render(technique, pass);
 }
 //----------------------------------------------------------------------------
 void Visualizer::SetShowMode(ShowMode mode)
 {
     mShowMode = mode;
+	mScreenQuad->ShowMode = mShowMode;
     switch( mShowMode )
     {
-    case SM_VoxelBuffer:
-        mScreenQuad->ShowMode = 4;
-        mScreenQuad->TempTexture = mGBufferPositionTexture;
-        break;
-
-    case SM_VoxelGrid:
-        break;
-
-    case SM_SVOGrid:
-        break;
-
-    case SM_Shadow:
-        mScreenQuad->ShowMode = 0;
-        mScreenQuad->TempTexture = mShadowMapTexture;
-        break;
-
-    case SM_VPLShadow:
-        break;
-
-    case SM_GBufferPosition:
-        mScreenQuad->ShowMode = 3;
-        mScreenQuad->TempTexture = mGBufferPositionTexture;
-        break;
-
-    case SM_GBufferNormal:
-        mScreenQuad->ShowMode = 0;
-        mScreenQuad->TempTexture = mGBufferNormalTexture;
-        break;
-
-    case SM_GBufferAlbedo:
-        mScreenQuad->ShowMode = 0;
-        mScreenQuad->TempTexture = mGBufferAlbedoTexture;
-        break;
-
-    case SM_RSMPosition:
-        mScreenQuad->ShowMode = 1;
-        mScreenQuad->TempTextureArray = mRSMPositionTextureArray;
-        break;
-
-    case SM_RSMNormal:
-        mScreenQuad->ShowMode = 1;
-        mScreenQuad->TempTextureArray = mRSMNormalTextureArray;
-        break;
-
-    case SM_RSMFlux:
-        mScreenQuad->ShowMode = 1;
-        mScreenQuad->TempTextureArray = mRSMFluxTextureArray;
-        break;
-
-    case SM_DirectLighting:
-        mScreenQuad->ShowMode = 0;
-        mScreenQuad->TempTexture = mDirectLightingTexture;
-        break;
-
-    case SM_IndirectLighting:
-        mScreenQuad->ShowMode = 0;
-        mScreenQuad->TempTexture = mIndirectLightingTexture;
-        break;
-
-    case SM_FilteredIndirectLighting:
-        mScreenQuad->ShowMode = 5;
-        mScreenQuad->TempTexture = mIndirectLightingTexture;
-        break;
-
     case SM_Final:
-        mScreenQuad->ShowMode = 2;
         mScreenQuad->TempTexture = mIndirectLightingTexture;
         mScreenQuad->TempTexture2 = mDirectLightingTexture;
         break;

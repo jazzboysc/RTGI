@@ -34,8 +34,117 @@ void AdaptiveCausticsApp::InitializeFBO()
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 {
+	// Init things
+	float color = 0.0f;
+	glClearColor(color, color, color, 0.0f);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Create camera and light
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.1f, 50.0f);
+	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f),
+		vec3(0.0f, 1.0f, 0.0f));
+
+	mLightProjector = new Camera;
+	mLightProjector->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 1.0f, 50.0f);
+	mLightProjector->SetLookAt(vec3(-0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
+
+	mLight = new Light;
+	mLight->SetProjector(\mLightProjector);
+	mLight->Color = vec3(0.9f, 0.9f, 0.7f);
+
+	mTimer = new GPUTimer();
+	mTimer->CreateDeviceResource();
+
+	// Pass: Render light space position of receiver geometry
+	ShaderProgramInfo PI_WorldPosition;
+	PI_WorldPosition
+		<< "AdaptiveCaustics/WorldPosition.vert"
+		<< "AdaptiveCaustics/WorldPosition.frag";
+	/*
+	// Cubemap variation
+	ShaderProgramInfo PI_CubeReceiverPosition;
+	PI_CubeReceiverPosition
+		<< "AdaptiveCaustics/CausticsResourceCubeReceiver.vert"
+		<< "AdaptiveCaustics/CausticsResourceCubeReceiver.frag";
+	*/
+
+	// Pass: Render light space front and back normal of refractor geometry
+	ShaderProgramInfo PI_FrontBackNormals;
+	PI_FrontBackNormals
+		<< "AdaptiveCaustics/FrontBackNormals.vert"
+		<< "AdaptiveCaustics/FrontBackNormals.frag";
+
+
+
+	auto mtCausticsResourceReceiver = new MaterialTemplate(
+		new Technique(new Pass(PI_WorldPosition)));
+
+
+	auto mtCausticsResourceRefractor = new MaterialTemplate(
+		new Technique(new Pass(PI_FrontBackNormals)));
+
+
+	// Receiver meshes
+	auto mCubeMap = new TextureCube();
+	mCubeMap->LoadFromFile(mDevice,
+		"Textures/pool.bmp",
+		"Textures/pool.bmp",
+		"Textures/pool.bmp",
+		"Textures/pool.bmp",
+		"Textures/pool.bmp",
+		"Textures/pool.bmp");
+
+	/*
+	auto mtCausticsResourceReceiverCubeReceiver = new MaterialTemplate(
+		new Technique(new Pass(PI_CubeReceiverPosition)));
+	*/
+
+	mScene.pool = new AdaptiveCausticsCube(
+		new Material(mtCausticsResourceReceiver), mMainCamera);
+	mScene.pool->LoadFromFile("cube.ply");
+	mScene.pool->GenerateNormals();
+	mScene.pool->CreateDeviceResource(mDevice);
+	mScene.pool->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
+	mScene.pool->SetWorldScale(vec3(1, -1, 1));
+	mScene.pool->MaterialColor = vec3(1, 1, 1);
+	mScene.pool->CubeTexture = mCubeMap;
+	
+	mScene.ground = new AdaptiveCausticsTriMesh(
+		new Material(mtCausticsResourceReceiver), mMainCamera);
+	mScene.ground->LoadFromFile("ground.ply");
+	mScene.ground->GenerateNormals();
+	mScene.ground->CreateDeviceResource(mDevice);
+	mScene.ground->SetWorldTranslation(vec3(0.0f, -6.0f, 0.0f));
+	mScene.ground->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
+
+	// Refractor mesh
+	mScene.mesh = new AdaptiveCausticsTriMesh(
+		new Material(mtCausticsResourceRefractor), mMainCamera);
+	mScene.mesh->LoadFromFile("dragon_s.ply");
+	mScene.mesh->GenerateNormals();
+	mScene.mesh->CreateDeviceResource(mDevice);
+	mScene.mesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
+	mScene.mesh->SetWorldTranslation(vec3(0.0f, -0.8f, 0.0f));
+	mScene.mesh->SetWorldScale(vec3(3.0f));
+	mScene.mesh->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
+
+	// Render sets
+	mScene.receiver = new RenderSet();
+	mScene.receiver->AddRenderObject(mScene.pool);
+	mScene.receiver->AddRenderObject(mScene.ground);
+
+	mScene.refractor = new RenderSet();
+	mScene.refractor->AddRenderObject(mScene.mesh);
+
+
 	mFBO.backgroundObjectsPositionLightSpace;
 	mFBO.refractorNormalFrontBackLightSpace;
+
 	// Create information panel.
 	int screenX, screenY;
 	glfwGetWindowPos(Window, &screenX, &screenY);
@@ -46,9 +155,9 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	InformationPanel::GetInstance()->AddListener(this);
 	int infoStartY = 20;
 	int infoIncY = 20;
-	InformationPanel::GetInstance()->AddTimingLabel("Scene Voxelization Pass", 16, infoStartY);
+	InformationPanel::GetInstance()->AddTimingLabel("Resource Gathering Pass", 16, infoStartY);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddTimingLabel("Scene Shadow Pass", 16, infoStartY);
+	InformationPanel::GetInstance()->AddTimingLabel("Debug B", 16, infoStartY);
 	infoStartY += infoIncY;
 
 	infoStartY = 20;
@@ -56,8 +165,27 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
 
-	// Create GPU timer.
-	mTimer = new GPUTimer();
+	infoPanel->SetTimingLabelValue("Debug A", 0.01);
+
+
+
+
+	
+	mCausticsResourceRenderer = new CausticsResourceRenderer(
+		device, mScene.receiver, mScene.refractor);
+	CausticsResourceDesc causticsResDesc;
+	causticsResDesc.Height = this->Height;
+	causticsResDesc.Width = this->Width;
+	causticsResDesc.ReceiverPositionFormat = BF_RGBAF;
+	causticsResDesc.RefractorBackNormalFormat = BF_RGBAF;
+	causticsResDesc.RefractorFrontNormalFormat = BF_RGBAF;
+	causticsResDesc.ReceiverPositionMipmap = false;
+	causticsResDesc.RefractorBackNormalMipmap = false;
+	causticsResDesc.RefractorFrontNormalMipmap = false;
+	//causticsResDesc.RefractorAlbedoFormat = this->Height;
+	mCausticsResourceRenderer->CreateCausticsResource(&causticsResDesc);
+	mCausticsResourceRenderer->SetTimer(mTimer);
+
 	/*
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -314,7 +442,19 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::FrameFunc()
 {
+	InformationPanel^ infoPanel = InformationPanel::GetInstance();
+	static double workLoad;
+	static double totalWorkLoad;
+	totalWorkLoad = 0.0;
 
+	// Resource gathering pass
+	mCausticsResourceRenderer->Render(0, SMP_Resource, mLightProjector);
+	workLoad = mCausticsResourceRenderer->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("Resource Gathering Pass", workLoad);
+
+	// Show rendering result.
+	mVisualizer->Render(0, 0);
 }
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::Terminate()

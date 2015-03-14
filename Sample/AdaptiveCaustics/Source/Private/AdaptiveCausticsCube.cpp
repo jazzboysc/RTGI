@@ -1,31 +1,29 @@
 #include "AdaptiveCausticsCube.h"
+#include "AdaptiveCausticsApp.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-CausticsCube::CausticsCube(Material* material, Camera* camera)
+AdaptiveCausticsCube::AdaptiveCausticsCube(Material* material, Camera* camera)
 	:
 	TriangleMesh(material, camera),
 	MaterialColor(0.75f, 0.75f, 0.75f)
 {
 }
 //----------------------------------------------------------------------------
-CausticsCube::~CausticsCube()
+AdaptiveCausticsCube::~AdaptiveCausticsCube()
 {
 }
 //----------------------------------------------------------------------------
-void CausticsCube::OnGetShaderConstants()
+void AdaptiveCausticsCube::OnGetShaderConstants()
 {
-	TriangleMesh::OnGetShaderConstants();
-
-	auto program = mMaterial->GetProgram(0, 0);
-
-    program->GetUniformLocation(&mMaterialColorLoc, "materialColor");
-
-	program->GetUniformLocation(&mCubemapSampler, "cubemapSampler");
+	auto program = mMaterial->GetProgram(0, AdaptiveCausticsApp::SMP_Resource);
+	program->GetUniformLocation(&mWorldLoc, "World");
+	program->GetUniformLocation(&mViewLoc, "View");
+	program->GetUniformLocation(&mProjLoc, "Proj");
 }
 //----------------------------------------------------------------------------
-void CausticsCube::OnUpdateShaderConstants(int technique, int pass)
+void AdaptiveCausticsCube::OnUpdateShaderConstants(int technique, int pass)
 {
 	TriangleMesh::OnUpdateShaderConstants(technique, pass);
 
@@ -36,23 +34,22 @@ void CausticsCube::OnUpdateShaderConstants(int technique, int pass)
 	sampler.WrapT = WT_Clamp;
 	sampler.WrapR = WT_Clamp;
 
-	if (technique == 0)
+	switch (technique)
 	{
-		mMaterialColorLoc.SetValue(MaterialColor);
-		CubeTexture->BindToSampler(0, &sampler);
-		mCubemapSampler.SetValue(0);
-	}
+	default:
+		break;
+	case AdaptiveCausticsApp::SMP_Resource:
+		glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
+		mWorldLoc.SetValue(worldTrans);
+		if (mCamera)
+		{
+			glm::mat4 viewTrans = mCamera->GetViewTransform();
+			mViewLoc.SetValue(viewTrans);
 
-	if (technique == 1)
-	{
-		vec3 lightLoc = Light->GetLocation();
-		mLightPositionLoc.SetValue(lightLoc);
-		mLightViewLoc.SetValue(Light->GetProjector()->GetViewTransform());
-		mLightProjLoc.SetValue(Light->GetProjector()->GetProjectionTransform());
-		mLightColorLoc.SetValue(Light->Color);
-
-		VertexSplattingTexture->BindToSampler(0, &sampler);
-		mVertexSplattingSamplerLoc.SetValue(0);
+			glm::mat4 projTrans = mCamera->GetProjectionTransform();
+			mProjLoc.SetValue(projTrans);
+		}
+		break;
 	}
 }
 //----------------------------------------------------------------------------

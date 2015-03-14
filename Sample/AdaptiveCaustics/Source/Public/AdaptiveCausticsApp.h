@@ -1,6 +1,10 @@
 #pragma once
 #include "AdaptiveCausticsTriMesh.h"
 #include "AdaptiveCausticsCube.h"
+
+#include "CausticsResourceRenderer.h"
+#include "Visualizer.h"
+
 #include "GPUTimer.h"
 #include "FormEventListener.h"
 
@@ -14,7 +18,7 @@ namespace RTGI
 class AdaptiveCausticsApp : public Application, GUIFramework::FormEventListener
 {
 public:
-	AdaptiveCausticsApp(int width = 1024, int height = 768);
+	AdaptiveCausticsApp(int width = 768, int height = 768);
 	~AdaptiveCausticsApp();
 
 	void Initialize(GPUDevice* device) override;
@@ -26,6 +30,9 @@ private:
 	void InitializeTextures();
 	void InitializeScene();
 	void InitializeFBO();
+
+	CausticsResourceRendererPtr mCausticsResourceRenderer;
+	VisualizerPtr mVisualizer;
 
 	struct DebugBuffer
 	{
@@ -45,15 +52,24 @@ private:
 
 	struct Scene
 	{
-		RenderSet receiver;
-		RenderSet refractor;
+		RenderSetPtr receiver;
+		RenderSetPtr refractor;
 
 		CausticsTriMeshPtr mesh;
-		CausticsCubePtr pool;
+		AdaptiveCausticsCubePtr pool;
 		CausticsTriMeshPtr ground;
 
 	} mScene;
 	
+	friend class AdaptiveCausticsTriMesh;
+	friend class AdaptiveCausticsCube;
+	enum SceneModelPass
+	{
+		SMP_Resource = 0,
+		SMP_ShadowMap,
+		SMP_AdaptiveCaustics
+	};
+
 	struct FBO
 	{
 		FrameBufferPtr backgroundObjectsPositionLightSpace;
@@ -64,6 +80,7 @@ private:
 
 	} mFBO;
 
+	Camera* mLightProjector;
 	LightPtr mLight;
 
 	TextureCubePtr mCubeMap;

@@ -9,11 +9,11 @@ namespace RTGI
 // Author: Che Sun
 // Date: 04/23/2014
 //----------------------------------------------------------------------------
-class CausticsCube : public TriangleMesh
+class AdaptiveCausticsCube : public TriangleMesh
 {
 public:
-	CausticsCube(Material* material, Camera* camera);
-	virtual ~CausticsCube();
+	AdaptiveCausticsCube(Material* material, Camera* camera);
+	virtual ~AdaptiveCausticsCube();
 
 	// Implement base class interface.
 	virtual void OnGetShaderConstants();
@@ -21,7 +21,6 @@ public:
 
 	vec3 MaterialColor;
 	TextureCubePtr CubeTexture;
-	Texture2DPtr VertexSplattingTexture;
 
 	LightPtr Light;
 
@@ -37,6 +36,6 @@ private:
 	ShaderUniform mCubemapSampler;
 };
 
-typedef RefPointer<CausticsCube> CausticsCubePtr;
+typedef RefPointer<AdaptiveCausticsCube> AdaptiveCausticsCubePtr;
 
 }

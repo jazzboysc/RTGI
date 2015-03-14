@@ -1,31 +1,46 @@
 #include "AdaptiveCausticsTriMesh.h"
+#include "AdaptiveCausticsApp.h"
 
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-CausticsTriMesh::CausticsTriMesh(Material* material, Camera* camera)
+AdaptiveCausticsTriMesh::AdaptiveCausticsTriMesh(Material* material, Camera* camera)
 	:
 	TriangleMesh(material, camera),
 	MaterialColor(0.75f, 0.75f, 0.75f)
 {
 }
 //----------------------------------------------------------------------------
-CausticsTriMesh::~CausticsTriMesh()
+AdaptiveCausticsTriMesh::~AdaptiveCausticsTriMesh()
 {
 }
 //----------------------------------------------------------------------------
-void CausticsTriMesh::OnGetShaderConstants()
+void AdaptiveCausticsTriMesh::OnGetShaderConstants()
 {
-	TriangleMesh::OnGetShaderConstants();
-
-	ShaderProgram* program = mMaterial->GetProgram(0, 0);
-    program->GetUniformLocation(&mMaterialColorLoc, "materialColor");
+	auto program = mMaterial->GetProgram(0, AdaptiveCausticsApp::SMP_Resource);
+	program->GetUniformLocation(&mWorldLoc, "World");
+	program->GetUniformLocation(&mViewLoc, "View");
+	program->GetUniformLocation(&mProjLoc, "Proj");
 }
 //----------------------------------------------------------------------------
-void CausticsTriMesh::OnUpdateShaderConstants(int technique, int pass)
+void AdaptiveCausticsTriMesh::OnUpdateShaderConstants(int technique, int pass)
 {
-	TriangleMesh::OnUpdateShaderConstants(technique, pass);
+	switch (technique)
+	{
+	default:
+		break;
+	case AdaptiveCausticsApp::SMP_Resource:
+		glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
+		mWorldLoc.SetValue(worldTrans);
+		if (mCamera)
+		{
+			glm::mat4 viewTrans = mCamera->GetViewTransform();
+			mViewLoc.SetValue(viewTrans);
 
-    mMaterialColorLoc.SetValue(MaterialColor);
+			glm::mat4 projTrans = mCamera->GetProjectionTransform();
+			mProjLoc.SetValue(projTrans);
+		}
+		break;
+	}
 }
 //----------------------------------------------------------------------------

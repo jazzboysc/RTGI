@@ -9,11 +9,11 @@ namespace RTGI
 // Author: Che Sun
 // Date: 04/23/2014
 //----------------------------------------------------------------------------
-	class CausticsTriMesh : public TriangleMesh
+	class AdaptiveCausticsTriMesh : public TriangleMesh
 {
 public:
-	CausticsTriMesh(Material* material, Camera* camera);
-	virtual ~CausticsTriMesh();
+	AdaptiveCausticsTriMesh(Material* material, Camera* camera);
+	virtual ~AdaptiveCausticsTriMesh();
 
 	// Implement base class interface.
 	virtual void OnGetShaderConstants();
@@ -26,6 +26,6 @@ private:
 	ShaderUniform mMaterialColorLoc;
 };
 
-	typedef RefPointer<CausticsTriMesh> CausticsTriMeshPtr;
+	typedef RefPointer<AdaptiveCausticsTriMesh> CausticsTriMeshPtr;
 
 }
