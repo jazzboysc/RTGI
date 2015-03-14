@@ -89,7 +89,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	// Create LD random texture.
 	mRandomTexture = new Texture2D();
-	mRandomTexture->CreateLDRandomTextureRGBF(mDevice, 16, 2);
+	mRandomTexture->CreateLDRandomTextureRGBF(mDevice, 16, 4);
 
 	// Create MRT textures.
 	mPositionTexture = new Texture2D();
@@ -164,7 +164,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	mSSDOQuad->BounceStrength = 107.0f;
 	mSSDOQuad->BounceSingularity = 500.0f;
 	mSSDOQuad->SampleCount = 16;
-	mSSDOQuad->PatternSize = 2;
+	mSSDOQuad->PatternSize = 4;
 
 	// Create SSDO filter screen quad.
 	material = new Material(mtSSDOFilter);
@@ -183,7 +183,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	mSSDOFilterQuad->PositionThreshold = 5.5f;
 	mSSDOFilterQuad->NormalThreshold = 0.3f;
 	mSSDOFilterQuad->MaxRadiance = 4.5f;
-	mSSDOFilterQuad->KernelSize = 2;
+	mSSDOFilterQuad->KernelSize = 4;
 
 	// Create SSDO temp result screen quad.
 	material = new Material(mtSSDOTemp);

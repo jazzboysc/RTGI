@@ -226,7 +226,8 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer, 
     RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer,
     IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
-    int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera)
+    int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera, 
+    int kernelSize)
 {
     mVoxelizerType = voxelizer->GetVoxelizerType();
     mVoxelGridDim = voxelGridDim;
@@ -407,7 +408,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mScreenQuad->PositionThreshold = 5.5f;
     mScreenQuad->NormalThreshold = 0.3f;
     mScreenQuad->MaxRadiance = 4.5f;
-    mScreenQuad->KernelSize = 2;
+    mScreenQuad->KernelSize = kernelSize;
 
     SetShowMode(SM_Final);
 }

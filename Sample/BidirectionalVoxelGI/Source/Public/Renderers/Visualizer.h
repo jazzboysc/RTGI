@@ -162,7 +162,8 @@ public:
         ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer,
         RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer, 
         IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
-        int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera);
+        int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera, 
+        int kernelSize);
 
     void Render(int technique, int pass);
 
