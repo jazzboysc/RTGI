@@ -34,6 +34,7 @@ public:
     };
 
     void SetValue(int value);
+    void SetValue(unsigned int value);
     void SetValue(float value);
     void SetValue(float value[2]);
     void SetValue(const glm::mat4& value);

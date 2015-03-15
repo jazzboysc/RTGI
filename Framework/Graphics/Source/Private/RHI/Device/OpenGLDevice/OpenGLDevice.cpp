@@ -424,11 +424,6 @@ void OpenGLDevice::__SetUniformValueVec3(ShaderUniform* uniform,
 //----------------------------------------------------------------------------
 void OpenGLDevice::__SetUniformValueInt(ShaderUniform* uniform, int value)
 {
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
-#endif
-
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
     assert(uniformHandle);
@@ -436,7 +431,22 @@ void OpenGLDevice::__SetUniformValueInt(ShaderUniform* uniform, int value)
     glUniform1i(uniformHandle->mUniform, value);
 
 #ifdef _DEBUG
-    res = glGetError();
+    GLenum res = glGetError();
+    assert(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__SetUniformValueUInt(ShaderUniform* uniform, 
+    unsigned int value)
+{
+    OpenGLShaderUniformHandle* uniformHandle =
+        (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
+    assert(uniformHandle);
+
+    glUniform1ui(uniformHandle->mUniform, value);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
     assert(res == GL_NO_ERROR);
 #endif
 }
@@ -1218,6 +1228,7 @@ OpenGLDevice::OpenGLDevice()
     _SetUniformValueMat4 = (GPUDeviceSetUniformValueMat4)&OpenGLDevice::__SetUniformValueMat4;
     _SetUniformValueVec3 = (GPUDeviceSetUniformValueVec3)&OpenGLDevice::__SetUniformValueVec3;
     _SetUniformValueInt = (GPUDeviceSetUniformValueInt)&OpenGLDevice::__SetUniformValueInt;
+    _SetUniformValueUInt = (GPUDeviceSetUniformValueUInt)&OpenGLDevice::__SetUniformValueUInt;
     _SetUniformValueFloat = (GPUDeviceSetUniformValueFloat)&OpenGLDevice::__SetUniformValueFloat;
     _SetUniformValueFloat2 = (GPUDeviceSetUniformValueFloat2)&OpenGLDevice::__SetUniformValueFloat2;
     _DeleteTexture = (GPUDeviceDeleteTexture)&OpenGLDevice::__DeleteTexture;

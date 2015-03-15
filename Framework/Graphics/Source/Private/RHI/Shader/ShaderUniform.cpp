@@ -25,6 +25,11 @@ void ShaderUniform::SetValue(int value)
 	this->mUniformHandle->Device->SetUniformValueInt(this, value);
 }
 //----------------------------------------------------------------------------
+void ShaderUniform::SetValue(unsigned int value)
+{
+    this->mUniformHandle->Device->SetUniformValueUInt(this, value);
+}
+//----------------------------------------------------------------------------
 void ShaderUniform::SetValue(float value)
 {
 	this->mUniformHandle->Device->SetUniformValueFloat(this, value);

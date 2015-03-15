@@ -232,6 +232,12 @@ void GPUDevice::SetUniformValueInt(ShaderUniform* uniform, int value)
     (this->*_SetUniformValueInt)(uniform, value);
 }
 //----------------------------------------------------------------------------
+void GPUDevice::SetUniformValueUInt(ShaderUniform* uniform, 
+    unsigned int value)
+{
+    (this->*_SetUniformValueUInt)(uniform, value);
+}
+//----------------------------------------------------------------------------
 void GPUDevice::SetUniformValueVec3(ShaderUniform* uniform, 
     const glm::vec3* value)
 {

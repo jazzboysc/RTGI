@@ -34,6 +34,7 @@ public:
     AABB* SceneBB;
     int VoxelGridDim;
     bool VPLVisibilityTest;
+    bool UseTC;
 
 private:
     ShaderUniform mVPLCountLoc;
@@ -46,6 +47,7 @@ private:
     ShaderUniform mSceneBBExtensionLoc;
     ShaderUniform mDimLoc;
     ShaderUniform mVPLVisibilityTestLoc;
+    ShaderUniform mFrameCounterLoc;
 };
 
 typedef RefPointer<IndirectLightingScreenQuad> IndirectLightingScreenQuadPtr;

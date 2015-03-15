@@ -15,7 +15,7 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	Title = "Bidirectional Voxel GI";
     mIsRotatingModel = false;
     mIsWireframe = false;
-    mUseTC = false;
+    mUseTC = true;
     mVoxelizerType = Voxelizer::VT_SVO;
 }
 //----------------------------------------------------------------------------

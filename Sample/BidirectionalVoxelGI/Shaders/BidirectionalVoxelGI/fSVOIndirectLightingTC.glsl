@@ -16,13 +16,16 @@ uniform sampler2D GBufferAlbedoSampler;
 uniform vec3 SceneBBCenter;
 uniform vec3 SceneBBExtension;
 uniform int dim;
+uniform int FrameCounter;
 
 void main()
 {
+    ivec2 fragmentCoords = ivec2(int(gl_FragCoord.x), int(gl_FragCoord.y));
+
     vec4 PositionWorld = texture(GBufferPositionSampler, pTCoord);
     if( PositionWorld.w == 0.0 )
     {
-        imageStore(IndirectLightingBuffer, ivec2(int(gl_FragCoord.x), int(gl_FragCoord.y)), vec4(0.0, 0.0, 0.0, 1.0));
+        imageStore(IndirectLightingBuffer, fragmentCoords, vec4(0.0, 0.0, 0.0, 1.0));
         return;
     }
 
@@ -31,7 +34,7 @@ void main()
 
     vec4 MaterialColor = texture(GBufferAlbedoSampler, pTCoord);
 
-    int patternIndex = int(gl_FragCoord.x) % PatternSize + (int(gl_FragCoord.y) % PatternSize) * PatternSize;
+    int patternIndex = fragmentCoords.x % PatternSize + (fragmentCoords.y % PatternSize) * PatternSize;
     int patternLen = PatternSize*PatternSize;
     int sampleVPLCount = VPLCount / patternLen;
     int vplBufferIndex = sampleVPLCount * patternIndex;
@@ -43,11 +46,13 @@ void main()
     root.nodeBox.Max = Ivec3ToUint(ivec3(SVO_MAX_LEVEL_DIM,
         SVO_MAX_LEVEL_DIM, SVO_MAX_LEVEL_DIM));
 
+    //int vplBufferFrameOffset = (FrameCounter - 1) % 4;
     vec3 indirectColor = vec3(0.0, 0.0, 0.0);
     for( int i = 0; i < sampleVPLCount; ++i )
     {
         // Fetch VPL.
         VPL vpl = VPLBuffer.vpls[vplBufferIndex + i];
+        //VPL vpl = VPLBuffer.vpls[vplBufferIndex + 4 * i + vplBufferFrameOffset];
 
         // VPL visibility test.
         uint vTerm = SVOIntersectionTest(PositionWorld.xyz, vpl.WorldPosition.xyz, root);
@@ -68,5 +73,7 @@ void main()
     }
 
     indirectColor = MaterialColor.rgb * indirectColor * 2 * PI;
-    imageStore(IndirectLightingBuffer, ivec2(int(gl_FragCoord.x), int(gl_FragCoord.y)), vec4(indirectColor, 1.0));
+    //vec3 cacheData = imageLoad(IndirectLightingBuffer, fragmentCoords).xyz;
+    //indirectColor = 0.4*indirectColor + 0.6*cacheData;
+    imageStore(IndirectLightingBuffer, fragmentCoords, vec4(indirectColor, 1.0));
 }

@@ -9,6 +9,7 @@ IndirectLightingScreenQuad::IndirectLightingScreenQuad(Material* material)
 {
     BounceSingularity = 60.0f;
     VPLVisibilityTest = true;
+    UseTC = true;
 }
 //----------------------------------------------------------------------------
 IndirectLightingScreenQuad::~IndirectLightingScreenQuad()
@@ -30,6 +31,11 @@ void IndirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
         mSceneBBExtensionLoc.SetValue(SceneBB->GetExtension());
     }
     mVPLVisibilityTestLoc.SetValue(VPLVisibilityTest);
+    if( UseTC )
+    {
+        Application* app = Application::GetInstance();
+        mFrameCounterLoc.SetValue((int)app->FrameCounter);
+    }
 }
 //----------------------------------------------------------------------------
 void IndirectLightingScreenQuad::OnGetShaderConstants()
@@ -46,6 +52,10 @@ void IndirectLightingScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
     program->GetUniformLocation(&mDimLoc, "dim");
     program->GetUniformLocation(&mVPLVisibilityTestLoc, "VPLVisibilityTest");
+    if( UseTC )
+    {
+        program->GetUniformLocation(&mFrameCounterLoc, "FrameCounter");
+    }
 }
 //----------------------------------------------------------------------------
 
@@ -124,11 +134,12 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     mIndirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mIndirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mIndirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
-    mIndirectLightingScreenQuad->CreateDeviceResource(device);
     mIndirectLightingScreenQuad->VPLCount = vplCount;
     mIndirectLightingScreenQuad->PatternSize = patternSize;
     mIndirectLightingScreenQuad->SceneBB = sceneBB;
     mIndirectLightingScreenQuad->VoxelGridDim = voxelGridDim;
+    mIndirectLightingScreenQuad->UseTC = useTC;
+    mIndirectLightingScreenQuad->CreateDeviceResource(device);
 
     // Setup inputs.
 
