@@ -196,6 +196,7 @@ Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
     :
     SubRenderer(device, renderSet)
 {
+    mShowVPL = false;
 }
 //----------------------------------------------------------------------------
 Visualizer::~Visualizer()
@@ -222,9 +223,10 @@ Visualizer::~Visualizer()
     mVoxelCubeModel = 0;
 }
 //----------------------------------------------------------------------------
-void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
-    ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer, 
-    RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer,
+void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer, 
+    VPLGenerator* vplGenerator, ShadowMapRenderer* shadowMapRenderer, 
+    GBufferRenderer* gbufferRenderer, RSMRenderer* rsmRenderer, 
+    DirectLightingRenderer* directLightingRenderer,
     IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
     int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera, 
     int kernelSize)

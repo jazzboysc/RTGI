@@ -8,6 +8,7 @@
 #include "RSMRenderer.h"
 #include "DirectLightingRenderer.h"
 #include "IndirectLightingRenderer.h"
+#include "VPLGenerator.h"
 
 namespace RTGI
 {
@@ -159,8 +160,9 @@ public:
     virtual ~Visualizer();
 
     void Initialize(GPUDevice* device, Voxelizer* voxelizer, 
-        ShadowMapRenderer* shadowMapRenderer, GBufferRenderer* gbufferRenderer,
-        RSMRenderer* rsmRenderer, DirectLightingRenderer* directLightingRenderer, 
+        VPLGenerator* vplGenerator, ShadowMapRenderer* shadowMapRenderer, 
+        GBufferRenderer* gbufferRenderer, RSMRenderer* rsmRenderer, 
+        DirectLightingRenderer* directLightingRenderer, 
         IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
         int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera, 
         int kernelSize);
@@ -179,6 +181,7 @@ private:
     int mGlobalDim;
 
     ShowMode mShowMode;
+    bool mShowVPL;
 
     VisualizerScreenQuadPtr mScreenQuad;
 
