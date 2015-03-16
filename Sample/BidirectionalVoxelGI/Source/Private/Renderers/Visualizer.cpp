@@ -197,6 +197,7 @@ VPLPointSet::VPLPointSet(Material* material, Camera* camera)
     PointSet(material)
 {
     SetCamera(camera);
+    CurVPLSubsetID = 0;
 }
 //----------------------------------------------------------------------------
 VPLPointSet::~VPLPointSet()
@@ -206,12 +207,27 @@ VPLPointSet::~VPLPointSet()
 //----------------------------------------------------------------------------
 void VPLPointSet::OnGetShaderConstants()
 {
-
+    ShaderProgram* program = mMaterial->GetProgram(0, 0);
+    program->GetUniformLocation(&mViewLoc, "View");
+    program->GetUniformLocation(&mProjLoc, "Proj");
+    program->GetUniformLocation(&mCurVPLSubsetIDLoc, "CurVPLSubsetID");
+    program->GetUniformLocation(&mVPLCountLoc, "VPLCount");
+    program->GetUniformLocation(&mPatternSizeLoc, "PatternSize");
 }
 //----------------------------------------------------------------------------
 void VPLPointSet::OnUpdateShaderConstants(int technique, int pass)
 {
+    if( mCamera )
+    {
+        mat4 viewTrans = mCamera->GetViewTransform();
+        mViewLoc.SetValue(viewTrans);
 
+        mat4 projTrans = mCamera->GetProjectionTransform();
+        mProjLoc.SetValue(projTrans);
+    }
+    mCurVPLSubsetIDLoc.SetValue(CurVPLSubsetID);
+    mVPLCountLoc.SetValue(VPLCount);
+    mPatternSizeLoc.SetValue(PatternSize);
 }
 //----------------------------------------------------------------------------
 
@@ -256,7 +272,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     DirectLightingRenderer* directLightingRenderer,
     IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
     int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera, 
-    int kernelSize, int vplCount)
+    int patternSize, int vplCount)
 {
     mVoxelizerType = voxelizer->GetVoxelizerType();
     mVoxelGridDim = voxelGridDim;
@@ -309,6 +325,10 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
         RTGI_VPLGenerator_VPLBuffer_Name);
 
     // Create VPL point set for VPL visualization.
+
+    mVPLSubsetCount = patternSize*patternSize;
+    mCurVPLSubset = 0;
+
     ShaderProgramInfo showVPLProgramInfo;
     showVPLProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShowVPL.glsl";
     showVPLProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fShowVPL.glsl";
@@ -321,11 +341,17 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     MaterialTemplate* mtShowVPL = new MaterialTemplate();
     mtShowVPL->AddTechnique(techShowVPL);
 
-    float* vplPointSetVB = new float[vplCount * 4];
+    float* vplPointSetVB = new float[4];
+    memset(vplPointSetVB, 0, sizeof(float) * 4);
     Material* showVPLMaterial = new Material(mtShowVPL);
     mVPLPointSet = new VPLPointSet(showVPLMaterial, mainCamera);
-    mVPLPointSet->LoadFromSystemMemory(vplCount, vplPointSetVB, 4);
+    mVPLPointSet->LoadFromSystemMemory(1, vplPointSetVB, 4);
     mVPLPointSet->CreateDeviceResource(mDevice);
+    mVPLPointSet->InstanceCount = vplCount / mVPLSubsetCount;
+    mVPLPointSet->PointSize = 5.0f;
+    mVPLPointSet->VPLCount = vplCount;
+    mVPLPointSet->CurVPLSubsetID = mCurVPLSubset;
+    mVPLPointSet->PatternSize = patternSize;
     delete[] vplPointSetVB;
 
     if( mVoxelizerType == Voxelizer::VT_Grid )
@@ -458,7 +484,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mScreenQuad->PositionThreshold = 5.5f;
     mScreenQuad->NormalThreshold = 0.3f;
     mScreenQuad->MaxRadiance = 4.5f;
-    mScreenQuad->KernelSize = kernelSize;
+    mScreenQuad->KernelSize = patternSize;
 
     SetShowMode(SM_Final);
 }
@@ -509,6 +535,8 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
         glDisable(GL_DEPTH_TEST);
 
         mVPLBuffer->Bind(0);
+        mVPLPointSet->CurVPLSubsetID = mCurVPLSubset;
+        mVPLPointSet->Render(0, 0);
     }
 }
 //----------------------------------------------------------------------------
@@ -596,5 +624,15 @@ void Visualizer::SetShowMode(ShowMode mode)
         assert(false);
         break;
     }
+}
+//----------------------------------------------------------------------------
+int Visualizer::GetCurVPLSubsetIndex() const
+{
+    return mCurVPLSubset;
+}
+//----------------------------------------------------------------------------
+void Visualizer::SetCurVPLSubsetIndex(int value)
+{
+    mCurVPLSubset = RTGI_MIN(RTGI_MAX(0, value), mVPLSubsetCount - 1);
 }
 //----------------------------------------------------------------------------

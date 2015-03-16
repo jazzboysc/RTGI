@@ -32,6 +32,7 @@ public:
 	void Terminate() override;
     void OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e) override;
     void OnCheckBoxClick(System::Object^  sender, System::EventArgs^  e) override;
+    void OnButtonClick(System::Object^  sender, System::EventArgs^  e) override;
 
 private:
     friend class SceneMesh;

@@ -14,6 +14,8 @@ PointSet::PointSet(Material* material)
 	mPointCount(0),
     mComponent(0)
 {
+    InstanceCount = 1;
+    PointSize = 2.0;
 }
 //----------------------------------------------------------------------------
 PointSet::~PointSet()
@@ -28,9 +30,16 @@ void PointSet::Render(int technique, int pass, SubRenderer* subRenderer)
 //----------------------------------------------------------------------------
 void PointSet::OnRender(Pass*, PassInfo*)
 { 
-	//glVertexPointer(3, GL_FLOAT, 0, &mVertexData[0]);
-	glPointSize(2.0);
-	glDrawArrays(GL_POINTS, 0, mPointCount);
+	glPointSize(PointSize);
+
+    if( InstanceCount > 1 )
+    {
+        glDrawArraysInstanced(GL_POINTS, 0, mPointCount, InstanceCount);
+    }
+    else
+    {
+        glDrawArrays(GL_POINTS, 0, mPointCount);
+    }
 }
 //----------------------------------------------------------------------------
 void PointSet::CreateDeviceResource(GPUDevice* device)

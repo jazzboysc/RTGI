@@ -33,6 +33,9 @@ public:
 	void OnUpdateShaderConstants(int technique, int pass) override {};
 	virtual void OnGetShaderConstants() {};
 
+    unsigned int InstanceCount;
+    float PointSize;
+
 protected:
 	unsigned int mPointCount;
     unsigned int mComponent;

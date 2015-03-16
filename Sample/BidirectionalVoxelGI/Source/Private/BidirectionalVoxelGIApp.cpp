@@ -15,7 +15,7 @@ BidirectionalVoxelGIApp::BidirectionalVoxelGIApp(int width, int height)
 	Title = "Bidirectional Voxel GI";
     mIsRotatingModel = false;
     mIsWireframe = false;
-    mUseTC = true;
+    mUseTC = false;
     mVoxelizerType = Voxelizer::VT_SVO;
 }
 //----------------------------------------------------------------------------
@@ -392,6 +392,9 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddCheckBox("VPL Visibility Test", 16, infoStartY, 60, 20, true);
+    infoStartY += 24;
+    InformationPanel::GetInstance()->AddButton("Prev VPL Subset", 16, infoStartY, 100, 24);
+    InformationPanel::GetInstance()->AddButton("Next VPL Subset", 120, infoStartY, 100, 24);
 }
 //----------------------------------------------------------------------------
 void BidirectionalVoxelGIApp::FrameFunc()
@@ -531,7 +534,8 @@ void BidirectionalVoxelGIApp::ProcessInput()
 	}
 }
 //----------------------------------------------------------------------------
-void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^ sender, System::EventArgs^ e)
+void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^ sender, 
+    System::EventArgs^ e)
 {
     RadioButton^ radioButton = (RadioButton^)sender;
     if( !mVisualizer )
@@ -615,7 +619,8 @@ void BidirectionalVoxelGIApp::OnRadioButtonClick(System::Object^ sender, System:
     }
 }
 //----------------------------------------------------------------------------
-void BidirectionalVoxelGIApp::OnCheckBoxClick(System::Object^ sender, System::EventArgs^ e)
+void BidirectionalVoxelGIApp::OnCheckBoxClick(System::Object^ sender, 
+    System::EventArgs^ e)
 {
     CheckBox^ checkBox = (CheckBox^)sender;
 
@@ -637,6 +642,26 @@ void BidirectionalVoxelGIApp::OnCheckBoxClick(System::Object^ sender, System::Ev
         }
 
         mIndirectLightingRenderer->VPLVisibilityTest(checkBox->Checked);
+    }
+}
+//----------------------------------------------------------------------------
+void BidirectionalVoxelGIApp::OnButtonClick(System::Object^  sender,
+    System::EventArgs^  e)
+{
+    Button^ button = (Button^)sender;
+
+    if( button->Name == "Prev VPL Subset" )
+    {
+        int curVPLSubsetIndex = mVisualizer->GetCurVPLSubsetIndex();
+        --curVPLSubsetIndex;
+        mVisualizer->SetCurVPLSubsetIndex(curVPLSubsetIndex);
+    }
+
+    if( button->Name == "Next VPL Subset" )
+    {
+        int curVPLSubsetIndex = mVisualizer->GetCurVPLSubsetIndex();
+        ++curVPLSubsetIndex;
+        mVisualizer->SetCurVPLSubsetIndex(curVPLSubsetIndex);
     }
 }
 //----------------------------------------------------------------------------

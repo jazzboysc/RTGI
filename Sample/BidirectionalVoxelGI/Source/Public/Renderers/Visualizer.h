@@ -143,6 +143,17 @@ public:
     // Implement base class interface.
     virtual void OnGetShaderConstants();
     virtual void OnUpdateShaderConstants(int technique, int pass);
+
+    int CurVPLSubsetID;
+    int VPLCount;
+    int PatternSize;
+
+private:
+    ShaderUniform mViewLoc;
+    ShaderUniform mProjLoc;
+    ShaderUniform mCurVPLSubsetIDLoc;
+    ShaderUniform mVPLCountLoc;
+    ShaderUniform mPatternSizeLoc;
 };
 
 typedef RefPointer<VPLPointSet> VPLPointSetPtr;
@@ -183,7 +194,7 @@ public:
         DirectLightingRenderer* directLightingRenderer, 
         IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
         int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera, 
-        int kernelSize, int vplCount);
+        int patternSize, int vplCount);
 
     void Render(int technique, int pass);
 
@@ -191,6 +202,8 @@ public:
     void OnRender(int technique, int pass, Camera* camera);
 
     void SetShowMode(ShowMode mode);
+    int GetCurVPLSubsetIndex() const;
+    void SetCurVPLSubsetIndex(int value);
 
 private:
     Voxelizer::VoxelizerType mVoxelizerType;
@@ -200,6 +213,8 @@ private:
 
     ShowMode mShowMode;
     bool mShowVPL;
+    int mVPLSubsetCount;
+    int mCurVPLSubset;
 
     VisualizerScreenQuadPtr mScreenQuad;
 
