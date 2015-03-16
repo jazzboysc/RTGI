@@ -297,7 +297,7 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
         mShadowMapRenderer, mGBufferRenderer, mRSMRenderer, 
         mDirectLightingRenderer, mIndirectLightingRenderer, &mSceneBB, 
         VOXEL_DIMENSION, VOXEL_LOCAL_GROUP_DIM, mMainCamera, 
-        INTERLEAVED_PATTERN_SIZE);
+        INTERLEAVED_PATTERN_SIZE, VPL_SAMPLE_COUNT);
 
     // Create GPU timer.
     mTimer = new GPUTimer();

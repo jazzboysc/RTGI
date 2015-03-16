@@ -9,6 +9,7 @@
 #include "DirectLightingRenderer.h"
 #include "IndirectLightingRenderer.h"
 #include "VPLGenerator.h"
+#include "PointSet.h"
 
 namespace RTGI
 {
@@ -131,6 +132,23 @@ typedef RefPointer<SVOCubeMesh> SVOCubeMeshPtr;
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
+// Date: 03/15/2015
+//----------------------------------------------------------------------------
+class VPLPointSet : public PointSet
+{
+public:
+    VPLPointSet(Material* material, Camera* camera);
+    ~VPLPointSet();
+
+    // Implement base class interface.
+    virtual void OnGetShaderConstants();
+    virtual void OnUpdateShaderConstants(int technique, int pass);
+};
+
+typedef RefPointer<VPLPointSet> VPLPointSetPtr;
+
+//----------------------------------------------------------------------------
+// Author: Che Sun
 // Date: 12/05/2014
 //----------------------------------------------------------------------------
 class Visualizer : public SubRenderer
@@ -165,7 +183,7 @@ public:
         DirectLightingRenderer* directLightingRenderer, 
         IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
         int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera, 
-        int kernelSize);
+        int kernelSize, int vplCount);
 
     void Render(int technique, int pass);
 
@@ -195,6 +213,10 @@ private:
     Texture2DArrayPtr mRSMFluxTextureArray;
     Texture2DPtr mDirectLightingTexture;
     Texture2DPtr mIndirectLightingTexture;
+
+    // VPL visualization.
+    StructuredBufferPtr mVPLBuffer;
+    VPLPointSetPtr mVPLPointSet;
 
     // Grid voxelizer visualization.
     StructuredBufferPtr mVoxelBuffer;

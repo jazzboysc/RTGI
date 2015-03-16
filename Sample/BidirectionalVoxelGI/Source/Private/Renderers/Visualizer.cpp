@@ -192,16 +192,43 @@ void SVOCubeMesh::OnUpdateShaderConstants(int technique, int pass)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
+VPLPointSet::VPLPointSet(Material* material, Camera* camera)
+    :
+    PointSet(material)
+{
+    SetCamera(camera);
+}
+//----------------------------------------------------------------------------
+VPLPointSet::~VPLPointSet()
+{
+
+}
+//----------------------------------------------------------------------------
+void VPLPointSet::OnGetShaderConstants()
+{
+
+}
+//----------------------------------------------------------------------------
+void VPLPointSet::OnUpdateShaderConstants(int technique, int pass)
+{
+
+}
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
 Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
     :
     SubRenderer(device, renderSet)
 {
-    mShowVPL = false;
+    mShowVPL = true;
 }
 //----------------------------------------------------------------------------
 Visualizer::~Visualizer()
 {
     mVoxelBuffer = 0;
+
+    mVPLBuffer = 0;
+    mVPLPointSet = 0;
 
     mVoxelFragmentListBuffer = 0;
     mSVOBuffer = 0;
@@ -229,7 +256,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     DirectLightingRenderer* directLightingRenderer,
     IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
     int voxelGridDim, int voxelGridLocalGroupDim, Camera* mainCamera, 
-    int kernelSize)
+    int kernelSize, int vplCount)
 {
     mVoxelizerType = voxelizer->GetVoxelizerType();
     mVoxelGridDim = voxelGridDim;
@@ -277,6 +304,29 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
         (Texture2D*)directLightingRenderer->GetFrameBufferTextureByName(
         RTGI_DirectLightingRenderer_DirectLighting_Name);
     mIndirectLightingTexture = indirectLightingRenderer->IndirectLightingTexture;
+
+    mVPLBuffer = (StructuredBuffer*)vplGenerator->GetGenericBufferByName(
+        RTGI_VPLGenerator_VPLBuffer_Name);
+
+    // Create VPL point set for VPL visualization.
+    ShaderProgramInfo showVPLProgramInfo;
+    showVPLProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShowVPL.glsl";
+    showVPLProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fShowVPL.glsl";
+    showVPLProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                         ShaderType::ST_Fragment;
+    Pass* passShowVPL = new Pass(showVPLProgramInfo);
+
+    Technique* techShowVPL = new Technique();
+    techShowVPL->AddPass(passShowVPL);
+    MaterialTemplate* mtShowVPL = new MaterialTemplate();
+    mtShowVPL->AddTechnique(techShowVPL);
+
+    float* vplPointSetVB = new float[vplCount * 4];
+    Material* showVPLMaterial = new Material(mtShowVPL);
+    mVPLPointSet = new VPLPointSet(showVPLMaterial, mainCamera);
+    mVPLPointSet->LoadFromSystemMemory(vplCount, vplPointSetVB, 4);
+    mVPLPointSet->CreateDeviceResource(mDevice);
+    delete[] vplPointSetVB;
 
     if( mVoxelizerType == Voxelizer::VT_Grid )
     {
@@ -452,6 +502,13 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
     else
     {
         mScreenQuad->Render(technique, pass);
+    }
+
+    if( mShowVPL )
+    {
+        glDisable(GL_DEPTH_TEST);
+
+        mVPLBuffer->Bind(0);
     }
 }
 //----------------------------------------------------------------------------
