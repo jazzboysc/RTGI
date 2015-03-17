@@ -198,6 +198,10 @@ VPLPointSet::VPLPointSet(Material* material, Camera* camera)
 {
     SetCamera(camera);
     CurVPLSubsetID = 0;
+    VPLCount = 0;
+    PatternSize = 0;
+    ShowVPLSubset = false;
+    ShowVPLFluxContrast = false;
 }
 //----------------------------------------------------------------------------
 VPLPointSet::~VPLPointSet()
@@ -213,6 +217,10 @@ void VPLPointSet::OnGetShaderConstants()
     program->GetUniformLocation(&mCurVPLSubsetIDLoc, "CurVPLSubsetID");
     program->GetUniformLocation(&mVPLCountLoc, "VPLCount");
     program->GetUniformLocation(&mPatternSizeLoc, "PatternSize");
+    program->GetUniformLocation(&mShowVPLSubsetLoc, "ShowVPLSubset");
+    program->GetUniformLocation(&mShowVPLSubsetLoc, "ShowVPLSubset");
+    program->GetUniformLocation(&mShowVPLFluxContrastLoc, 
+        "ShowVPLFluxContrast");
 }
 //----------------------------------------------------------------------------
 void VPLPointSet::OnUpdateShaderConstants(int technique, int pass)
@@ -228,6 +236,8 @@ void VPLPointSet::OnUpdateShaderConstants(int technique, int pass)
     mCurVPLSubsetIDLoc.SetValue(CurVPLSubsetID);
     mVPLCountLoc.SetValue(VPLCount);
     mPatternSizeLoc.SetValue(PatternSize);
+    mShowVPLSubsetLoc.SetValue(ShowVPLSubset);
+    mShowVPLFluxContrastLoc.SetValue(ShowVPLFluxContrast);
 }
 //----------------------------------------------------------------------------
 
@@ -236,7 +246,10 @@ Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
     :
     SubRenderer(device, renderSet)
 {
-    mShowVPL = true;
+    mShowVPL = false;
+    mShowVPLSubset = false;
+    mVPLSubsetCount = 0;
+    mCurVPLSubsetIndex = 0;
 }
 //----------------------------------------------------------------------------
 Visualizer::~Visualizer()
@@ -327,7 +340,6 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     // Create VPL point set for VPL visualization.
 
     mVPLSubsetCount = patternSize*patternSize;
-    mCurVPLSubset = 0;
 
     ShaderProgramInfo showVPLProgramInfo;
     showVPLProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vShowVPL.glsl";
@@ -347,11 +359,11 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mVPLPointSet = new VPLPointSet(showVPLMaterial, mainCamera);
     mVPLPointSet->LoadFromSystemMemory(1, vplPointSetVB, 4);
     mVPLPointSet->CreateDeviceResource(mDevice);
-    mVPLPointSet->InstanceCount = vplCount / mVPLSubsetCount;
     mVPLPointSet->PointSize = 5.0f;
     mVPLPointSet->VPLCount = vplCount;
-    mVPLPointSet->CurVPLSubsetID = mCurVPLSubset;
+    mVPLPointSet->CurVPLSubsetID = mCurVPLSubsetIndex;
     mVPLPointSet->PatternSize = patternSize;
+    SetShowVPLSubset(mShowVPLSubset);
     delete[] vplPointSetVB;
 
     if( mVoxelizerType == Voxelizer::VT_Grid )
@@ -535,7 +547,7 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
         glDisable(GL_DEPTH_TEST);
 
         mVPLBuffer->Bind(0);
-        mVPLPointSet->CurVPLSubsetID = mCurVPLSubset;
+        mVPLPointSet->CurVPLSubsetID = mCurVPLSubsetIndex;
         mVPLPointSet->Render(0, 0);
     }
 }
@@ -628,11 +640,35 @@ void Visualizer::SetShowMode(ShowMode mode)
 //----------------------------------------------------------------------------
 int Visualizer::GetCurVPLSubsetIndex() const
 {
-    return mCurVPLSubset;
+    return mCurVPLSubsetIndex;
 }
 //----------------------------------------------------------------------------
 void Visualizer::SetCurVPLSubsetIndex(int value)
 {
-    mCurVPLSubset = RTGI_MIN(RTGI_MAX(0, value), mVPLSubsetCount - 1);
+    mCurVPLSubsetIndex = RTGI_MIN(RTGI_MAX(0, value), mVPLSubsetCount - 1);
+}
+//----------------------------------------------------------------------------
+void Visualizer::SetShowVPL(bool value)
+{
+    mShowVPL = value;
+}
+//----------------------------------------------------------------------------
+void Visualizer::SetShowVPLSubset(bool value)
+{
+    mShowVPLSubset = value;
+    if( mShowVPLSubset )
+    {
+        mVPLPointSet->InstanceCount = mVPLPointSet->VPLCount / mVPLSubsetCount;
+    }
+    else
+    {
+        mVPLPointSet->InstanceCount = mVPLPointSet->VPLCount;
+    }
+    mVPLPointSet->ShowVPLSubset = value;
+}
+//----------------------------------------------------------------------------
+void Visualizer::SetShowVPLFluxContrast(bool value)
+{
+    mVPLPointSet->ShowVPLFluxContrast = value;
 }
 //----------------------------------------------------------------------------

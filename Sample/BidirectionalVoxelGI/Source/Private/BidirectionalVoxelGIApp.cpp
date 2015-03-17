@@ -392,6 +392,12 @@ void BidirectionalVoxelGIApp::Initialize(GPUDevice* device)
     InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddCheckBox("VPL Visibility Test", 16, infoStartY, 60, 20, true);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddCheckBox("Show VPL", 16, infoStartY, 60, 20, false);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddCheckBox("Show VPL Interleaved Sampling Subset", 16, infoStartY, 60, 20, false);
+    infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddCheckBox("Show VPL Flux Contrast", 16, infoStartY, 60, 20, false);
     infoStartY += 24;
     InformationPanel::GetInstance()->AddButton("Prev VPL Subset", 16, infoStartY, 100, 24);
     InformationPanel::GetInstance()->AddButton("Next VPL Subset", 120, infoStartY, 100, 24);
@@ -642,6 +648,36 @@ void BidirectionalVoxelGIApp::OnCheckBoxClick(System::Object^ sender,
         }
 
         mIndirectLightingRenderer->VPLVisibilityTest(checkBox->Checked);
+    }
+
+    if( checkBox->Name == "Show VPL" )
+    {
+        if( !mVisualizer )
+        {
+            return;
+        }
+
+        mVisualizer->SetShowVPL(checkBox->Checked);
+    }
+
+    if( checkBox->Name == "Show VPL Interleaved Sampling Subset" )
+    {
+        if( !mVisualizer )
+        {
+            return;
+        }
+
+        mVisualizer->SetShowVPLSubset(checkBox->Checked);
+    }
+
+    if( checkBox->Name == "Show VPL Flux Contrast" )
+    {
+        if( !mVisualizer )
+        {
+            return;
+        }
+
+        mVisualizer->SetShowVPLFluxContrast(checkBox->Checked);
     }
 }
 //----------------------------------------------------------------------------

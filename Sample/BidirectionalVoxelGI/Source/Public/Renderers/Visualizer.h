@@ -147,6 +147,8 @@ public:
     int CurVPLSubsetID;
     int VPLCount;
     int PatternSize;
+    bool ShowVPLSubset;
+    bool ShowVPLFluxContrast;
 
 private:
     ShaderUniform mViewLoc;
@@ -154,6 +156,8 @@ private:
     ShaderUniform mCurVPLSubsetIDLoc;
     ShaderUniform mVPLCountLoc;
     ShaderUniform mPatternSizeLoc;
+    ShaderUniform mShowVPLSubsetLoc;
+    ShaderUniform mShowVPLFluxContrastLoc;
 };
 
 typedef RefPointer<VPLPointSet> VPLPointSetPtr;
@@ -204,6 +208,9 @@ public:
     void SetShowMode(ShowMode mode);
     int GetCurVPLSubsetIndex() const;
     void SetCurVPLSubsetIndex(int value);
+    void SetShowVPL(bool value);
+    void SetShowVPLSubset(bool value);
+    void SetShowVPLFluxContrast(bool value);
 
 private:
     Voxelizer::VoxelizerType mVoxelizerType;
@@ -213,8 +220,9 @@ private:
 
     ShowMode mShowMode;
     bool mShowVPL;
+    bool mShowVPLSubset;
     int mVPLSubsetCount;
-    int mCurVPLSubset;
+    int mCurVPLSubsetIndex;
 
     VisualizerScreenQuadPtr mScreenQuad;
 
