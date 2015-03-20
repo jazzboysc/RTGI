@@ -408,6 +408,7 @@ void BidirectionalVoxelGIApp::FrameFunc()
     mModel->UpdateRenderCache();
 
     static float angle = 0.0f;
+    static float angle2 = 0.0f;
     if( mIsRotatingModel )
     {
         angle += 1.0f;
@@ -416,6 +417,12 @@ void BidirectionalVoxelGIApp::FrameFunc()
         vec3 trans = mModel->GetWorldTranslation();
         mModel->SetWorldTransform(rot);
         mModel->SetWorldTranslation(trans);
+
+        angle2 -= 2.0f;
+        rot = rotate(mat4(), radians(angle2), vec3(0, 1, 0));
+        trans = mModel2->GetWorldTranslation();
+        mModel2->SetWorldTransform(rot);
+        mModel2->SetWorldTranslation(trans);
     }
 
     if( mIsWireframe )
