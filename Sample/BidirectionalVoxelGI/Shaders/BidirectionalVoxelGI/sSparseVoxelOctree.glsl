@@ -2,7 +2,8 @@
 #define SVO_MAX_LEVEL 7
 #define SVO_MAX_LEVEL_DIM 128
 #define SVO_RAY_T_EPSILON 0.0001
-#define SVO_RAY_ENDPOINT_BIAS 2.5
+#define SVO_ONE_VOXEL_CUBE_DIAG 1.732 // Length of SVO space voxel cube diagonal
+#define SVO_TWO_VOXEL_CUBE_DIAG 2.449490
 
 #define SVO_NODE_LEAF_MASK         0x80000000
 #define SVO_NODE_FLAG_MASK         0x40000000
@@ -235,12 +236,15 @@ uint SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint, SVONode root)
     vec3 rayEndPosSVO = (rayEndPoint - sceneBBMin)*inv2SceneBBExtension*
         SVO_MAX_LEVEL_DIM;
 
-    // Initialize sceneMinT, sceneMaxT and ray direction.
+    // Initialize sceneMaxT and ray direction.
     vec3 rayDirSVO = rayEndPosSVO - rayStartPosSVO;
     sceneMaxT = length(rayDirSVO);
     rayDirSVO = rayDirSVO / sceneMaxT;
-    rayStartPosSVO = rayStartPosSVO + rayDirSVO*SVO_RAY_ENDPOINT_BIAS;
-    rayEndPosSVO = rayEndPosSVO - rayDirSVO*SVO_RAY_ENDPOINT_BIAS;
+    rayStartPosSVO = rayStartPosSVO + rayDirSVO*SVO_ONE_VOXEL_CUBE_DIAG;
+    rayEndPosSVO = rayEndPosSVO - rayDirSVO*SVO_ONE_VOXEL_CUBE_DIAG;
+    rayDirSVO = rayEndPosSVO - rayStartPosSVO;
+    sceneMaxT = length(rayDirSVO);
+    rayDirSVO = rayDirSVO / sceneMaxT;
     vec3 rayInvDirSVO = 1.0 / rayDirSVO;
 
     uint hit = 0;

@@ -17,7 +17,7 @@ SVOApp::SVOApp(int width, int height)
 	Height = height;
 	Title = "Sparse voxel octree demo";
     mIsRotatingModel = false;
-    mVoxelizeCornell = false;
+    mVoxelizeCornell = true;
     mShowCornell = false;
     mShowSVOBoxBV = true;
     mShowMode = SM_WorldPosition;
@@ -327,11 +327,11 @@ void SVOApp::VoxelizeScene()
     if( mVoxelizeCornell )
     {
         glViewport(0, 0, VOXEL_DIMENSION, VOXEL_DIMENSION);
-        mGround->Render(0, 0);
-        mCeiling->Render(0, 0);
-        mBackWall->Render(0, 0);
+        //mGround->Render(0, 0);
+        //mCeiling->Render(0, 0);
+        //mBackWall->Render(0, 0);
         mLeftWall->Render(0, 0);
-        mRightWall->Render(0, 0);
+        //mRightWall->Render(0, 0);
     }
 
     glViewport(0, 0, 2, 2);
