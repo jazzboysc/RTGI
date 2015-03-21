@@ -172,9 +172,9 @@ void main()
         float cos1 = max(0.0, dot(incidentDir, vpl.WorldNormal.xyz));
         float geometricTerm = cos0 * cos1 / max(len*len, BounceSingularity);
 
-        indirectColor += MaterialColor.rgb * vpl.Flux.rgb * geometricTerm;
+        indirectColor += vpl.Flux.rgb * geometricTerm;
     }
 
-    indirectColor = indirectColor * 2 * PI;
+    indirectColor = (MaterialColor.rgb * indirectColor * 2.0 * PI * VPL_INTENSITY) / sampleVPLCount;
     Output = vec4(indirectColor, 1.0);
 }
