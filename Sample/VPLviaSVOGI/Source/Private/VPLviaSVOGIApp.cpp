@@ -36,11 +36,24 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
-    // Create light projector.
-    mLightProjector = new Camera();
-    mLightProjector->SetPerspectiveFrustum(85.0f, 1.0f, 0.01f, 50.0f);
-    mLightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
+    // Create light.
+    ShaderProgramInfo lightMeshProgramInfo;
+    lightMeshProgramInfo.VShaderFileName = "VPLviaSVOGI/vLightMesh.glsl";
+    lightMeshProgramInfo.FShaderFileName = "VPLviaSVOGI/fLightMesh.glsl";
+    lightMeshProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                           ShaderType::ST_Fragment;
+    Pass* passLightMesh = new Pass(lightMeshProgramInfo);
+    Technique* techLightMesh = new Technique();
+    techLightMesh->AddPass(passLightMesh);
+    MaterialTemplate* mtLightMesh = new MaterialTemplate();
+    mtLightMesh->AddTechnique(techLightMesh);
+
+    Camera* lightProjector = new Camera();
+    lightProjector->SetPerspectiveFrustum(85.0f, 1.0f, 0.01f, 50.0f);
+    lightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
+    mLight = new Light();
+    mLight->SetProjector(lightProjector);
 
 	// Create material templates.
 	Material* material = 0;
@@ -119,7 +132,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mModel->CreateDeviceResource(mDevice);
     mModel->SetWorldTranslation(vec3(-4.0f, 4.2f, 1.0f));
     mModel->MaterialColor = vec3(1.8f, 1.8f, 1.8f);
-    mModel->LightProjector = mLightProjector;
+    mModel->LightProjector = mLight->GetProjector();
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
@@ -134,7 +147,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mModel2->SetWorldTransform(rotM);
     mModel2->SetWorldTranslation(vec3(3.2f, 3.2f, 2.4f));
     mModel2->MaterialColor = vec3(0.8f, 1.0f, 2.0f);
-    mModel2->LightProjector = mLightProjector;
+    mModel2->LightProjector = mLight->GetProjector();
     mModel2->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel2->GetWorldSpaceBB());
 
@@ -144,7 +157,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mGround->GenerateNormals();
     mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
-    mGround->LightProjector = mLightProjector;
+    mGround->LightProjector = mLight->GetProjector();
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
@@ -157,7 +170,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mCeiling->SetWorldTransform(rotM);
     mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
-    mCeiling->LightProjector = mLightProjector;
+    mCeiling->LightProjector = mLight->GetProjector();
     mCeiling->SceneBB = &mSceneBB;
     mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
@@ -170,7 +183,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mBackWall->SetWorldTransform(rotM);
     mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
-    mBackWall->LightProjector = mLightProjector;
+    mBackWall->LightProjector = mLight->GetProjector();
     mBackWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
@@ -183,7 +196,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mLeftWall->SetWorldTransform(rotM);
     mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(1.0f, 0.2f, 0.2f);
-    mLeftWall->LightProjector = mLightProjector;
+    mLeftWall->LightProjector = mLight->GetProjector();
     mLeftWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
@@ -196,7 +209,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mRightWall->SetWorldTransform(rotM);
     mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.2f, 1.0f, 0.2f);
-    mRightWall->LightProjector = mLightProjector;
+    mRightWall->LightProjector = mLight->GetProjector();
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
@@ -283,7 +296,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     // Create direct lighting renderer.
     mDirectLightingRenderer = new DirectLightingRenderer(mDevice);
     mDirectLightingRenderer->Initialize(mDevice, Width, Height, BF_RGBAF, 
-        mLightProjector, mGBufferRenderer, mShadowMapRenderer);
+        mLight->GetProjector(), mGBufferRenderer, mShadowMapRenderer);
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer(mDevice);
@@ -450,7 +463,7 @@ void VPLviaSVOGI::FrameFunc()
 #endif
 
     // Scene shadow pass.
-    mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);
+    mShadowMapRenderer->Render(0, SMP_ShadowMap, mLight->GetProjector());
 #ifdef SHOW_TIMING
     workLoad = mShadowMapRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;
@@ -511,7 +524,7 @@ void VPLviaSVOGI::FrameFunc()
 void VPLviaSVOGI::Terminate()
 {
 	// Release all resources.
-    delete mLightProjector;
+    mLight = 0;
 
     mVoxelizer = 0;
     mGBufferRenderer = 0;

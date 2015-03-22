@@ -11,22 +11,19 @@ using namespace RTGI;
 Light::Light()
 	:
 	Color(1.0f, 1.0f, 1.0f),
-	mLocation(0.0f, 0.0f, 0.0f),
     mProjector(0)
 {
 }
 //----------------------------------------------------------------------------
 Light::~Light()
 {
+    delete mProjector;
+    mLightMesh = 0;
 }
 //----------------------------------------------------------------------------
 void Light::SetProjector(Camera* projector)
 {
     mProjector = projector;
-    if( mProjector )
-    {
-        mLocation = mProjector->GetLocation();
-    }
 }
 //----------------------------------------------------------------------------
 Camera* Light::GetProjector() const
@@ -36,7 +33,6 @@ Camera* Light::GetProjector() const
 //----------------------------------------------------------------------------
 void Light::SetLocation(const glm::vec3& location)
 {
-    mLocation = location;
     if( mProjector )
     {
         mProjector->SetLocation(location);
@@ -45,6 +41,17 @@ void Light::SetLocation(const glm::vec3& location)
 //----------------------------------------------------------------------------
 glm::vec3 Light::GetLocation() const
 {
-    return mLocation;
+    assert(mProjector);
+    return mProjector->GetLocation();
+}
+//----------------------------------------------------------------------------
+void Light::SetLightMesh(TriangleMesh* lightMesh)
+{
+    mLightMesh = lightMesh;
+}
+//----------------------------------------------------------------------------
+TriangleMesh* Light::GetLightMesh() const
+{
+    return mLightMesh;
 }
 //----------------------------------------------------------------------------

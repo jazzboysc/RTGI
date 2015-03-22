@@ -8,6 +8,7 @@
 
 #include "RefObject.h"
 #include "Camera.h"
+#include "TriangleMesh.h"
 
 namespace RTGI
 {
@@ -28,11 +29,13 @@ public:
     Camera* GetProjector() const;
     void SetLocation(const glm::vec3& location);
     glm::vec3 GetLocation() const;
+
+    void SetLightMesh(TriangleMesh* lightMesh);
+    TriangleMesh* GetLightMesh() const;
    
-private:
-	glm::vec3 mLocation;
+protected:
     Camera* mProjector;
-    
+    TriangleMeshPtr mLightMesh;
 };
 
 typedef RefPointer<Light> LightPtr;
