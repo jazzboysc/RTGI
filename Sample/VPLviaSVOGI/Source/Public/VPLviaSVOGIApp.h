@@ -72,8 +72,8 @@ private:
     VPLGeneratorPtr mVPLGenerator;
 
     // VPL stuff.
-    enum { INTERLEAVED_PATTERN_SIZE = 5 };
-    enum { VPL_SAMPLE_COUNT = 250 };
+    enum { INTERLEAVED_PATTERN_SIZE = 3 };
+    enum { VPL_SAMPLE_COUNT = 270 };
 
     // Visualizer.
     VisualizerPtr mVisualizer;

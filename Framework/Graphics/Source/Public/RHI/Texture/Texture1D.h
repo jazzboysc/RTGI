@@ -33,9 +33,15 @@ public:
     void CreateUniformRandomTexture(GPUDevice* device, int sampleCount, 
         int channelCount);
 
+    void CreateHaltonRandomTexture(GPUDevice* device, int sampleCount,
+        int channelCount);
+
     void GetDataFromGPUMemory(void* dstData);
 
 	int Width;
+
+protected:
+    void SetupRandomTextureFormat(int sampleCount, int channelCount);
 };
 
 typedef RefPointer<Texture1D> Texture1DPtr;

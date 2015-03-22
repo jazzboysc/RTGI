@@ -291,9 +291,7 @@ void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device,
 
 	int patternSizeSquared = patternSize * patternSize;
 
-	srand(0);
-
-	int haltonIndex = 0;
+	int haltonIndex = 1;
 	float* const pixels = 
 		new float[3 * maxSampleCount * patternSizeSquared];
 	
@@ -304,9 +302,9 @@ void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device,
 			glm::vec3 sample;
 			do
 			{
-				sample = glm::vec3(2.0f * Halton(2, haltonIndex) - 1.0f, 
-							  2.0f * Halton(3, haltonIndex) - 1.0f, 
-							  Halton(5, haltonIndex));						
+				sample = glm::vec3(2.0f * RadicalInverse(2, haltonIndex) - 1.0f, 
+							  2.0f * RadicalInverse(3, haltonIndex) - 1.0f, 
+							  RadicalInverse(5, haltonIndex));						
 				haltonIndex++;
 			} while( glm::length(sample) > 1.0f );
 

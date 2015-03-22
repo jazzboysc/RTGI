@@ -26,7 +26,7 @@ void SampleRSM::OnGetShaderConstants()
 void SampleRSM::OnPreDispatch(unsigned int pass)
 {
     VPLSamplePattern->BindToImageUnit(0, BA_Read_Only);
-    VPLSampleTest->BindToImageUnit(1, BA_Write_Only);
+    //VPLSampleTest->BindToImageUnit(1, BA_Write_Only);
 
     mRSMPositionLoc.SetValue(0);
     mRSMNormalLoc.SetValue(1);
@@ -95,10 +95,11 @@ void VPLGenerator::Initialize(GPUDevice* device, int vplCount)
 
     // Create VPL sample pattern.
     mVPLSamplePattern = new Texture1D();
-    mVPLSamplePattern->CreateUniformRandomTexture(device, mVPLCount, 4);
-    mVPLSampleTest = new Texture1D();
-    mVPLSampleTest->LoadFromSystemMemory(device, BIF_RGBA32F, mVPLCount, 
-        BF_RGBA, BCT_Float, 0);
+    //mVPLSamplePattern->CreateUniformRandomTexture(device, mVPLCount, 4);
+    mVPLSamplePattern->CreateHaltonRandomTexture(device, mVPLCount, 4);
+    //mVPLSampleTest = new Texture1D();
+    //mVPLSampleTest->LoadFromSystemMemory(device, BIF_RGBA32F, mVPLCount, 
+    //    BF_RGBA, BCT_Float, 0);
 
     // Create VPL buffer.
     GLuint vplBufferSize = sizeof(VPL) * mVPLCount;
@@ -109,7 +110,6 @@ void VPLGenerator::Initialize(GPUDevice* device, int vplCount)
     ShaderProgramInfo sampleRSMProgramInfo;
     sampleRSMProgramInfo.CShaderFileName = "VPLviaSVOGI/cSampleRSM.glsl";
     sampleRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Compute;
-
     ComputePass* passSampleRSM = new ComputePass(sampleRSMProgramInfo);
     mSampleRSMTask = new SampleRSM();
     mSampleRSMTask->AddPass(passSampleRSM);

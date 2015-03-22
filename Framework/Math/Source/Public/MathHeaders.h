@@ -28,12 +28,12 @@
 //----------------------------------------------------------------------------
 #define RTGI_MIN(a,b)((a < b) ? (a) : (b))
 //----------------------------------------------------------------------------
-inline float Halton(const int base, int index)
+inline float RadicalInverse(const int base, int index)
 {
 	float x = 0.0f;
 	float f = 1.0f / base;
 
-	while (index)
+	while( index )
 	{
 		x += f * (float)(index % base);
 		index /= base;
@@ -75,3 +75,4 @@ inline double SymmetricRandom(unsigned int uiSeed = 0)
 	double ratio = ((double)rand()) / ((double)(RAND_MAX));
 	return 2.0*ratio - 1.0;
 }
+//----------------------------------------------------------------------------

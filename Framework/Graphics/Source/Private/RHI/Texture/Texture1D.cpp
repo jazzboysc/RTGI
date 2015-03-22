@@ -47,6 +47,56 @@ void Texture1D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 void Texture1D::CreateUniformRandomTexture(GPUDevice* device, 
     int sampleCount, int channelCount)
 {
+    SetupRandomTextureFormat(sampleCount, channelCount);
+
+    float* pixels = new float[sampleCount * channelCount];
+    for( int i = 0; i < sampleCount; ++i )
+    {
+        for( int j = 0; j < channelCount; ++j )
+        {
+            pixels[channelCount*i + j] = (float)UniformRandom();
+        }
+    }
+
+    mTextureHandle = device->Texture1DLoadFromSystemMemory(
+        this, mInternalFormat, Width, mFormat, mComponentType, pixels);
+
+    delete[] pixels;
+}
+//--------------------------------------------------------------------------
+static int PrimeNumbers[4] = { 2, 3, 5, 7 };
+//--------------------------------------------------------------------------
+void Texture1D::CreateHaltonRandomTexture(GPUDevice* device, 
+    int sampleCount, int channelCount)
+{
+    SetupRandomTextureFormat(sampleCount, channelCount);
+
+    int haltonIndex = 1;
+    float* pixels = new float[sampleCount * channelCount];
+    for( int i = 0; i < sampleCount; ++i )
+    {
+        for( int j = 0; j < channelCount; ++j )
+        {
+            pixels[channelCount*i + j] = RadicalInverse(PrimeNumbers[j], 
+                haltonIndex);
+        }
+        haltonIndex++;
+    }
+
+    mTextureHandle = device->Texture1DLoadFromSystemMemory(
+        this, mInternalFormat, Width, mFormat, mComponentType, pixels);
+
+    delete[] pixels;
+}
+//--------------------------------------------------------------------------
+void Texture1D::GetDataFromGPUMemory(void* dstData)
+{
+    mTextureHandle->Device->Texture1DGetDataFromGPUMemory(
+        this, dstData);
+}
+//--------------------------------------------------------------------------
+void Texture1D::SetupRandomTextureFormat(int sampleCount, int channelCount)
+{
     Width = sampleCount;
     mComponentType = BCT_Float;
 
@@ -76,25 +126,5 @@ void Texture1D::CreateUniformRandomTexture(GPUDevice* device,
         assert(false);
         break;
     }
-
-    float* pixels = new float[sampleCount * channelCount];
-    for( int i = 0; i < sampleCount; ++i )
-    {
-        for( int j = 0; j < channelCount; ++j )
-        {
-            pixels[channelCount * i + j] = (float)UniformRandom();
-        }
-    }
-
-    mTextureHandle = device->Texture1DLoadFromSystemMemory(
-        this, mInternalFormat, Width, mFormat, mComponentType, pixels);
-
-    delete[] pixels;
-}
-//--------------------------------------------------------------------------
-void Texture1D::GetDataFromGPUMemory(void* dstData)
-{
-    mTextureHandle->Device->Texture1DGetDataFromGPUMemory(
-        this, dstData);
 }
 //--------------------------------------------------------------------------
