@@ -41,7 +41,7 @@ void VPLTriMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
     program->GetUniformLocation(&mLightColorLoc, "LightColor");
     program->GetUniformLocation(&mMaterialColorLoc3, "MaterialColor");
-    GPU_DEVICE_FUNC_SetProgramParameterInt(program,
+    program->GetProgramHandle()->Device->SetProgramParameterInt(program,
         SPP_Geometry_Vertices_Out, VPLApp::RSM_FACE_COUNT * 3);
 
     // Get pass 4 uniform locations.
@@ -69,7 +69,7 @@ void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update pass 2 uniform data.
     if( pass == 1 )
     {
-        mWorldLoc2.SetValue(mWorldTransform);
+        mWorldLoc2.SetValue(mSpatialInfo->GetWorldTransform());
         mMaterialColorLoc2.SetValue(MaterialColor);
 
         if( mCamera )
@@ -85,7 +85,7 @@ void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update pass 3 uniform data.
     if( pass == 2 )
     {
-        mWorldLoc3.SetValue(mWorldTransform);
+        mWorldLoc3.SetValue(mSpatialInfo->GetWorldTransform());
         mLightColorLoc.SetValue(LightColor);
         mMaterialColorLoc3.SetValue(MaterialColor);
 
@@ -103,7 +103,7 @@ void VPLTriMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update pass 4 uniform data.
     if( pass == 3 )
     {
-        mWorldLoc4.SetValue(mWorldTransform);
+        mWorldLoc4.SetValue(mSpatialInfo->GetWorldTransform());
         float nearFarPlane[2];
         nearFarPlane[0] = 0.01f;
         nearFarPlane[1] = 50.0f;

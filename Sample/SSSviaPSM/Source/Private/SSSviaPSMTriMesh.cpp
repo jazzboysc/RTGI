@@ -59,7 +59,7 @@ void SSSviaPSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update pass 2 uniform data.
     if( pass == 1 )
     {
-        mWorldLoc2.SetValue(mWorldTransform);
+        mWorldLoc2.SetValue(mSpatialInfo->GetWorldTransform());
         mMaterialColorLoc.SetValue(MaterialColor);
         mIsSSSLoc.SetValue(IsSSS);
 
