@@ -10,6 +10,7 @@ SET( INCLUDE_DIRS
 	Math
 	glm
     libbmpread
+    libpng
 	glew
 )
 SET( LINK_LIBS

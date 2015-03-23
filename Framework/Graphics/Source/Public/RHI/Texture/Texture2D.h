@@ -27,6 +27,10 @@ public:
     bool LoadBMPFromFile(GPUDevice* device, const std::string& fileName, 
         bool generateMipMap = true);
 
+    // Load a ".png" file and create its resource.
+    bool LoadPNGFromFile(GPUDevice* device, const std::string& fileName,
+        bool generateMipMap = true);
+
 	// Load a ".pfm" file and create its resource.
     bool LoadPFMFromFile(GPUDevice* device, const std::string& fileName,
         bool generateMipMap = true);

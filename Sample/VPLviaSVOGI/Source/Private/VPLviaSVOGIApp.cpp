@@ -1,5 +1,6 @@
 #include "VPLviaSVOGIApp.h"
 #include "InformationPanel.h"
+#include "LightMesh.h"
 #include <glfw3.h>
 
 using namespace RTGI;
@@ -48,12 +49,29 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     MaterialTemplate* mtLightMesh = new MaterialTemplate();
     mtLightMesh->AddTechnique(techLightMesh);
 
+    LightMesh* lightMesh = new LightMesh(new Material(mtLightMesh), mMainCamera);
+    lightMesh->LoadFromFile("square.ply");
+    mat4 lightMeshScale = glm::scale(mat4(), vec3(0.05f));
+    lightMesh->UpdateModelSpaceVertices(lightMeshScale);
+    mat4 lightRotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
+    lightMesh->SetWorldTransform(lightRotM);
+    lightMesh->SetTCoord(0, vec2(0.0f, 0.0f));
+    lightMesh->SetTCoord(1, vec2(1.0f, 0.0f));
+    lightMesh->SetTCoord(2, vec2(1.0f, 1.0f));
+    lightMesh->SetTCoord(3, vec2(0.0f, 1.0f));
+    lightMesh->CreateDeviceResource(device);
+
+    lightMesh->LightMeshTexture = new Texture2D();
+    lightMesh->LightMeshTexture->LoadPNGFromFile(mDevice, "Textures/pointLight.png");
+
     Camera* lightProjector = new Camera();
     lightProjector->SetPerspectiveFrustum(85.0f, 1.0f, 0.01f, 50.0f);
     lightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
     mLight = new Light();
     mLight->SetProjector(lightProjector);
+    mLight->SetLightMesh(lightMesh);
+    lightMesh->SetWorldTranslation(lightProjector->GetLocation());
 
 	// Create material templates.
 	Material* material = 0;
@@ -519,6 +537,8 @@ void VPLviaSVOGI::FrameFunc()
     infoPanel->SetTimingLabelValue("Total", totalWorkLoad);
     infoPanel->SetTimingLabelValue("Frame Counter", FrameCounter);
 #endif
+
+    mLight->RenderLightMesh(0, 0);
 }
 //----------------------------------------------------------------------------
 void VPLviaSVOGI::Terminate()

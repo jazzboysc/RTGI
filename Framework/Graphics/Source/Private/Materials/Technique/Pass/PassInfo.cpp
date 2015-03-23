@@ -81,9 +81,9 @@ void PassInfo::Create(GLuint program, Primitive* primitive, bool hasNormal,
                 vertexComponentCount*sizeof(float), (void*)12);
         }
 
+        loc = glGetAttribLocation(program, "vNormal");
         if( loc != -1 )
         {
-            loc = glGetAttribLocation(program, "vNormal");
             glEnableVertexAttribArray(loc);
             glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE,
                 vertexComponentCount*sizeof(float), (void*)20);

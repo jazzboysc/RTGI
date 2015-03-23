@@ -55,3 +55,9 @@ TriangleMesh* Light::GetLightMesh() const
     return mLightMesh;
 }
 //----------------------------------------------------------------------------
+void Light::RenderLightMesh(int technique, int pass, SubRenderer* subRenderer)
+{
+    assert(mLightMesh);
+    mLightMesh->Render(technique, pass, subRenderer);
+}
+//----------------------------------------------------------------------------

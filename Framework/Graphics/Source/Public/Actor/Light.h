@@ -32,6 +32,9 @@ public:
 
     void SetLightMesh(TriangleMesh* lightMesh);
     TriangleMesh* GetLightMesh() const;
+
+    void RenderLightMesh(int technique, int pass, 
+        SubRenderer* subRenderer = 0);
    
 protected:
     Camera* mProjector;

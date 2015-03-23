@@ -5,6 +5,7 @@
 
 #include "Texture2D.h"
 #include "bmpread.h"
+#include "png.h"
 #include "Terminal.h"
 
 using namespace RTGI;
@@ -65,6 +66,59 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device,
 #endif
 
 	return true;
+}
+//----------------------------------------------------------------------------
+bool Texture2D::LoadPNGFromFile(GPUDevice* device, 
+    const std::string& fileName, bool generateMipMap)
+{
+    if( mTextureHandle )
+    {
+        assert(false);
+        return false;
+    }
+
+    IsRenderTarget = false;
+
+    png_image png;
+    memset(&png, 0, sizeof(png_image));
+    png.version = PNG_IMAGE_VERSION;
+
+    if( png_image_begin_read_from_file(&png, fileName.c_str()) )
+    {
+        png_bytep buffer;
+
+        png.format = PNG_FORMAT_RGBA;
+        buffer = (png_bytep)malloc(PNG_IMAGE_SIZE(png));
+
+        if( png_image_finish_read(&png, 0, buffer, 0, 0) )
+        {
+            Width = png.width;
+            Height = png.height;
+
+            mInternalFormat = BIF_RGBA8;
+            mFormat = BF_RGBA;
+            mComponentType = BCT_Unsigned_Byte;
+
+            mTextureHandle = device->Texture2DLoadFromSystemMemory(
+                this, mInternalFormat, Width, Height, mFormat,
+                mComponentType, generateMipMap, buffer);
+            HasMipMap = generateMipMap;
+
+#ifdef RTGI_OUTPUT_TEXTURE_RESOURCE_LOADING
+            Terminal::Output(Terminal::OC_Success, 
+                "Loading texture %s finished\n", fileName.c_str());
+#endif
+            free(buffer);
+
+            return true;
+        }
+        else
+        {
+            free(buffer);
+        }
+    }
+
+    return false;
 }
 //----------------------------------------------------------------------------
 bool Texture2D::LoadPFMFromFile(GPUDevice* device, 

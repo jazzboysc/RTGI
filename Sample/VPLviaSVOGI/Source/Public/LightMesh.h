@@ -20,6 +20,12 @@ public:
     // Implement base class interface.
     virtual void OnGetShaderConstants();
     virtual void OnUpdateShaderConstants(int technique, int pass);
+    virtual void OnRender(Pass* pass, PassInfo* passInfo);
+
+    Texture2DPtr LightMeshTexture;
+
+private:
+    ShaderUniform mLightMeshTextureSamplerLoc;
 };
 
 typedef RefPointer<LightMesh> LightMeshPtr;
