@@ -440,7 +440,7 @@ void VPLviaSVOGI::FrameFunc()
 {
     mModel->UpdateRenderCache();
 
-    static float angle = 0.0f;
+    static float angle = -60.0f;
     static float angle2 = -60.0f;
     if( mIsRotatingModel )
     {

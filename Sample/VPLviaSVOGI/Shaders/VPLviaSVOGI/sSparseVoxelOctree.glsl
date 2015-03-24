@@ -240,8 +240,8 @@ uint SVOIntersectionTest(vec3 rayStartPoint, vec3 rayEndPoint, SVONode root)
     vec3 rayDirSVO = rayEndPosSVO - rayStartPosSVO;
     sceneMaxT = length(rayDirSVO);
     rayDirSVO = rayDirSVO / sceneMaxT;
-    rayStartPosSVO = rayStartPosSVO + rayDirSVO*SVO_TWO_VOXEL_CUBE_DIAG;
-    rayEndPosSVO = rayEndPosSVO - rayDirSVO*SVO_TWO_VOXEL_CUBE_DIAG;
+    rayStartPosSVO = rayStartPosSVO + rayDirSVO*SVO_TWO_VOXEL_CUBE_DIAG*2.0;
+    rayEndPosSVO = rayEndPosSVO - rayDirSVO*SVO_TWO_VOXEL_CUBE_DIAG*2.0;
     rayDirSVO = rayEndPosSVO - rayStartPosSVO;
     sceneMaxT = length(rayDirSVO);
     rayDirSVO = rayDirSVO / sceneMaxT;
