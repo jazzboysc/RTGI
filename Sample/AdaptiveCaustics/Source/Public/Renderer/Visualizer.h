@@ -27,7 +27,8 @@ public:
 
 private:
     ShaderUniform mShowModeLoc;
-    ShaderUniform mTempSamplerLoc;
+	ShaderUniform mTempSamplerLoc;
+	ShaderUniform mTempArraySamplerLoc;
 };
 
 typedef RefPointer<VisualizerScreenQuad> VisualizerScreenQuadPtr;
@@ -39,7 +40,7 @@ typedef RefPointer<VisualizerScreenQuad> VisualizerScreenQuadPtr;
 class Visualizer : public SubRenderer
 {
 public:
-    enum ShowMode
+    enum eShowMode
     {
 		eSM_ReceiverLightSpacePosition,
 		eSM_RefractorLightSpaceFrontNorm,
@@ -62,11 +63,12 @@ public:
     // Implement base class interface.
     void OnRender(int technique, int pass, Camera* camera);
 
-    void SetShowMode(ShowMode mode);
+    void SetShowMode(eShowMode mode);
 
 private:
-    ShowMode mShowMode;
+    eShowMode mShowMode;
 
+	PipelineStateBlockPtr mPSB;
     VisualizerScreenQuadPtr mScreenQuad;
 
     Texture2DPtr mReceiverPositionTexture;

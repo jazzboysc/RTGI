@@ -34,6 +34,15 @@ public:
 
 private:
 	PipelineStateBlockPtr mPSB;
+	StructuredBuffer* mDebugBuffer;
+	struct DebugBuffer
+	{
+		// Debug.
+		float value1;
+		float value2;
+		float value3;
+		float value4;
+	};
 };
 
 typedef RefPointer<RefractorResourceRenderer> RefractorResourceRendererPtr;

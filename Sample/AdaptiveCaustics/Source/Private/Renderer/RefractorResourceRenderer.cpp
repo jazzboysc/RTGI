@@ -26,9 +26,14 @@ void RefractorResourceRenderer::CreateCausticsResource(RefractorResourceDesc* de
 	assert(desc);
 
 	AddFrameBufferTarget(RTGI_CausticsBuffer_RefractorFrontNormal_Name,
-		desc->Width, desc->Height, 0, TT_Texture2D,
+		desc->Width, desc->Height, 2, TT_Texture2DArray,
 		desc->RefractorFrontNormalFormat, desc->RefractorFrontNormalMipmap);
-	CreateFrameBuffer(desc->Width, desc->Height, 0, TT_Texture2D);
+	CreateFrameBuffer(desc->Width, desc->Height, 2, TT_Texture2DArray);
+
+	// Create material templates.
+	mDebugBuffer = new StructuredBuffer();
+	auto bufferSize = sizeof(DebugBuffer);
+	mDebugBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
 
 #ifdef _DEBUG
 	GLenum res = glGetError();
@@ -38,6 +43,15 @@ void RefractorResourceRenderer::CreateCausticsResource(RefractorResourceDesc* de
 //----------------------------------------------------------------------------
 void RefractorResourceRenderer::Render(int technique, int pass, Camera* camera)
 {
+	glDisable(GL_CULL_FACE);
+
+	mDebugBuffer->Bind(0);
 	SubRenderer::Render(technique, pass, SRO_FrameBuffer, mPSB, camera);
+	mDebugBuffer->Bind();
+
+	void* bufferData = mDebugBuffer->Map(BA_Read_Only);
+	auto dataPtr = (DebugBuffer*)bufferData;
+	mDebugBuffer->Unmap();
+	int a = 0;
 }
 //----------------------------------------------------------------------------

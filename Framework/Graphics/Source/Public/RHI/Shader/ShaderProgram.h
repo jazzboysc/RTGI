@@ -66,7 +66,7 @@ struct ShaderProgramInfo
 		}
 		else if (fileExt == "geom")
 		{
-			FShaderFileName = shaderName;
+			GShaderFileName = shaderName;
 			ShaderStageFlag |= ShaderType::ST_Geometry;
 		}
 		else if (fileExt == "ctrl")

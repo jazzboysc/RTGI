@@ -5,6 +5,7 @@
 #include "ReceiverResourceRenderer.h"
 #include "RefractorResourceRenderer.h"
 #include "RefractorResourceRendererBack.h"
+#include "CausticsMapRenderer.h"
 #include "Visualizer.h"
 
 #include "GPUTimer.h"

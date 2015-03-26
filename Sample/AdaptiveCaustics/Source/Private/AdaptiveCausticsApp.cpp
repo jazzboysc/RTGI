@@ -39,8 +39,9 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	glClearColor(color, color, color, 0.0f);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-
+	glDisable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glDisable(GL_CULL_FACE);
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -61,10 +62,10 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mTimer->CreateDeviceResource();
 
 	// Pass: Render light space position of receiver geometry
-	ShaderProgramInfo PI_WorldPosition;
-	PI_WorldPosition
-		<< "AdaptiveCaustics/WorldPosition.vert"
-		<< "AdaptiveCaustics/WorldPosition.frag";
+	ShaderProgramInfo PI_outputEyeSpacePosition;
+	PI_outputEyeSpacePosition
+		<< "AdaptiveCaustics/outputEyeSpacePosition.vert"
+		<< "AdaptiveCaustics/outputEyeSpacePosition.frag";
 	/*
 	// Cubemap variation
 	ShaderProgramInfo PI_CubeReceiverPosition;
@@ -76,13 +77,14 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	// Pass: Render light space front and back normal of refractor geometry
 	ShaderProgramInfo PI_FrontBackNormals;
 	PI_FrontBackNormals
-		<< "AdaptiveCaustics/FrontBackNormals.vert"
-		<< "AdaptiveCaustics/FrontBackNormals.frag";
+		<< "AdaptiveCaustics/renderFrontAndBackNormals.vert"
+		<< "AdaptiveCaustics/renderFrontAndBackNormals.geom"
+		<< "AdaptiveCaustics/renderFrontAndBackNormals.frag";
 
 
 
 	auto mtCausticsResourceReceiver = new MaterialTemplate(
-		new Technique(new Pass(PI_WorldPosition)));
+		new Technique(new Pass(PI_outputEyeSpacePosition)));
 
 
 	auto mtCausticsResourceRefractor = new MaterialTemplate(
@@ -125,12 +127,12 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	// Refractor mesh
 	mScene.mesh = new AdaptiveCausticsTriMesh(
 		new Material(mtCausticsResourceRefractor), mMainCamera);
-	mScene.mesh->LoadFromFile("dragon_s.ply");
+	mScene.mesh->LoadFromFile("triangle.ply");
 	mScene.mesh->GenerateNormals();
 	mScene.mesh->CreateDeviceResource(mDevice);
 	mScene.mesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
 	mScene.mesh->SetWorldTranslation(vec3(0.0f, -0.8f, 0.0f));
-	mScene.mesh->SetWorldScale(vec3(3.0f));
+	mScene.mesh->SetWorldScale(vec3(0.03f));
 	mScene.mesh->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
 
 	// Render sets
@@ -189,13 +191,13 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mRefractorResourceRenderer->CreateCausticsResource(&refractorResourceDesc);
 	mRefractorResourceRenderer->SetTimer(mTimer);
 
-	mRefractorResourceRendererBack = new RefractorResourceRendererBack(device, mScene.refractor);
-	RefractorResourceDescBack refractorResourceDescBack;
-	refractorResourceDescBack.Width = this->Width;
-	refractorResourceDescBack.Height = this->Height;
-	refractorResourceDescBack.RefractorBackNormalFormat = BF_RGBAF;
-	mRefractorResourceRendererBack->CreateCausticsResource(&refractorResourceDescBack);
-	mRefractorResourceRendererBack->SetTimer(mTimer);
+// 	mRefractorResourceRendererBack = new RefractorResourceRendererBack(device, mScene.refractor);
+// 	RefractorResourceDescBack refractorResourceDescBack;
+// 	refractorResourceDescBack.Width = this->Width;
+// 	refractorResourceDescBack.Height = this->Height;
+// 	refractorResourceDescBack.RefractorBackNormalFormat = BF_RGBAF;
+// 	mRefractorResourceRendererBack->CreateCausticsResource(&refractorResourceDescBack);
+// 	mRefractorResourceRendererBack->SetTimer(mTimer);
 
 	mVisualizer = new Visualizer(device);
 	mVisualizer->Initialize(device, mReceiverResourceRenderer,
@@ -476,10 +478,39 @@ void AdaptiveCausticsApp::FrameFunc()
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Refractor Light Space Front Normal Pass", workLoad);
 
-	mRefractorResourceRendererBack->Render(0, SMP_Resource, mLightProjector);
-	workLoad = mRefractorResourceRendererBack->GetTimeElapsed();
-	totalWorkLoad += workLoad;
-	infoPanel->SetTimingLabelValue("Refractor Light Space Back Normal Pass", workLoad);
+// 	mRefractorResourceRendererBack->Render(0, SMP_Resource, mLightProjector);
+// 	workLoad = mRefractorResourceRendererBack->GetTimeElapsed();
+// 	totalWorkLoad += workLoad;
+// 	infoPanel->SetTimingLabelValue("Refractor Light Space Back Normal Pass", workLoad);
+
+	/*
+	// OK.  Now that we have all the information to compute all the photons
+	//    stored in our temporary FBOs, adaptively traverse the "mipmap" levels
+	//    of our virtual photon buffer.  In other words, start at a 64x64
+	//    resolution, compute all the photons, and then in each area where 
+	//    the photons hit the refractor, adaptively subdivide (don't subdivide
+	//    in other regions).
+	data->fbo->causticMap[lightNum]->BindBuffer();
+	data->fbo->causticMap[lightNum]->ClearBuffers();
+	glLoadIdentity();
+	scene->LightLookAtMatrix(lightNum);
+
+	// The actual hierarchical traversal is given in code in utilRoutines.cpp.  This
+	//    code traverses our photon hierarchy and outputs the correct photons as 
+	//    splats into the current buffer (the causticMap[lightNum] enabled above)
+	glBlendFunc(GL_ONE, GL_ONE);
+	int startLevel = 6;  // The starting traversal level (2^6 = 64x64 photons)
+
+	HierarchicalTransformFeedbackTraversalWithBatching(data->shader->adaptCaustic_traverse,
+		data->shader->adaptCaustic_splat,
+		startLevel,
+		lightNum);
+
+	// All right, we just created the caustic map, so do some housekeeping to make sure
+	//    our rendering pipeline (see directories "Scene," "Objects" and "Materials") can 
+	//    correctly render geometry using a caustic map.
+	data->fbo->causticMap[lightNum]->UnbindBuffer();
+	*/
 
 	// Show rendering result.
 	mVisualizer->Render(0, 0);
