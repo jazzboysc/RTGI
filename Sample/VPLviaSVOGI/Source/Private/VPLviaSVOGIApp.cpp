@@ -65,7 +65,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     lightMesh->LightMeshTexture->LoadPNGFromFile(mDevice, "Textures/pointLight.png");
 
     Camera* lightProjector = new Camera();
-    lightProjector->SetPerspectiveFrustum(85.0f, 1.0f, 0.01f, 50.0f);
+    lightProjector->SetPerspectiveFrustum(90.0f, 1.0f, 0.01f, 50.0f);
     lightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
     mLight = new Light();
