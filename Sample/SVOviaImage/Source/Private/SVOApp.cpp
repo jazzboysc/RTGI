@@ -184,7 +184,7 @@ void SVOApp::Initialize(GPUDevice* device)
 	mat4 rotM;
     material = new Material(mtVoxelization);
 	mModel = new SVOTriMesh(material, mMainCamera);
-	mModel->LoadFromFile("dragon_s.ply");
+	mModel->LoadFromPLYFile("dragon_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(60.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
@@ -196,7 +196,7 @@ void SVOApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
     mGround = new SVOTriMesh(material, mMainCamera);
-	mGround->LoadFromFile("square.ply");
+	mGround->LoadFromPLYFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.8f, 0.8f, 0.0f);
@@ -205,7 +205,7 @@ void SVOApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
     mCeiling = new SVOTriMesh(material, mMainCamera);
-	mCeiling->LoadFromFile("square.ply");
+	mCeiling->LoadFromPLYFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
 	rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -217,7 +217,7 @@ void SVOApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
     mBackWall = new SVOTriMesh(material, mMainCamera);
-	mBackWall->LoadFromFile("square.ply");
+	mBackWall->LoadFromPLYFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -229,7 +229,7 @@ void SVOApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
     mLeftWall = new SVOTriMesh(material, mMainCamera);
-	mLeftWall->LoadFromFile("square.ply");
+	mLeftWall->LoadFromPLYFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
@@ -241,7 +241,7 @@ void SVOApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
     mRightWall = new SVOTriMesh(material, mMainCamera);
-	mRightWall->LoadFromFile("square.ply");
+	mRightWall->LoadFromPLYFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));

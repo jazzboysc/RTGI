@@ -116,7 +116,7 @@ void TriangleMesh::OnUpdateShaderConstants(int technique, int pass)
 	}
 }
 //----------------------------------------------------------------------------
-bool TriangleMesh::LoadFromFile(const std::string& fileName)
+bool TriangleMesh::LoadFromPLYFile(const std::string& fileName)
 {
 	std::ifstream fileData("PLY/" + fileName);
     if( !fileData )

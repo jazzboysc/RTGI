@@ -33,10 +33,12 @@ public:
 	virtual void OnDisableBuffers();
 
 	// Load data from a ".ply" file and create its VBO and IBO.
-	bool LoadFromFile(const std::string& fileName);
+	bool LoadFromPLYFile(const std::string& fileName);
+
 	bool LoadFromMemory(std::vector<glm::vec3>& _vData,
 						std::vector<unsigned short>& _iData,
 						std::vector<glm::vec3>& _nData);
+
 	virtual void OnLoadFromFile();
 
 	// Should be called after calling LoadFromFile or LoadFromMemory.

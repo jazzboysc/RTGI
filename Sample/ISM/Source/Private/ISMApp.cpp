@@ -91,7 +91,7 @@ void ISMApp::Initialize(GPUDevice* device)
 	mat4 rotM;
 	material = new Material(mtISM);
 	mModel = new ISMTriMesh(material, mMainCamera);
-	mModel->LoadFromFile("cow.ply");
+	mModel->LoadFromPLYFile("cow.ply");
     mat4 scale = glm::scale(mat4(), vec3(2.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
@@ -103,7 +103,7 @@ void ISMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mGround = new ISMTriMesh(material, mMainCamera);
-	mGround->LoadFromFile("square.ply");
+	mGround->LoadFromPLYFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
@@ -112,7 +112,7 @@ void ISMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mCeiling = new ISMTriMesh(material, mMainCamera);
-	mCeiling->LoadFromFile("square.ply");
+	mCeiling->LoadFromPLYFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
 	rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -124,7 +124,7 @@ void ISMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mBackWall = new ISMTriMesh(material, mMainCamera);
-	mBackWall->LoadFromFile("square.ply");
+	mBackWall->LoadFromPLYFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -136,7 +136,7 @@ void ISMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mLeftWall = new ISMTriMesh(material, mMainCamera);
-	mLeftWall->LoadFromFile("square.ply");
+	mLeftWall->LoadFromPLYFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
@@ -148,7 +148,7 @@ void ISMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mRightWall = new ISMTriMesh(material, mMainCamera);
-	mRightWall->LoadFromFile("square.ply");
+	mRightWall->LoadFromPLYFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
@@ -160,7 +160,7 @@ void ISMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtScreenQuad);
     mShadowMapScreenQuad = new ISMTempScreenQuad(material);
-    mShadowMapScreenQuad->LoadFromFile("screenquad.ply");
+    mShadowMapScreenQuad->LoadFromPLYFile("screenquad.ply");
     mShadowMapScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
     mShadowMapScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mShadowMapScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));

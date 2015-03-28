@@ -133,7 +133,7 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 	mat4 rotM;
     material = new Material(mtVoxelization);
 	mModel = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
-	mModel->LoadFromFile("dragon_s.ply");
+	mModel->LoadFromPLYFile("dragon_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(60.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
@@ -145,7 +145,7 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
 	mGround = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
-	mGround->LoadFromFile("square.ply");
+	mGround->LoadFromPLYFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.8f, 0.8f, 0.0f);
@@ -154,7 +154,7 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
 	mCeiling = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
-	mCeiling->LoadFromFile("square.ply");
+	mCeiling->LoadFromPLYFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
 	rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -166,7 +166,7 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
 	mBackWall = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
-	mBackWall->LoadFromFile("square.ply");
+	mBackWall->LoadFromPLYFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -178,7 +178,7 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
 	mLeftWall = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
-	mLeftWall->LoadFromFile("square.ply");
+	mLeftWall->LoadFromPLYFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
@@ -190,7 +190,7 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVoxelization);
 	mRightWall = new SimpleVoxelizationTriMesh(material, mVoxelizationProjector);
-	mRightWall->LoadFromFile("square.ply");
+	mRightWall->LoadFromPLYFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
@@ -203,7 +203,7 @@ void SimpleVoxelizationApp::Initialize(GPUDevice* device)
     // Create voxel cube model.
     material = new Material(mtShowVoxelGrid);
     mVoxelCubeModel = new VoxelCubeTriMesh(material, mMainCamera);
-    mVoxelCubeModel->LoadFromFile("box.ply");
+    mVoxelCubeModel->LoadFromPLYFile("box.ply");
     mVoxelCubeModel->GenerateNormals();
     mVoxelCubeModel->SetIndirectCommandBuffer(mIndirectCommandBuffer, 0);
     mVoxelCubeModel->CreateDeviceResource(mDevice);

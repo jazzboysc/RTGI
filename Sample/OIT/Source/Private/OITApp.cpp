@@ -59,7 +59,7 @@ void OITApp::Initialize(GPUDevice* device)
 	// Create OIT screen quad.
 	material = new Material(mtOIT);
 	mScreenQuad = new OITScreenQuad(material);
-	mScreenQuad->LoadFromFile("screenquad.ply");
+	mScreenQuad->LoadFromPLYFile("screenquad.ply");
 	mScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
 	mScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
 	mScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
@@ -71,7 +71,7 @@ void OITApp::Initialize(GPUDevice* device)
 	// Create scene.
 	material = new Material(mtGPUABuffer);
 	mModel = new OITTriMesh(material, mMainCamera);
-	mModel->LoadFromFile("dragon_s.ply");
+	mModel->LoadFromPLYFile("dragon_s.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource(mDevice);
 	mat4 rot = rotate(mat4(), radians(30.0f), vec3(0, 1, 0));

@@ -43,7 +43,7 @@ void CornellApp::Initialize(GPUDevice* device)
 	mat4 rotM;
 	material = new Material(mtScene);
 	mModel = new CornellTriMesh(material, mMainCamera);
-	mModel->LoadFromFile("beethoven.ply");
+	mModel->LoadFromPLYFile("beethoven.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource(mDevice);
 	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
@@ -51,14 +51,14 @@ void CornellApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtScene);
 	mGround = new CornellTriMesh(material, mMainCamera);
-	mGround->LoadFromFile("square.ply");
+	mGround->LoadFromPLYFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
 
 	material = new Material(mtScene);
 	mCeiling = new CornellTriMesh(material, mMainCamera);
-	mCeiling->LoadFromFile("square.ply");
+	mCeiling->LoadFromPLYFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
 	rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -68,7 +68,7 @@ void CornellApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtScene);
 	mLight = new CornellTriMesh(material, mMainCamera);
-	mLight->LoadFromFile("square.ply");
+	mLight->LoadFromPLYFile("square.ply");
 	mLight->GenerateNormals();
 	mLight->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -80,7 +80,7 @@ void CornellApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtScene);
 	mBackWall = new CornellTriMesh(material, mMainCamera);
-	mBackWall->LoadFromFile("square.ply");
+	mBackWall->LoadFromPLYFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -90,7 +90,7 @@ void CornellApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtScene);
 	mLeftWall = new CornellTriMesh(material, mMainCamera);
-	mLeftWall->LoadFromFile("square.ply");
+	mLeftWall->LoadFromPLYFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
@@ -100,7 +100,7 @@ void CornellApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtScene);
 	mRightWall = new CornellTriMesh(material, mMainCamera);
-	mRightWall->LoadFromFile("square.ply");
+	mRightWall->LoadFromPLYFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));

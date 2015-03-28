@@ -415,7 +415,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
         // Create voxel cube model.
         Material* material = new Material(mtShowVoxelGrid);
         mVoxelCubeModel = new VoxelCubeTriMesh(material, mainCamera);
-        mVoxelCubeModel->LoadFromFile("box.ply");
+        mVoxelCubeModel->LoadFromPLYFile("box.ply");
         mVoxelCubeModel->GenerateNormals();
         mVoxelCubeModel->SetIndirectCommandBuffer(
             (StructuredBuffer*)GetGenericBufferByName(
@@ -482,7 +482,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     // Create screen quad.
     Material* material = new Material(mtScreenQuad);
     mScreenQuad = new VisualizerScreenQuad(material);
-    mScreenQuad->LoadFromFile("screenquad.ply");
+    mScreenQuad->LoadFromPLYFile("screenquad.ply");
     mScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
     mScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));

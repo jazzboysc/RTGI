@@ -247,7 +247,7 @@ void VPLApp::Initialize(GPUDevice* device)
 	mat4 rotM;
 	material = new Material(mtVPL);
 	mModel = new VPLTriMesh(material, mMainCamera);
-	mModel->LoadFromFile("dragon_s.ply");
+	mModel->LoadFromPLYFile("dragon_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(60.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
@@ -260,7 +260,7 @@ void VPLApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVPL);
 	mGround = new VPLTriMesh(material, mMainCamera);
-	mGround->LoadFromFile("square.ply");
+	mGround->LoadFromPLYFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(1.2f, 1.2f, 1.2f);
@@ -270,7 +270,7 @@ void VPLApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVPL);
 	mCeiling = new VPLTriMesh(material, mMainCamera);
-	mCeiling->LoadFromFile("square.ply");
+	mCeiling->LoadFromPLYFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
 	rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -283,7 +283,7 @@ void VPLApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVPL);
 	mBackWall = new VPLTriMesh(material, mMainCamera);
-	mBackWall->LoadFromFile("square.ply");
+	mBackWall->LoadFromPLYFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -296,7 +296,7 @@ void VPLApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVPL);
 	mLeftWall = new VPLTriMesh(material, mMainCamera);
-	mLeftWall->LoadFromFile("square.ply");
+	mLeftWall->LoadFromPLYFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
@@ -309,7 +309,7 @@ void VPLApp::Initialize(GPUDevice* device)
 
     material = new Material(mtVPL);
 	mRightWall = new VPLTriMesh(material, mMainCamera);
-	mRightWall->LoadFromFile("square.ply");
+	mRightWall->LoadFromPLYFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
@@ -323,7 +323,7 @@ void VPLApp::Initialize(GPUDevice* device)
     // Create screen quads.
     material = new Material(mtScreenQuad);
     mTempScreenQuad = new VPLTempScreenQuad(material);
-    mTempScreenQuad->LoadFromFile("screenquad.ply");
+    mTempScreenQuad->LoadFromPLYFile("screenquad.ply");
     mTempScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
     mTempScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mTempScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
@@ -334,7 +334,7 @@ void VPLApp::Initialize(GPUDevice* device)
 
     material = new Material(mtDirectLighting);
     mDirectLightingScreenQuad = new VPLDirectLightingScreenQuad(material);
-    mDirectLightingScreenQuad->LoadFromFile("screenquad.ply");
+    mDirectLightingScreenQuad->LoadFromPLYFile("screenquad.ply");
     mDirectLightingScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
     mDirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mDirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
@@ -348,7 +348,7 @@ void VPLApp::Initialize(GPUDevice* device)
 
     material = new Material(mtIndirectLighting);
     mIndirectLightingScreenQuad = new VPLIndirectLightingScreenQuad(material);
-    mIndirectLightingScreenQuad->LoadFromFile("screenquad.ply");
+    mIndirectLightingScreenQuad->LoadFromPLYFile("screenquad.ply");
     mIndirectLightingScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
     mIndirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mIndirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));

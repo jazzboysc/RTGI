@@ -90,7 +90,7 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 
     Material* material = new Material(mtDirectLighting);
     mDirectLightingScreenQuad = new DirectLightingScreenQuad(material);
-    mDirectLightingScreenQuad->LoadFromFile("screenquad.ply");
+    mDirectLightingScreenQuad->LoadFromPLYFile("screenquad.ply");
     mDirectLightingScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
     mDirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mDirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));

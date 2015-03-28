@@ -132,7 +132,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	// Create direct lighting screen quad.
 	material = new Material(mtDirectLighting);
 	mDirectLightingQuad = new DirectLightingQuad(material, mLight);
-	mDirectLightingQuad->LoadFromFile("screenquad.ply");
+	mDirectLightingQuad->LoadFromPLYFile("screenquad.ply");
 	mDirectLightingQuad->SetTCoord(0, tcoord00);
 	mDirectLightingQuad->SetTCoord(1, tcoord10);
 	mDirectLightingQuad->SetTCoord(2, tcoord11);
@@ -145,7 +145,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	// Create SSDO screen quad.
 	material = new Material(mtSSDO);
 	mSSDOQuad = new SSDOScreenQuad(material, mMainCamera);
-	mSSDOQuad->LoadFromFile("screenquad.ply");
+	mSSDOQuad->LoadFromPLYFile("screenquad.ply");
 	mSSDOQuad->SetTCoord(0, tcoord00);
 	mSSDOQuad->SetTCoord(1, tcoord10);
 	mSSDOQuad->SetTCoord(2, tcoord11);
@@ -169,7 +169,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	// Create SSDO filter screen quad.
 	material = new Material(mtSSDOFilter);
 	mSSDOFilterQuad = new SSDOFilterScreenQuad(material);
-	mSSDOFilterQuad->LoadFromFile("screenquad.ply");
+	mSSDOFilterQuad->LoadFromPLYFile("screenquad.ply");
 	mSSDOFilterQuad->SetTCoord(0, tcoord00);
 	mSSDOFilterQuad->SetTCoord(1, tcoord10);
 	mSSDOFilterQuad->SetTCoord(2, tcoord11);
@@ -188,7 +188,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	// Create SSDO temp result screen quad.
 	material = new Material(mtSSDOTemp);
 	mSSDOTempResultQuad = new SSDOTempScreenQuad(material);
-	mSSDOTempResultQuad->LoadFromFile("screenquad.ply");
+	mSSDOTempResultQuad->LoadFromPLYFile("screenquad.ply");
 	mSSDOTempResultQuad->SetTCoord(0, tcoord00);
 	mSSDOTempResultQuad->SetTCoord(1, tcoord10);
 	mSSDOTempResultQuad->SetTCoord(2, tcoord11);
@@ -199,7 +199,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	// Create scene.
 	material = new Material(mtGBuffer);
 	mModel1 = new SSDOTriMesh(material, mMainCamera);
-	mModel1->LoadFromFile("dragon_s.ply");
+	mModel1->LoadFromPLYFile("dragon_s.ply");
 	mModel1->GenerateNormals();
 	mModel1->CreateDeviceResource(mDevice);
 	mat4 rot = rotate(mat4(), radians(30.0f), vec3(0, 1, 0));
@@ -210,7 +210,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtGBuffer);
 	mModel2 = new SSDOTriMesh(material, mMainCamera);
-	mModel2->LoadFromFile("happy_s.ply");
+	mModel2->LoadFromPLYFile("happy_s.ply");
 	mModel2->GenerateNormals();
 	mModel2->CreateDeviceResource(mDevice);
     rot = rotate(mat4(), radians(0.0f), vec3(0, 1, 0));
@@ -221,7 +221,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtGBuffer);
 	mGround = new SSDOTriMesh(material, mMainCamera);
-	mGround->LoadFromFile("ground.ply");
+	mGround->LoadFromPLYFile("ground.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
 	mGround->SetWorldTranslation(vec3(0.0f, -6.0f, 0.0f));
@@ -233,7 +233,7 @@ void SSDOApp::Initialize(GPUDevice* device)
 	{
 		material = new Material(mtGBuffer);
 		mCubes[i] = new SSDOTriMesh(material, mMainCamera);
-		mCubes[i]->LoadFromFile("cube.ply");
+		mCubes[i]->LoadFromPLYFile("cube.ply");
 		mCubes[i]->GenerateNormals();
 		mCubes[i]->CreateDeviceResource(mDevice);
 

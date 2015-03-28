@@ -95,7 +95,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
 	mat4 rotM;
 	material = new Material(mtISM);
 	mModel = new SSSviaPSMTriMesh(material, mMainCamera);
-	mModel->LoadFromFile("dragon_s.ply");
+	mModel->LoadFromPLYFile("dragon_s.ply");
     mat4 scale = glm::scale(mat4(), vec3(60.0f));
     //mat4 scale = Scale(vec3(1.0f));
     mModel->UpdateModelSpaceVertices(scale);
@@ -110,7 +110,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mGround = new SSSviaPSMTriMesh(material, mMainCamera);
-	mGround->LoadFromFile("square.ply");
+	mGround->LoadFromPLYFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.8f, 0.8f, 0.8f);
@@ -119,7 +119,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mCeiling = new SSSviaPSMTriMesh(material, mMainCamera);
-	mCeiling->LoadFromFile("square.ply");
+	mCeiling->LoadFromPLYFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
 	rotM = rotate(mat4(),  radians(180.0f), vec3(1, 0, 0));
@@ -131,7 +131,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mBackWall = new SSSviaPSMTriMesh(material, mMainCamera);
-	mBackWall->LoadFromFile("square.ply");
+	mBackWall->LoadFromPLYFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -143,7 +143,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mLeftWall = new SSSviaPSMTriMesh(material, mMainCamera);
-	mLeftWall->LoadFromFile("square.ply");
+	mLeftWall->LoadFromPLYFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
@@ -155,7 +155,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtISM);
 	mRightWall = new SSSviaPSMTriMesh(material, mMainCamera);
-	mRightWall->LoadFromFile("square.ply");
+	mRightWall->LoadFromPLYFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
@@ -167,7 +167,7 @@ void SSSviaPSMApp::Initialize(GPUDevice* device)
 
     material = new Material(mtScreenQuad);
     mShadowMapScreenQuad = new SSSviaPSMTempScreenQuad(material);
-    mShadowMapScreenQuad->LoadFromFile("screenquad.ply");
+    mShadowMapScreenQuad->LoadFromPLYFile("screenquad.ply");
     mShadowMapScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
     mShadowMapScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mShadowMapScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));

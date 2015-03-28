@@ -54,7 +54,7 @@ void RSMTriMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update pass 2 uniform data.
     if( pass == 1 )
     {
-        mWorldLoc2.SetValue(mWorldTransform);
+        mWorldLoc2.SetValue(mSpatialInfo->GetWorldTransform());
         if( mCamera )
         {
             mat4 viewTrans = mCamera->GetViewTransform();

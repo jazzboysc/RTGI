@@ -50,7 +50,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mtLightMesh->AddTechnique(techLightMesh);
 
     LightMesh* lightMesh = new LightMesh(new Material(mtLightMesh), mMainCamera);
-    lightMesh->LoadFromFile("square.ply");
+    lightMesh->LoadFromPLYFile("square.ply");
     mat4 lightMeshScale = glm::scale(mat4(), vec3(0.05f));
     lightMesh->UpdateModelSpaceVertices(lightMeshScale);
     mat4 lightRotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -143,7 +143,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mat4 rotM;
     material = new Material(mtSceneModel);
     mModel = new SceneMesh(material, mMainCamera);
-    mModel->LoadFromFile("cube.ply");
+    mModel->LoadFromPLYFile("cube.ply");
     mat4 scale = glm::scale(mat4(), vec3(2.5f));
     mModel->UpdateModelSpaceVertices(scale);
     mModel->GenerateNormals();
@@ -158,7 +158,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     material = new Material(mtSceneModel);
     mModel2 = new SceneMesh(material, mMainCamera);
-    mModel2->LoadFromFile("dragon_s.ply");
+    mModel2->LoadFromPLYFile("dragon_s.ply");
     scale = glm::scale(mat4(), vec3(45.0f));
     mModel2->UpdateModelSpaceVertices(scale);
     mModel2->GenerateNormals();
@@ -173,7 +173,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     material = new Material(mtSceneModel);
     mGround = new SceneMesh(material, mMainCamera);
-    mGround->LoadFromFile("square.ply");
+    mGround->LoadFromPLYFile("square.ply");
     mGround->GenerateNormals();
     mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
@@ -183,7 +183,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     material = new Material(mtSceneModel);
     mCeiling = new SceneMesh(material, mMainCamera);
-    mCeiling->LoadFromFile("square.ply");
+    mCeiling->LoadFromPLYFile("square.ply");
     mCeiling->GenerateNormals();
     mCeiling->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -196,7 +196,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     material = new Material(mtSceneModel);
     mBackWall = new SceneMesh(material, mMainCamera);
-    mBackWall->LoadFromFile("square.ply");
+    mBackWall->LoadFromPLYFile("square.ply");
     mBackWall->GenerateNormals();
     mBackWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -209,7 +209,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     material = new Material(mtSceneModel);
     mLeftWall = new SceneMesh(material, mMainCamera);
-    mLeftWall->LoadFromFile("square.ply");
+    mLeftWall->LoadFromPLYFile("square.ply");
     mLeftWall->GenerateNormals();
     mLeftWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
@@ -222,7 +222,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     material = new Material(mtSceneModel);
     mRightWall = new SceneMesh(material, mMainCamera);
-    mRightWall->LoadFromFile("square.ply");
+    mRightWall->LoadFromPLYFile("square.ply");
     mRightWall->GenerateNormals();
     mRightWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
