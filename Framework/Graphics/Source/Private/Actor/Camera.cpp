@@ -71,7 +71,7 @@ void Camera::SetAxes(const glm::vec3& right, const glm::vec3& up, const glm::vec
 void Camera::SetPerspectiveFrustum(float upFovDegrees, float aspectRatio, 
 	float nearPlane, float farPlane)
 {
-	assert( mIsPerspective );
+	RTGI_ASSERT( mIsPerspective );
 
     float halfAngleRadians = glm::radians(0.5f * upFovDegrees);
     mFrustum[VF_UMAX] = nearPlane * tan(halfAngleRadians);
@@ -88,7 +88,7 @@ void Camera::SetPerspectiveFrustum(float upFovDegrees, float aspectRatio,
 void Camera::SetOrthogonalFrustum(float upMax, float aspectRatio, 
 	float nearPlane, float farPlane)
 {
-	assert( !mIsPerspective );
+	RTGI_ASSERT( !mIsPerspective );
 
     mFrustum[VF_UMAX] = upMax;
     mFrustum[VF_RMAX] = aspectRatio * mFrustum[VF_UMAX];
@@ -102,7 +102,7 @@ void Camera::SetOrthogonalFrustum(float upMax, float aspectRatio,
 //----------------------------------------------------------------------------
 void Camera::GetNearFarPlane(float* nearFarPlane) const
 {
-    assert( nearFarPlane );
+    RTGI_ASSERT( nearFarPlane );
     nearFarPlane[0] = mFrustum[VF_DMIN];
     nearFarPlane[1] = mFrustum[VF_DMAX];
 }

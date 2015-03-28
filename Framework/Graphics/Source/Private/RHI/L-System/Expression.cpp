@@ -148,7 +148,7 @@ void Expression::GenerateLPointSequence(std::vector<LPoint>& points,
 		}
 		else
 		{
-			assert( false );
+			RTGI_ASSERT( false );
 		}
 	}
 }

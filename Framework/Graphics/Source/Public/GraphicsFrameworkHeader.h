@@ -100,5 +100,6 @@
 // Utils
 #include "GPUTimer.h"
 #include "Terminal.h"
+#include "RTGIAssert.h"
 
 #endif

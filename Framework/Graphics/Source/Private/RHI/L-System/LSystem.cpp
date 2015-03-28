@@ -51,7 +51,7 @@ bool LSystem::LoadFromFile(const std::string& fileName)
 	uiBegin = curLine.find_first_not_of(" ", uiBegin);
 	uiEnd = curLine.find(" ", uiBegin);
 	curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
-	assert( curValue == "len:" );
+	RTGI_ASSERT( curValue == "len:" );
 	uiBegin = curLine.find_first_not_of(" ", uiEnd);
 	uiEnd = curLine.find("\n", uiBegin);
 	curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
@@ -62,7 +62,7 @@ bool LSystem::LoadFromFile(const std::string& fileName)
 	uiBegin = curLine.find_first_not_of(" ", uiBegin);
 	uiEnd = curLine.find(" ", uiBegin);
 	curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
-	assert( curValue == "iter:" );
+	RTGI_ASSERT( curValue == "iter:" );
 	uiBegin = curLine.find_first_not_of(" ", uiEnd);
 	uiEnd = curLine.find("\n", uiBegin);
 	curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
@@ -73,7 +73,7 @@ bool LSystem::LoadFromFile(const std::string& fileName)
 	uiBegin = curLine.find_first_not_of(" ", uiBegin);
 	uiEnd = curLine.find(" ", uiBegin);
 	curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
-	assert( curValue == "rot:" );
+	RTGI_ASSERT( curValue == "rot:" );
 	uiBegin = curLine.find_first_not_of(" ", uiEnd);
 	uiEnd = curLine.find(" ", uiBegin);
 	curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
@@ -222,7 +222,7 @@ Expression* LSystem::GenerateIteration(Expression* exp)
 		}
 		else
 		{
-			assert( false );
+			RTGI_ASSERT( false );
 		}
 	}
 

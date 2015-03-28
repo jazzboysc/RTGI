@@ -26,14 +26,14 @@ IndexableBuffer::~IndexableBuffer()
 //----------------------------------------------------------------------------
 void IndexableBuffer::Bind(unsigned int index)
 {
-    assert(mBufferHandle);
+    RTGI_ASSERT(mBufferHandle);
     mBufferHandle->Device->BufferBindIndex(this, index);
 }
 //----------------------------------------------------------------------------
 void IndexableBuffer::UpdateSubData(unsigned int index, int offset, 
     size_t size, void* data)
 {
-    assert(mBufferHandle);
+    RTGI_ASSERT(mBufferHandle);
     Bind(index);
     mBufferHandle->Device->BufferUpdateSubData(this, offset,
         size, data);

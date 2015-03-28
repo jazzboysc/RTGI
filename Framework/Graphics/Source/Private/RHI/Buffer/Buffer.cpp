@@ -23,25 +23,25 @@ Buffer::~Buffer()
 //----------------------------------------------------------------------------
 void* Buffer::Map(BufferAccess access)
 {
-    assert(mBufferHandle);
+    RTGI_ASSERT(mBufferHandle);
     return mBufferHandle->Device->BufferMap(this, access);
 }
 //----------------------------------------------------------------------------
 void Buffer::Unmap()
 {
-    assert(mBufferHandle);
+    RTGI_ASSERT(mBufferHandle);
 	mBufferHandle->Device->BufferUnmap(this);
 }
 //----------------------------------------------------------------------------
 void Buffer::Bind()
 {
-    assert(mBufferHandle);
+    RTGI_ASSERT(mBufferHandle);
 	mBufferHandle->Device->BufferBind(this);
 }
 //----------------------------------------------------------------------------
 void Buffer::BindToIndirect()
 {
-    assert(mBufferHandle);
+    RTGI_ASSERT(mBufferHandle);
 	mBufferHandle->Device->BufferBindToIndirect(this);
 }
 //----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ void Buffer::ReserveImmutableDeviceResource(GPUDevice* device, size_t size)
 void Buffer::Clear(BufferInternalFormat internalFormat, BufferFormat format,
     BufferComponentType type, void* data)
 {
-    assert(mBufferHandle);
+    RTGI_ASSERT(mBufferHandle);
     mBufferHandle->Device->BufferClear(this, internalFormat, 
         format, type, data);
 }

@@ -25,7 +25,7 @@ GBufferRenderer::~GBufferRenderer()
 //----------------------------------------------------------------------------
 void GBufferRenderer::CreateGBuffer(GBufferDesc* desc)
 {
-    assert(desc);
+    RTGI_ASSERT(desc);
 
     AddFrameBufferTarget(RTGI_GBuffer_Position_Name, desc->Width, 
         desc->Height, 0, TT_Texture2D, desc->PositionFormat, 

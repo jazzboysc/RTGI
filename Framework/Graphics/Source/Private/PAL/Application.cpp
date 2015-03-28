@@ -19,7 +19,7 @@ Application::Application()
 	mOpenGLContext = wglGetCurrentContext();
 	mWindowsDeviceContext = wglGetCurrentDC();
 
-    assert( mInstance == 0 );
+    RTGI_ASSERT( mInstance == 0 );
     mInstance = this;
 }
 //----------------------------------------------------------------------------

@@ -26,37 +26,37 @@ SpatialInfo* RenderObject::GetSpatialInfo()
 //----------------------------------------------------------------------------
 void RenderObject::SetWorldTransform(const glm::mat4& worldTrans)
 {
-    assert(mSpatialInfo);
+    RTGI_ASSERT(mSpatialInfo);
     mSpatialInfo->SetWorldTransform(worldTrans);
 }
 //----------------------------------------------------------------------------
 glm::mat4 RenderObject::GetWorldTransform() const
 {
-    assert(mSpatialInfo);
+    RTGI_ASSERT(mSpatialInfo);
     return mSpatialInfo->GetWorldTransform();
 }
 //----------------------------------------------------------------------------
 void RenderObject::SetWorldTranslation(const glm::vec3& translation)
 {
-    assert(mSpatialInfo);
+    RTGI_ASSERT(mSpatialInfo);
     mSpatialInfo->SetWorldTranslation(translation);
 }
 //----------------------------------------------------------------------------
 glm::vec3 RenderObject::GetWorldTranslation() const
 {
-    assert(mSpatialInfo);
+    RTGI_ASSERT(mSpatialInfo);
     return mSpatialInfo->GetWorldTranslation();
 }
 //----------------------------------------------------------------------------
 void RenderObject::SetWorldScale(const glm::vec3& scale)
 {
-    assert(mSpatialInfo);
+    RTGI_ASSERT(mSpatialInfo);
     mSpatialInfo->SetWorldScale(scale);
 }
 //----------------------------------------------------------------------------
 glm::vec3 RenderObject::GetWorldScale() const
 {
-    assert(mSpatialInfo);
+    RTGI_ASSERT(mSpatialInfo);
     return mSpatialInfo->GetWorldScale();
 }
 //----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ RenderCache* RenderObject::GetRenderCache()
 //----------------------------------------------------------------------------
 void RenderObject::UpdateRenderCache()
 {
-    assert(mRenderCache && mSpatialInfo);
+    RTGI_ASSERT(mRenderCache && mSpatialInfo);
     mRenderCache->Update(mSpatialInfo);
 }
 //----------------------------------------------------------------------------

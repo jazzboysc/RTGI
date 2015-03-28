@@ -50,7 +50,7 @@ ShaderProgram::ShaderProgram(VertexShader* vShader, FragmentShader* fShader)
 	:
 	mProgramHandle(0)
 {
-	assert( vShader && fShader );
+	RTGI_ASSERT( vShader && fShader );
 	mVertexShader = vShader;
 	mFragmentShader = fShader;
 }

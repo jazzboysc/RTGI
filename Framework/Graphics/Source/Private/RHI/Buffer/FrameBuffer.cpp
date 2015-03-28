@@ -34,7 +34,7 @@ FBOHandle* FrameBuffer::GetFBOHandle()
 void FrameBuffer::SetRenderTargets(unsigned int colorTextureCount, 
     Texture** colorTextures, Texture* depthTexture, Texture* stencilTexture)
 {
-    assert(colorTextureCount > 0 && 
+    RTGI_ASSERT(colorTextureCount > 0 && 
         colorTextureCount <= FBO_MAX_COLOR_TARGETS && colorTextures );
 
 
@@ -68,7 +68,7 @@ void FrameBuffer::SetRenderTargets(unsigned int colorTextureCount,
         break;
 
     default:
-        assert( false );
+        RTGI_ASSERT( false );
         break;
     }
 

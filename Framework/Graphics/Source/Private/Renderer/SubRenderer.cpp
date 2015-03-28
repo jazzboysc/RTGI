@@ -110,9 +110,9 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     int height, int depth, TextureType type, BufferFormat format, 
     bool generateMipmap)
 {
-    assert(width > 0 && format != BF_Unknown);
-    assert(GetFrameBufferTargetByName(name) == 0);
-    assert(GetGenericBufferTargetByName(name) == 0);
+    RTGI_ASSERT(width > 0 && format != BF_Unknown);
+    RTGI_ASSERT(GetFrameBufferTargetByName(name) == 0);
+    RTGI_ASSERT(GetGenericBufferTargetByName(name) == 0);
 
     BufferBase* texture = 0;
     switch( type )
@@ -130,7 +130,7 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
             depth, format);
         break;
     default:
-        assert(false);
+        RTGI_ASSERT(false);
         break;
     }
 
@@ -145,7 +145,7 @@ int SubRenderer::GetFrameBufferTargetCount() const
 //----------------------------------------------------------------------------
 RendererOutput* SubRenderer::GetFrameBufferTarget(int i) const
 {
-    assert(i >= 0 && i < (int)mFrameBufferTargets.size());
+    RTGI_ASSERT(i >= 0 && i < (int)mFrameBufferTargets.size());
     return mFrameBufferTargets[i];
 }
 //----------------------------------------------------------------------------
@@ -198,16 +198,16 @@ Texture* SubRenderer::GetDepthTexture() const
 void SubRenderer::AddInputDependency(SubRenderer* producer, 
     const std::string& srcName, RendererInputDataView* view)
 {
-    assert(view->BindingType >= BF_Bindless && 
+    RTGI_ASSERT(view->BindingType >= BF_Bindless && 
         view->BindingType < BindingFlag_Max);
-    assert(mInputs.size() < MAX_INPUT_DEPENDENCY_COUNT);
+    RTGI_ASSERT(mInputs.size() < MAX_INPUT_DEPENDENCY_COUNT);
     RendererOutput* producerOutput = 
         producer->GetFrameBufferTargetByName(srcName);
     if( !producerOutput )
     {
         producerOutput = producer->GetGenericBufferTargetByName(srcName);
     }
-    assert(producerOutput);
+    RTGI_ASSERT(producerOutput);
 
     RendererInput* consumerInput = new RendererInput(producerOutput->Name,
         producerOutput->OutputBuffer, view);
@@ -216,7 +216,7 @@ void SubRenderer::AddInputDependency(SubRenderer* producer,
 //----------------------------------------------------------------------------
 RendererInput* SubRenderer::GetInputDependency(int i) const
 {
-    assert(i >= 0 && i < (int)mInputs.size());
+    RTGI_ASSERT(i >= 0 && i < (int)mInputs.size());
     return mInputs[i];
 }
 //----------------------------------------------------------------------------
@@ -233,7 +233,7 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight,
     int depthCount, TextureType depthType)
 {
     int rtCount = (int)mFrameBufferTargets.size();
-    assert(rtCount > 0);
+    RTGI_ASSERT(rtCount > 0);
     Texture** renderTargets = new Texture*[rtCount];
     for( int i = 0; i < rtCount; ++i )
     {
@@ -257,7 +257,7 @@ void SubRenderer::CreateFrameBuffer(int depthWidth, int depthHeight,
         break;
 
     default:
-        assert(false);
+        RTGI_ASSERT(false);
         break;
     }
     mDepthTarget = new RendererOutput("Depth", depthTexture);
@@ -271,8 +271,8 @@ void SubRenderer::AddGenericBufferTarget(const std::string& name,
     RendererDataType bufferType, int size, BufferUsage usage, 
     BindingFlag flag, unsigned int binding, bool reset, int resetValue)
 {
-    assert(GetFrameBufferTargetByName(name) == 0);
-    assert(GetGenericBufferTargetByName(name) == 0);
+    RTGI_ASSERT(GetFrameBufferTargetByName(name) == 0);
+    RTGI_ASSERT(GetGenericBufferTargetByName(name) == 0);
 
     float typeValue = (float)(int)bufferType;
     int functionIndex = (int)glm::log2(typeValue) - 2;
@@ -291,7 +291,7 @@ int SubRenderer::GetGenericBufferTargetCount() const
 //----------------------------------------------------------------------------
 RendererOutput* SubRenderer::GetGenericBufferTarget(int i) const
 {
-    assert(i >= 0 && i < (int)mGenericBufferTargets.size());
+    RTGI_ASSERT(i >= 0 && i < (int)mGenericBufferTargets.size());
     return mGenericBufferTargets[i];
 }
 //----------------------------------------------------------------------------
@@ -346,7 +346,7 @@ void SubRenderer::RenderSingle(RenderObject* object, int technique, int pass,
     SubRendererOutput outputFlag, PipelineStateBlock* psb,
     Camera* camera)
 {
-    assert(object);
+    RTGI_ASSERT(object);
     PreRender(outputFlag, psb);
 
     // Render single object.
@@ -358,7 +358,7 @@ void SubRenderer::RenderSingle(RenderObject* object, int technique, int pass,
 //----------------------------------------------------------------------------
 void SubRenderer::OnRender(int technique, int pass, Camera* camera)
 {
-    assert(mRenderSet);
+    RTGI_ASSERT(mRenderSet);
     int renderObjectCount = mRenderSet->GetRenderObjectCount();
     if( camera )
     {
@@ -398,7 +398,7 @@ double SubRenderer::GetTimeElapsed() const
 void SubRenderer::PreRender(unsigned int outputFlag, 
     PipelineStateBlock* psb)
 {
-    assert(mTimer);
+    RTGI_ASSERT(mTimer);
     if( mTimer )
     {
         mTimer->Start();
@@ -413,7 +413,7 @@ void SubRenderer::PreRender(unsigned int outputFlag,
     // Enable renderer framebuffer outputs.
     if( outputFlag & SRO_FrameBuffer )
     {
-        assert(mFrameBuffer);
+        RTGI_ASSERT(mFrameBuffer);
         mFrameBuffer->Enable();
     }
 
@@ -484,7 +484,7 @@ void SubRenderer::ApplyPipelineStateBlock(PipelineStateBlock* psb)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------

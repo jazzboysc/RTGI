@@ -32,7 +32,7 @@ RendererOutput::~RendererOutput()
 //----------------------------------------------------------------------------
 void RendererOutput::Enable()
 {
-    assert(OutputType == ROT_Buffer);
+    RTGI_ASSERT(OutputType == ROT_Buffer);
     Buffer* buffer = (Buffer*)(BufferBase*)OutputBuffer;
     switch( Flag )
     {
@@ -54,7 +54,7 @@ void RendererOutput::Enable()
         break;
 
     default:
-        assert(false);
+        RTGI_ASSERT(false);
         break;
     }
 
@@ -62,7 +62,7 @@ void RendererOutput::Enable()
     {
         size_t bufferSize = buffer->GetSize();
         int* bufferData = (int*)buffer->Map(BA_Write_Only);
-        assert(bufferData);
+        RTGI_ASSERT(bufferData);
         memset(bufferData, ResetValue, bufferSize);
         buffer->Unmap();
     }

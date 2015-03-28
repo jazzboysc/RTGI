@@ -22,7 +22,7 @@ ComputePass::ComputePass(const ShaderProgramInfo& programInfo)
     }
     else
     {
-        assert(false);
+        RTGI_ASSERT(false);
     }
 }
 //----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ ComputePass::ComputePass(ShaderProgram* computeProgram)
     }
     else
     {
-        assert(false);
+        RTGI_ASSERT(false);
     }
 }
 //----------------------------------------------------------------------------

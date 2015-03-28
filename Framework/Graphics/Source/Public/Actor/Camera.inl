@@ -6,13 +6,13 @@
 //----------------------------------------------------------------------------
 glm::mat4 Camera::GetViewCacheTransform()
 {
-    assert(mRenderCache);
+    RTGI_ASSERT(mRenderCache);
     return *mRenderCache->GetViewCache();
 }
 //----------------------------------------------------------------------------
 glm::mat4 Camera::GetProjectionCacheTransform()
 {
-    assert(mRenderCache);
+    RTGI_ASSERT(mRenderCache);
     return *mRenderCache->GetProjCache();
 }
 //----------------------------------------------------------------------------
@@ -28,7 +28,7 @@ RenderCache* Camera::GetRenderCache()
 //----------------------------------------------------------------------------
 void Camera::UpdateRenderCache()
 {
-    assert(mRenderCache);
+    RTGI_ASSERT(mRenderCache);
     mRenderCache->Update(this);
 }
 //----------------------------------------------------------------------------

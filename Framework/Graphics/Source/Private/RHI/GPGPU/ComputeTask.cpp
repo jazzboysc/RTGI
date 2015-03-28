@@ -27,8 +27,8 @@ void ComputeTask::DispatchCompute(unsigned int pass, unsigned int globalX,
     unsigned int globalY, unsigned int globalZ)
 {
     ComputePass* p = (ComputePass*)GetPass(pass);
-    assert(p);
-    assert(p->IsVertexPass() == false);
+    RTGI_ASSERT(p);
+    RTGI_ASSERT(p->IsVertexPass() == false);
 
     ShaderProgram* program = p->GetShaderProgram();
     program->Enable();
@@ -45,14 +45,14 @@ void ComputeTask::DispatchComputeIndirect(unsigned int pass,
     StructuredBuffer* indirectCommandBuffer, void* indirect)
 {
     // TODO:
-    assert(false);
+    RTGI_ASSERT(false);
 }
 //----------------------------------------------------------------------------
 void ComputeTask::DispatchVertex(unsigned int pass, unsigned int threadCount)
 {
     ComputePass* p = (ComputePass*)GetPass(pass);
-    assert(p);
-    assert(p->IsVertexPass() == true);
+    RTGI_ASSERT(p);
+    RTGI_ASSERT(p->IsVertexPass() == true);
 
     ShaderProgram* program = p->GetShaderProgram();
     program->Enable();
@@ -68,9 +68,9 @@ void ComputeTask::DispatchVertexIndirect(unsigned int pass,
     StructuredBuffer* indirectCommandBuffer, void* indirect)
 {
     ComputePass* p = (ComputePass*)GetPass(pass);
-    assert(p);
-    assert(p->IsVertexPass() == true);
-    assert(indirectCommandBuffer);
+    RTGI_ASSERT(p);
+    RTGI_ASSERT(p->IsVertexPass() == true);
+    RTGI_ASSERT(indirectCommandBuffer);
 
     ShaderProgram* program = p->GetShaderProgram();
     program->Enable();

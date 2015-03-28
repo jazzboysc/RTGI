@@ -22,13 +22,13 @@ Material::~Material()
 void Material::Apply(int techniqueNum, int passNum)
 {
 	Technique* tech = mMaterialTemplate->GetTechnique(techniqueNum);
-    assert( tech );
+    RTGI_ASSERT( tech );
 
     Pass* pass = (Pass*)tech->GetPass(passNum);
-    assert( pass );
+    RTGI_ASSERT( pass );
 
 	PassInfo* passInfo = mTechniqueInfo[techniqueNum]->GetPassInfo(passNum);
-	assert( passInfo );
+	RTGI_ASSERT( passInfo );
     
 	passInfo->Enable();
     pass->Enable();

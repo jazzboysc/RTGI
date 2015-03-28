@@ -44,7 +44,7 @@ void Texture::BindToSampler(unsigned int index, SamplerDesc* sampler)
 //--------------------------------------------------------------------------
 void Texture::GenerateMipmap()
 {
-    assert(HasMipMap);
+    RTGI_ASSERT(HasMipMap);
 
 }
 //--------------------------------------------------------------------------

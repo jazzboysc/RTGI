@@ -22,7 +22,7 @@ PassManager::~PassManager()
 //----------------------------------------------------------------------------
 void PassManager::AddPass(PassBase* pass)
 {
-    assert(pass);
+    RTGI_ASSERT(pass);
     mPasses.push_back(pass);
 }
 //----------------------------------------------------------------------------

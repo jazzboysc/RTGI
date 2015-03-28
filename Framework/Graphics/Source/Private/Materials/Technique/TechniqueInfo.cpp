@@ -42,7 +42,7 @@ void TechniqueInfo::CreatePassInfo(Technique* technique,
 //----------------------------------------------------------------------------
 PassInfo* TechniqueInfo::GetPassInfo(int i) const
 {
-	assert( i >= 0 && i < (int)mPassInfoArray.size());
+	RTGI_ASSERT( i >= 0 && i < (int)mPassInfoArray.size());
 	return mPassInfoArray[i];
 }
 //----------------------------------------------------------------------------

@@ -50,7 +50,7 @@ void QuadMesh::OnRender(Pass* pass, PassInfo*)
     {
         // TODO:
         // Check this later.
-        assert(false);
+        RTGI_ASSERT(false);
         glPatchParameteri(GL_PATCH_VERTICES, 4);
         glDrawElements(GL_PATCHES, (GLsizei)mIndexData.size(),
             GL_UNSIGNED_SHORT, 0);
@@ -64,7 +64,7 @@ void QuadMesh::OnRender(Pass* pass, PassInfo*)
         }
         else
         {
-            assert(mIndirectCommandBuffer != 0);
+            RTGI_ASSERT(mIndirectCommandBuffer != 0);
             glDrawElementsIndirect(GL_QUADS, GL_UNSIGNED_SHORT,
                 (void*)mCommandOffset);
         }
@@ -72,13 +72,13 @@ void QuadMesh::OnRender(Pass* pass, PassInfo*)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
 void QuadMesh::OnUpdateShaderConstants(int technique, int pass)
 {
-    assert( technique == 0 && pass == 0 );
+    RTGI_ASSERT( technique == 0 && pass == 0 );
     
     mWorldLoc.SetValue(mSpatialInfo->GetWorldTransform());
 	if( mCamera )
@@ -120,10 +120,10 @@ void QuadMesh::CreateDeviceResource(GPUDevice* device)
 
     if( mIsIndirect )
     {
-        assert(mIndirectCommandBuffer);
+        RTGI_ASSERT(mIndirectCommandBuffer);
         mIndirectCommandBuffer->Bind();
         char* bufferData = (char*)mIndirectCommandBuffer->Map(BA_Write_Only);
-        assert( bufferData );
+        RTGI_ASSERT( bufferData );
         DrawElementsIndirectCommand* commandBufferData = 
             (DrawElementsIndirectCommand*)(bufferData + mCommandOffset);
         commandBufferData->Count = (unsigned int)mIndexData.size();
@@ -150,7 +150,7 @@ int QuadMesh::GetVertexCount() const
 //----------------------------------------------------------------------------
 glm::vec3 QuadMesh::GetWorldVertex(int i) const
 {
-	assert( (int)mVertexData.size() > i );
+	RTGI_ASSERT( (int)mVertexData.size() > i );
 	glm::vec4 temp = glm::vec4(mVertexData[i], 1.0f);
     glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
 	temp = worldTrans * temp;
@@ -226,7 +226,7 @@ void QuadMesh::CreateVertexBufferDeviceResource(GPUDevice* device)
 //----------------------------------------------------------------------------
 void QuadMesh::CreateIndexBufferDeviceResource(GPUDevice* device)
 {
-	assert( mIndexData.size() > 0 );
+	RTGI_ASSERT( mIndexData.size() > 0 );
 	if( mIndexData.size() > 0 )
 	{
         size_t bufferSize = sizeof(unsigned short)*mIndexData.size();

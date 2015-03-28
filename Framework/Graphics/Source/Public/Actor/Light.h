@@ -37,6 +37,7 @@ public:
         SubRenderer* subRenderer = 0);
    
 protected:
+    glm::vec3 mLocation;
     Camera* mProjector;
     TriangleMeshPtr mLightMesh;
 };

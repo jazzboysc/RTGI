@@ -123,7 +123,7 @@ void Texture1D::SetupRandomTextureFormat(int sampleCount, int channelCount)
         break;
 
     default:
-        assert(false);
+        RTGI_ASSERT(false);
         break;
     }
 }

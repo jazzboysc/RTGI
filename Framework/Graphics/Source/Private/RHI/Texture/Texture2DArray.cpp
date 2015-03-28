@@ -34,7 +34,7 @@ void Texture2DArray::CreateRenderTarget(GPUDevice* device, int width,
 	{
 	case BF_RGB:
 		// TODO:
-		assert( false );
+		RTGI_ASSERT( false );
 		break;
 
 	case BF_RGBF:
@@ -52,7 +52,7 @@ void Texture2DArray::CreateRenderTarget(GPUDevice* device, int width,
 		mInternalFormat = BIF_R32UI;
         mComponentType = BCT_Unsigned_Int;
 #else
-        assert( false );
+        RTGI_ASSERT( false );
 #endif
 		break;
 

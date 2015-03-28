@@ -32,7 +32,7 @@ void Voxelizer::VoxelizeScene(int technique, int pass)
     mSceneBBMaxLength = RTGI_MAX(sceneBBLen.x,
         RTGI_MAX(sceneBBLen.y, sceneBBLen.z));
 
-    assert(mRenderSet);
+    RTGI_ASSERT(mRenderSet);
     int renderObjectCount = mRenderSet->GetRenderObjectCount();
     for( int i = 0; i < renderObjectCount; ++i )
     {

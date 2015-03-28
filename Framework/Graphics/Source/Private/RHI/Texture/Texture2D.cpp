@@ -29,7 +29,7 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device,
 {
     if( mTextureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return false;
     }
 
@@ -40,7 +40,7 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device,
 	{
 		Terminal::Output(Terminal::OC_Error, "Failed loading texture %s\n", 
             fileName.c_str());
-        assert( false );
+        RTGI_ASSERT( false );
         
 		return false;
 	}
@@ -73,7 +73,7 @@ bool Texture2D::LoadPNGFromFile(GPUDevice* device,
 {
     if( mTextureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return false;
     }
 
@@ -129,7 +129,7 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device,
 
     if( mTextureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return false;
     }
 
@@ -140,7 +140,7 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device,
     char imageformat[1024]; 
     float f[1];
 
-    std::string extendedFileName = "PLY/" + fileName;
+    std::string extendedFileName = "Textures/" + fileName;
 	 
     // Open the file handle  .
     FILE* infile = fopen(extendedFileName.c_str(), "rb");
@@ -223,7 +223,7 @@ bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
 {
     if( mTextureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return false;
     }
 
@@ -265,7 +265,7 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 {
     if( mTextureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return;
     }
 
@@ -301,7 +301,7 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 		mInternalFormat = BIF_R32UI;
         mComponentType = BCT_Unsigned_Int;
 #else
-        assert( false );
+        RTGI_ASSERT( false );
 #endif
 		break;
 
@@ -327,7 +327,7 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 //--------------------------------------------------------------------------
 void Texture2D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 {
-    assert(mTextureHandle);
+    RTGI_ASSERT(mTextureHandle);
     mTextureHandle->Device->Texture2DUpdateFromPixelBuffer(this, pixelBuffer);
 }
 //--------------------------------------------------------------------------
@@ -339,7 +339,7 @@ void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device,
 
     if( mTextureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return;
     }
 
@@ -383,7 +383,7 @@ void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device,
 //--------------------------------------------------------------------------
 void Texture2D::GetImageData(void* dstPixels)
 {
-    assert(mTextureHandle);
+    RTGI_ASSERT(mTextureHandle);
     mTextureHandle->Device->Texture2DGetImageData(this, 
         dstPixels);
 }

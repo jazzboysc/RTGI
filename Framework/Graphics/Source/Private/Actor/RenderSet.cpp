@@ -28,7 +28,7 @@ int RenderSet::GetRenderObjectCount() const
 //----------------------------------------------------------------------------
 RenderObject* RenderSet::GetRenderObject(int i) const
 {
-    assert( i >= 0 && i < (int)mRenderObjects.size() );
+    RTGI_ASSERT( i >= 0 && i < (int)mRenderObjects.size() );
     return mRenderObjects[i];
 }
 //----------------------------------------------------------------------------

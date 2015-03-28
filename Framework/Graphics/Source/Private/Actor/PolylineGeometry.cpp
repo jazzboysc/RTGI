@@ -111,7 +111,7 @@ bool PolylineGeometry::LoadFromFile(const std::string& fileName)
 		getline(fileData, curLine);
 	}
 	mPolylineCount = atoi(curLine.c_str());
-	assert( mPolylineCount >= 0 );
+	RTGI_ASSERT( mPolylineCount >= 0 );
 
 	// Get all polyline data.
 	for( int i = 0; i < mPolylineCount; ++i )
@@ -151,7 +151,7 @@ bool PolylineGeometry::LoadFromFile(const std::string& fileName)
 		}
 	}
 
-	assert( mVertexData.size() == mTotalVertexCount*2 );
+	RTGI_ASSERT( mVertexData.size() == mTotalVertexCount*2 );
 	fileData.close();
 
 	return true;
@@ -161,7 +161,7 @@ void PolylineGeometry::LoadFromMemory(int polylineCount,
 	std::vector<int>& polylineVertexCounts, int totalVertexCount, 
 	GLfloat* vertexData)
 {
-	assert( polylineCount > 0 && 
+	RTGI_ASSERT( polylineCount > 0 && 
 		polylineCount == (int)polylineVertexCounts.size() &&
 		totalVertexCount > 0  && vertexData );
 
@@ -274,7 +274,7 @@ int PolylineGeometry::SearchClosedPoint(GLfloat x, GLfloat y, GLfloat* dist)
 		return -1;
 	}
 
-	assert( (mTotalVertexCount<<1) == (int)mVertexData.size() );
+	RTGI_ASSERT( (mTotalVertexCount<<1) == (int)mVertexData.size() );
 
 	float minDist2 = glm::distance2(glm::vec2(x, y), glm::vec2(mVertexData[0], mVertexData[1]));
 	int closed = 0;
@@ -301,7 +301,7 @@ int PolylineGeometry::SearchClosedPoint(GLfloat x, GLfloat y, GLfloat* dist)
 void PolylineGeometry::UpdatePoint(GPUDevice* device, int index, GLfloat x, 
     GLfloat y)
 {
-	assert( index >= 0 && index < mTotalVertexCount );
+	RTGI_ASSERT( index >= 0 && index < mTotalVertexCount );
 	mVertexData[2*index    ] = x;
 	mVertexData[2*index + 1] = y;
 
@@ -310,7 +310,7 @@ void PolylineGeometry::UpdatePoint(GPUDevice* device, int index, GLfloat x,
 //----------------------------------------------------------------------------
 void PolylineGeometry::DeletePoint(GPUDevice* device, int index)
 {
-	assert( index >= 0 && index < mTotalVertexCount );
+	RTGI_ASSERT( index >= 0 && index < mTotalVertexCount );
 
 	mTotalVertexCount--;
 	mVertexData.erase(mVertexData.begin() + 2*index, 
@@ -366,7 +366,7 @@ void PolylineGeometry::OnRender(Pass*, PassInfo*)
 //----------------------------------------------------------------------------
 void PolylineGeometry::OnUpdateShaderConstants(int technique, int pass)
 {
-    assert(technique == 0 && pass == 0);
+    RTGI_ASSERT(technique == 0 && pass == 0);
 
 	mWorldLoc.SetValue(mWorldTransform);
     if( mCamera )

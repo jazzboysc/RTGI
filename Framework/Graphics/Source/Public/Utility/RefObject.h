@@ -7,6 +7,7 @@
 #define RTGI_RefObject_H
 
 #include "RefPointer.h"
+#include "RTGIAssert.h"
 
 namespace RTGI
 {

@@ -81,7 +81,7 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
             }
             else
             {
-                assert(mIndirectCommandBuffer != 0);
+                RTGI_ASSERT(mIndirectCommandBuffer != 0);
                 glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_SHORT, 
                     (void*)mCommandOffset);
             }
@@ -96,13 +96,13 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::OnUpdateShaderConstants(int technique, int pass)
 {
-    assert( technique == 0 && pass == 0 );
+    RTGI_ASSERT( technique == 0 && pass == 0 );
     
     glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
     mWorldLoc.SetValue(worldTrans);
@@ -261,7 +261,7 @@ bool TriangleMesh::LoadFromFile(const std::string& fileName)
 		value = (unsigned short)atoi(curValue.c_str());
 		// TODO:
 		// Only support trangle for now.
-		assert( value == 3);
+		RTGI_ASSERT( value == 3);
 
 		uiBegin = curLine.find_first_not_of(" ", uiEnd);
 		uiEnd = curLine.find(" ", uiBegin);
@@ -344,10 +344,10 @@ void TriangleMesh::CreateDeviceResource(GPUDevice* device)
 
     if( mIsIndirect )
     {
-        assert(mIndirectCommandBuffer);
+        RTGI_ASSERT(mIndirectCommandBuffer);
         mIndirectCommandBuffer->Bind();
         char* bufferData = (char*)mIndirectCommandBuffer->Map(BA_Write_Only);
-        assert( bufferData );
+        RTGI_ASSERT( bufferData );
         DrawElementsIndirectCommand* commandBufferData = 
             (DrawElementsIndirectCommand*)(bufferData + mCommandOffset);
         commandBufferData->Count = (unsigned int)mIndexData.size();
@@ -433,13 +433,13 @@ void TriangleMesh::SetTCoord(int i, const glm::vec2& texCoord)
 		mHasTCoord = true;
 	}
 
-	assert( mVertexCount > i );
+	RTGI_ASSERT( mVertexCount > i );
 	mTCoordData[i] = texCoord;
 }
 //----------------------------------------------------------------------------
 glm::vec2 TriangleMesh::GetTCoord(int i) const
 {
-	assert( (int)mTCoordData.size() > i );
+	RTGI_ASSERT( (int)mTCoordData.size() > i );
 	return mTCoordData[i];
 }
 //----------------------------------------------------------------------------
@@ -450,7 +450,7 @@ int TriangleMesh::GetVertexCount() const
 //----------------------------------------------------------------------------
 glm::vec3 TriangleMesh::GetWorldVertex(int i) const
 {
-	assert( (int)mVertexData.size() > i );
+	RTGI_ASSERT( (int)mVertexData.size() > i );
 	glm::vec4 temp = glm::vec4(mVertexData[i], 1.0f);
     glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
 	temp = worldTrans * temp;
@@ -559,7 +559,7 @@ void TriangleMesh::CreateVertexBufferDeviceResource(GPUDevice* device)
 //----------------------------------------------------------------------------
 void TriangleMesh::CreateIndexBufferDeviceResource(GPUDevice* device)
 {
-	assert( mIndexData.size() > 0 );
+	RTGI_ASSERT( mIndexData.size() > 0 );
 	if( mIndexData.size() > 0 )
 	{
         size_t bufferSize = sizeof(unsigned short)*mIndexData.size();

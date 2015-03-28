@@ -113,7 +113,7 @@ void PassInfo::Create(GLuint program, Primitive* primitive, bool hasNormal,
 #ifdef _DEBUG
     GLenum error = glGetError();
 	printf("%s\n", gluErrorString(error));
-    assert(error == GL_NO_ERROR);
+    RTGI_ASSERT(error == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------

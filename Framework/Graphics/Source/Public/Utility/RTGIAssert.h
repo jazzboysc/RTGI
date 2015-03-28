@@ -3,61 +3,66 @@
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
 
-#include "Light.h"
+#ifndef RTGI_Assert_H
+#define RTGI_Assert_H
 
-using namespace RTGI;
+#include <cassert>
+
+#ifdef NDEBUG
 
 //----------------------------------------------------------------------------
-Light::Light()
-	:
-	Color(1.0f, 1.0f, 1.0f),
-    mProjector(0)
-{
+#define RTGI_ASSERT(ignore) \
+((void)0)
+//----------------------------------------------------------------------------
+
+#else
+
+//----------------------------------------------------------------------------
+// Microsoft Windows 2000/XP platform
+//----------------------------------------------------------------------------
+#if defined(_WIN32)
+
+//----------------------------------------------------------------------------
+#define RTGI_SAFEBREAKPOINT \
+try \
+{ \
+    _asm \
+    { \
+        int 3 \
+    }; \
+} \
+catch(...) \
+{ \
+    ; \
 }
 //----------------------------------------------------------------------------
-Light::~Light()
-{
-    delete mProjector;
-    mLightMesh = 0;
+
+//----------------------------------------------------------------------------
+// Macintosh OS X platform
+//----------------------------------------------------------------------------
+#elif defined(__APPLE__)
+
+#define RTGI_SAFEBREAKPOINT ((void)0)
+
+//----------------------------------------------------------------------------
+// Linux platform
+//----------------------------------------------------------------------------
+#else
+
+#define RTGI_SAFEBREAKPOINT ((void)0)
+
+#endif
+
+//----------------------------------------------------------------------------
+#define RTGI_ASSERT(expr) \
+if( !(expr) ) \
+{ \
+    RTGI_SAFEBREAKPOINT; \
+    assert(expr); \
 }
 //----------------------------------------------------------------------------
-void Light::SetProjector(Camera* projector)
-{
-    mProjector = projector;
-}
-//----------------------------------------------------------------------------
-Camera* Light::GetProjector() const
-{
-    return mProjector;
-}
-//----------------------------------------------------------------------------
-void Light::SetLocation(const glm::vec3& location)
-{
-    if( mProjector )
-    {
-        mProjector->SetLocation(location);
-    }
-    mLocation = location;
-}
-//----------------------------------------------------------------------------
-glm::vec3 Light::GetLocation() const
-{
-    return mLocation;
-}
-//----------------------------------------------------------------------------
-void Light::SetLightMesh(TriangleMesh* lightMesh)
-{
-    mLightMesh = lightMesh;
-}
-//----------------------------------------------------------------------------
-TriangleMesh* Light::GetLightMesh() const
-{
-    return mLightMesh;
-}
-//----------------------------------------------------------------------------
-void Light::RenderLightMesh(int technique, int pass, SubRenderer* subRenderer)
-{
-    RTGI_ASSERT(mLightMesh);
-    mLightMesh->Render(technique, pass, subRenderer);
-}
-//----------------------------------------------------------------------------
+
+#endif
+
+#endif
+

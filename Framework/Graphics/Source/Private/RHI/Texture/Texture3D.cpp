@@ -26,7 +26,7 @@ bool Texture3D::LoadFromSystemMemory(GPUDevice* device,
 {
     if( mTextureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return false;
     }
 
@@ -49,7 +49,7 @@ void Texture3D::CreateRenderTarget(GPUDevice* device, int width, int height,
 {
     if( mTextureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return;
     }
 
@@ -86,7 +86,7 @@ void Texture3D::CreateRenderTarget(GPUDevice* device, int width, int height,
         mInternalFormat = BIF_R32UI;
         mComponentType = BCT_Unsigned_Int;
 #else
-        assert(false);
+        RTGI_ASSERT(false);
 #endif
         break;
 
@@ -111,7 +111,7 @@ void Texture3D::CreateRenderTarget(GPUDevice* device, int width, int height,
 //----------------------------------------------------------------------------
 void Texture3D::UpdateFromPixelBuffer(PixelBuffer* pixelBuffer)
 {
-    assert(mTextureHandle);
+    RTGI_ASSERT(mTextureHandle);
     mTextureHandle->Device->Texture3DUpdateFromPixelBuffer(
         this, pixelBuffer);
 }

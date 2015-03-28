@@ -157,7 +157,7 @@ ShaderHandle* OpenGLDevice::__CreateShader(Shader* shader)
             delete[] acInfoLog;
         }
 
-        assert(false);
+        RTGI_ASSERT(false);
         delete  shaderHandle;
         return 0;
     }
@@ -169,7 +169,7 @@ ShaderHandle* OpenGLDevice::__CreateShader(Shader* shader)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return shaderHandle;
@@ -271,7 +271,7 @@ ShaderProgramHandle* OpenGLDevice::__CreateProgram(ShaderProgram* program)
             delete[] acInfoLog;
         }
 
-        assert(false);
+        RTGI_ASSERT(false);
         return 0;
     }
 
@@ -282,7 +282,7 @@ ShaderProgramHandle* OpenGLDevice::__CreateProgram(ShaderProgram* program)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     OpenGLShaderProgramHandle* programHandle = new OpenGLShaderProgramHandle();
@@ -306,7 +306,7 @@ void OpenGLDevice::__EnableProgram(ShaderProgram* program)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -325,7 +325,7 @@ void OpenGLDevice::__SetProgramParameterInt(ShaderProgram* program,
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -334,7 +334,7 @@ void OpenGLDevice::__GetUniformLocation(ShaderProgram* program,
 {
     OpenGLShaderProgramHandle* programHandle = 
         (OpenGLShaderProgramHandle*)program->GetProgramHandle();
-    assert(programHandle);
+    RTGI_ASSERT(programHandle);
 
     GLint loc = glGetUniformLocation(programHandle->mProgram, name);
     if( !uniform->mUniformHandle )
@@ -388,7 +388,7 @@ void OpenGLDevice::__GetUniformLocation(ShaderProgram* program,
     }
 
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -397,13 +397,13 @@ void OpenGLDevice::__SetUniformValueMat4(ShaderUniform* uniform,
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
-    assert(uniformHandle);
+    RTGI_ASSERT(uniformHandle);
 
     glUniformMatrix4fv(uniformHandle->mUniform, 1, GL_FALSE, glm::value_ptr(*value));
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -412,13 +412,13 @@ void OpenGLDevice::__SetUniformValueVec3(ShaderUniform* uniform,
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
-    assert(uniformHandle);
+    RTGI_ASSERT(uniformHandle);
 
     glUniform3fv(uniformHandle->mUniform, 1, (GLfloat*)value);
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -426,13 +426,13 @@ void OpenGLDevice::__SetUniformValueInt(ShaderUniform* uniform, int value)
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
-    assert(uniformHandle);
+    RTGI_ASSERT(uniformHandle);
 
     glUniform1i(uniformHandle->mUniform, value);
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -441,13 +441,13 @@ void OpenGLDevice::__SetUniformValueUInt(ShaderUniform* uniform,
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
-    assert(uniformHandle);
+    RTGI_ASSERT(uniformHandle);
 
     glUniform1ui(uniformHandle->mUniform, value);
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -455,13 +455,13 @@ void OpenGLDevice::__SetUniformValueFloat(ShaderUniform* uniform, float value)
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
-    assert(uniformHandle);
+    RTGI_ASSERT(uniformHandle);
 
     glUniform1f(uniformHandle->mUniform, value);
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -470,13 +470,13 @@ void OpenGLDevice::__SetUniformValueFloat2(ShaderUniform* uniform,
 {
     OpenGLShaderUniformHandle* uniformHandle =
         (OpenGLShaderUniformHandle*)uniform->mUniformHandle;
-    assert(uniformHandle);
+    RTGI_ASSERT(uniformHandle);
 
     glUniform2fv(uniformHandle->mUniform, 1, value);
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -508,7 +508,7 @@ TextureHandle* OpenGLDevice::__Texture1DLoadFromSystemMemory(Texture* texture,
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return textureHandle;
@@ -521,7 +521,7 @@ void OpenGLDevice::__Texture1DUpdateFromPixelBuffer(Texture* texture,
         (OpenGLTextureHandle*)texture->GetTextureHandle();
     if( !textureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return;
     }
 
@@ -540,7 +540,7 @@ void OpenGLDevice::__Texture1DUpdateFromPixelBuffer(Texture* texture,
     
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -548,13 +548,13 @@ void OpenGLDevice::__TextureBindToImageUnit(Texture* texture,
     unsigned int unit, BufferAccess access)
 {
 #if defined(__APPLE__)
-    assert( false );
+    RTGI_ASSERT( false );
 #else
     OpenGLTextureHandle* textureHandle =
         (OpenGLTextureHandle*)texture->GetTextureHandle();
     if( !textureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return;
     }
 
@@ -564,7 +564,7 @@ void OpenGLDevice::__TextureBindToImageUnit(Texture* texture,
     
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
     
 #endif
@@ -577,7 +577,7 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
         (OpenGLTextureHandle*)texture->GetTextureHandle();
     if( !textureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return;
     }
 
@@ -590,7 +590,7 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
 	// Anisotropic Filtering.
@@ -602,7 +602,7 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
 
 #ifdef _DEBUG
 	res = glGetError();
-	assert(res == GL_NO_ERROR);
+	RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     if( sampler )
@@ -613,7 +613,7 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
 
 #ifdef _DEBUG
         GLenum res = glGetError();
-        assert(res == GL_NO_ERROR);
+        RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER,
@@ -621,7 +621,7 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
 
 #ifdef _DEBUG
         res = glGetError();
-        assert(res == GL_NO_ERROR);
+        RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
         // Texture coordinates wrapping.
@@ -630,7 +630,7 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
 
 #ifdef _DEBUG
         res = glGetError();
-        assert(res == GL_NO_ERROR);
+        RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
         glTexParameteri(target, GL_TEXTURE_WRAP_T,
@@ -638,7 +638,7 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
 
 #ifdef _DEBUG
         res = glGetError();
-        assert(res == GL_NO_ERROR);
+        RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
         if( target == GL_TEXTURE_CUBE_MAP )
@@ -648,7 +648,7 @@ void OpenGLDevice::__TextureBindToSampler(Texture* texture,
 
 #ifdef _DEBUG
             res = glGetError();
-            assert(res == GL_NO_ERROR);
+            RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
         }
     }
@@ -658,7 +658,7 @@ void OpenGLDevice::__TextureGenerateMipmap(Texture* texture)
 {
     OpenGLTextureHandle* textureHandle =
         (OpenGLTextureHandle*)texture->GetTextureHandle();
-    assert(textureHandle);
+    RTGI_ASSERT(textureHandle);
 
     TextureType type = texture->GetType();
     GLenum target = gsTextureTargets[(int)type];
@@ -668,7 +668,7 @@ void OpenGLDevice::__TextureGenerateMipmap(Texture* texture)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -679,7 +679,7 @@ void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture,
         (OpenGLTextureHandle*)texture->GetTextureHandle();
     if( !textureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return;
     }
 
@@ -692,7 +692,7 @@ void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture,
     
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -720,7 +720,7 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return textureHandle;
@@ -743,7 +743,7 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromTextureBuffer(
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return textureHandle;
@@ -754,7 +754,7 @@ void OpenGLDevice::__Texture2DUpdateFromPixelBuffer(Texture* texture,
 {
     OpenGLTextureHandle* textureHandle = 
         (OpenGLTextureHandle*)texture->GetTextureHandle();
-    assert(textureHandle);
+    RTGI_ASSERT(textureHandle);
 
     GLuint buffer = 
         ((OpenGLBufferHandle*)pixelBuffer->GetBufferHandle())->mBuffer;
@@ -770,7 +770,7 @@ void OpenGLDevice::__Texture2DUpdateFromPixelBuffer(Texture* texture,
     
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -778,7 +778,7 @@ void OpenGLDevice::__Texture2DGetImageData(Texture* texture, void* dstPixels)
 {
     OpenGLTextureHandle* textureHandle =
         (OpenGLTextureHandle*)texture->GetTextureHandle();
-    assert(textureHandle);
+    RTGI_ASSERT(textureHandle);
 
     glBindTexture(GL_TEXTURE_2D, textureHandle->mTexture);
     glGetTexImage(GL_TEXTURE_2D, 0, gsBufferFormat[(int)texture->GetFormat()],
@@ -787,7 +787,7 @@ void OpenGLDevice::__Texture2DGetImageData(Texture* texture, void* dstPixels)
     
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -810,7 +810,7 @@ TextureHandle* OpenGLDevice::__Tex2DArrayLoadFromSystemMemory(
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return textureHandle;
@@ -835,7 +835,7 @@ TextureHandle* OpenGLDevice::__Texture3DLoadFromSystemMemory(
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return textureHandle;
@@ -846,7 +846,7 @@ void OpenGLDevice::__Texture3DUpdateFromPixelBuffer(Texture* texture,
 {
     OpenGLTextureHandle* textureHandle =
         (OpenGLTextureHandle*)texture->GetTextureHandle();
-    assert(textureHandle);
+    RTGI_ASSERT(textureHandle);
 
     GLuint buffer = 
         ((OpenGLBufferHandle*)pixelBuffer->GetBufferHandle())->mBuffer;
@@ -864,7 +864,7 @@ void OpenGLDevice::__Texture3DUpdateFromPixelBuffer(Texture* texture,
     
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -911,7 +911,7 @@ TextureHandle* OpenGLDevice::__TextureCubeLoadFromSystemMemory(
     
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return textureHandle;
@@ -934,7 +934,7 @@ TextureHandle* OpenGLDevice::__BufferTextureLoadFromTextureBuffer(
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return textureHandle;
@@ -949,7 +949,7 @@ FBOHandle* OpenGLDevice::__CreateFrameBuffer(FrameBuffer* frameBuffer)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return fboHandle;
@@ -959,7 +959,7 @@ void OpenGLDevice::__DeleteFrameBuffer(FrameBuffer* frameBuffer)
 {
     OpenGLFBOHandle* fboHandle = 
         (OpenGLFBOHandle*)frameBuffer->GetFBOHandle();
-    assert(fboHandle);
+    RTGI_ASSERT(fboHandle);
 
     glDeleteFramebuffersEXT(1, &fboHandle->mFBO);
 }
@@ -970,7 +970,7 @@ void OpenGLDevice::__FrameBufferSetRenderTargets(FrameBuffer* frameBuffer,
 {
     OpenGLFBOHandle* fboHandle =
         (OpenGLFBOHandle*)frameBuffer->GetFBOHandle();
-    assert(fboHandle);
+    RTGI_ASSERT(fboHandle);
 
     glBindFramebuffer(GL_FRAMEBUFFER, fboHandle->mFBO);
 
@@ -978,7 +978,7 @@ void OpenGLDevice::__FrameBufferSetRenderTargets(FrameBuffer* frameBuffer,
     {
         OpenGLTextureHandle* textureHandle = 
             (OpenGLTextureHandle*)colorTextures[i]->GetTextureHandle();
-        assert(textureHandle);
+        RTGI_ASSERT(textureHandle);
 
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i,
             textureHandle->mTexture, 0);
@@ -1008,7 +1008,7 @@ void OpenGLDevice::__FrameBufferSetRenderTargets(FrameBuffer* frameBuffer,
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1022,13 +1022,13 @@ void OpenGLDevice::__FrameBufferEnable(FrameBuffer* frameBuffer)
 
     OpenGLFBOHandle* fboHandle =
         (OpenGLFBOHandle*)frameBuffer->GetFBOHandle();
-    assert(fboHandle);
+    RTGI_ASSERT(fboHandle);
     glBindFramebuffer(GL_FRAMEBUFFER, fboHandle->mFBO);
     glDrawBuffers(frameBuffer->mColorTextureCount, frameBuffer->mColorBuffers);
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1041,7 +1041,7 @@ void OpenGLDevice::__FrameBufferDisable(FrameBuffer* frameBuffer)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1052,7 +1052,7 @@ void OpenGLDevice::__ComputeShaderDispatch(ShaderProgram* program,
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1062,7 +1062,7 @@ void OpenGLDevice::__DispatchVertex(unsigned int threadCount)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1072,7 +1072,7 @@ void OpenGLDevice::__DispatchVertexIndirect(void* indirect)
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1080,12 +1080,12 @@ void OpenGLDevice::__DeleteBuffer(Buffer* buffer)
 {
     OpenGLBufferHandle* bufferHandle = 
         (OpenGLBufferHandle*)buffer->GetBufferHandle();
-    assert(bufferHandle);
+    RTGI_ASSERT(bufferHandle);
     glDeleteBuffers(1, &bufferHandle->mBuffer);
 
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1095,7 +1095,7 @@ void* OpenGLDevice::__BufferMap(Buffer* buffer, BufferAccess access)
         gsBufferAccess[(int)access]);
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
     return data;
 }
@@ -1105,7 +1105,7 @@ void OpenGLDevice::__BufferUnmap(Buffer* buffer)
     glUnmapBuffer(gsBufferTargets[(int)buffer->GetType()]);
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1118,11 +1118,11 @@ void OpenGLDevice::__BufferBindIndex(Buffer* buffer, unsigned int index)
     
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert( res == GL_NO_ERROR );
+    RTGI_ASSERT( res == GL_NO_ERROR );
 #endif
 
 #else
-    assert(false);
+    RTGI_ASSERT(false);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1132,7 +1132,7 @@ void OpenGLDevice::__BufferBind(Buffer* buffer)
     glBindBuffer(gsBufferTargets[(int)buffer->GetType()], b);
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1142,7 +1142,7 @@ void OpenGLDevice::__BufferBindToIndirect(Buffer* buffer)
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, b);
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1153,7 +1153,7 @@ void OpenGLDevice::__BufferUpdateSubData(Buffer* buffer, int offset,
         data);
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------
@@ -1170,7 +1170,7 @@ BufferHandle* OpenGLDevice::__BufferLoadFromSystemMemory(Buffer* buffer,
     glBindBuffer(type, 0);
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return bufferHandle;
@@ -1189,7 +1189,7 @@ BufferHandle* OpenGLDevice::__BufferLoadImmutableFromSystemMemory(
     glBindBuffer(type, 0);
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 
     return bufferHandle;
@@ -1207,7 +1207,7 @@ void OpenGLDevice::__BufferClear(Buffer* buffer,
         gsBufferFormat[(int)format], gsBufferComponentType[(int)type], data);
 #ifdef _DEBUG
     GLenum res = glGetError();
-    assert(res == GL_NO_ERROR);
+    RTGI_ASSERT(res == GL_NO_ERROR);
 #endif
 }
 //----------------------------------------------------------------------------

@@ -15,7 +15,7 @@ Shader::Shader(GLenum type, const std::string& shaderFileName)
 {
     mShaderFileName = "Shaders/" + shaderFileName;
     bool res = LoadFromFile(mShaderFileName);
-	assert( res );
+	RTGI_ASSERT( res );
 
 	// TODO:
 	// Assign defalut source if LoadFromFile fails.
@@ -87,7 +87,7 @@ bool Shader::LoadFromFile(const std::string& shaderFileName)
                 startPos, range);
 
             bool res = LoadFromFile(includeFileName);
-            assert(res);
+            RTGI_ASSERT(res);
         }
 	}
 

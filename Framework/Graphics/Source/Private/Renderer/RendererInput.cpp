@@ -32,7 +32,7 @@ void EnableBuffer(RendererInput* input)
         break;
 
     default:
-        assert(false);
+        RTGI_ASSERT(false);
         break;
     }
 }
@@ -70,7 +70,7 @@ void RendererInput::Enable()
         break;
 
     default:
-        assert(false);
+        RTGI_ASSERT(false);
         break;
     }
 }

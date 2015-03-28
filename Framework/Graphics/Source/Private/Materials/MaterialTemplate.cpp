@@ -37,7 +37,7 @@ MaterialTemplate::~MaterialTemplate()
 //----------------------------------------------------------------------------
 void MaterialTemplate::AddTechnique(Technique* technique)
 {
-	assert( technique );
+	RTGI_ASSERT( technique );
 	mTechniques.push_back(technique);
 }
 //----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ unsigned int MaterialTemplate::GetTechniqueCount() const
 //----------------------------------------------------------------------------
 Technique* MaterialTemplate::GetTechnique(int i) const
 {
-	assert( i < (int)mTechniques.size() );
+	RTGI_ASSERT( i < (int)mTechniques.size() );
 
 	return mTechniques[i];
 }

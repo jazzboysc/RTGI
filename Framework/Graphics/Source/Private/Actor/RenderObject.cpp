@@ -12,11 +12,11 @@ RenderObject::RenderObject(Material* material)
 {
     mPrimitive = new Primitive();
 
-    assert( material );
+    RTGI_ASSERT( material );
     mMaterial = material;
 
     // Material object cannot be shared between render objects.
-    assert( !material->mRenderObject );
+    RTGI_ASSERT( !material->mRenderObject );
     mMaterial->mRenderObject = this;
 }
 //----------------------------------------------------------------------------

@@ -26,7 +26,7 @@ bool TextureCube::LoadFromFile(GPUDevice* device, const std::string& pX,
 {
     if( mTextureHandle )
     {
-        assert(false);
+        RTGI_ASSERT(false);
         return false;
     }
 
@@ -47,7 +47,7 @@ bool TextureCube::LoadFromFile(GPUDevice* device, const std::string& pX,
         bmpread_free(&pZBitmap);
         bmpread_free(&nZBitmap);
 
-        assert(false);
+        RTGI_ASSERT(false);
 		return false;
 	}
 

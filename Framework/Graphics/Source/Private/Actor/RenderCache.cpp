@@ -79,7 +79,7 @@ void RenderCache::Update(SpatialInfo* spatialInfo)
 //----------------------------------------------------------------------------
 void RenderCache::Update(Camera* camera)
 {
-    assert(camera);
+    RTGI_ASSERT(camera);
     *mViewCache = camera->GetViewTransform();
     *mProjCache = camera->GetProjectionTransform();
 }
