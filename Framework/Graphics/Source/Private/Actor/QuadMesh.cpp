@@ -53,19 +53,19 @@ void QuadMesh::OnRender(Pass* pass, PassInfo*)
         RTGI_ASSERT(false);
         glPatchParameteri(GL_PATCH_VERTICES, 4);
         glDrawElements(GL_PATCHES, (GLsizei)mIndexData.size(),
-            GL_UNSIGNED_SHORT, 0);
+            GL_UNSIGNED_INT, 0);
     }
     else
     {
         if( !mIsIndirect )
         {
             glDrawElements(GL_QUADS, (GLsizei)mIndexData.size(),
-                GL_UNSIGNED_SHORT, 0);
+                GL_UNSIGNED_INT, 0);
         }
         else
         {
             RTGI_ASSERT(mIndirectCommandBuffer != 0);
-            glDrawElementsIndirect(GL_QUADS, GL_UNSIGNED_SHORT,
+            glDrawElementsIndirect(GL_QUADS, GL_UNSIGNED_INT,
                 (void*)mCommandOffset);
         }
     }
@@ -92,7 +92,7 @@ void QuadMesh::OnUpdateShaderConstants(int technique, int pass)
 }
 //----------------------------------------------------------------------------
 void QuadMesh::LoadFromSystemMemory(std::vector<glm::vec3>& vertexData,
-    std::vector<unsigned short>& indexData)
+    std::vector<unsigned int>& indexData)
 {
     mVertexCount = (int)vertexData.size();
     mFaceCount = (int)(indexData.size() >> 2);
@@ -229,7 +229,7 @@ void QuadMesh::CreateIndexBufferDeviceResource(GPUDevice* device)
 	RTGI_ASSERT( mIndexData.size() > 0 );
 	if( mIndexData.size() > 0 )
 	{
-        size_t bufferSize = sizeof(unsigned short)*mIndexData.size();
+        size_t bufferSize = sizeof(unsigned int)*mIndexData.size();
         mPrimitive->IB = new IndexBuffer();
         mPrimitive->IB->LoadFromSystemMemory(device, bufferSize,
             (void*)&mIndexData[0], BU_Static_Draw);

@@ -61,7 +61,7 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
     {
         glPatchParameteri(GL_PATCH_VERTICES, 3);
         glDrawElements(GL_PATCHES, (GLsizei)mIndexData.size(),
-            GL_UNSIGNED_SHORT, 0);
+            GL_UNSIGNED_INT, 0);
     }
     else
     {
@@ -72,7 +72,7 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
                 if( InstanceCount == 1 )
                 {
                     glDrawElements(GL_TRIANGLES, (GLsizei)mIndexData.size(),
-                        GL_UNSIGNED_SHORT, 0);
+                        GL_UNSIGNED_INT, 0);
                 }
                 else
                 {
@@ -82,7 +82,7 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
             else
             {
                 RTGI_ASSERT(mIndirectCommandBuffer != 0);
-                glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_SHORT, 
+                glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, 
                     (void*)mCommandOffset);
             }
         }
@@ -247,7 +247,7 @@ bool TriangleMesh::LoadFromPLYFile(const std::string& fileName)
 	// Get index data.
 	for( int i = 0; i < mFaceCount; ++i )
 	{
-		unsigned short value;
+		unsigned int value;
 
 		getline(fileData, curLine);
 		while( curLine.size() == 0 || curLine[0] == '\n' )
@@ -258,7 +258,7 @@ bool TriangleMesh::LoadFromPLYFile(const std::string& fileName)
 		uiBegin = curLine.find_first_not_of(" ", uiBegin);
 		uiEnd = curLine.find(" ", uiBegin);
 		curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
-		value = (unsigned short)atoi(curValue.c_str());
+		value = (unsigned int)atoi(curValue.c_str());
 		// TODO:
 		// Only support trangle for now.
 		RTGI_ASSERT( value == 3);
@@ -266,19 +266,19 @@ bool TriangleMesh::LoadFromPLYFile(const std::string& fileName)
 		uiBegin = curLine.find_first_not_of(" ", uiEnd);
 		uiEnd = curLine.find(" ", uiBegin);
 		curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
-		value = (unsigned short)atof(curValue.c_str());
+		value = (unsigned int)atof(curValue.c_str());
 		mIndexData.push_back(value);
 
 		uiBegin = curLine.find_first_not_of(" ", uiEnd);
 		uiEnd = curLine.find(" ", uiBegin);
 		curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
-		value = (unsigned short)atof(curValue.c_str());
+		value = (unsigned int)atof(curValue.c_str());
 		mIndexData.push_back(value);
 
 		uiBegin = curLine.find_first_not_of(" ", uiEnd);
 		uiEnd = curLine.find("\n", uiBegin);
 		curValue = curLine.substr(uiBegin, uiEnd - uiBegin);
-		value = (unsigned short)atof(curValue.c_str());
+		value = (unsigned int)atof(curValue.c_str());
 		mIndexData.push_back(value);
 	}
 
@@ -293,7 +293,7 @@ bool TriangleMesh::LoadFromPLYFile(const std::string& fileName)
 }
 //----------------------------------------------------------------------------
 bool RTGI::TriangleMesh::LoadFromMemory(std::vector<glm::vec3>& _vData,
-										std::vector<unsigned short>& _iData,
+										std::vector<unsigned int>& _iData,
 										std::vector<glm::vec3>& _nData)
 {
 	mVertexData = _vData;
@@ -376,7 +376,7 @@ void TriangleMesh::GenerateNormals()
 	mFaceNormalData.reserve(mFaceCount);
 	for( int i = 0; i < mFaceCount; ++i )
 	{
-		unsigned short v1ID, v2ID, v3ID;
+		unsigned int v1ID, v2ID, v3ID;
 
 		// Get vertex indices.
 		v1ID = mIndexData[i*3    ];
@@ -562,7 +562,7 @@ void TriangleMesh::CreateIndexBufferDeviceResource(GPUDevice* device)
 	RTGI_ASSERT( mIndexData.size() > 0 );
 	if( mIndexData.size() > 0 )
 	{
-        size_t bufferSize = sizeof(unsigned short)*mIndexData.size();
+        size_t bufferSize = sizeof(unsigned int)*mIndexData.size();
         mPrimitive->IB = new IndexBuffer();
         mPrimitive->IB->LoadFromSystemMemory(device, bufferSize,
             (void*)&mIndexData[0], BU_Static_Draw);

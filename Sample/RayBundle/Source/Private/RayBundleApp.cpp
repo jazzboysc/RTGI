@@ -113,7 +113,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	mat4 rotM;
 	material = new Material(mtRayBundle);
 	mModel = new RayBundleTriMesh(material, mMainCamera);
-	mModel->LoadFromFile("beethoven.ply");
+	mModel->LoadFromPLYFile("beethoven.ply");
 	mModel->GenerateNormals();
 	mModel->CreateDeviceResource(mDevice);
 	mModel->SetWorldTranslation(vec3(-2.0f, 5.8f, -1.0f));
@@ -122,7 +122,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtRayBundle);
 	mGround = new RayBundleTriMesh(material, mMainCamera);
-	mGround->LoadFromFile("square.ply");
+	mGround->LoadFromPLYFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
@@ -130,7 +130,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtRayBundle);
 	mCeiling = new RayBundleTriMesh(material, mMainCamera);
-	mCeiling->LoadFromFile("square.ply");
+	mCeiling->LoadFromPLYFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
 	rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -141,7 +141,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtRayBundle);
 	mLight = new RayBundleTriMesh(material, mMainCamera);
-	mLight->LoadFromFile("square.ply");
+	mLight->LoadFromPLYFile("square.ply");
 	mLight->GenerateNormals();
 	mLight->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -155,7 +155,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtRayBundle);
 	mBackWall = new RayBundleTriMesh(material, mMainCamera);
-	mBackWall->LoadFromFile("square.ply");
+	mBackWall->LoadFromPLYFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -166,7 +166,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtRayBundle);
 	mLeftWall = new RayBundleTriMesh(material, mMainCamera);
-	mLeftWall->LoadFromFile("square.ply");
+	mLeftWall->LoadFromPLYFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
@@ -177,7 +177,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 
 	material = new Material(mtRayBundle);
 	mRightWall = new RayBundleTriMesh(material, mMainCamera);
-	mRightWall->LoadFromFile("square.ply");
+	mRightWall->LoadFromPLYFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
@@ -253,7 +253,7 @@ void RayBundleApp::Initialize(GPUDevice* device)
 	// Create update accumulation screen quad.
 	material = new Material(mtUpdateAccumulation);
 	mUpdateAccuScreenQuad = new UpdateAccumulationScreenQuad(material);
-	mUpdateAccuScreenQuad->LoadFromFile("screenquad.ply");
+	mUpdateAccuScreenQuad->LoadFromPLYFile("screenquad.ply");
 	mUpdateAccuScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
 	mUpdateAccuScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
 	mUpdateAccuScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));

@@ -34,7 +34,7 @@ public:
 
     // Load data from user specified memory location.
     void LoadFromSystemMemory(std::vector<glm::vec3>& vertexData, 
-        std::vector<unsigned short>& indexData);
+        std::vector<unsigned int>& indexData);
 
 	// Should be called after calling LoadFromSystemMemory.
     void CreateDeviceResource(GPUDevice* device);
@@ -68,7 +68,7 @@ protected:
 	int mFaceCount;
 	int mVertexComponentCount;
 	std::vector<glm::vec3> mVertexData;
-	std::vector<unsigned short> mIndexData;
+	std::vector<unsigned int> mIndexData;
 
     ShaderUniform mWorldLoc;
     ShaderUniform mViewLoc;

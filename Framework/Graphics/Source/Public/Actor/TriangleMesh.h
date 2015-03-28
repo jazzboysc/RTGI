@@ -36,7 +36,7 @@ public:
 	bool LoadFromPLYFile(const std::string& fileName);
 
 	bool LoadFromMemory(std::vector<glm::vec3>& _vData,
-						std::vector<unsigned short>& _iData,
+						std::vector<unsigned int>& _iData,
 						std::vector<glm::vec3>& _nData);
 
 	virtual void OnLoadFromFile();
@@ -89,7 +89,7 @@ protected:
 	std::vector<glm::vec2> mTCoordData;
 	std::vector<glm::vec3> mVertexNormalData;
 	std::vector<glm::vec3> mFaceNormalData;
-	std::vector<unsigned short> mIndexData;
+	std::vector<unsigned int> mIndexData;
 
 	bool mHasTCoord;
 	bool mHasNormal;
