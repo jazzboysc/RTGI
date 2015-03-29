@@ -108,7 +108,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	mScene.pool = new AdaptiveCausticsCube(
 		new Material(mtCausticsResourceReceiver), mMainCamera);
-	mScene.pool->LoadFromFile("cube.ply");
+	mScene.pool->LoadFromPLYFile("cube.ply");
 	mScene.pool->GenerateNormals();
 	mScene.pool->CreateDeviceResource(mDevice);
 	mScene.pool->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
@@ -118,7 +118,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	
 	mScene.ground = new AdaptiveCausticsTriMesh(
 		new Material(mtCausticsResourceReceiver), mMainCamera);
-	mScene.ground->LoadFromFile("ground.ply");
+	mScene.ground->LoadFromPLYFile("ground.ply");
 	mScene.ground->GenerateNormals();
 	mScene.ground->CreateDeviceResource(mDevice);
 	mScene.ground->SetWorldTranslation(vec3(0.0f, -6.0f, 0.0f));
@@ -127,12 +127,12 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	// Refractor mesh
 	mScene.mesh = new AdaptiveCausticsTriMesh(
 		new Material(mtCausticsResourceRefractor), mMainCamera);
-	mScene.mesh->LoadFromFile("triangle.ply");
+	mScene.mesh->LoadFromPLYFile("dragon_s.ply");
 	mScene.mesh->GenerateNormals();
 	mScene.mesh->CreateDeviceResource(mDevice);
 	mScene.mesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
 	mScene.mesh->SetWorldTranslation(vec3(0.0f, -0.8f, 0.0f));
-	mScene.mesh->SetWorldScale(vec3(0.03f));
+	mScene.mesh->SetWorldScale(vec3(3.0f));
 	mScene.mesh->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
 
 	// Render sets
