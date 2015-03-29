@@ -49,6 +49,8 @@ void RefractorResourceRenderer::Render(int technique, int pass, Camera* camera)
 	SubRenderer::Render(technique, pass, SRO_FrameBuffer, mPSB, camera);
 	mDebugBuffer->Bind();
 
+	glEnable(GL_CULL_FACE);
+
 	void* bufferData = mDebugBuffer->Map(BA_Read_Only);
 	auto dataPtr = (DebugBuffer*)bufferData;
 	mDebugBuffer->Unmap();

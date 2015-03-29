@@ -21,8 +21,8 @@ void main( void )
 	causticsDebugBuffer.second = gl_Layer;
 
 	// Eye space normal
-	Output.rgb = vec3(1,0,0);//normalize(gNormalView[0].xyz);
+	Output.rgb = normalize(gNormalView[0].xyz);
 	// Facing direction flag
-	Output.a = 1; //max( gNormalView[0].w, 1.0 );
+	Output.a = max( gNormalView[0].w, 1.0 );
 }
 
