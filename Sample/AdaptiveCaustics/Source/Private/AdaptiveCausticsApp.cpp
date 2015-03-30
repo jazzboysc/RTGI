@@ -52,7 +52,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 		vec3(0.0f, 1.0f, 0.0f));
 
 	mLightProjector = new Camera;
-	mLightProjector->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 0.01f, 50.0f);
+	mLightProjector->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 0.01f, 25.0f);
 	mLightProjector->SetLookAt(vec3(-0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
 
 
@@ -87,7 +87,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	lightMesh->LightMeshTexture = new Texture2D();
 	lightMesh->LightMeshTexture->LoadPNGFromFile(mDevice, "Textures/pointLight.png");
 
-	//mLight->SetLightMesh(lightMesh);
+	mLight->SetLightMesh(lightMesh);
 	lightMesh->SetWorldTranslation(mLightProjector->GetLocation());
 	//*/
 	mTimer = new GPUTimer();
@@ -259,10 +259,10 @@ void AdaptiveCausticsApp::FrameFunc()
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Refractor Light Space Front Normal Pass", workLoad);
 
-// 	mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);
-// 	workLoad = mShadowMapRenderer->GetTimeElapsed();
-//  	totalWorkLoad += workLoad;
-//  	infoPanel->SetTimingLabelValue("Shadow Map Pass", workLoad);
+	mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);
+	workLoad = mShadowMapRenderer->GetTimeElapsed();
+ 	totalWorkLoad += workLoad;
+ 	infoPanel->SetTimingLabelValue("Shadow Map Pass", workLoad);
 
 	/*
 	// OK.  Now that we have all the information to compute all the photons

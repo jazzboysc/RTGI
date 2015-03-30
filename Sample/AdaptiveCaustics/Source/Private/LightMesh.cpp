@@ -39,13 +39,13 @@ void LightMesh::OnUpdateShaderConstants(int technique, int pass)
 //----------------------------------------------------------------------------
 void LightMesh::OnRender(Pass* pass, PassInfo* passInfo)
 {
-//     glDisable(GL_DEPTH_TEST);
-//     glEnable(GL_BLEND);
-//     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-// 
-//     TriangleMesh::OnRender(pass, passInfo);
-// 
-//     glDisable(GL_BLEND);
-// 	glEnable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    TriangleMesh::OnRender(pass, passInfo);
+
+    glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 }
 //----------------------------------------------------------------------------
