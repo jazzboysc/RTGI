@@ -35,6 +35,9 @@ public:
 	// Load data from a ".ply" file and create its VBO and IBO.
 	bool LoadFromPLYFile(const std::string& fileName);
 
+    // Load data from a ".obj" file and create its VBO and IBO.
+    bool LoadFromOBJFile(const std::string& fileName);
+
 	bool LoadFromMemory(std::vector<glm::vec3>& _vData,
 						std::vector<unsigned int>& _iData,
 						std::vector<glm::vec3>& _nData);
@@ -74,6 +77,9 @@ public:
 protected:
 	void CreateVertexBufferDeviceResource(GPUDevice* device);
     void CreateIndexBufferDeviceResource(GPUDevice* device);
+
+    // Adjust vertices based on the center of the model.
+    void Centering();
 
     bool mIsIndirect;
     StructuredBufferPtr mIndirectCommandBuffer;

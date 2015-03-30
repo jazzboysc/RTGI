@@ -158,14 +158,14 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     material = new Material(mtSceneModel);
     mModel2 = new SceneMesh(material, mMainCamera);
-    mModel2->LoadFromPLYFile("dragon_s.ply");
-    scale = glm::scale(mat4(), vec3(45.0f));
+    mModel2->LoadFromOBJFile("elephant-gallop/elephant-gallop-01.obj");
+    scale = glm::scale(mat4(), vec3(9.0f));
     mModel2->UpdateModelSpaceVertices(scale);
     mModel2->GenerateNormals();
     mModel2->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-60.0f), vec3(0, 1, 0));
     mModel2->SetWorldTransform(rotM);
-    mModel2->SetWorldTranslation(vec3(3.2f, 3.2f, 2.4f));
+    mModel2->SetWorldTranslation(vec3(3.2f, 3.6f, 2.4f));
     mModel2->MaterialColor = vec3(0.8f, 1.0f, 2.0f);
     mModel2->LightProjector = mLight->GetProjector();
     mModel2->SceneBB = &mSceneBB;

@@ -12,7 +12,6 @@ PortableCMake-Win32/
 *.dll
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 

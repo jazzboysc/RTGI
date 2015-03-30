@@ -6,6 +6,7 @@
 #include "TriangleMesh.h"
 #include "GeometryAttributes.h"
 #include "GPUDevice.h"
+#include <sstream>
 
 using namespace RTGI;
 
@@ -220,30 +221,6 @@ bool TriangleMesh::LoadFromPLYFile(const std::string& fileName)
 		mModelSpaceBB.Max[2] = RTGI_MAX(mModelSpaceBB.Max[2], vertex[2]);
 	}
 
-	// Adjust vertices based on the center of the model.
-	glm::vec3 bc = mModelSpaceBB.GetBoxCenter();
-	glm::mat4 modelTrans = glm::translate(glm::mat4(), -bc);
-	glm::vec4 tempV;
-	for( int i = 0; i < mVertexCount; ++i )
-	{
-		tempV = glm::vec4(mVertexData[i], 1.0f);
-		tempV = modelTrans * tempV;
-		mVertexData[i].x = tempV.x;
-		mVertexData[i].y = tempV.y;
-		mVertexData[i].z = tempV.z;
-	}
-	// Adjust bounding box.
-	tempV = glm::vec4(mModelSpaceBB.Min, 1.0f);
-	tempV = modelTrans * tempV;
-	mModelSpaceBB.Min.x = tempV.x;
-	mModelSpaceBB.Min.y = tempV.y;
-	mModelSpaceBB.Min.z = tempV.z;
-	tempV = glm::vec4(mModelSpaceBB.Max, 1.0f);
-	tempV = modelTrans * tempV;
-	mModelSpaceBB.Max.x = tempV.x;
-	mModelSpaceBB.Max.y = tempV.y;
-	mModelSpaceBB.Max.z = tempV.z;
-
 	// Get index data.
 	for( int i = 0; i < mFaceCount; ++i )
 	{
@@ -282,6 +259,9 @@ bool TriangleMesh::LoadFromPLYFile(const std::string& fileName)
 		mIndexData.push_back(value);
 	}
 
+    fileData.close();
+
+    Centering();
 	OnLoadFromFile();
     
 #ifdef RTGI_OUTPUT_MESH_RESOURCE_LOADING
@@ -292,9 +272,114 @@ bool TriangleMesh::LoadFromPLYFile(const std::string& fileName)
 	return true;
 }
 //----------------------------------------------------------------------------
-bool RTGI::TriangleMesh::LoadFromMemory(std::vector<glm::vec3>& _vData,
-										std::vector<unsigned int>& _iData,
-										std::vector<glm::vec3>& _nData)
+bool TriangleMesh::LoadFromOBJFile(const std::string& fileName)
+{
+    std::ifstream fileData("OBJ/" + fileName);
+    if( !fileData )
+    {
+        return false;
+    }
+
+    std::string curLine;
+    std::stringstream lineStream;
+    std::string token;
+    std::vector<std::string> tokens;
+
+    while( getline(fileData, curLine) )
+    {
+        lineStream.clear();
+        lineStream.str(curLine);
+        tokens.clear();
+
+        while( lineStream >> token )
+        {
+            tokens.push_back(token);
+        }
+
+        if( !tokens.empty() )
+        {
+            // Process tokens.
+
+            if( !tokens[1].compare(".obj") )
+            {
+                if( !tokens[4].compare("vertices,") )
+                {
+                    mVertexCount = atoi(tokens[3].c_str());
+                    mVertexData.reserve(mVertexCount);
+                }
+
+                if( !tokens[6].compare("triangles.") )
+                {
+                    mFaceCount = atoi(tokens[5].c_str());
+                    mIndexData.reserve(mFaceCount*3);
+                }
+            }
+
+            if( !tokens[0].compare("v") )
+            {
+                // Process vertex.
+                RTGI_ASSERT(tokens.size() >= 4);
+
+                float x = (float)atof(tokens[1].c_str());
+                float y = (float)atof(tokens[2].c_str());
+                float z = (float)atof(tokens[3].c_str());
+                mVertexData.push_back(glm::vec3(x, y, z));
+
+                // Update model space bounding box.
+                mModelSpaceBB.Min[0] = RTGI_MIN(mModelSpaceBB.Min[0], x);
+                mModelSpaceBB.Min[1] = RTGI_MIN(mModelSpaceBB.Min[1], y);
+                mModelSpaceBB.Min[2] = RTGI_MIN(mModelSpaceBB.Min[2], z);
+                mModelSpaceBB.Max[0] = RTGI_MAX(mModelSpaceBB.Max[0], x);
+                mModelSpaceBB.Max[1] = RTGI_MAX(mModelSpaceBB.Max[1], y);
+                mModelSpaceBB.Max[2] = RTGI_MAX(mModelSpaceBB.Max[2], z);
+            }
+            else if( !tokens.at(0).compare("f") )
+            {
+                RTGI_ASSERT(tokens.size() > 3);
+
+                // Possible layouts:
+                // f v       v       v
+                // f v/vt    v/vt    v/vt
+                // f v//vn   v//vn   v//vn
+                // f v/vt/vn v/vt/vn v/vt/vn
+
+                // TODO:
+                // Only support triangle mesh for now.
+
+                for( int i = 1; i <= 3; ++i )
+                {
+                    std::string indexToken;
+                    std::stringstream curVertexIndex;
+                    curVertexIndex.str(tokens[i]);
+
+                    // TODO:
+                    // Only interested in vertex index for now.
+                    getline(curVertexIndex, indexToken, '/');
+
+                    // obj file's index starts from 1.
+                    unsigned int index = 
+                        (unsigned int)atoi(indexToken.c_str()) - 1;
+                    mIndexData.push_back(index);
+                }
+            }
+        }
+    }
+
+    fileData.close();
+
+    Centering();
+    OnLoadFromFile();
+
+#ifdef RTGI_OUTPUT_MESH_RESOURCE_LOADING
+    Terminal::Output(Terminal::OC_Success, "Loading mesh %s finished\n",
+        fileName.c_str());
+#endif
+
+    return true;
+}
+//----------------------------------------------------------------------------
+bool TriangleMesh::LoadFromMemory(std::vector<glm::vec3>& _vData, 
+    std::vector<unsigned int>& _iData, std::vector<glm::vec3>& _nData)
 {
 	mVertexData = _vData;
 	mIndexData = _iData;
@@ -567,6 +652,33 @@ void TriangleMesh::CreateIndexBufferDeviceResource(GPUDevice* device)
         mPrimitive->IB->LoadFromSystemMemory(device, bufferSize,
             (void*)&mIndexData[0], BU_Static_Draw);
 	}
+}
+//----------------------------------------------------------------------------
+void TriangleMesh::Centering()
+{
+    // Adjust vertices based on the center of the model.
+    glm::vec3 bc = mModelSpaceBB.GetBoxCenter();
+    glm::mat4 modelTrans = glm::translate(glm::mat4(), -bc);
+    glm::vec4 tempV;
+    for( int i = 0; i < mVertexCount; ++i )
+    {
+        tempV = glm::vec4(mVertexData[i], 1.0f);
+        tempV = modelTrans * tempV;
+        mVertexData[i].x = tempV.x;
+        mVertexData[i].y = tempV.y;
+        mVertexData[i].z = tempV.z;
+    }
+    // Adjust bounding box.
+    tempV = glm::vec4(mModelSpaceBB.Min, 1.0f);
+    tempV = modelTrans * tempV;
+    mModelSpaceBB.Min.x = tempV.x;
+    mModelSpaceBB.Min.y = tempV.y;
+    mModelSpaceBB.Min.z = tempV.z;
+    tempV = glm::vec4(mModelSpaceBB.Max, 1.0f);
+    tempV = modelTrans * tempV;
+    mModelSpaceBB.Max.x = tempV.x;
+    mModelSpaceBB.Max.y = tempV.y;
+    mModelSpaceBB.Max.z = tempV.z;
 }
 //----------------------------------------------------------------------------
 void TriangleMesh::SetIndirectCommandBuffer(
