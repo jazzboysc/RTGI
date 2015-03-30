@@ -40,6 +40,9 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
 		case Visualizer::eSM_RefractorLightSpaceBackNorm:
 			DisplayTexture->BindToSampler(1, &samplerDesc);
 			break;
+		case Visualizer::eSM_RefractorShadow:
+			DisplayTexture->BindToSampler(0, &samplerDesc);
+			break;
 
 		default:
 			assert(false);
@@ -71,8 +74,6 @@ Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
 Visualizer::~Visualizer()
 {
     mReceiverPositionTexture = 0;
-    mRefractorFrontNormalTexture = 0;
-    mRefractorBackNormalTexture = 0;
 
     mScreenQuad = 0;
 }
@@ -80,7 +81,7 @@ Visualizer::~Visualizer()
 void Visualizer::Initialize(GPUDevice* device,
 	ReceiverResourceRenderer* receiverResourceRenderer,
 	RefractorResourceRenderer* refractorResourceRenderer,
-	RefractorResourceRendererBack* refractorResourceRendererBack,
+	ShadowMapRenderer* shadowMapRenderer,
 	Camera* mainCamera)
 {
     ShaderProgramInfo visualizerProgramInfo;
@@ -94,12 +95,11 @@ void Visualizer::Initialize(GPUDevice* device,
 	mReceiverPositionTexture =
 		(Texture2D*)receiverResourceRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_ReceiverPosition_Name);
-	mRefractorFrontNormalTexture =
 		(Texture2D*)refractorResourceRenderer->GetFrameBufferTextureByName(
-		RTGI_CausticsBuffer_RefractorFrontNormal_Name);
-// 	mRefractorBackNormalTexture =
-// 		(Texture2D*)refractorResourceRendererBack->GetFrameBufferTextureByName(
-// 		RTGI_CausticsBuffer_RefractorBackNormal_Name);
+		RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name);
+	mShadowMapTexture =
+		(Texture2D*)shadowMapRenderer->GetFrameBufferTextureByName(
+		RTGI_ShadowMapRenderer_ShadowMap_Name);
 
     // Create screen quad.
     Material* material = new Material(mtScreenQuad);
@@ -122,6 +122,9 @@ void Visualizer::Render(int technique, int pass)
 //----------------------------------------------------------------------------
 void Visualizer::OnRender(int technique, int pass, Camera*)
 {
+	//glEnable(GL_DEPTH_TEST);
+	//glDisable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
 	mScreenQuad->Render(technique, pass);
 }
 //----------------------------------------------------------------------------
@@ -135,10 +138,11 @@ void Visualizer::SetShowMode(eShowMode mode)
 		mScreenQuad->DisplayTexture = mReceiverPositionTexture;
         break;
 	case eSM_RefractorLightSpaceFrontNorm:
-		mScreenQuad->DisplayTexture = mRefractorFrontNormalTexture;
 		break;
 	case eSM_RefractorLightSpaceBackNorm:
-		mScreenQuad->DisplayTexture = mRefractorFrontNormalTexture;
+		break;
+	case eSM_RefractorShadow:
+		mScreenQuad->DisplayTexture = mShadowMapTexture;
 		break;
 
     default:

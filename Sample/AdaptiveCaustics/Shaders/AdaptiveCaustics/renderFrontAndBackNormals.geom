@@ -14,7 +14,7 @@ in vec4 vNormalView[];
 
 in float distanceView[];
 
-out vec4 gNormalView[];
+out vec4 gNormalView;
 
 // Output the surface normal to one of two different
 //    rendering layers, based upon if it is front or back geometry.
@@ -33,23 +33,23 @@ void main( void )
 
 	gl_Position    = vPositionProj[0];
 	// View space normal
-	gNormalView[0].xyz = vNormalView[0].xyz;
+	gNormalView.xyz = vNormalView[0].xyz;
 	// Facing direction flag
-	gNormalView[0].w = back * distanceView[0].x;
+	gNormalView.w = back * distanceView[0].x;
 	EmitVertex();
 
 	gl_Position    = vPositionProj[1];
 	// View space normal
-	gNormalView[0].xyz = vNormalView[1].xyz;
+	gNormalView.xyz = vNormalView[1].xyz;
 	// Facing direction flag
-	gNormalView[0].w = back * distanceView[1].x;
+	gNormalView.w = back * distanceView[1].x;
 	EmitVertex();
 
 	gl_Position    = vPositionProj[2];
 	// View space normal
-	gNormalView[0].xyz = vNormalView[2].xyz;
+	gNormalView.xyz = vNormalView[2].xyz;
 	// Facing direction flag
-	gNormalView[0].w = back * distanceView[2].x;
+	gNormalView.w = back * distanceView[2].x;
 	EmitVertex();
 
 	EndPrimitive();	

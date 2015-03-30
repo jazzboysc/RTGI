@@ -23,7 +23,12 @@ public:
 	Texture2DPtr Texture;
 
 private:
+	ShaderUniform mWorldLoc2;
+	ShaderUniform mViewLoc2;
+	ShaderUniform mProjLoc2;
+
 	ShaderUniform mMaterialColorLoc;
+	ShaderUniform mLightProjectorNearFarLoc;
 };
 
 	typedef RefPointer<AdaptiveCausticsTriMesh> CausticsTriMeshPtr;

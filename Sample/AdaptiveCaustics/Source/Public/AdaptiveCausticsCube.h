@@ -33,7 +33,12 @@ private:
 	ShaderUniform mMaterialColorLoc;
 	ShaderUniform mVertexSplattingSamplerLoc;
 
+	ShaderUniform mWorldLoc2;
+	ShaderUniform mViewLoc2;
+	ShaderUniform mProjLoc2;
+
 	ShaderUniform mCubemapSampler;
+	ShaderUniform mLightProjectorNearFarLoc;
 };
 
 typedef RefPointer<AdaptiveCausticsCube> AdaptiveCausticsCubePtr;

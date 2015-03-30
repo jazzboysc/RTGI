@@ -37,6 +37,11 @@ void ReceiverResourceRenderer::CreateCausticsResource(ReceiverResourceDesc* desc
 //----------------------------------------------------------------------------
 void ReceiverResourceRenderer::Render(int technique, int pass, Camera* camera)
 {
+	//glEnable(GL_DEPTH_TEST);
+	//glDisable(GL_BLEND);
+
 	SubRenderer::Render(technique, pass, SRO_FrameBuffer, mPSB, camera);
+
+
 }
 //----------------------------------------------------------------------------

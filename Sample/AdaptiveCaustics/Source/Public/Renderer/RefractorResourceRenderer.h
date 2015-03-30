@@ -2,7 +2,7 @@
 
 namespace RTGI
 {
-#define RTGI_CausticsBuffer_RefractorFrontNormal_Name   "RefractorFrontNormal"
+#define RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name   "RefractorFrontNormal"
 
 struct RefractorResourceDesc
 {
@@ -31,7 +31,6 @@ public:
 
 	void CreateCausticsResource(RefractorResourceDesc* desc);
 	void Render(int technique, int pass, Camera* camera);
-
 private:
 	PipelineStateBlockPtr mPSB;
 	StructuredBuffer* mDebugBuffer;

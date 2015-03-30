@@ -21,16 +21,21 @@ void AdaptiveCausticsTriMesh::OnGetShaderConstants()
 	program->GetUniformLocation(&mWorldLoc, "World");
 	program->GetUniformLocation(&mViewLoc, "View");
 	program->GetUniformLocation(&mProjLoc, "Proj");
+	program = mMaterial->GetProgram(0, AdaptiveCausticsApp::SMP_ShadowMap);
+	program->GetUniformLocation(&mWorldLoc2, "World");
+	program->GetUniformLocation(&mViewLoc2, "View");
+	program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
 }
 //----------------------------------------------------------------------------
 void AdaptiveCausticsTriMesh::OnUpdateShaderConstants(int technique, int pass)
 {
-	switch (technique)
+	glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
+
+	switch (pass)
 	{
 	default:
 		break;
 	case AdaptiveCausticsApp::SMP_Resource:
-		glm::mat4 worldTrans = mSpatialInfo->GetWorldTransform();
 		mWorldLoc.SetValue(worldTrans);
 		if (mCamera)
 		{
@@ -39,6 +44,18 @@ void AdaptiveCausticsTriMesh::OnUpdateShaderConstants(int technique, int pass)
 
 			glm::mat4 projTrans = mCamera->GetProjectionTransform();
 			mProjLoc.SetValue(projTrans);
+		}
+		break;
+	case AdaptiveCausticsApp::SMP_ShadowMap:
+		mWorldLoc2.SetValue(worldTrans);
+		if (mCamera)
+		{
+			glm::mat4 viewTrans = mCamera->GetViewTransform();
+			mViewLoc2.SetValue(viewTrans);
+
+			float nearFarPlane[2];
+			mCamera->GetNearFarPlane(nearFarPlane);
+			mLightProjectorNearFarLoc.SetValue(nearFarPlane);
 		}
 		break;
 	}

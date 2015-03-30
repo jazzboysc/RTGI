@@ -4,7 +4,7 @@
 
 #include "ReceiverResourceRenderer.h"
 #include "RefractorResourceRenderer.h"
-#include "RefractorResourceRendererBack.h"
+#include "ShadowMapRenderer.h"
 #include "CausticsMapRenderer.h"
 #include "Visualizer.h"
 
@@ -39,7 +39,7 @@ private:
 
 	ReceiverResourceRendererPtr mReceiverResourceRenderer;
 	RefractorResourceRendererPtr mRefractorResourceRenderer;
-	RefractorResourceRendererBackPtr mRefractorResourceRendererBack;
+	ShadowMapRendererPtr mShadowMapRenderer;
 	VisualizerPtr mVisualizer;
 
 	struct DebugBuffer
@@ -62,6 +62,7 @@ private:
 	{
 		RenderSetPtr receiver;
 		RenderSetPtr refractor;
+		RenderSetPtr all;
 
 		CausticsTriMeshPtr mesh;
 		AdaptiveCausticsCubePtr pool;

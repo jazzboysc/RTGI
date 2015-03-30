@@ -4,7 +4,6 @@
 #include "GraphicsFrameworkHeader.h"
 #include "ReceiverResourceRenderer.h"
 #include "RefractorResourceRenderer.h"
-#include "RefractorResourceRendererBack.h"
 namespace RTGI
 {
 //----------------------------------------------------------------------------
@@ -55,7 +54,7 @@ public:
     void Initialize(GPUDevice* device,
 		ReceiverResourceRenderer* receiverResourceRenderer,
 		RefractorResourceRenderer* refractorResourceRenderer,
-		RefractorResourceRendererBack* refractorResourceRendererBack,
+		ShadowMapRenderer* mShadowMapRenderer,
         Camera* mainCamera);
 
     void Render(int technique, int pass);
@@ -72,8 +71,8 @@ private:
     VisualizerScreenQuadPtr mScreenQuad;
 
     Texture2DPtr mReceiverPositionTexture;
-    Texture2DPtr mRefractorFrontNormalTexture;
-    Texture2DPtr mRefractorBackNormalTexture;
+    Texture2DPtr mRefractorFrontAndBackNormalTextures;
+	Texture2DPtr mShadowMapTexture;
 
 	/*
     Texture2DPtr mGBufferAlbedoTexture;
