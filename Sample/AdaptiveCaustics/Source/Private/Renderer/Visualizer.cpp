@@ -74,6 +74,7 @@ Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
 Visualizer::~Visualizer()
 {
     mReceiverPositionTexture = 0;
+    mRefractorFrontAndBackNormalTextures = 0;
 
     mScreenQuad = 0;
 }
@@ -95,6 +96,7 @@ void Visualizer::Initialize(GPUDevice* device,
 	mReceiverPositionTexture =
 		(Texture2D*)receiverResourceRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_ReceiverPosition_Name);
+	mRefractorFrontAndBackNormalTextures =
 		(Texture2D*)refractorResourceRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name);
 	mShadowMapTexture =
@@ -138,8 +140,10 @@ void Visualizer::SetShowMode(eShowMode mode)
 		mScreenQuad->DisplayTexture = mReceiverPositionTexture;
         break;
 	case eSM_RefractorLightSpaceFrontNorm:
+		mScreenQuad->DisplayTexture = mRefractorFrontAndBackNormalTextures;
 		break;
 	case eSM_RefractorLightSpaceBackNorm:
+		mScreenQuad->DisplayTexture = mRefractorFrontAndBackNormalTextures;
 		break;
 	case eSM_RefractorShadow:
 		mScreenQuad->DisplayTexture = mShadowMapTexture;

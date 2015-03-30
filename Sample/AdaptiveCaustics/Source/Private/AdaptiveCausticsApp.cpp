@@ -1,5 +1,6 @@
 #include "AdaptiveCausticsApp.h"
 #include "InformationPanel.h"
+#include "LightMesh.h"
 #include <glfw3.h>
 
 using namespace RTGI;
@@ -46,50 +47,83 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Create camera and light
-	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.1f, 50.0f);
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 150.0f);
 	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
 	mLightProjector = new Camera;
-	mLightProjector->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 1.0f, 50.0f);
+	mLightProjector->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 0.01f, 50.0f);
 	mLightProjector->SetLookAt(vec3(-0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
+
 
 	mLight = new Light;
 	mLight->SetProjector(mLightProjector);
 	mLight->Color = vec3(0.9f, 0.9f, 0.7f);
 
+	// Create light.
+	ShaderProgramInfo PI_LightMesh;
+	PI_LightMesh
+		<< "AdaptiveCaustics/LightMesh.vert"
+		<< "AdaptiveCaustics/LightMesh.frag";
+
+	auto mtLightMesh = new MaterialTemplate(
+		new Technique({
+		new Pass(PI_LightMesh) })
+		);
+
+	//*
+	LightMesh* lightMesh = new LightMesh(new Material(mtLightMesh), mMainCamera);
+	lightMesh->LoadFromPLYFile("square.ply");
+	mat4 lightMeshScale = glm::scale(mat4(), vec3(0.05f));
+	lightMesh->UpdateModelSpaceVertices(lightMeshScale);
+	mat4 lightRotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
+	lightMesh->SetWorldTransform(lightRotM);
+	lightMesh->SetTCoord(0, vec2(0.0f, 0.0f));
+	lightMesh->SetTCoord(1, vec2(1.0f, 0.0f));
+	lightMesh->SetTCoord(2, vec2(1.0f, 1.0f));
+	lightMesh->SetTCoord(3, vec2(0.0f, 1.0f));
+	lightMesh->CreateDeviceResource(device);
+
+	lightMesh->LightMeshTexture = new Texture2D();
+	lightMesh->LightMeshTexture->LoadPNGFromFile(mDevice, "Textures/pointLight.png");
+
+	//mLight->SetLightMesh(lightMesh);
+	lightMesh->SetWorldTranslation(mLightProjector->GetLocation());
+	//*/
 	mTimer = new GPUTimer();
 	mTimer->CreateDeviceResource();
 
 	// Pass: Render light space position of receiver geometry
 	ShaderProgramInfo PI_outputEyeSpacePosition;
 	PI_outputEyeSpacePosition
-		<< "AdaptiveCaustics/outputEyeSpacePosition.vert"
-		<< "AdaptiveCaustics/outputEyeSpacePosition.frag";
-	/*
-	// Cubemap variation
-	ShaderProgramInfo PI_CubeReceiverPosition;
-	PI_CubeReceiverPosition
-		<< "AdaptiveCaustics/CausticsResourceCubeReceiver.vert"
-		<< "AdaptiveCaustics/CausticsResourceCubeReceiver.frag";
-	*/
+		<< "AdaptiveCaustics/RenderEyeSpacePosition.vert"
+		<< "AdaptiveCaustics/RenderEyeSpacePosition.frag";
 
 	// Pass: Render light space front and back normal of refractor geometry
 	ShaderProgramInfo PI_FrontBackNormals;
 	PI_FrontBackNormals
-		<< "AdaptiveCaustics/renderFrontAndBackNormals.vert"
-		<< "AdaptiveCaustics/renderFrontAndBackNormals.geom"
-		<< "AdaptiveCaustics/renderFrontAndBackNormals.frag";
+		<< "AdaptiveCaustics/RenderFrontAndBackNormals.vert"
+		<< "AdaptiveCaustics/RenderFrontAndBackNormals.geom"
+		<< "AdaptiveCaustics/RenderFrontAndBackNormals.frag";
 
-
+	// Pass: Render Shadow Map for refractor
+	ShaderProgramInfo PI_ShadowMap;
+	PI_ShadowMap
+		<< "AdaptiveCaustics/ShadowMap.vert"
+		<< "AdaptiveCaustics/ShadowMap.frag"
+		<< "AdaptiveCaustics/ShadowMap.ctrl"
+		<< "AdaptiveCaustics/ShadowMap.eval";
 
 	auto mtCausticsResourceReceiver = new MaterialTemplate(
-		new Technique(new Pass(PI_outputEyeSpacePosition)));
-
-
+		new Technique({
+		new Pass(PI_outputEyeSpacePosition),
+		new Pass(PI_ShadowMap)})
+		);
 	auto mtCausticsResourceRefractor = new MaterialTemplate(
-		new Technique(new Pass(PI_FrontBackNormals)));
-
+		new Technique({
+		new Pass(PI_FrontBackNormals),
+		new Pass(PI_ShadowMap)})
+		);
 
 	// Receiver meshes
 	auto mCubeMap = new TextureCube();
@@ -100,11 +134,6 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 		"Textures/pool.bmp",
 		"Textures/pool.bmp",
 		"Textures/pool.bmp");
-
-	/*
-	auto mtCausticsResourceReceiverCubeReceiver = new MaterialTemplate(
-		new Technique(new Pass(PI_CubeReceiverPosition)));
-	*/
 
 	mScene.pool = new AdaptiveCausticsCube(
 		new Material(mtCausticsResourceReceiver), mMainCamera);
@@ -143,6 +172,11 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mScene.refractor = new RenderSet();
 	mScene.refractor->AddRenderObject(mScene.mesh);
 
+	mScene.all = new RenderSet();
+	mScene.all->AddRenderObject(mScene.pool);
+	mScene.all->AddRenderObject(mScene.ground);
+	mScene.all->AddRenderObject(mScene.mesh);
+
 	// Create information panel.
 	int screenX, screenY;
 	glfwGetWindowPos(Window, &screenX, &screenY);
@@ -157,7 +191,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddTimingLabel("Refractor Light Space Front Normal Pass", 16, infoStartY);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddTimingLabel("Refractor Light Space Back Normal Pass", 16, infoStartY);
+	InformationPanel::GetInstance()->AddTimingLabel("Shadow Map Pass", 16, infoStartY);
 	infoStartY += infoIncY;
 
 	infoStartY = 20;
@@ -167,6 +201,8 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Refractor Light Space Back Normal", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddRadioButton("Shadow Map", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
 
 	infoPanel->SetTimingLabelValue("Debug A", 0.01);
@@ -174,7 +210,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 
 
-	
+	// Step 1: Render resources needed for caustics computation
 	mReceiverResourceRenderer = new ReceiverResourceRenderer(device, mScene.receiver);
 	ReceiverResourceDesc receiverResourceDesc;
 	receiverResourceDesc.Width = this->Width;
@@ -191,10 +227,14 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mRefractorResourceRenderer->CreateCausticsResource(&refractorResourceDesc);
 	mRefractorResourceRenderer->SetTimer(mTimer);
 
+	mShadowMapRenderer = new ShadowMapRenderer(device, mScene.all);
+	mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBAF);
+	mShadowMapRenderer->SetTimer(mTimer);
+
 	mVisualizer = new Visualizer(device);
 	mVisualizer->Initialize(device, mReceiverResourceRenderer,
 		mRefractorResourceRenderer,
-		mRefractorResourceRendererBack,
+		mShadowMapRenderer,
 		mMainCamera);
 	mVisualizer->SetTimer(mTimer);
 
@@ -219,10 +259,10 @@ void AdaptiveCausticsApp::FrameFunc()
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Refractor Light Space Front Normal Pass", workLoad);
 
-// 	mRefractorResourceRendererBack->Render(0, SMP_Resource, mLightProjector);
-// 	workLoad = mRefractorResourceRendererBack->GetTimeElapsed();
-// 	totalWorkLoad += workLoad;
-// 	infoPanel->SetTimingLabelValue("Refractor Light Space Back Normal Pass", workLoad);
+// 	mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);
+// 	workLoad = mShadowMapRenderer->GetTimeElapsed();
+//  	totalWorkLoad += workLoad;
+//  	infoPanel->SetTimingLabelValue("Shadow Map Pass", workLoad);
 
 	/*
 	// OK.  Now that we have all the information to compute all the photons
@@ -255,6 +295,10 @@ void AdaptiveCausticsApp::FrameFunc()
 
 	// Show rendering result.
 	mVisualizer->Render(0, 0);
+
+	// Post processing: add light mesh
+	//mLight->RenderLightMesh(0, 0);
+
 }
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::Terminate()
@@ -284,6 +328,10 @@ void AdaptiveCausticsApp::OnRadioButtonClick(System::Object^ sender, System::Eve
 	if (radioButton->Name == "Refractor Light Space Back Normal")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_RefractorLightSpaceBackNorm);
+	}
+	if (radioButton->Name == "Shadow Map")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_RefractorShadow);
 	}
 
 }

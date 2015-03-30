@@ -25,7 +25,7 @@ void RefractorResourceRenderer::CreateCausticsResource(RefractorResourceDesc* de
 {
 	assert(desc);
 
-	AddFrameBufferTarget(RTGI_CausticsBuffer_RefractorFrontNormal_Name,
+	AddFrameBufferTarget(RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name,
 		desc->Width, desc->Height, 2, TT_Texture2DArray,
 		desc->RefractorFrontNormalFormat, desc->RefractorFrontNormalMipmap);
 	CreateFrameBuffer(desc->Width, desc->Height, 2, TT_Texture2DArray);
@@ -43,6 +43,8 @@ void RefractorResourceRenderer::CreateCausticsResource(RefractorResourceDesc* de
 //----------------------------------------------------------------------------
 void RefractorResourceRenderer::Render(int technique, int pass, Camera* camera)
 {
+	//glEnable(GL_DEPTH_TEST);
+	//glDisable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 
 	mDebugBuffer->Bind(0);
