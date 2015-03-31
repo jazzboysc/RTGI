@@ -84,6 +84,9 @@ enum BufferUsage
     BU_Dynamic_Read,
     BU_Dynamic_Copy,
     BU_Dynamic_Draw,
+	BU_Stream_Read,
+	BU_Stream_Copy,
+	BU_Stream_Draw,
     BufferUsage_Max
 };
 

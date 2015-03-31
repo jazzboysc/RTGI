@@ -76,7 +76,10 @@ GLenum gsBufferUsage[BufferUsage_Max] =
     GL_STATIC_DRAW,
     GL_DYNAMIC_READ,
     GL_DYNAMIC_COPY,
-    GL_DYNAMIC_DRAW
+    GL_DYNAMIC_DRAW,
+	GL_STREAM_READ,
+	GL_STREAM_COPY,
+	GL_STREAM_DRAW
 };
 
 GLenum gsTextureTargets[TextureType_Max] =

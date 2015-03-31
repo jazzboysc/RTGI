@@ -19,6 +19,24 @@ CausticsMapRenderer::~CausticsMapRenderer()
 {
 	mPSB = 0;
 }
+
+void InitializeMinCausticHierarchy(GPUDevice* pDevice, VertexBuffer* pVB, int resolution)
+{
+	size_t bufSize = resolution * resolution * sizeof(fvec4);
+	float *causticStartPoints = (float *)malloc(bufSize);
+	for (int i = 0, j = resolution * resolution; i < j; ++i)
+	{
+		// 3D buffer: res * res * 4
+		int x = i % resolution;
+		int y = i / resolution;
+		causticStartPoints[4 * i + 0] = x / (float)resolution;
+		causticStartPoints[4 * i + 1] = y / (float)resolution;
+		causticStartPoints[4 * i + 2] = 0;
+		causticStartPoints[4 * i + 3] = 0;
+	}
+	pVB->LoadFromSystemMemory(pDevice, bufSize, causticStartPoints, RTGI::BufferUsage::BU_Static_Draw);
+	free(causticStartPoints);
+}
 //----------------------------------------------------------------------------
 void CausticsMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 {
@@ -28,6 +46,25 @@ void CausticsMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 		desc->Width, desc->Height, 0, TT_Texture2D,
 		desc->CausticsMapFormat, desc->CausticsMapMipmap);
 	CreateFrameBuffer(desc->Width, desc->Height, 0, TT_Texture2D);
+
+	// First a low-resolution start buffer to begin our hierarchical traversal
+	//    (so we need not start from a single photon).
+	tbd.genericTraversalStartBuffer = new VertexBuffer();
+	InitializeMinCausticHierarchy(this->mDevice, tbd.genericTraversalStartBuffer, 64);
+
+
+	// Now we need more generic, large traversal buffers to ping-pong between
+	//     for other rendering modes.  Here I allocate an array of these.  Many
+	//     render modes need only 1 or 2, those some of the complex ones need
+	//     4 or 5.  They probably need not all be the same size, but if I use
+	//     different sizes, I have to remember which is which!  (And then they're
+	//     not generic!).
+	GLsizeiptr traversalBufSz = 2048 * 2048 * sizeof(float)* 4;
+	for (int i = 0, j = 5; i < j; ++i)
+	{
+		tbd.genericTraversalBuffer[i] = new VertexBuffer();
+		tbd.genericTraversalBuffer[i]->ReserveMutableDeviceResource(this->mDevice, traversalBufSz, BU_Stream_Copy);
+	}
 
 #ifdef _DEBUG
 	GLenum res = glGetError();
