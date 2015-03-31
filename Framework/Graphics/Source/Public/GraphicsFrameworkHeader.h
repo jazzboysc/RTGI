@@ -75,6 +75,7 @@
 #include "RenderCache.h"
 #include "SpatialInfo.h"
 #include "Primitive.h"
+#include "RenderSequence.h"
 
 // Renderers
 #include "BufferBase.h"

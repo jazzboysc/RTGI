@@ -18,6 +18,7 @@ namespace RTGI
 {
 
 class SubRenderer;
+class Voxelizer;
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -32,11 +33,13 @@ public:
     void SetCamera(Camera* camera);
     Camera* GetCamera() const;
 
+    virtual int GetVoxelizerRasterDimension(Voxelizer* voxelizer);
+
     // Primitive access.
-    inline Primitive* GetPrimitive() const;
+    virtual Primitive* GetPrimitive() const;
 
     // Material access.
-    inline Material* GetMaterial() const;
+    virtual Material* GetMaterial() const;
 
     // Spatial information delegate functions.
     inline void SetSpatialInfo(SpatialInfo* spatialInfo);
@@ -49,9 +52,9 @@ public:
     inline glm::vec3 GetWorldScale() const;
 
     // Render cache delegate functions.
-    inline void SetRenderCache(RenderCache* renderCache);
-    inline RenderCache* GetRenderCache();
-    inline void UpdateRenderCache();
+    virtual void SetRenderCache(RenderCache* renderCache);
+    virtual RenderCache* GetRenderCache();
+    virtual void UpdateRenderCache();
 
 	virtual void Render(int technique, int pass, 
         SubRenderer* subRenderer = 0) = 0;

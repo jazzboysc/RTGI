@@ -35,6 +35,7 @@ public:
     int VoxelGridDim;
 
     inline VoxelizerType GetVoxelizerType() const;
+    float GetSceneBBMaxLength() const;
 
 protected:
     void VoxelizeScene(int technique, int pass);

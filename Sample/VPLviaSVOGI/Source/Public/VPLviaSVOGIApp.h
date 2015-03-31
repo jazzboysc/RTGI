@@ -12,6 +12,7 @@
 #include "GridVoxelizer.h"
 #include "SVOVoxelizer.h"
 #include "Visualizer.h"
+#include "RenderSequence.h"
 #include "FormEventListener.h"
 
 namespace RTGI
@@ -96,6 +97,7 @@ private:
     SceneMeshPtr mLeftWall;
     SceneMeshPtr mRightWall;
     SceneMeshPtr mModel;
+    RenderSequencePtr mModel2Sequence;
     SceneMeshPtr mModel2;
     RenderSetPtr mSceneObjects;
     RenderSetPtr mVoxelizedObjects;

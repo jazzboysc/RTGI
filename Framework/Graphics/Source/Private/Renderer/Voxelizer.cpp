@@ -26,6 +26,11 @@ void Voxelizer::Render(int technique, int pass)
     SubRenderer::Render(technique, pass, SRO_GenericBuffer, 0);
 }
 //----------------------------------------------------------------------------
+float Voxelizer::GetSceneBBMaxLength() const
+{
+    return mSceneBBMaxLength;
+}
+//----------------------------------------------------------------------------
 void Voxelizer::VoxelizeScene(int technique, int pass)
 {
     glm::vec3 sceneBBLen = mSceneBB->GetExtension() * 2.0f;
@@ -36,16 +41,10 @@ void Voxelizer::VoxelizeScene(int technique, int pass)
     int renderObjectCount = mRenderSet->GetRenderObjectCount();
     for( int i = 0; i < renderObjectCount; ++i )
     {
-        // TODO:
-        // Only support trangle mesh for now.
-        TriangleMesh* mesh = (TriangleMesh*)mRenderSet->GetRenderObject(i);
-        float triangleDim = mesh->GetTriangleMaxEdgeLength();
-        float ratio = triangleDim / mSceneBBMaxLength;
-        int rasterizerDim = (int)ceilf(ratio * (float)VoxelGridDim) +
-            RasterizerDimBias;
-
+        RenderObject* object = mRenderSet->GetRenderObject(i);
+        int rasterizerDim = object->GetVoxelizerRasterDimension(this);
         glViewport(0, 0, rasterizerDim, rasterizerDim);
-        mesh->Render(technique, pass, this);
+        object->Render(technique, pass, this);
     }
 }
 //----------------------------------------------------------------------------

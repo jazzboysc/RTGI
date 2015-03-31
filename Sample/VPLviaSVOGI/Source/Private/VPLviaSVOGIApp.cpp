@@ -6,7 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
-//#define SHOW_TIMING
+#define SHOW_TIMING
 
 //----------------------------------------------------------------------------
 VPLviaSVOGI::VPLviaSVOGI(int width, int height)
@@ -158,7 +158,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     material = new Material(mtSceneModel);
     mModel2 = new SceneMesh(material, mMainCamera);
-    mModel2->LoadFromOBJFile("elephant-gallop/elephant-gallop-01.obj");
+    mModel2->LoadFromOBJFile("elephant-gallop/elephant-gallop-06.obj");
     scale = glm::scale(mat4(), vec3(9.0f));
     mModel2->UpdateModelSpaceVertices(scale);
     mModel2->GenerateNormals();
@@ -170,6 +170,9 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mModel2->LightProjector = mLight->GetProjector();
     mModel2->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel2->GetWorldSpaceBB());
+
+    mModel2Sequence = new RenderSequence(0, 0);
+    mModel2Sequence->AddRenderObject(mModel2);
 
     material = new Material(mtSceneModel);
     mGround = new SceneMesh(material, mMainCamera);
@@ -236,7 +239,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     // Create scene renderset.
     mSceneObjects = new RenderSet();
     mSceneObjects->AddRenderObject(mModel);
-    mSceneObjects->AddRenderObject(mModel2);
+    mSceneObjects->AddRenderObject(mModel2Sequence);
     mSceneObjects->AddRenderObject(mGround);
     mSceneObjects->AddRenderObject(mCeiling);
     mSceneObjects->AddRenderObject(mBackWall);
@@ -249,7 +252,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     if( mVoxelizerType == Voxelizer::VT_Grid )
     {
         mVoxelizedObjects->AddRenderObject(mModel);
-        mVoxelizedObjects->AddRenderObject(mModel2);
+        mVoxelizedObjects->AddRenderObject(mModel2Sequence);
         mVoxelizedObjects->AddRenderObject(mGround);
         mVoxelizedObjects->AddRenderObject(mCeiling);
         mVoxelizedObjects->AddRenderObject(mBackWall);
@@ -259,7 +262,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
         mVoxelizedObjects->AddRenderObject(mModel);
-        mVoxelizedObjects->AddRenderObject(mModel2);
+        mVoxelizedObjects->AddRenderObject(mModel2Sequence);
     }
     else
     {
@@ -563,6 +566,7 @@ void VPLviaSVOGI::Terminate()
 	mLeftWall = 0;
 	mRightWall = 0;
 	mModel = 0;
+    mModel2Sequence = 0;
     mModel2 = 0;
     mSceneObjects = 0;
     mVoxelizedObjects = 0;

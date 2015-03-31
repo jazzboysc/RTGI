@@ -40,6 +40,16 @@ TriangleMesh::~TriangleMesh()
     mIndirectCommandBuffer = 0;
 }
 //----------------------------------------------------------------------------
+int TriangleMesh::GetVoxelizerRasterDimension(Voxelizer* voxelizer)
+{
+    float triangleDim = GetTriangleMaxEdgeLength();
+    float ratio = triangleDim / voxelizer->GetSceneBBMaxLength();
+    int rasterizerDim = (int)ceilf(ratio * (float)voxelizer->VoxelGridDim) +
+        voxelizer->RasterizerDimBias;
+
+    return rasterizerDim;
+}
+//----------------------------------------------------------------------------
 void TriangleMesh::Render(int technique, int pass, SubRenderer* subRenderer)
 {
 	// Apply current rendering pass.
