@@ -6,7 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
-#define SHOW_TIMING
+//#define SHOW_TIMING
 
 //----------------------------------------------------------------------------
 VPLviaSVOGI::VPLviaSVOGI(int width, int height)
@@ -156,24 +156,29 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
-    material = new Material(mtSceneModel);
-    mModel2 = new SceneMesh(material, mMainCamera);
-    mModel2->LoadFromOBJFile("elephant-gallop/elephant-gallop-06.obj");
-    scale = glm::scale(mat4(), vec3(9.0f));
-    mModel2->UpdateModelSpaceVertices(scale);
-    mModel2->GenerateNormals();
-    mModel2->CreateDeviceResource(mDevice);
-    rotM = rotate(mat4(), radians(-60.0f), vec3(0, 1, 0));
-    mModel2->SetWorldTransform(rotM);
-    mModel2->SetWorldTranslation(vec3(3.2f, 3.6f, 2.4f));
-    mModel2->MaterialColor = vec3(0.8f, 1.0f, 2.0f);
-    mModel2->LightProjector = mLight->GetProjector();
-    mModel2->SceneBB = &mSceneBB;
-    mSceneBB.Merge(mModel2->GetWorldSpaceBB());
-
-    mModel2Sequence = new RenderSequence(0, 0);
-    mModel2Sequence->AddRenderObject(mModel2);
+    mModel2Sequence = new RenderSequence(0);
+    for( int i = 1; i <= 12; ++i )
+    {
+        material = new Material(mtSceneModel);
+        mModel2 = new SceneMesh(material, mMainCamera);
+        char objFileName[64];
+        sprintf(objFileName, "elephant-gallop/elephant-gallop-%d.obj", i);
+        mModel2->LoadFromOBJFile(objFileName);
+        scale = glm::scale(mat4(), vec3(9.0f));
+        mModel2->UpdateModelSpaceVertices(scale);
+        mModel2->GenerateNormals();
+        mModel2->CreateDeviceResource(mDevice);
+        rotM = rotate(mat4(), radians(-60.0f), vec3(0, 1, 0));
+        mModel2->SetWorldTransform(rotM);
+        mModel2->SetWorldTranslation(vec3(3.2f, 3.6f, 2.4f));
+        mModel2->MaterialColor = vec3(0.8f, 1.0f, 2.0f);
+        mModel2->LightProjector = mLight->GetProjector();
+        mModel2->SceneBB = &mSceneBB;
+        mSceneBB.Merge(mModel2->GetWorldSpaceBB());
+        mModel2Sequence->AddRenderObject(mModel2);
+    }
     mModel2Sequence->SetActiveRenderObject(0);
+    mModel2Sequence->SetFrequence(0.4f);
 
     material = new Material(mtSceneModel);
     mGround = new SceneMesh(material, mMainCamera);
@@ -248,6 +253,16 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mSceneObjects->AddRenderObject(mRightWall);
     mSceneObjects->UpdateRenderCache();
 
+    // Create shadow casters.
+    mShadowCasters = new RenderSet();
+    mShadowCasters->AddRenderObject(mModel);
+    mShadowCasters->AddRenderObject(mModel2Sequence);
+    mShadowCasters->AddRenderObject(mGround);
+    mShadowCasters->AddRenderObject(mCeiling);
+    mShadowCasters->AddRenderObject(mBackWall);
+    mShadowCasters->AddRenderObject(mLeftWall);
+    mShadowCasters->AddRenderObject(mRightWall);
+
     // Create voxelizer renderset.
     mVoxelizedObjects = new RenderSet();
     if( mVoxelizerType == Voxelizer::VT_Grid )
@@ -305,7 +320,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     // Create shadow map renderer.
     mShadowMapRenderer = new ShadowMapRenderer(mDevice);
     mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBAF);
-    mShadowMapRenderer->SetRenderSet(mSceneObjects);
+    mShadowMapRenderer->SetRenderSet(mShadowCasters);
 
     // Create RSM renderer.
     mRSMRenderer = new RSMRenderer(mDevice);
@@ -448,19 +463,20 @@ void VPLviaSVOGI::FrameFunc()
     static float angle2 = -60.0f;
     if( mIsRotatingModel )
     {
-        angle += 1.0f;
+        angle -= 1.0f;
         mat4 rot;
         rot = rotate(mat4(), radians(angle), vec3(0, 1, 0));
         vec3 trans = mModel->GetWorldTranslation();
         mModel->SetWorldTransform(rot);
         mModel->SetWorldTranslation(trans);
 
-        angle2 -= 4.0f;
+        angle2 += 2.0f;
         rot = rotate(mat4(), radians(angle2), vec3(0, 1, 0));
-        trans = mModel2->GetWorldTranslation();
-        mModel2->SetWorldTransform(rot);
-        mModel2->SetWorldTranslation(trans);
+        trans = mModel2Sequence->GetWorldTranslation();
+        mModel2Sequence->SetWorldTransform(rot);
+        mModel2Sequence->SetWorldTranslation(trans);
     }
+    mModel2Sequence->Update(FrameCounter);
 
     if( mIsWireframe )
     {
@@ -570,6 +586,7 @@ void VPLviaSVOGI::Terminate()
     mModel2Sequence = 0;
     mModel2 = 0;
     mSceneObjects = 0;
+    mShadowCasters = 0;
     mVoxelizedObjects = 0;
 
     mTimer = 0;

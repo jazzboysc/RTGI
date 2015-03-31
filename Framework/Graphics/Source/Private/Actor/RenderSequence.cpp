@@ -8,12 +8,12 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-RenderSequence::RenderSequence(Material* material, Camera* camera)
+RenderSequence::RenderSequence(Material* material)
     :
     RenderObject(material)
 {
-    SetCamera(camera);
     mActiveObjectIndex = 0;
+    mFrequence = 1.0f;
 }
 //----------------------------------------------------------------------------
 RenderSequence::~RenderSequence()
@@ -22,6 +22,16 @@ RenderSequence::~RenderSequence()
     {
         mObjects[i] = 0;
     }
+}
+//----------------------------------------------------------------------------
+void RenderSequence::SetCamera(Camera* camera)
+{
+    mObjects[mActiveObjectIndex]->SetCamera(camera);
+}
+//----------------------------------------------------------------------------
+Camera* RenderSequence::GetCamera() const
+{
+    return mObjects[mActiveObjectIndex]->GetCamera();
 }
 //----------------------------------------------------------------------------
 int RenderSequence::GetVoxelizerRasterDimension(Voxelizer* voxelizer)
@@ -38,6 +48,45 @@ Primitive* RenderSequence::GetPrimitive() const
 Material* RenderSequence::GetMaterial() const
 {
     return mObjects[mActiveObjectIndex]->GetMaterial();
+}
+//----------------------------------------------------------------------------
+void RenderSequence::SetWorldTransform(const glm::mat4& worldTrans)
+{
+    for( int i = 0; i < (int)mObjects.size(); ++i )
+    {
+        mObjects[i]->SetWorldTransform(worldTrans);
+    }
+}
+//----------------------------------------------------------------------------
+glm::mat4 RenderSequence::GetWorldTransform() const
+{
+    return mObjects[mActiveObjectIndex]->GetWorldTransform();
+}
+//----------------------------------------------------------------------------
+void RenderSequence::SetWorldTranslation(const glm::vec3& translation)
+{
+    for( int i = 0; i < (int)mObjects.size(); ++i )
+    {
+        mObjects[i]->SetWorldTranslation(translation);
+    }
+}
+//----------------------------------------------------------------------------
+glm::vec3 RenderSequence::GetWorldTranslation() const
+{
+    return mObjects[mActiveObjectIndex]->GetWorldTranslation();
+}
+//----------------------------------------------------------------------------
+void RenderSequence::SetWorldScale(const glm::vec3& scale)
+{
+    for( int i = 0; i < (int)mObjects.size(); ++i )
+    {
+        mObjects[i]->SetWorldScale(scale);
+    }
+}
+//----------------------------------------------------------------------------
+glm::vec3 RenderSequence::GetWorldScale() const
+{
+    return mObjects[mActiveObjectIndex]->GetWorldScale();
 }
 //----------------------------------------------------------------------------
 void RenderSequence::SetRenderCache(RenderCache* renderCache)
@@ -80,15 +129,23 @@ void RenderSequence::OnDisableBuffers()
     mObjects[mActiveObjectIndex]->OnDisableBuffers();
 }
 //----------------------------------------------------------------------------
+void RenderSequence::Update(unsigned int frame)
+{
+    int sequenceSize = (int)mObjects.size();
+    SetActiveRenderObject(unsigned int((float)frame*mFrequence) % 
+        sequenceSize);
+}
+//----------------------------------------------------------------------------
 void RenderSequence::SetActiveRenderObject(unsigned int index)
 {
     RTGI_ASSERT(index >= 0 && index < mObjects.size());
-
-    mCamera = mObjects[index]->GetCamera();
-    mMaterial = mObjects[index]->GetMaterial();
-    mPrimitive = mObjects[index]->GetPrimitive();
-    mSpatialInfo = mObjects[index]->GetSpatialInfo();
-    mRenderCache = mObjects[index]->GetRenderCache();
+    mActiveObjectIndex = index;
+}
+//----------------------------------------------------------------------------
+void RenderSequence::SetFrequence(float value)
+{
+    RTGI_ASSERT(value > 0.0f);
+    mFrequence = value;
 }
 //----------------------------------------------------------------------------
 void RenderSequence::AddRenderObject(RenderObject* renderObject)

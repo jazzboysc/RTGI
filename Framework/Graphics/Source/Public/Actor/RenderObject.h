@@ -30,8 +30,8 @@ public:
 	RenderObject(Material* material);
 	virtual ~RenderObject();
 
-    void SetCamera(Camera* camera);
-    Camera* GetCamera() const;
+    virtual void SetCamera(Camera* camera);
+    virtual Camera* GetCamera() const;
 
     virtual int GetVoxelizerRasterDimension(Voxelizer* voxelizer);
 
@@ -44,12 +44,12 @@ public:
     // Spatial information delegate functions.
     inline void SetSpatialInfo(SpatialInfo* spatialInfo);
     inline SpatialInfo* GetSpatialInfo();
-    inline void SetWorldTransform(const glm::mat4& worldTrans);
-    inline glm::mat4 GetWorldTransform() const;
-    inline void SetWorldTranslation(const glm::vec3& translation);
-    inline glm::vec3 GetWorldTranslation() const;
-    inline void SetWorldScale(const glm::vec3& scale);
-    inline glm::vec3 GetWorldScale() const;
+    virtual void SetWorldTransform(const glm::mat4& worldTrans);
+    virtual glm::mat4 GetWorldTransform() const;
+    virtual void SetWorldTranslation(const glm::vec3& translation);
+    virtual glm::vec3 GetWorldTranslation() const;
+    virtual void SetWorldScale(const glm::vec3& scale);
+    virtual glm::vec3 GetWorldScale() const;
 
     // Render cache delegate functions.
     virtual void SetRenderCache(RenderCache* renderCache);

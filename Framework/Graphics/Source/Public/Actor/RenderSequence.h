@@ -18,13 +18,21 @@ namespace RTGI
 class RenderSequence : public RenderObject
 {
 public:
-    RenderSequence(Material* material, Camera* camera);
+    RenderSequence(Material* material);
     virtual ~RenderSequence();
 
     // Implement base class interface.
+    virtual void SetCamera(Camera* camera);
+    virtual Camera* GetCamera() const;
     virtual int GetVoxelizerRasterDimension(Voxelizer* voxelizer);
     virtual Primitive* GetPrimitive() const;
     virtual Material* GetMaterial() const;
+    virtual void SetWorldTransform(const glm::mat4& worldTrans);
+    virtual glm::mat4 GetWorldTransform() const;
+    virtual void SetWorldTranslation(const glm::vec3& translation);
+    virtual glm::vec3 GetWorldTranslation() const;
+    virtual void SetWorldScale(const glm::vec3& scale);
+    virtual glm::vec3 GetWorldScale() const;
     virtual void SetRenderCache(RenderCache* renderCache);
     virtual RenderCache* GetRenderCache();
     virtual void UpdateRenderCache();
@@ -35,12 +43,15 @@ public:
     virtual void OnEnableBuffers();
     virtual void OnDisableBuffers();
 
+    void Update(unsigned int frame);
     void SetActiveRenderObject(unsigned int index);
+    void SetFrequence(float value);
     void AddRenderObject(RenderObject* renderObject);
 
 protected:
     std::vector<RenderObjectPtr> mObjects;
     unsigned int mActiveObjectIndex;
+    float mFrequence;
 };
 
 typedef RefPointer<RenderSequence> RenderSequencePtr;

@@ -100,6 +100,7 @@ private:
     RenderSequencePtr mModel2Sequence;
     SceneMeshPtr mModel2;
     RenderSetPtr mSceneObjects;
+    RenderSetPtr mShadowCasters;
     RenderSetPtr mVoxelizedObjects;
 
     AABB mSceneBB;
