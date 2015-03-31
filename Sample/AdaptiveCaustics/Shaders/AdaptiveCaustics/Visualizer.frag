@@ -11,10 +11,22 @@ uniform sampler2DArray tempSamplerArray;
 
 void main()
 {
-    if( ShowMode == 0 ||
-		ShowMode == 3)
+    if( ShowMode == 0)
     {
         Output = texture(tempSampler, pTCoord);
+    }
+
+	if( ShowMode == 3)
+    {
+		vec4 color = texture(tempSampler, pTCoord);
+		if( color.a != 0)
+		{
+			Output = vec4(color.r * 1.5, color.g * 1.5, color.b * 1.5, color.a);
+		}
+		else
+		{
+			Output = vec4(0,0,0,0);
+		}
     }
 
 	if( ShowMode == 1 ||

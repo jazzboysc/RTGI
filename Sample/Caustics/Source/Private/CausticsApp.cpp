@@ -155,14 +155,14 @@ void CausticsApp::Initialize(GPUDevice* device)
 	auto mtGBuffer = new MaterialTemplate(new Technique(new Pass(gbufferProgramInfo)));
 
 	mGround = new CausticsTriMesh(new Material(mtGBuffer), mMainCamera);
-	mGround->LoadFromFile("ground.ply");
+	mGround->LoadFromPLYFile("ground.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
 	mGround->SetWorldTranslation(vec3(0.0f, -6.0f, 0.0f));
 	mGround->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
 
 	mMesh = new CausticsTriMesh(new Material(mtGBuffer), mMainCamera);
-	mMesh->LoadFromFile("dragon_s.ply");
+	mMesh->LoadFromPLYFile("dragon_s.ply");
 	mMesh->GenerateNormals();
 	mMesh->CreateDeviceResource(mDevice);
 	mMesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
@@ -185,7 +185,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 	auto mtGBufferCube = new MaterialTemplate(new Technique(new Pass(gbufferCubeProgramInfo)));
 
 	mPool = new CausticsCube(new Material(mtGBufferCube), mMainCamera);
-	mPool->LoadFromFile("cube.ply");
+	mPool->LoadFromPLYFile("cube.ply");
 	mPool->GenerateNormals();
 	mPool->CreateDeviceResource(mDevice);
 	mPool->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
@@ -220,7 +220,7 @@ void CausticsApp::Initialize(GPUDevice* device)
 
 
 	mCausticsScreenQuad = new CausticsScreenQuad(new Material(mtCausticsMap), mMainCamera);
-	mCausticsScreenQuad->LoadFromFile("screenquad.ply");
+	mCausticsScreenQuad->LoadFromPLYFile("screenquad.ply");
 	mCausticsScreenQuad->SetTCoord(0, tcoord00);
 	mCausticsScreenQuad->SetTCoord(1, tcoord10);
 	mCausticsScreenQuad->SetTCoord(2, tcoord11);

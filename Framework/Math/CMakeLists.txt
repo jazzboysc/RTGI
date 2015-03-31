@@ -6,7 +6,6 @@ SET( MACROS
 SET( INCLUDE_DIRS
 	glew
 	glm
-	FreeGlut
 )
 SET( LINK_LIBS
 )

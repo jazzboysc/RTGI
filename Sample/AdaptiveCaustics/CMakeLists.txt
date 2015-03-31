@@ -6,7 +6,6 @@ find_package(OpenGL REQUIRED)
 
 # Preprocessor Definitions
 SET( MACROS
-	FBXSDK_SHARED
 	GLEW_STATIC
 	GLM_FORCE_PURE
 )
@@ -16,16 +15,13 @@ SET( INCLUDE
 	glew
 	glm
 	glfw
-	fbxsdk
 	# ----- Core Framework -----
 	Graphics
-	Resource
 	GUI
 	Math
 	# ----- App Specific -----
 	zlib
     libbmpread
-	assimp
 )
 # Can include project name and absolute path to library
 SET( LINK
@@ -35,15 +31,12 @@ SET( LINK
 	glfw
 	# ----- Core Framework -----
 	Graphics
-	Resource
 	GUI
 	Math
 	# ----- App Specific -----
 	zlib
 	libpng
     libbmpread
-	${fbxsdk_SOURCE_DIR}/lib/x86/debug/libfbxsdk.lib
-	assimp
 )
 
 SET( VS_DOTNET_REFERENCES

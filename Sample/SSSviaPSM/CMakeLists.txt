@@ -16,16 +16,13 @@ SET( INCLUDE
 	glew
 	glm
 	glfw
-	fbxsdk
 	# ----- Core Framework -----
 	Graphics
-	Resource
 	GUI
 	Math
 	# ----- App Specific -----
 	zlib
     libbmpread
-	assimp
 )
 # Can include project name and absolute path to library
 SET( LINK
@@ -35,15 +32,12 @@ SET( LINK
 	glfw
 	# ----- Core Framework -----
 	Graphics
-	Resource
 	GUI
 	Math
 	# ----- App Specific -----
 	zlib
 	libpng
     libbmpread
-	${fbxsdk_SOURCE_DIR}/lib/x86/debug/libfbxsdk.lib
-	assimp
 )
 
 # Create project -- DO NOT EDIT ANYTHING BELOW THIS LINE --

@@ -143,7 +143,7 @@ void SIIApp::Initialize(GPUDevice* device)
     // Create VPL quad.
     material = new Material(mtVPLQuad);
     mVPLQuad = new SIIVPLQuad(material, mMainCamera);
-    mVPLQuad->LoadFromFile("screenquad.ply");
+    mVPLQuad->LoadFromPLYFile("screenquad.ply");
     mVPLQuad->CreateDeviceResource(mDevice);
     mVPLQuad->IsQuad = true;
     mVPLQuad->RSMPositionTexture = mRSMPositionTexturePX;
@@ -155,7 +155,7 @@ void SIIApp::Initialize(GPUDevice* device)
 	mat4 rotM;
 	material = new Material(mtSII);
 	mModel = new SIITriMesh(material, mMainCamera);
-	mModel->LoadFromFile("cow.ply");
+	mModel->LoadFromPLYFile("cow.ply");
     mat4 scale = glm::scale(mat4(), vec3(2.0f));
     mModel->UpdateModelSpaceVertices(scale);
 	mModel->GenerateNormals();
@@ -167,7 +167,7 @@ void SIIApp::Initialize(GPUDevice* device)
 
     material = new Material(mtSII);
 	mGround = new SIITriMesh(material, mMainCamera);
-	mGround->LoadFromFile("square.ply");
+	mGround->LoadFromPLYFile("square.ply");
 	mGround->GenerateNormals();
 	mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(0.5f, 0.0f, 0.0f);
@@ -176,7 +176,7 @@ void SIIApp::Initialize(GPUDevice* device)
 
     material = new Material(mtSII);
 	mCeiling = new SIITriMesh(material, mMainCamera);
-	mCeiling->LoadFromFile("square.ply");
+	mCeiling->LoadFromPLYFile("square.ply");
 	mCeiling->GenerateNormals();
 	mCeiling->CreateDeviceResource(mDevice);
 	rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
@@ -188,7 +188,7 @@ void SIIApp::Initialize(GPUDevice* device)
 
     material = new Material(mtSII);
 	mBackWall = new SIITriMesh(material, mMainCamera);
-	mBackWall->LoadFromFile("square.ply");
+	mBackWall->LoadFromPLYFile("square.ply");
 	mBackWall->GenerateNormals();
 	mBackWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
@@ -200,7 +200,7 @@ void SIIApp::Initialize(GPUDevice* device)
 
     material = new Material(mtSII);
 	mLeftWall = new SIITriMesh(material, mMainCamera);
-	mLeftWall->LoadFromFile("square.ply");
+	mLeftWall->LoadFromPLYFile("square.ply");
 	mLeftWall->GenerateNormals();
 	mLeftWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
@@ -212,7 +212,7 @@ void SIIApp::Initialize(GPUDevice* device)
 
     material = new Material(mtSII);
 	mRightWall = new SIITriMesh(material, mMainCamera);
-	mRightWall->LoadFromFile("square.ply");
+	mRightWall->LoadFromPLYFile("square.ply");
 	mRightWall->GenerateNormals();
 	mRightWall->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
@@ -224,7 +224,7 @@ void SIIApp::Initialize(GPUDevice* device)
 
     material = new Material(mtScreenQuad);
     mShadowMapScreenQuad = new SIITempScreenQuad(material);
-    mShadowMapScreenQuad->LoadFromFile("screenquad.ply");
+	mShadowMapScreenQuad->LoadFromPLYFile("screenquad.ply");
     mShadowMapScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
     mShadowMapScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
     mShadowMapScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));

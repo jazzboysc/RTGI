@@ -407,7 +407,7 @@ glutChangeToMenuEntry(int num, const char *label, int value)
 			}
 			
 			free(item->label);
-			item->label = strdup(label);
+			item->label = _strdup(label);
 			if (!item->label) __glutFatalError("out of memory");
 			item->isTrigger = FALSE;
 			item->len = (int) strlen(label);
@@ -446,7 +446,7 @@ glutChangeToSubMenu(int num, const char *label, int menu)
 			}
 			free(item->label);
 			
-			item->label = strdup(label);
+			item->label = _strdup(label);
 			if (!item->label)
 				__glutFatalError("out of memory");
 			item->isTrigger = TRUE;

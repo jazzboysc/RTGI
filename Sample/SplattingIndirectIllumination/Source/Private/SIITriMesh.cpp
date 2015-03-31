@@ -63,7 +63,7 @@ void SIITriMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update pass 2 uniform data.
     if( pass == 1 )
     {
-        mWorldLoc2.SetValue(mWorldTransform);
+		mWorldLoc2.SetValue(this->GetWorldTranslation());
         mMaterialColorLoc2.SetValue(MaterialColor);
 
         if( mCamera )
@@ -79,7 +79,7 @@ void SIITriMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update pass 3 uniform data.
     if( pass == 2 )
     {
-        mWorldLoc3.SetValue(mWorldTransform);
+		mWorldLoc3.SetValue(this->GetWorldTranslation());
         mMaterialColorLoc3.SetValue(MaterialColor);
 
         if( mCamera )

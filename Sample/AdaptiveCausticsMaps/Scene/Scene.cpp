@@ -90,7 +90,7 @@ void Scene::PerFrameUpdate( float currentTime )
 		camera->Update( currentTime );
 	if (geometry->NeedPerFrameUpdates()) 
 		geometry->Update( currentTime ); 
-	for (int i=0; i<light.Size(); i++)
+	for (unsigned int i=0; i<light.Size(); i++)
 	{
 		if (light[i]->NeedPerFrameUpdates()) 
 			light[i]->Update( currentTime );
@@ -103,7 +103,7 @@ void Scene::PerFrameUpdate( void )
 		camera->Update( frameTime );
 	if (geometry->NeedPerFrameUpdates()) 
 		geometry->Update( frameTime ); 
-	for (int i=0; i<light.Size(); i++)
+	for (unsigned int i=0; i<light.Size(); i++)
 	{
 		if (light[i]->NeedPerFrameUpdates()) 
 			light[i]->Update( frameTime );

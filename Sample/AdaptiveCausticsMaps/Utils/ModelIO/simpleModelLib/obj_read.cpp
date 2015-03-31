@@ -522,15 +522,15 @@ void ReadOBJSecondPass( struct _Model *m, FILE* file )
 			  /* v//n */
 			  sscanf(ptr, "%d//%d", &v, &n);
 			  m->triVertexIndex[3 * triCount + 0] = v-1;
-			  m->triNorm[3 * triCount + 0] = n-1;   // Note!  This data is currently thrown away...
+			  m->triNorm[3 * triCount + 0] = (float)n-1;   // Note!  This data is currently thrown away...
 			  ptr = strstr( ptr+1, " " );
 	          sscanf(ptr, "%d//%d", &v, &n);
 			  m->triVertexIndex[3 * triCount + 1] = v-1;
-			  m->triNorm[3 * triCount + 1] = n-1;   // Note!  This data is currently thrown away...
+			  m->triNorm[3 * triCount + 1] = (float)n - 1;   // Note!  This data is currently thrown away...
 			  ptr = strstr( ptr+1, " " );
 	          sscanf(ptr, "%d//%d", &v, &n);
 			  m->triVertexIndex[3 * triCount + 2] = v-1;
-			  m->triNorm[3 * triCount + 2] = n-1;   // Note!  This data is currently thrown away...
+			  m->triNorm[3 * triCount + 2] = (float)n - 1;   // Note!  This data is currently thrown away...
 			  ptr = strstr( ptr+1, " " );
 			  //if (m->triMatl) m->triMatl[ triCount ] = currentMaterial;
 	          triCount++;
@@ -541,7 +541,7 @@ void ReadOBJSecondPass( struct _Model *m, FILE* file )
 				  m->triVertexIndex[3 * triCount + 1] = m->triVertexIndex[3 * (triCount-1) + 2];	
 				  m->triNorm[3 * triCount + 1] = m->triNorm[3 * (triCount-1) + 2];
 				  m->triVertexIndex[3 * triCount + 2] = v-1;
-				  m->triNorm[3 * triCount + 2] = n-1;  // Note!  This data is currently thrown away...
+				  m->triNorm[3 * triCount + 2] = (float)n - 1;  // Note!  This data is currently thrown away...
 				  ptr = strstr( ptr+1, " " );
 				  //if (m->triMatl) m->triMatl[ triCount ] = currentMaterial;
 				  triCount++;
@@ -553,17 +553,17 @@ void ReadOBJSecondPass( struct _Model *m, FILE* file )
 			  /* v/t/n */
 			  m->triVertexIndex[3 * triCount + 0] = v-1;
 			  m->triTexCoordIndex[ 3 * triCount + 0] = t-1;
-			  m->triNorm[3 * triCount + 0] = n-1;  // Note!  This data is currently thrown away...
+			  m->triNorm[3 * triCount + 0] = (float)n - 1;  // Note!  This data is currently thrown away...
 			  ptr = strstr( ptr+1, " " );
 	          sscanf(ptr, "%d/%d/%d", &v, &t, &n);
 			  m->triVertexIndex[3 * triCount + 1] = v-1;
 			  m->triTexCoordIndex[ 3 * triCount + 1] = t-1;
-			  m->triNorm[3 * triCount + 1] = n-1;  // Note!  This data is currently thrown away...
+			  m->triNorm[3 * triCount + 1] = (float)n - 1;  // Note!  This data is currently thrown away...
 			  ptr = strstr( ptr+1, " " );
 	          sscanf(ptr, "%d/%d/%d", &v, &t, &n);
 			  m->triVertexIndex[3 * triCount + 2] = v-1;
 			  m->triTexCoordIndex[ 3 * triCount + 2] = t-1;
-			  m->triNorm[3 * triCount + 2] = n-1;  // Note!  This data is currently thrown away...
+			  m->triNorm[3 * triCount + 2] = (float)n - 1;  // Note!  This data is currently thrown away...
 			  ptr = strstr( ptr+1, " " );
 			  //if (m->triMatl) m->triMatl[ triCount ] = currentMaterial;
 	          triCount++;
@@ -577,7 +577,7 @@ void ReadOBJSecondPass( struct _Model *m, FILE* file )
 				  m->triNorm[3 * triCount + 1] = m->triNorm[3 * (triCount-1) + 2];
 				  m->triVertexIndex[3 * triCount + 2] = v-1;
 				  m->triTexCoordIndex[ 3 * triCount + 2] = t-1;
-				  m->triNorm[3 * triCount + 2] = n-1;  // Note!  This data is currently thrown away...
+				  m->triNorm[3 * triCount + 2] = (float)n - 1;  // Note!  This data is currently thrown away...
 				  ptr = strstr( ptr+1, " " );
 				  //if (m->triMatl) m->triMatl[ triCount ] = currentMaterial;
 				  triCount++;

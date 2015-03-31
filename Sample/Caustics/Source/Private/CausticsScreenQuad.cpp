@@ -72,7 +72,7 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	if (pass == 3)
 	{
-		mWorldLoc3.SetValue(mWorldTransform);
+		mWorldLoc3.SetValue(this->GetWorldTranslation());
 		if (mCamera)
 		{
 			glm::mat4 viewTrans = mCamera->GetViewTransform();
@@ -105,7 +105,7 @@ void CausticsScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 
 	if (pass == 4)
 	{
-		mWorldLoc4.SetValue(mWorldTransform);
+		mWorldLoc4.SetValue(this->GetWorldTranslation());
 		if (mCamera)
 		{
 			glm::mat4 viewTrans = mCamera->GetViewTransform();

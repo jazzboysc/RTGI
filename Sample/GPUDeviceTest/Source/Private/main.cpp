@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	auto pShaderProgram = new ShaderProgram(SICausticsMapIntersect);
 
 	// Test b
-	(gpuDevice->*(gpuDevice->CreateProgram))(pShaderProgram);
+	//(gpuDevice->*(gpuDevice->CreateProgram))(pShaderProgram);
 	delete app;
 
 	//GPU_DEVICE_FUNC(gpuDevice, CreateProgram)(pShaderProgram);

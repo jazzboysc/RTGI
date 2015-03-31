@@ -275,7 +275,7 @@ void SVOApp::Initialize(GPUDevice* device)
     svoCubeVertices.push_back(vec3( 1.0f, -1.0f,  1.0f));
     svoCubeVertices.push_back(vec3( 1.0f, -1.0f, -1.0f));
     svoCubeVertices.push_back(vec3(-1.0f, -1.0f, -1.0f));
-    std::vector<unsigned short> svoCubeIndices;
+    std::vector<unsigned int> svoCubeIndices;
     svoCubeIndices.reserve(24);
     static unsigned short indices[] = { 0, 1, 2, 3,
                                         0, 4, 5, 1,
