@@ -173,6 +173,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     mModel2Sequence = new RenderSequence(0, 0);
     mModel2Sequence->AddRenderObject(mModel2);
+    mModel2Sequence->SetActiveRenderObject(0);
 
     material = new Material(mtSceneModel);
     mGround = new SceneMesh(material, mMainCamera);

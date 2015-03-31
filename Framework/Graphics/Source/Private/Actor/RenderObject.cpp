@@ -23,8 +23,7 @@ RenderObject::RenderObject(Material* material)
 //----------------------------------------------------------------------------
 RenderObject::~RenderObject()
 {
-    delete mPrimitive;
-	delete mMaterial;
+    mPrimitive = 0;
 	mMaterial = 0;
     mSpatialInfo = 0;
     mRenderCache = 0;

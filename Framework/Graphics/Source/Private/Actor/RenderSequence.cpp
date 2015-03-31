@@ -80,6 +80,17 @@ void RenderSequence::OnDisableBuffers()
     mObjects[mActiveObjectIndex]->OnDisableBuffers();
 }
 //----------------------------------------------------------------------------
+void RenderSequence::SetActiveRenderObject(unsigned int index)
+{
+    RTGI_ASSERT(index >= 0 && index < mObjects.size());
+
+    mCamera = mObjects[index]->GetCamera();
+    mMaterial = mObjects[index]->GetMaterial();
+    mPrimitive = mObjects[index]->GetPrimitive();
+    mSpatialInfo = mObjects[index]->GetSpatialInfo();
+    mRenderCache = mObjects[index]->GetRenderCache();
+}
+//----------------------------------------------------------------------------
 void RenderSequence::AddRenderObject(RenderObject* renderObject)
 {
     mObjects.push_back(renderObject);

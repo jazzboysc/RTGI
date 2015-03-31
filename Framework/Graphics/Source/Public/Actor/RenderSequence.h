@@ -35,6 +35,7 @@ public:
     virtual void OnEnableBuffers();
     virtual void OnDisableBuffers();
 
+    void SetActiveRenderObject(unsigned int index);
     void AddRenderObject(RenderObject* renderObject);
 
 protected:

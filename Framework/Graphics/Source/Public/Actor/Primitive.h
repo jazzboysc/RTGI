@@ -6,6 +6,7 @@
 #ifndef RTGI_Primitive_H
 #define RTGI_Primitive_H
 
+#include "RefObject.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
@@ -16,7 +17,7 @@ namespace RTGI
 // Author: Che Sun
 // Date: 03/09/2015
 //----------------------------------------------------------------------------
-class Primitive
+class Primitive : public RefObject
 {
 public:
     Primitive();
@@ -25,6 +26,8 @@ public:
     VertexBufferPtr VB;
     IndexBufferPtr IB;
 };
+
+typedef RefPointer<Primitive> PrimitivePtr;
 
 #include "Primitive.inl"
 

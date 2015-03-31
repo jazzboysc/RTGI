@@ -64,8 +64,8 @@ public:
 	virtual void OnDisableBuffers(){};
 
 protected:
-    Primitive* mPrimitive;
-	Material* mMaterial;
+    PrimitivePtr mPrimitive;
+	MaterialPtr mMaterial;
     Camera* mCamera;
     SpatialInfoPtr mSpatialInfo;
     RenderCachePtr mRenderCache;
