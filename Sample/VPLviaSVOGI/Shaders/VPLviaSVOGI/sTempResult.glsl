@@ -11,20 +11,9 @@ layout(std430, binding = 0)  buffer _voxelBuffer
     Voxel data[];
 } voxelBuffer;
 
-uniform int ShowMode;
-uniform int TextureArrayIndex;
 uniform vec3 SceneBBMin;
 uniform vec3 SceneBBExtension;
 uniform int dim;
-uniform float positionThreshold;
-uniform float normalThreshold;
-uniform int kernelSize;
-
-uniform sampler2D tempSampler;
-uniform sampler2D tempSampler2;
-uniform sampler2DArray tempSamplerArray;
-uniform sampler2D positionSampler;
-uniform sampler2D normalSampler;
 
 ivec3 GetIndex(vec3 worldPosition)
 {

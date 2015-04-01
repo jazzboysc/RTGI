@@ -1,4 +1,5 @@
 #version 430 core
+#extension GL_EXT_gpu_shader4 : enable  // for textureSize2D function.
 
 #include "VPLviaSVOGI/sTempResult.glsl"
 

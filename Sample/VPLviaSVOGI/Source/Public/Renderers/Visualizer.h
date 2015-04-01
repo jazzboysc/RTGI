@@ -69,19 +69,40 @@ public:
     int KernelSize;
 
 private:
-    ShaderUniform mShowModeLoc;
-    ShaderUniform mTempSamplerLoc;
-    ShaderUniform mTempSampler2Loc;
-    ShaderUniform mTempSamplerArrayLoc;
-    ShaderUniform mTextureArrayIndexLoc;
-    ShaderUniform mSceneBBMinLoc;
-    ShaderUniform mSceneBBExtensionLoc;
-    ShaderUniform mDimLoc;
-    ShaderUniform mPositionSamplerLoc;
-    ShaderUniform mNormalSamplerLoc;
-    ShaderUniform mPositionThresholdLoc;
-    ShaderUniform mNormalThresholdLoc;
-    ShaderUniform mKernelSizeLoc;
+    // SM0
+    ShaderUniform mTempSamplerSM0Loc;
+
+    // SM1
+    ShaderUniform mTempSamplerArraySM1Loc;
+    ShaderUniform mTextureArrayIndexSM1Loc;
+
+    // SM2
+    ShaderUniform mTempSamplerSM2Loc;
+    ShaderUniform mTempSampler2SM2Loc;
+    ShaderUniform mPositionSamplerSM2Loc;
+    ShaderUniform mNormalSamplerSM2Loc;
+    ShaderUniform mPositionThresholdSM2Loc;
+    ShaderUniform mNormalThresholdSM2Loc;
+    ShaderUniform mKernelSizeSM2Loc;
+
+    // SM3
+    ShaderUniform mTempSamplerSM3Loc;
+    ShaderUniform mSceneBBMinSM3Loc;
+    ShaderUniform mSceneBBExtensionSM3Loc;
+
+    // SM4
+    ShaderUniform mTempSamplerSM4Loc;
+    ShaderUniform mSceneBBMinSM4Loc;
+    ShaderUniform mSceneBBExtensionSM4Loc;
+    ShaderUniform mDimSM4Loc;
+
+    // SM5
+    ShaderUniform mTempSamplerSM5Loc;
+    ShaderUniform mPositionSamplerSM5Loc;
+    ShaderUniform mNormalSamplerSM5Loc;
+    ShaderUniform mPositionThresholdSM5Loc;
+    ShaderUniform mNormalThresholdSM5Loc;
+    ShaderUniform mKernelSizeSM5Loc;
 };
 
 typedef RefPointer<VisualizerScreenQuad> VisualizerScreenQuadPtr;

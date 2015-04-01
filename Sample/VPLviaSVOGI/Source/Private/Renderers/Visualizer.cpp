@@ -55,56 +55,114 @@ VisualizerScreenQuad::~VisualizerScreenQuad()
     VoxelBuffer = 0;
 }
 //----------------------------------------------------------------------------
-void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
+void VisualizerScreenQuad::OnUpdateShaderConstants(int technique, int pass)
 {
-    mShowModeLoc.SetValue(ShowMode);
-    mTextureArrayIndexLoc.SetValue(TextureArrayIndex);
-    mDimLoc.SetValue(VoxelGridDim);
-
     SamplerDesc sampler;
     sampler.MinFilter = FT_Nearest;
     sampler.MagFilter = FT_Nearest;
     sampler.WrapS = WT_Clamp;
     sampler.WrapT = WT_Clamp;
 
-    mTempSamplerLoc.SetValue(0);
-    if( TempTexture )
+    if( pass == 0 )
     {
-        TempTexture->BindToSampler(0, &sampler);
+        mTempSamplerSM0Loc.SetValue(0);
+        if( TempTexture )
+        {
+            TempTexture->BindToSampler(0, &sampler);
+        }
     }
-
-    mTempSampler2Loc.SetValue(1);
-    if( TempTexture2 )
+    else if( pass == 1 )
     {
-        TempTexture2->BindToSampler(1, &sampler);
+        mTempSamplerArraySM1Loc.SetValue(0);
+        if( TempTextureArray )
+        {
+            TempTextureArray->BindToSampler(0, &sampler);
+        }
+        mTextureArrayIndexSM1Loc.SetValue(TextureArrayIndex);
     }
-
-    mTempSamplerArrayLoc.SetValue(2);
-    if( TempTextureArray )
+    else if( pass == 2 )
     {
-        TempTextureArray->BindToSampler(2, &sampler);
+        mTempSamplerSM2Loc.SetValue(0);
+        if( TempTexture )
+        {
+            TempTexture->BindToSampler(0, &sampler);
+        }
+
+        mTempSampler2SM2Loc.SetValue(1);
+        if( TempTexture2 )
+        {
+            TempTexture2->BindToSampler(1, &sampler);
+        }
+
+        mPositionSamplerSM2Loc.SetValue(2);
+        if( GBufferPositionTexture )
+        {
+            GBufferPositionTexture->BindToSampler(2, &sampler);
+        }
+
+        mNormalSamplerSM2Loc.SetValue(3);
+        if( GBufferNormalTexture )
+        {
+            GBufferNormalTexture->BindToSampler(3, &sampler);
+        }
+
+        mPositionThresholdSM2Loc.SetValue(PositionThreshold);
+        mNormalThresholdSM2Loc.SetValue(NormalThreshold);
+        mKernelSizeSM2Loc.SetValue(KernelSize);
     }
-
-    mPositionSamplerLoc.SetValue(3);
-    if( GBufferPositionTexture )
+    else if( pass == 3 )
     {
-        GBufferPositionTexture->BindToSampler(3, &sampler);
+        mTempSamplerSM3Loc.SetValue(0);
+        if( TempTexture )
+        {
+            TempTexture->BindToSampler(0, &sampler);
+        }
+
+        if( SceneBB )
+        {
+            mSceneBBMinSM3Loc.SetValue(SceneBB->Min);
+            mSceneBBExtensionSM3Loc.SetValue(SceneBB->GetExtension());
+        }
     }
-
-    mNormalSamplerLoc.SetValue(4);
-    if( GBufferNormalTexture )
+    else if( pass == 4 )
     {
-        GBufferNormalTexture->BindToSampler(4, &sampler);
+        mTempSamplerSM4Loc.SetValue(0);
+        if( TempTexture )
+        {
+            TempTexture->BindToSampler(0, &sampler);
+        }
+
+        if( SceneBB )
+        {
+            mSceneBBMinSM4Loc.SetValue(SceneBB->Min);
+            mSceneBBExtensionSM4Loc.SetValue(SceneBB->GetExtension());
+        }
+
+        mDimSM4Loc.SetValue(VoxelGridDim);
     }
-
-    mPositionThresholdLoc.SetValue(PositionThreshold);
-    mNormalThresholdLoc.SetValue(NormalThreshold);
-    mKernelSizeLoc.SetValue(KernelSize);
-
-    if( SceneBB )
+    else if( pass == 5 )
     {
-        mSceneBBMinLoc.SetValue(SceneBB->Min);
-        mSceneBBExtensionLoc.SetValue(SceneBB->GetExtension());
+        mTempSamplerSM5Loc.SetValue(0);
+        if( TempTexture )
+        {
+            TempTexture->BindToSampler(0, &sampler);
+        }
+
+        mPositionSamplerSM5Loc.SetValue(1);
+        if( GBufferPositionTexture )
+        {
+            GBufferPositionTexture->BindToSampler(1, &sampler);
+        }
+
+        mNormalSamplerSM5Loc.SetValue(2);
+        if( GBufferNormalTexture )
+        {
+            GBufferNormalTexture->BindToSampler(2, &sampler);
+        }
+
+        mPositionThresholdSM5Loc.SetValue(PositionThreshold);
+        mNormalThresholdSM5Loc.SetValue(NormalThreshold);
+        mKernelSizeSM5Loc.SetValue(KernelSize);
     }
 
     if( VoxelBuffer )
@@ -115,20 +173,46 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
 //----------------------------------------------------------------------------
 void VisualizerScreenQuad::OnGetShaderConstants()
 {
+    // SM0
     ShaderProgram* program = mMaterial->GetProgram(0, 0);
-    program->GetUniformLocation(&mTempSamplerLoc, "tempSampler");
-    program->GetUniformLocation(&mTempSampler2Loc, "tempSampler2");
-    program->GetUniformLocation(&mTempSamplerArrayLoc, "tempSamplerArray");
-    program->GetUniformLocation(&mShowModeLoc, "ShowMode");
-    program->GetUniformLocation(&mTextureArrayIndexLoc, "TextureArrayIndex");
-    program->GetUniformLocation(&mSceneBBMinLoc, "SceneBBMin");
-    program->GetUniformLocation(&mSceneBBExtensionLoc, "SceneBBExtension");
-    program->GetUniformLocation(&mDimLoc, "dim");
-    program->GetUniformLocation(&mPositionSamplerLoc, "positionSampler");
-    program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
-    program->GetUniformLocation(&mPositionThresholdLoc, "positionThreshold");
-    program->GetUniformLocation(&mNormalThresholdLoc, "normalThreshold");
-    program->GetUniformLocation(&mKernelSizeLoc, "kernelSize");
+    program->GetUniformLocation(&mTempSamplerSM0Loc, "tempSampler");
+
+    // SM1
+    program = mMaterial->GetProgram(0, 1);
+    program->GetUniformLocation(&mTempSamplerArraySM1Loc, "tempSamplerArray");
+    program->GetUniformLocation(&mTextureArrayIndexSM1Loc, "TextureArrayIndex");
+
+    // SM2
+    program = mMaterial->GetProgram(0, 2);
+    program->GetUniformLocation(&mTempSamplerSM2Loc, "tempSampler");
+    program->GetUniformLocation(&mTempSampler2SM2Loc, "tempSampler2");
+    program->GetUniformLocation(&mPositionSamplerSM2Loc, "positionSampler");
+    program->GetUniformLocation(&mNormalSamplerSM2Loc, "normalSampler");
+    program->GetUniformLocation(&mPositionThresholdSM2Loc, "positionThreshold");
+    program->GetUniformLocation(&mNormalThresholdSM2Loc, "normalThreshold");
+    program->GetUniformLocation(&mKernelSizeSM2Loc, "kernelSize");
+
+    // SM3
+    program = mMaterial->GetProgram(0, 3);
+    program->GetUniformLocation(&mTempSamplerSM3Loc, "tempSampler");
+    program->GetUniformLocation(&mSceneBBMinSM3Loc, "SceneBBMin");
+    program->GetUniformLocation(&mSceneBBExtensionSM3Loc, "SceneBBExtension");
+
+    // SM4
+    program = mMaterial->GetProgram(0, 4);
+    program->GetUniformLocation(&mTempSamplerSM4Loc, "tempSampler");
+    program->GetUniformLocation(&mSceneBBMinSM4Loc, "SceneBBMin");
+    program->GetUniformLocation(&mSceneBBExtensionSM4Loc, "SceneBBExtension");
+    program->GetUniformLocation(&mDimSM4Loc, "dim");
+
+    // SM5
+    program = mMaterial->GetProgram(0, 5);
+    program->GetUniformLocation(&mTempSamplerSM5Loc, "tempSampler");
+    program->GetUniformLocation(&mPositionSamplerSM5Loc, "positionSampler");
+    program->GetUniformLocation(&mNormalSamplerSM5Loc, "normalSampler");
+    program->GetUniformLocation(&mPositionThresholdSM5Loc, "positionThreshold");
+    program->GetUniformLocation(&mNormalThresholdSM5Loc, "normalThreshold");
+    program->GetUniformLocation(&mKernelSizeSM5Loc, "kernelSize");
 }
 //----------------------------------------------------------------------------
 
@@ -290,15 +374,55 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mVoxelGridLocalGroupDim = voxelGridLocalGroupDim;
     mGlobalDim = mVoxelGridDim / mVoxelGridLocalGroupDim;
 
-    ShaderProgramInfo visualizerProgramInfo;
-    visualizerProgramInfo.VShaderFileName = "VPLviaSVOGI/vTempResult.glsl";
-    visualizerProgramInfo.FShaderFileName = "VPLviaSVOGI/fTempResult.glsl";
-    visualizerProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                            ShaderType::ST_Fragment;
-    Pass* passScreenQuad = new Pass(visualizerProgramInfo);
+    ShaderProgramInfo tempResultSM0ProgramInfo;
+    tempResultSM0ProgramInfo.VShaderFileName = "VPLviaSVOGI/vTempResult.glsl";
+    tempResultSM0ProgramInfo.FShaderFileName = "VPLviaSVOGI/fTempResultSM0.glsl";
+    tempResultSM0ProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Fragment;
+    Pass* passTempResultSM0 = new Pass(tempResultSM0ProgramInfo);
+
+    ShaderProgramInfo tempResultSM1ProgramInfo;
+    tempResultSM1ProgramInfo.VShaderFileName = "VPLviaSVOGI/vTempResult.glsl";
+    tempResultSM1ProgramInfo.FShaderFileName = "VPLviaSVOGI/fTempResultSM1.glsl";
+    tempResultSM1ProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Fragment;
+    Pass* passTempResultSM1 = new Pass(tempResultSM1ProgramInfo);
+
+    ShaderProgramInfo tempResultSM2ProgramInfo;
+    tempResultSM2ProgramInfo.VShaderFileName = "VPLviaSVOGI/vTempResult.glsl";
+    tempResultSM2ProgramInfo.FShaderFileName = "VPLviaSVOGI/fTempResultSM2.glsl";
+    tempResultSM2ProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Fragment;
+    Pass* passTempResultSM2 = new Pass(tempResultSM2ProgramInfo);
+
+    ShaderProgramInfo tempResultSM3ProgramInfo;
+    tempResultSM3ProgramInfo.VShaderFileName = "VPLviaSVOGI/vTempResult.glsl";
+    tempResultSM3ProgramInfo.FShaderFileName = "VPLviaSVOGI/fTempResultSM3.glsl";
+    tempResultSM3ProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Fragment;
+    Pass* passTempResultSM3 = new Pass(tempResultSM3ProgramInfo);
+
+    ShaderProgramInfo tempResultSM4ProgramInfo;
+    tempResultSM4ProgramInfo.VShaderFileName = "VPLviaSVOGI/vTempResult.glsl";
+    tempResultSM4ProgramInfo.FShaderFileName = "VPLviaSVOGI/fTempResultSM4.glsl";
+    tempResultSM4ProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Fragment;
+    Pass* passTempResultSM4 = new Pass(tempResultSM4ProgramInfo);
+
+    ShaderProgramInfo tempResultSM5ProgramInfo;
+    tempResultSM5ProgramInfo.VShaderFileName = "VPLviaSVOGI/vTempResult.glsl";
+    tempResultSM5ProgramInfo.FShaderFileName = "VPLviaSVOGI/fTempResultSM5.glsl";
+    tempResultSM5ProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Fragment;
+    Pass* passTempResultSM5 = new Pass(tempResultSM5ProgramInfo);
 
     Technique* techScreenQuad = new Technique();
-    techScreenQuad->AddPass(passScreenQuad);
+    techScreenQuad->AddPass(passTempResultSM0);
+    techScreenQuad->AddPass(passTempResultSM1);
+    techScreenQuad->AddPass(passTempResultSM2);
+    techScreenQuad->AddPass(passTempResultSM3);
+    techScreenQuad->AddPass(passTempResultSM4);
+    techScreenQuad->AddPass(passTempResultSM5);
     MaterialTemplate* mtScreenQuad = new MaterialTemplate();
     mtScreenQuad->AddTechnique(techScreenQuad);
 
@@ -504,7 +628,7 @@ void Visualizer::Render(int technique, int pass)
         0, 0);
 }
 //----------------------------------------------------------------------------
-void Visualizer::OnRender(int technique, int pass, Camera*)
+void Visualizer::OnRender(int, int, Camera*)
 {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -536,7 +660,7 @@ void Visualizer::OnRender(int technique, int pass, Camera*)
     }
     else
     {
-        mScreenQuad->Render(technique, pass);
+        mScreenQuad->Render(0, mScreenQuad->ShowMode);
     }
 
     if( mShowVPL )

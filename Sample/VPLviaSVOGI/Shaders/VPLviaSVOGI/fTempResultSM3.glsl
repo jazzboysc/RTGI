@@ -6,8 +6,6 @@ in vec2 pTCoord;
 out vec4 Output;
 
 uniform sampler2D tempSampler;
-uniform vec3 SceneBBMin;
-uniform vec3 SceneBBExtension;
 
 void main()
 {
