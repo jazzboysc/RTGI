@@ -6,7 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
-//#define SHOW_TIMING
+#define SHOW_TIMING
 
 //----------------------------------------------------------------------------
 VPLviaSVOGI::VPLviaSVOGI(int width, int height)
@@ -66,7 +66,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     Camera* lightProjector = new Camera();
     lightProjector->SetPerspectiveFrustum(90.0f, 1.0f, 0.01f, 50.0f);
-    lightProjector->SetLookAt(vec3(0.0f, 10.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f),
+    lightProjector->SetLookAt(vec3(0.0f, 12.0f, 2.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
     mLight = new Light();
     mLight->SetProjector(lightProjector);
@@ -150,7 +150,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mModel->CreateDeviceResource(mDevice);
     rotM = rotate(mat4(), radians(-60.0f), vec3(0, 1, 0));
     mModel->SetWorldTransform(rotM);
-    mModel->SetWorldTranslation(vec3(-6.0f, 2.5f, -1.0f));
+    mModel->SetWorldTranslation(vec3(-6.0f, 2.5f, -1.5f));
     mModel->MaterialColor = vec3(0.8f, 1.8f, 1.8f);
     mModel->LightProjector = mLight->GetProjector();
     mModel->SceneBB = &mSceneBB;
@@ -160,22 +160,22 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     for( int i = 1; i <= 12; ++i )
     {
         material = new Material(mtSceneModel);
-        mModel2 = new SceneMesh(material, mMainCamera);
+        SceneMesh* model2 = new SceneMesh(material, mMainCamera);
         char objFileName[64];
         sprintf(objFileName, "elephant-gallop/elephant-gallop-%d.obj", i);
-        mModel2->LoadFromOBJFile(objFileName);
+        model2->LoadFromOBJFile(objFileName);
         scale = glm::scale(mat4(), vec3(9.0f));
-        mModel2->UpdateModelSpaceVertices(scale);
-        mModel2->GenerateNormals();
-        mModel2->CreateDeviceResource(mDevice);
+        model2->UpdateModelSpaceVertices(scale);
+        model2->GenerateNormals();
+        model2->CreateDeviceResource(mDevice);
         rotM = rotate(mat4(), radians(-60.0f), vec3(0, 1, 0));
-        mModel2->SetWorldTransform(rotM);
-        mModel2->SetWorldTranslation(vec3(3.2f, 3.6f, 2.4f));
-        mModel2->MaterialColor = vec3(0.8f, 1.0f, 2.0f);
-        mModel2->LightProjector = mLight->GetProjector();
-        mModel2->SceneBB = &mSceneBB;
-        mSceneBB.Merge(mModel2->GetWorldSpaceBB());
-        mModel2Sequence->AddRenderObject(mModel2);
+        model2->SetWorldTransform(rotM);
+        model2->SetWorldTranslation(vec3(3.2f, 3.6f, 2.4f));
+        model2->MaterialColor = vec3(0.8f, 1.0f, 2.0f);
+        model2->LightProjector = mLight->GetProjector();
+        model2->SceneBB = &mSceneBB;
+        mSceneBB.Merge(model2->GetWorldSpaceBB());
+        mModel2Sequence->AddRenderObject(model2);
     }
     mModel2Sequence->SetActiveRenderObject(0);
     mModel2Sequence->SetFrequence(0.4f);
@@ -584,7 +584,6 @@ void VPLviaSVOGI::Terminate()
 	mRightWall = 0;
 	mModel = 0;
     mModel2Sequence = 0;
-    mModel2 = 0;
     mSceneObjects = 0;
     mShadowCasters = 0;
     mVoxelizedObjects = 0;

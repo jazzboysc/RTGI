@@ -98,7 +98,6 @@ private:
     SceneMeshPtr mRightWall;
     SceneMeshPtr mModel;
     RenderSequencePtr mModel2Sequence;
-    SceneMeshPtr mModel2;
     RenderSetPtr mSceneObjects;
     RenderSetPtr mShadowCasters;
     RenderSetPtr mVoxelizedObjects;
