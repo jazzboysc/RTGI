@@ -12,6 +12,7 @@ SceneMesh::SceneMesh(Material* material, Camera* camera)
     MaterialColor = vec3(0.75f, 0.75f, 0.75f);
     LightColor = vec3(0.9686f, 0.9333f, 0.8392f)*6.8f;
     LightProjector = 0;
+    TessLevel = 14.0f;
 }
 //----------------------------------------------------------------------------
 SceneMesh::~SceneMesh()
@@ -38,6 +39,7 @@ void SceneMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mViewLocShadowMap, "View");
     program->GetUniformLocation(&mProjLocShadowMap, "Proj");
     program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
+    program->GetUniformLocation(&mTessLevelLoc, "TessLevel");
 
     // Get G-buffer pass uniform locations.
     program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_GBuffer);
@@ -87,6 +89,7 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == VPLviaSVOGI::SMP_ShadowMap )
     {
         mWorldLocShadowMap.SetValue(worldTrans);
+        mTessLevelLoc.SetValue(TessLevel);
 
         if( mCamera )
         {

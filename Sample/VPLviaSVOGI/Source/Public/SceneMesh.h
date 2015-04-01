@@ -26,6 +26,7 @@ public:
 	vec3 MaterialColor;
     vec3 LightColor;
     Camera* LightProjector;
+    float TessLevel;
 
 private:
     // Scene voxelization pass.
@@ -39,6 +40,7 @@ private:
     // Scene shadow map pass.
     ShaderUniform mWorldLocShadowMap, mViewLocShadowMap, mProjLocShadowMap;
     ShaderUniform mLightProjectorNearFarLoc;
+    ShaderUniform mTessLevelLoc;
 
     // G-buffer pass.
     ShaderUniform mWorldLocGBuffer, mViewLocGBuffer, mProjLocGBuffer;

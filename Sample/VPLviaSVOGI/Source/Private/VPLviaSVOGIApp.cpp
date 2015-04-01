@@ -6,7 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
-#define SHOW_TIMING
+//#define SHOW_TIMING
 
 //----------------------------------------------------------------------------
 VPLviaSVOGI::VPLviaSVOGI(int width, int height)
@@ -174,6 +174,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
         model2->MaterialColor = vec3(0.8f, 1.0f, 2.0f);
         model2->LightProjector = mLight->GetProjector();
         model2->SceneBB = &mSceneBB;
+        model2->TessLevel = 1.0f;
         mSceneBB.Merge(model2->GetWorldSpaceBB());
         mModel2Sequence->AddRenderObject(model2);
     }
