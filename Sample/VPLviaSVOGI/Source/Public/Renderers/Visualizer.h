@@ -66,7 +66,6 @@ public:
     int VoxelGridDim;
     float PositionThreshold;
     float NormalThreshold;
-    float MaxRadiance;
     int KernelSize;
 
 private:
@@ -82,7 +81,6 @@ private:
     ShaderUniform mNormalSamplerLoc;
     ShaderUniform mPositionThresholdLoc;
     ShaderUniform mNormalThresholdLoc;
-    ShaderUniform mMaxRadianceLoc;
     ShaderUniform mKernelSizeLoc;
 };
 

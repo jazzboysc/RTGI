@@ -99,7 +99,6 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
 
     mPositionThresholdLoc.SetValue(PositionThreshold);
     mNormalThresholdLoc.SetValue(NormalThreshold);
-    mMaxRadianceLoc.SetValue(MaxRadiance);
     mKernelSizeLoc.SetValue(KernelSize);
 
     if( SceneBB )
@@ -129,7 +128,6 @@ void VisualizerScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mNormalSamplerLoc, "normalSampler");
     program->GetUniformLocation(&mPositionThresholdLoc, "positionThreshold");
     program->GetUniformLocation(&mNormalThresholdLoc, "normalThreshold");
-    program->GetUniformLocation(&mMaxRadianceLoc, "maxRadiance");
     program->GetUniformLocation(&mKernelSizeLoc, "kernelSize");
 }
 //----------------------------------------------------------------------------
@@ -495,7 +493,6 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     mScreenQuad->GBufferNormalTexture = mGBufferNormalTexture;
     mScreenQuad->PositionThreshold = 5.5f;
     mScreenQuad->NormalThreshold = 0.3f;
-    mScreenQuad->MaxRadiance = 4.5f;
     mScreenQuad->KernelSize = patternSize;
 
     SetShowMode(SM_Final);
