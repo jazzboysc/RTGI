@@ -1,12 +1,12 @@
-#version 120
+#version 430 core
 
-varying vec4 vPositionView;
-varying vec4 vPositionWorld;
-varying vec4 vNormalView;
-varying vec4 vNormalWorld;
+in vec4 vPositionView;
+in vec4 vPositionWorld;
+in vec4 vNormalView;
+in vec4 vNormalWorld;
+in vec3 pTCoord;
 
 uniform vec3 materialColor;
-varying vec3 pTCoord;
 uniform samplerCube cubemapSampler;
 
 void main()

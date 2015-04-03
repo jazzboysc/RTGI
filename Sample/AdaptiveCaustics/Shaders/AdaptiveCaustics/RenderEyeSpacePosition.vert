@@ -1,16 +1,18 @@
-#version 120
+#version 430 core
 
 attribute vec4 vPosition;
 attribute vec3 vNormal;
 
-varying vec4 vPositionView;
-varying vec4 vPositionWorld;
-varying vec4 vNormalView;
-varying vec4 vNormalWorld;
-
 uniform mat4 World;
 uniform mat4 View;
 uniform mat4 Proj;
+
+out vec4 vPositionView;
+out vec4 vPositionWorld;
+out vec4 vNormalView;
+out vec4 vNormalWorld;
+
+
 
 void main()
 {

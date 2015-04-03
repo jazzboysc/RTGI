@@ -5,7 +5,7 @@
 #include "ReceiverResourceRenderer.h"
 #include "RefractorResourceRenderer.h"
 #include "ShadowMapRenderer.h"
-#include "CausticsMapRenderer.h"
+#include "CausticMapRenderer.h"
 #include "Visualizer.h"
 
 #include "GPUTimer.h"
@@ -40,6 +40,7 @@ private:
 	ReceiverResourceRendererPtr mReceiverResourceRenderer;
 	RefractorResourceRendererPtr mRefractorResourceRenderer;
 	ShadowMapRendererPtr mShadowMapRenderer;
+	CausticsMapRendererPtr mCausticMapRenderer;
 	VisualizerPtr mVisualizer;
 
 	struct DebugBuffer

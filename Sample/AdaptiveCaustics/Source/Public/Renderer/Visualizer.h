@@ -4,6 +4,8 @@
 #include "GraphicsFrameworkHeader.h"
 #include "ReceiverResourceRenderer.h"
 #include "RefractorResourceRenderer.h"
+#include "CausticMapRenderer.h"
+
 namespace RTGI
 {
 //----------------------------------------------------------------------------
@@ -45,6 +47,7 @@ public:
 		eSM_RefractorLightSpaceFrontNorm,
 		eSM_RefractorLightSpaceBackNorm,
 		eSM_RefractorShadow,
+		eSM_CausticMap,
 		eSM_Final
     };
 
@@ -54,7 +57,8 @@ public:
     void Initialize(GPUDevice* device,
 		ReceiverResourceRenderer* receiverResourceRenderer,
 		RefractorResourceRenderer* refractorResourceRenderer,
-		ShadowMapRenderer* mShadowMapRenderer,
+		ShadowMapRenderer* shadowMapRenderer,
+		CausticMapRenderer* causticMapRenderer,
         Camera* mainCamera);
 
     void Render(int technique, int pass);
@@ -73,6 +77,7 @@ private:
     Texture2DPtr mReceiverPositionTexture;
     Texture2DPtr mRefractorFrontAndBackNormalTextures;
 	Texture2DPtr mShadowMapTexture;
+	Texture2DPtr mCausticMapTexture;
 
 	/*
     Texture2DPtr mGBufferAlbedoTexture;

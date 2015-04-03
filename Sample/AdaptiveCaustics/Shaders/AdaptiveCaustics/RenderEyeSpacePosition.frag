@@ -1,11 +1,11 @@
-#version 120
-
-varying vec4 vPositionView;
-varying vec4 vPositionWorld;
-varying vec4 vNormalView;
-varying vec4 vNormalWorld;
+#version 430 core
 
 uniform vec3 materialColor;
+
+in vec4 vPositionView;
+in vec4 vPositionWorld;
+in vec4 vNormalView;
+in vec4 vNormalWorld;
 
 void main()
 {

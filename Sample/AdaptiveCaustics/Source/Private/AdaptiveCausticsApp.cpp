@@ -193,6 +193,8 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddTimingLabel("Shadow Map Pass", 16, infoStartY);
 	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddTimingLabel("Adaptive Caustic Map Pass", 16, infoStartY);
+	infoStartY += infoIncY;
 
 	infoStartY = 20;
 	InformationPanel::GetInstance()->AddRadioButton("Receiver Light Space Position", 16, infoStartY, 60, 20, true);
@@ -202,6 +204,8 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	InformationPanel::GetInstance()->AddRadioButton("Refractor Light Space Back Normal", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Shadow Map", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
 
@@ -231,10 +235,20 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBAF);
 	mShadowMapRenderer->SetTimer(mTimer);
 
+	mCausticMapRenderer = new CausticMapRenderer(device);
+	CausticsMapDesc causticsMapDesc;
+	causticsMapDesc.Width = this->Width;
+	causticsMapDesc.Height = this->Height;
+	causticsMapDesc.CausticsMapFormat = BF_RGBAF;
+	mCausticMapRenderer->CreateCausticsResource(&causticsMapDesc);
+	mCausticMapRenderer->SetTimer(mTimer);
+
+
 	mVisualizer = new Visualizer(device);
 	mVisualizer->Initialize(device, mReceiverResourceRenderer,
 		mRefractorResourceRenderer,
 		mShadowMapRenderer,
+		mCausticMapRenderer,
 		mMainCamera);
 	mVisualizer->SetTimer(mTimer);
 
@@ -264,6 +278,10 @@ void AdaptiveCausticsApp::FrameFunc()
  	totalWorkLoad += workLoad;
  	infoPanel->SetTimingLabelValue("Shadow Map Pass", workLoad);
 
+	mCausticMapRenderer->Render(0, 0/*SMP_AdaptiveCaustics*/, mLightProjector);
+	workLoad = mShadowMapRenderer->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("Adaptive Caustic Map Pass", workLoad);
 	/*
 	// OK.  Now that we have all the information to compute all the photons
 	//    stored in our temporary FBOs, adaptively traverse the "mipmap" levels
@@ -332,6 +350,10 @@ void AdaptiveCausticsApp::OnRadioButtonClick(System::Object^ sender, System::Eve
 	if (radioButton->Name == "Shadow Map")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_RefractorShadow);
+	}
+	if (radioButton->Name == "Adaptive Caustic Map")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_CausticMap);
 	}
 
 }

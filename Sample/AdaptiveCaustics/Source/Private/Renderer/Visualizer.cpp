@@ -83,6 +83,7 @@ void Visualizer::Initialize(GPUDevice* device,
 	ReceiverResourceRenderer* receiverResourceRenderer,
 	RefractorResourceRenderer* refractorResourceRenderer,
 	ShadowMapRenderer* shadowMapRenderer,
+	CausticMapRenderer* causticMapRenderer,
 	Camera* mainCamera)
 {
     ShaderProgramInfo visualizerProgramInfo;
@@ -102,6 +103,11 @@ void Visualizer::Initialize(GPUDevice* device,
 	mShadowMapTexture =
 		(Texture2D*)shadowMapRenderer->GetFrameBufferTextureByName(
 		RTGI_ShadowMapRenderer_ShadowMap_Name);
+	mCausticMapTexture =
+		(Texture2D*)causticMapRenderer->GetFrameBufferTextureByName(
+		RTGI_CausticsBuffer_CausticMap_Name);
+	
+
 
     // Create screen quad.
     Material* material = new Material(mtScreenQuad);
@@ -148,7 +154,9 @@ void Visualizer::SetShowMode(eShowMode mode)
 	case eSM_RefractorShadow:
 		mScreenQuad->DisplayTexture = mShadowMapTexture;
 		break;
-
+	case eSM_CausticMap:
+		mScreenQuad->DisplayTexture = mShadowMapTexture;
+		break;
     default:
         assert(false);
         break;
