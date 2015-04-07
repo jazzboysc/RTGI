@@ -7,7 +7,7 @@ IndirectLightingScreenQuad::IndirectLightingScreenQuad(Material* material)
     :
     ScreenQuad(material, 0)
 {
-    BounceSingularity = 60.0f;
+    BounceSingularity = 30.0f;
     VPLVisibilityTest = true;
     UseTC = true;
 }

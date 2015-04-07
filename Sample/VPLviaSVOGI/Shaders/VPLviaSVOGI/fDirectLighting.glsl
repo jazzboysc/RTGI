@@ -1,5 +1,7 @@
 #version 430 core
 
+#include "VPLviaSVOGI/sSceneLight.glsl"
+
 in vec2 pTCoord;
 
 out vec4 Output;
@@ -56,11 +58,11 @@ void main()
     else
     {
         // Direct lighting.
-        vec3 lightDir = LightPositionWorld - PositionWorld.xyz;
+        vec3 lightDir = sceneLightUniformBuffer.lights[0].WorldPositionAndType.xyz - PositionWorld.xyz;
         float len = length(lightDir);
         lightDir = lightDir / len;
         float d = max(0.0, dot(lightDir, NormalWorld));
-        vec3 color = MaterialColor.rgb * LightColor * d / (1 + 0.2*len + 0.1*len*len);
+        vec3 color = MaterialColor.rgb * sceneLightUniformBuffer.lights[0].Intensity.xyz * d / (1.0 + 0.4*len*len);
         Output = vec4(color, 1.0);
     }
 }

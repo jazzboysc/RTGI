@@ -14,5 +14,5 @@ void main()
 
     Output[0] = vPositionWorld;
     Output[1] = vec4(vNormal, 0.0);
-    Output[2] = vec4(MaterialColor, 1.0);
+    Output[2] = vec4(MaterialColor.rgb / 3.141593, 1.0);
 }

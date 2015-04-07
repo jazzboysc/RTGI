@@ -7,7 +7,7 @@ DirectLightingScreenQuad::DirectLightingScreenQuad(Material* material)
     :
     ScreenQuad(material, 0)
 {
-    LightColor = vec3(0.9686f, 0.9333f, 0.8392f)*6.8f;
+    LightColor = vec3(1.0f, 1.0f, 1.0f)*50.0f;
     ShowShadow = true;
 }
 //----------------------------------------------------------------------------

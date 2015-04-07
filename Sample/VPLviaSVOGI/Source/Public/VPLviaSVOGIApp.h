@@ -1,7 +1,7 @@
 #ifndef RTGI_VPLviaSVOGIApp_H
 #define RTGI_VPLviaSVOGIApp_H
 
-#include "Light.h"
+#include "LightManager.h"
 #include "SceneMesh.h"
 #include "GPUTimer.h"
 #include "ShadowMapRenderer_Voxel.h"
@@ -43,8 +43,9 @@ private:
     bool mIsRotatingModel;
     bool mIsWireframe;
 
-    // Scene light.
+    // Scene lights.
     LightPtr mLight;
+    LightManagerPtr mLightManager;
 
     // GI temporal coherence.
     bool mUseTC;

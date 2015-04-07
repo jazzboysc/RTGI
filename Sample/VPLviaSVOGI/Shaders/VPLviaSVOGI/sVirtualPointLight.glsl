@@ -1,5 +1,5 @@
 #define PI 3.141593
-#define VPL_INTENSITY 10.0
+#define VPL_INTENSITY 4.0
 
 //----------------------------------------------------------------------------
 // Virtual Point Light

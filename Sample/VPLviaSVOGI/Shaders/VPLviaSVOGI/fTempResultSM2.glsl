@@ -71,10 +71,7 @@ void main()
 
     result = result + texture(tempSampler2, pTCoord);
 
-    // Simple gamma tone mapper.
-    float greyRadiance = max(0.001, 0.3 * result.r + 0.6 * result.g + 0.1 * result.b);
-    float mappedRadiance = pow(min(greyRadiance / 4.5, 1.0), 1.0 / 2.2);
-    result.rgb = (mappedRadiance / greyRadiance) * result.rgb;
+    result.rgb = pow(result.rgb, vec3(1.0 / 2.2));
     result.a = 1.0;
 
     Output = result;

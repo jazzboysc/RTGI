@@ -37,6 +37,9 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 	mMainCamera->SetLookAt(vec3(0.0f, 10.0f, 35.0f), vec3(0.0f, 10.0f, 0.0f),
         vec3(0.0f, 1.0f, 0.0f));
 
+    // Create light manager.
+    mLightManager = new LightManager();
+
     // Create light.
     ShaderProgramInfo lightMeshProgramInfo;
     lightMeshProgramInfo.VShaderFileName = "VPLviaSVOGI/vLightMesh.glsl";
@@ -69,9 +72,13 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     lightProjector->SetLookAt(vec3(0.0f, 12.0f, 2.0f), vec3(0.0f, 0.0f, 0.0f),
         vec3(1.0f, 0.0f, 0.0f));
     mLight = new Light();
+    mLight->Intensity = vec3(50.0f);
     mLight->SetProjector(lightProjector);
     mLight->SetLightMesh(lightMesh);
     lightMesh->SetWorldTranslation(lightProjector->GetLocation());
+
+    mLightManager->AddLight(mLight);
+    mLightManager->CreateLightBuffer(mDevice);
 
 	// Create material templates.
 	Material* material = 0;
@@ -151,13 +158,13 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     rotM = rotate(mat4(), radians(-60.0f), vec3(0, 1, 0));
     mModel->SetWorldTransform(rotM);
     mModel->SetWorldTranslation(vec3(-6.0f, 2.5f, -1.5f));
-    mModel->MaterialColor = vec3(0.8f, 1.8f, 1.8f);
+    mModel->MaterialColor = vec3(0.1f, 0.9f, 0.9f);
     mModel->LightProjector = mLight->GetProjector();
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
     mModel2Sequence = new RenderSequence(0);
-    for( int i = 1; i <= 12; ++i )
+    for( int i = 1; i <= 1; ++i )
     {
         material = new Material(mtSceneModel);
         SceneMesh* model2 = new SceneMesh(material, mMainCamera);
@@ -171,7 +178,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
         rotM = rotate(mat4(), radians(-60.0f), vec3(0, 1, 0));
         model2->SetWorldTransform(rotM);
         model2->SetWorldTranslation(vec3(3.2f, 3.6f, 2.4f));
-        model2->MaterialColor = vec3(0.8f, 1.0f, 2.0f);
+        model2->MaterialColor = vec3(0.2f, 0.2f, 0.9f);
         model2->LightProjector = mLight->GetProjector();
         model2->SceneBB = &mSceneBB;
         model2->TessLevel = 1.0f;
@@ -186,7 +193,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mGround->LoadFromPLYFile("square.ply");
     mGround->GenerateNormals();
     mGround->CreateDeviceResource(mDevice);
-    mGround->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
+    mGround->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
     mGround->LightProjector = mLight->GetProjector();
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
@@ -199,7 +206,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     rotM = rotate(mat4(), radians(180.0f), vec3(1, 0, 0));
     mCeiling->SetWorldTransform(rotM);
     mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
-    mCeiling->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
+    mCeiling->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
     mCeiling->LightProjector = mLight->GetProjector();
     mCeiling->SceneBB = &mSceneBB;
     mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
@@ -212,7 +219,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     rotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
     mBackWall->SetWorldTransform(rotM);
     mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
-    mBackWall->MaterialColor = vec3(1.5f, 1.5f, 1.5f);
+    mBackWall->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
     mBackWall->LightProjector = mLight->GetProjector();
     mBackWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
@@ -225,7 +232,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     rotM = rotate(mat4(), radians(-90.0f), vec3(0, 0, 1));
     mLeftWall->SetWorldTransform(rotM);
     mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
-    mLeftWall->MaterialColor = vec3(1.0f, 0.2f, 0.2f);
+    mLeftWall->MaterialColor = vec3(0.95f, 0.2f, 0.2f);
     mLeftWall->LightProjector = mLight->GetProjector();
     mLeftWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
@@ -238,7 +245,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     rotM = rotate(mat4(), radians(90.0f), vec3(0, 0, 1));
     mRightWall->SetWorldTransform(rotM);
     mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
-    mRightWall->MaterialColor = vec3(0.2f, 1.0f, 0.2f);
+    mRightWall->MaterialColor = vec3(0.2f, 0.95f, 0.2f);
     mRightWall->LightProjector = mLight->GetProjector();
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
@@ -495,6 +502,10 @@ void VPLviaSVOGI::FrameFunc()
     totalWorkLoad = 0.0;
 #endif
 
+    // Update light uniform buffer.
+    mLightManager->SetLightBufferBindingPoint(1);
+    mLightManager->UpdateLightBuffer();
+
     // Scene voxelization pass.
     mVoxelizer->Render(0, SMP_Voxelization);
 #ifdef SHOW_TIMING
@@ -568,6 +579,7 @@ void VPLviaSVOGI::Terminate()
 {
 	// Release all resources.
     mLight = 0;
+    mLightManager = 0;
 
     mVoxelizer = 0;
     mGBufferRenderer = 0;

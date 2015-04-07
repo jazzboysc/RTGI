@@ -10,7 +10,7 @@ using namespace RTGI;
 //----------------------------------------------------------------------------
 Light::Light()
 	:
-	Color(1.0f, 1.0f, 1.0f),
+    Intensity(50.0f, 50.0f, 50.0f),
     mProjector(0)
 {
 }
@@ -24,6 +24,7 @@ Light::~Light()
 void Light::SetProjector(Camera* projector)
 {
     mProjector = projector;
+    mLocation = mProjector->GetLocation();
 }
 //----------------------------------------------------------------------------
 Camera* Light::GetProjector() const
@@ -59,5 +60,33 @@ void Light::RenderLightMesh(int technique, int pass, SubRenderer* subRenderer)
 {
     RTGI_ASSERT(mLightMesh);
     mLightMesh->Render(technique, pass, subRenderer);
+}
+//----------------------------------------------------------------------------
+void Light::OnUpdateLightBufferCache(SceneLight* cache)
+{
+    RTGI_ASSERT(cache);
+    if( cache )
+    {
+        cache->Intensity.x = Intensity.x;
+        cache->Intensity.y = Intensity.y;
+        cache->Intensity.z = Intensity.z;
+
+        cache->WorldPositionAndType.x = mLocation.x;
+        cache->WorldPositionAndType.y = mLocation.y;
+        cache->WorldPositionAndType.z = mLocation.z;
+
+        RTGI_ASSERT(mProjector);
+        if( mProjector )
+        {
+            glm::mat4 lightView = mProjector->GetViewTransform();
+            cache->LightProjectorView = lightView;
+
+            glm::mat4 lightProj = mProjector->GetProjectionTransform();
+            cache->LightProjectorProj = lightProj;
+
+            mProjector->GetNearFarPlane(
+                (float*)&cache->LightProjectorNearFar);
+        }
+    }
 }
 //----------------------------------------------------------------------------

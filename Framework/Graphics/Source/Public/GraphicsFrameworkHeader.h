@@ -64,6 +64,7 @@
 #include "Camera.h"
 #include "Fog.h"
 #include "Light.h"
+#include "LightManager.h"
 #include "PointSet.h"
 #include "PolylineGeometry.h"
 #include "RenderObject.h"
