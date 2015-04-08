@@ -3,6 +3,7 @@
 
 #include "GraphicsFrameworkHeader.h"
 #include "ShadowMapRenderer.h"
+#include "LightManager.h"
 
 namespace RTGI
 {
@@ -23,20 +24,18 @@ public:
     virtual void OnUpdateShaderConstants(int technique, int pass);
     virtual void OnGetShaderConstants();
 
-    Camera* LightProjector;
-    vec3 LightColor;
     bool ShowShadow;
+    int PointLightCount;
+    int SpotLightCount;
 
 private:
     ShaderUniform mGBufferPositionSamplerLoc;
     ShaderUniform mGBufferNormalSamplerLoc;
     ShaderUniform mGBufferAlbedoSamplerLoc;
     ShaderUniform mShadowMapSamplerLoc;
-    ShaderUniform mLightProjectorViewLoc;
-    ShaderUniform mLightPositionWorldLoc;
-    ShaderUniform mLightColorLoc;
-    ShaderUniform mLightProjectorNearFarLoc;
     ShaderUniform mShowShadow;
+    ShaderUniform mPointLightCount;
+    ShaderUniform mSpotLightCount;
 };
 
 typedef RefPointer<DirectLightingScreenQuad> DirectLightingScreenQuadPtr;
@@ -52,15 +51,15 @@ public:
     virtual ~DirectLightingRenderer();
 
     void Initialize(GPUDevice* device, int width, int height, 
-        BufferFormat format, Camera* LightProjector, 
-        GBufferRenderer* gbufferRenderer, 
-        ShadowMapRenderer* shadowMapRenderer);
+        BufferFormat format, GBufferRenderer* gbufferRenderer, 
+        ShadowMapRenderer* shadowMapRenderer, LightManager* lightManager);
 
     void Render();
 
     void ShowShadow(bool value);
 
 private:
+    LightManagerPtr mLightManager;
     PipelineStateBlockPtr mPSB;
     DirectLightingScreenQuadPtr mDirectLightingScreenQuad;
 };

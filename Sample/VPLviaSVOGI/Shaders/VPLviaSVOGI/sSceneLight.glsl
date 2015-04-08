@@ -16,5 +16,61 @@ struct SceneLight
 
 layout(std140, binding = 1) uniform _sceneLightUniformBuffer
 {
-    SceneLight lights[];
+    SceneLight lights[256];
 } sceneLightUniformBuffer;
+
+uniform bool ShowShadow;
+uniform sampler2D ShadowMapSampler;
+
+//----------------------------------------------------------------------------
+vec4 ComputePointLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Material)
+{
+    vec4 res;
+
+    SceneLight light = sceneLightUniformBuffer.lights[i];
+
+    // Compare with shadow map bias.
+    bool skipShadow = false;
+    vec4 viewPos = light.LightProjectorView * PositionWorld;
+    if( viewPos.z > -0.05 )
+    {
+        skipShadow = true;
+    }
+    vec3 viewDir = viewPos.xyz;
+    float len = length(viewDir);
+    viewDir = normalize(viewDir);
+    vec3 halfDir = viewDir + vec3(0.0, 0.0, -1.0);
+    float u = -halfDir.x / halfDir.z;
+    float v = -halfDir.y / halfDir.z;
+    float currDepth = (len - light.LightProjectorNearFar.x) /
+        (light.LightProjectorNearFar.y - light.LightProjectorNearFar.x);
+
+    vec2 texCoords = vec2(u, v);
+    texCoords = texCoords*0.5 + 0.5;
+    float depth = texture(ShadowMapSampler, texCoords).r;
+
+    if( currDepth - depth > 0.01 && !skipShadow && ShowShadow )
+    {
+        // Shadow.
+        res = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+    else
+    {
+        // Direct lighting.
+        vec3 lightDir = light.WorldPositionAndType.xyz - PositionWorld.xyz;
+        float len = length(lightDir);
+        lightDir = lightDir / len;
+        float d = max(0.0, dot(lightDir, NormalWorld));
+        vec3 color = Material.rgb * light.Intensity.xyz * d / (1.0 + 0.2*len*len);
+        res = vec4(color, 1.0);
+    }
+
+    return res;
+}
+//----------------------------------------------------------------------------
+vec4 ComputeSpotLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Material)
+{
+    vec4 res = vec4(0.0);
+    return res;
+}
+//----------------------------------------------------------------------------

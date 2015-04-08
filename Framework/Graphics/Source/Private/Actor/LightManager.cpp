@@ -17,31 +17,59 @@ LightManager::LightManager()
 //----------------------------------------------------------------------------
 LightManager::~LightManager()
 {
-    for( int i = 0; i < (int)mLights.size(); ++i )
+    for( int i = 0; i < (int)mPointLights.size(); ++i )
     {
-        mLights[i] = 0;
+        mPointLights[i] = 0;
     }
+
+    for( int i = 0; i < (int)mSpotLights.size(); ++i )
+    {
+        mSpotLights[i] = 0;
+    }
+
     mLightBuffer = 0;
 }
 //----------------------------------------------------------------------------
-void LightManager::AddLight(Light* light)
+void LightManager::AddPointLight(Light* light)
 {
-    RTGI_ASSERT(mLights.size() < MAX_LIGHT_COUNT);
-    mLights.push_back(light);
+    RTGI_ASSERT((mPointLights.size() + mSpotLights.size()) < MAX_LIGHT_COUNT);
+    mPointLights.push_back(light);
 }
 //----------------------------------------------------------------------------
-Light* LightManager::GetLight(int i) const
+Light* LightManager::GetPointLight(int i) const
 {
-    RTGI_ASSERT(i >= 0 && i < (int)mLights.size());
-    return mLights[i];
+    RTGI_ASSERT(i >= 0 && i < (int)mPointLights.size());
+    return mPointLights[i];
+}
+//----------------------------------------------------------------------------
+int LightManager::GetPointLightCount() const
+{
+    return mPointLights.size();
+}
+//----------------------------------------------------------------------------
+void LightManager::AddSpotLight(Light* light)
+{
+    RTGI_ASSERT((mPointLights.size() + mSpotLights.size()) < MAX_LIGHT_COUNT);
+    mSpotLights.push_back(light);
+}
+//----------------------------------------------------------------------------
+Light* LightManager::GetSpotLight(int i) const
+{
+    RTGI_ASSERT(i >= 0 && i < (int)mSpotLights.size());
+    return mSpotLights[i];
+}
+//----------------------------------------------------------------------------
+int LightManager::GetSpotLightCount() const
+{
+    return mSpotLights.size();
 }
 //----------------------------------------------------------------------------
 void LightManager::CreateLightBuffer(GPUDevice* device)
 {
-    if( mLights.size() > 0 )
+    if( mPointLights.size() > 0 || mSpotLights.size() > 0 )
     {
         mLightBuffer = new UniformBuffer();
-        size_t bufferSize = sizeof(SceneLight) * mLights.size();
+        size_t bufferSize = sizeof(SceneLight) * MAX_LIGHT_COUNT;
         mLightBuffer->ReserveMutableDeviceResource(device, bufferSize,
             BU_Dynamic_Draw);
 
@@ -51,12 +79,17 @@ void LightManager::CreateLightBuffer(GPUDevice* device)
 //----------------------------------------------------------------------------
 void LightManager::UpdateLightBuffer()
 {
-    for( int i = 0; i < (int)mLights.size(); ++i )
+    int i = 0;
+    for( ; i < (int)mPointLights.size(); ++i )
     {
-        mLights[i]->OnUpdateLightBufferCache(&mLightBufferCache[i]);
+        mPointLights[i]->OnUpdateLightBufferCache(&mLightBufferCache[i]);
+    }
+    for( int j = 0 ; j < (int)mSpotLights.size(); ++j )
+    {
+        mSpotLights[j]->OnUpdateLightBufferCache(&mLightBufferCache[i + j]);
     }
 
-    size_t bufferSize = sizeof(SceneLight) * mLights.size();
+    size_t bufferSize = sizeof(SceneLight) * MAX_LIGHT_COUNT;
     mLightBuffer->UpdateSubData(mLightBufferBindingPoint, 0, bufferSize,
         (void*)mLightBufferCache);
 }

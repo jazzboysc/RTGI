@@ -77,7 +77,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mLight->SetLightMesh(lightMesh);
     lightMesh->SetWorldTranslation(lightProjector->GetLocation());
 
-    mLightManager->AddLight(mLight);
+    mLightManager->AddPointLight(mLight);
     mLightManager->CreateLightBuffer(mDevice);
 
 	// Create material templates.
@@ -343,7 +343,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     // Create direct lighting renderer.
     mDirectLightingRenderer = new DirectLightingRenderer(mDevice);
     mDirectLightingRenderer->Initialize(mDevice, Width, Height, BF_RGBAF, 
-        mLight->GetProjector(), mGBufferRenderer, mShadowMapRenderer);
+        mGBufferRenderer, mShadowMapRenderer, mLightManager);
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer(mDevice);

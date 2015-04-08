@@ -23,8 +23,12 @@ public:
     LightManager();
     ~LightManager();
 
-    void AddLight(Light* light);
-    Light* GetLight(int i) const;
+    void AddPointLight(Light* light);
+    Light* GetPointLight(int i) const;
+    int GetPointLightCount() const;
+    void AddSpotLight(Light* light);
+    Light* GetSpotLight(int i) const;
+    int GetSpotLightCount() const;
 
     void CreateLightBuffer(GPUDevice* device);
     void UpdateLightBuffer();
@@ -34,7 +38,8 @@ public:
     enum { MAX_LIGHT_COUNT = 256 };
 
 private:
-    std::vector<LightPtr> mLights;
+    std::vector<LightPtr> mPointLights;
+    std::vector<LightPtr> mSpotLights;
     unsigned int mLightBufferBindingPoint;
     UniformBufferPtr mLightBuffer;
     SceneLight mLightBufferCache[MAX_LIGHT_COUNT];
