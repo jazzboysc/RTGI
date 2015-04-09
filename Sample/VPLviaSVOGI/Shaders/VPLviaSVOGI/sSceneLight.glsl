@@ -1,3 +1,5 @@
+#define MAX_LIGHT_COUNT 256
+
 //----------------------------------------------------------------------------
 // Scene Light. Currently support point and spot lights.
 //----------------------------------------------------------------------------
@@ -16,7 +18,7 @@ struct SceneLight
 
 layout(std140, binding = 1) uniform _sceneLightUniformBuffer
 {
-    SceneLight lights[256];
+    SceneLight lights[MAX_LIGHT_COUNT];
 } sceneLightUniformBuffer;
 
 uniform bool ShowShadow;
