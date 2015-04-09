@@ -7,23 +7,10 @@
 #define RTGI_Buffer_H
 
 #include "BufferBase.h"
+#include "BufferView.h"
 
 namespace RTGI
 {
-
-enum BufferType
-{
-    BT_Unknown = -1,
-    BT_AtomicCounter,
-    BT_DispatchIndirect,
-    BT_Pixel,
-    BT_Structured,
-    BT_Texture,
-    BT_Uniform,
-    BT_Vertex,
-    BT_Index,
-    BufferType_Max
-};
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -33,12 +20,14 @@ class Buffer : public BufferBase
 {
 public:
     Buffer(BufferType type);
+    Buffer(BufferView* defaultView);
 	virtual ~Buffer();
 
     void* Map(BufferAccess access);
 	void Unmap();
 
 	void Bind();
+    void BindTo(BufferView* view);
     void BindToIndirect();
 
 	// Load buffer data from system memory. User is responsible for deleting
@@ -56,12 +45,12 @@ public:
 
     inline BufferHandle* GetBufferHandle() const { return mBufferHandle; }
     inline size_t GetSize() const { return mSize; }
-    inline BufferType GetType() const { return mType; }
+    inline BufferType GetType() const { return mDefaultView->GetBufferType(); }
 
 protected:
     BufferHandle* mBufferHandle;
     size_t mSize;
-    BufferType mType;
+    BufferViewPtr mDefaultView;
 };
 
 typedef RefPointer<Buffer> BufferPtr;

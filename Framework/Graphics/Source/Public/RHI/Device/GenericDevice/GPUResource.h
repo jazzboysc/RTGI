@@ -56,6 +56,10 @@ struct BufferHandle : public GPUResource
 {
 };
 
+struct BufferViewHandle : public GPUResource
+{
+};
+
 }
 
 #endif

@@ -30,6 +30,7 @@ class PassInfo;
 class ShaderUniform;
 class Texture;
 class Buffer;
+class BufferView;
 class PixelBuffer;
 class TextureBuffer;
 class FrameBuffer;
@@ -142,7 +143,10 @@ typedef void* (GPUDevice::*GPUDeviceBufferMap)(Buffer* buffer,
 typedef void (GPUDevice::*GPUDeviceBufferUnmap)(Buffer* buffer);
 typedef void (GPUDevice::*GPUDeviceBufferBindIndex)(Buffer* buffer, 
     unsigned int index);
+typedef void (GPUDevice::*GPUDeviceBufferBindIndexTo)(Buffer* buffer,
+    unsigned int index, BufferView* view);
 typedef void (GPUDevice::*GPUDeviceBufferBind)(Buffer* buffer);
+typedef void (GPUDevice::*GPUDeviceBufferBindTo)(Buffer* buffer, BufferView* view);
 typedef void (GPUDevice::*GPUDeviceBufferBindToIndirect)(Buffer* buffer);
 typedef void (GPUDevice::*GPUDeviceBufferUpdateSubData)(Buffer* buffer, 
     int offset, size_t size, void* data);
@@ -248,7 +252,9 @@ public:
     inline 	void* BufferMap(Buffer* buffer, BufferAccess access);
     inline 	void BufferUnmap(Buffer* buffer);
     inline 	void BufferBindIndex(Buffer* buffer, unsigned int index);
+    inline  void BufferBindIndexTo(Buffer* buffer, unsigned int index, BufferView* view);
     inline 	void BufferBind(Buffer* buffer);
+    inline  void BufferBindTo(Buffer* buffer, BufferView* view);
     inline 	void BufferBindToIndirect(Buffer* buffer);
     inline 	void BufferUpdateSubData(Buffer* buffer, int offset, size_t size, 
         void* data);
@@ -309,7 +315,9 @@ protected:
     GPUDeviceBufferMap                            _BufferMap;
     GPUDeviceBufferUnmap                          _BufferUnmap;
     GPUDeviceBufferBindIndex                      _BufferBindIndex;
+    GPUDeviceBufferBindIndexTo                    _BufferBindIndexTo;
     GPUDeviceBufferBind                           _BufferBind;
+    GPUDeviceBufferBindTo                         _BufferBindTo;
     GPUDeviceBufferBindToIndirect                 _BufferBindToIndirect;
     GPUDeviceBufferUpdateSubData                  _BufferUpdateSubData;
     GPUDeviceBufferLoadFromSystemMemory           _BufferLoadFromSystemMemory;

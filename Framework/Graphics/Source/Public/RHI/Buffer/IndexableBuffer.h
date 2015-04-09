@@ -24,6 +24,9 @@ public:
     using Buffer::Bind;
     void Bind(unsigned int index);
 
+    using Buffer::BindTo;
+    void BindTo(unsigned int index, BufferView* view);
+
     void UpdateSubData(unsigned int index, int offset, size_t size,
         void* data);
 

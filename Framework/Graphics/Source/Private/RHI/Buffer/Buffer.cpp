@@ -9,16 +9,27 @@ using namespace RTGI;
 
 //----------------------------------------------------------------------------
 Buffer::Buffer(BufferType type)
+    :
+    mBufferHandle(0),
+    mSize(0)
+{
+    BufferViewDesc viewDesc;
+    viewDesc.Type = type;
+    mDefaultView = new BufferView(viewDesc);
+}
+//----------------------------------------------------------------------------
+Buffer::Buffer(BufferView* defaultView)
 	:
 	mBufferHandle(0),
 	mSize(0),
-	mType(type)
+    mDefaultView(defaultView)
 {
 }
 //----------------------------------------------------------------------------
 Buffer::~Buffer()
 {
 	mBufferHandle->Device->DeleteBuffer(this);
+    mDefaultView = 0;
 }
 //----------------------------------------------------------------------------
 void* Buffer::Map(BufferAccess access)
@@ -39,6 +50,12 @@ void Buffer::Bind()
 	mBufferHandle->Device->BufferBind(this);
 }
 //----------------------------------------------------------------------------
+void Buffer::BindTo(BufferView* view)
+{
+    RTGI_ASSERT(mBufferHandle && view);
+    mBufferHandle->Device->BufferBindTo(this, view);
+}
+//----------------------------------------------------------------------------
 void Buffer::BindToIndirect()
 {
     RTGI_ASSERT(mBufferHandle);
@@ -48,6 +65,8 @@ void Buffer::BindToIndirect()
 bool Buffer::LoadFromSystemMemory(GPUDevice* device, size_t size, void* data, 
     BufferUsage usage)
 {
+    mDefaultView->CreateDeviceResource(device);
+
 	mSize = size;
     mBufferHandle = device->BufferLoadFromSystemMemory(this, 
         size, data, usage);
@@ -58,6 +77,8 @@ bool Buffer::LoadFromSystemMemory(GPUDevice* device, size_t size, void* data,
 void Buffer::ReserveMutableDeviceResource(GPUDevice* device, size_t size, 
     BufferUsage usage)
 {
+    mDefaultView->CreateDeviceResource(device);
+
 	mSize = size;
     mBufferHandle = device->BufferLoadFromSystemMemory(this, 
         size, 0, usage);
@@ -65,6 +86,8 @@ void Buffer::ReserveMutableDeviceResource(GPUDevice* device, size_t size,
 //----------------------------------------------------------------------------
 void Buffer::ReserveImmutableDeviceResource(GPUDevice* device, size_t size)
 {
+    mDefaultView->CreateDeviceResource(device);
+
     mSize = size;
     mBufferHandle = device->BufferLoadImmutableFromSystemMemory(this, size, 0);
 }

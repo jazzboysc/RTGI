@@ -19,6 +19,7 @@ GLenum gsBufferTargets[BufferType_Max] =
 {
     GL_ATOMIC_COUNTER_BUFFER,
     GL_DISPATCH_INDIRECT_BUFFER,
+    GL_DRAW_INDIRECT_BUFFER,
     GL_PIXEL_UNPACK_BUFFER,
     GL_SHADER_STORAGE_BUFFER,
     GL_TEXTURE_BUFFER,
@@ -1134,10 +1135,38 @@ void OpenGLDevice::__BufferBindIndex(Buffer* buffer, unsigned int index)
 #endif
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__BufferBindIndexTo(Buffer* buffer, unsigned int index, 
+    BufferView* view)
+{
+#ifndef __APPLE__
+
+    GLuint b = ((OpenGLBufferHandle*)buffer->GetBufferHandle())->mBuffer;
+    glBindBufferBase(gsBufferTargets[(int)view->GetBufferType()], index, b);
+
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    RTGI_ASSERT(res == GL_NO_ERROR);
+#endif
+
+#else
+    RTGI_ASSERT(false);
+#endif
+}
+//----------------------------------------------------------------------------
 void OpenGLDevice::__BufferBind(Buffer* buffer)
 {
     GLuint b = ((OpenGLBufferHandle*)buffer->GetBufferHandle())->mBuffer;
     glBindBuffer(gsBufferTargets[(int)buffer->GetType()], b);
+#ifdef _DEBUG
+    GLenum res = glGetError();
+    RTGI_ASSERT(res == GL_NO_ERROR);
+#endif
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__BufferBindTo(Buffer* buffer, BufferView* view)
+{
+    GLuint b = ((OpenGLBufferHandle*)buffer->GetBufferHandle())->mBuffer;
+    glBindBuffer(gsBufferTargets[(int)view->GetBufferType()], b);
 #ifdef _DEBUG
     GLenum res = glGetError();
     RTGI_ASSERT(res == GL_NO_ERROR);
@@ -1267,7 +1296,9 @@ OpenGLDevice::OpenGLDevice()
     _BufferMap = (GPUDeviceBufferMap)&OpenGLDevice::__BufferMap;
     _BufferUnmap = (GPUDeviceBufferUnmap)&OpenGLDevice::__BufferUnmap;
     _BufferBindIndex = (GPUDeviceBufferBindIndex)&OpenGLDevice::__BufferBindIndex;
+    _BufferBindIndexTo = (GPUDeviceBufferBindIndexTo)&OpenGLDevice::__BufferBindIndexTo;
     _BufferBind = (GPUDeviceBufferBind)&OpenGLDevice::__BufferBind;
+    _BufferBindTo = (GPUDeviceBufferBindTo)&OpenGLDevice::__BufferBindTo;
     _BufferBindToIndirect = (GPUDeviceBufferBindToIndirect)&OpenGLDevice::__BufferBindToIndirect;
     _BufferUpdateSubData = (GPUDeviceBufferUpdateSubData)&OpenGLDevice::__BufferUpdateSubData;
     _BufferLoadFromSystemMemory = (GPUDeviceBufferLoadFromSystemMemory)&OpenGLDevice::__BufferLoadFromSystemMemory;

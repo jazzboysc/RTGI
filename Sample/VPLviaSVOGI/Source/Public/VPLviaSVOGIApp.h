@@ -4,7 +4,7 @@
 #include "LightManager.h"
 #include "SceneMesh.h"
 #include "GPUTimer.h"
-#include "ShadowMapRenderer_Voxel.h"
+#include "ShadowMapRenderer.h"
 #include "RSMRenderer.h"
 #include "VPLGenerator.h"
 #include "DirectLightingRenderer.h"

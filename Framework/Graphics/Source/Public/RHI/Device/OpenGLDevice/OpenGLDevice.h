@@ -106,7 +106,9 @@ private:
     void* __BufferMap(Buffer* buffer, BufferAccess access);
     void __BufferUnmap(Buffer* buffer);
     void __BufferBindIndex(Buffer* buffer, unsigned int index);
+    void __BufferBindIndexTo(Buffer* buffer, unsigned int index, BufferView* view);
     void __BufferBind(Buffer* buffer);
+    void __BufferBindTo(Buffer* buffer, BufferView* view);
     void __BufferBindToIndirect(Buffer* buffer);
     void __BufferUpdateSubData(Buffer* buffer, int offset, size_t size, void* data);
     BufferHandle* __BufferLoadFromSystemMemory(Buffer* buffer, size_t size, 

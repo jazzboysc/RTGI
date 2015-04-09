@@ -27,6 +27,7 @@
 #include "TextureSampler.h"
 
 // Buffers
+#include "BufferView.h"
 #include "Buffer.h"
 #include "IndexableBuffer.h"
 #include "PixelBuffer.h"

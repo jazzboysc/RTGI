@@ -30,6 +30,12 @@ void IndexableBuffer::Bind(unsigned int index)
     mBufferHandle->Device->BufferBindIndex(this, index);
 }
 //----------------------------------------------------------------------------
+void IndexableBuffer::BindTo(unsigned int index, BufferView* view)
+{
+    RTGI_ASSERT(mBufferHandle);
+    mBufferHandle->Device->BufferBindIndexTo(this, index, view);
+}
+//----------------------------------------------------------------------------
 void IndexableBuffer::UpdateSubData(unsigned int index, int offset, 
     size_t size, void* data)
 {
