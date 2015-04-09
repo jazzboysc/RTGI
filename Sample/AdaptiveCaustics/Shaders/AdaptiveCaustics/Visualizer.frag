@@ -11,7 +11,8 @@ uniform sampler2DArray tempSamplerArray;
 
 void main()
 {
-    if( ShowMode == 0)
+    if( ShowMode == 0 ||
+		ShowMode == 4)
     {
         Output = texture(tempSampler, pTCoord);
     }

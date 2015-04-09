@@ -64,16 +64,30 @@ void AdaptiveCausticsPointSet::OnRender(Pass* pass, PassInfo* passInfo)
 	auto program = this->mMaterial->GetProgram(0, 0);
 	auto HProgram = program->GetProgramHandle();
 	// Setup transform feedback to allow readback of the positions output
-	int posLoc = glGetVaryingLocationNV((GLuint)HProgram, "gl_Position");
-	glTransformFeedbackVaryingsNV((GLuint)HProgram, 1, &posLoc, GL_INTERLEAVED_ATTRIBS);
+	const GLchar* Varyings[1];
+	Varyings[0] = "gl_Position";
+	GLuint prog = *(((GLuint*)HProgram + 3));
+	//int posLoc = glGetVaryingLocationNV((GLuint)HProgram, "gl_Position");
+	glTransformFeedbackVaryings((GLuint)prog, 1, Varyings, GL_INTERLEAVED_ATTRIBS);
 }
 //----------------------------------------------------------------------------
 void AdaptiveCausticsPointSet::OnGetShaderConstants()
 {
 	auto program = mMaterial->GetProgram(0, 0);
 	auto HProgram = program->GetProgramHandle();
-	posLoc = glGetVaryingLocationNV((GLuint)HProgram, "gl_Position");
-	glTransformFeedbackVaryingsNV((GLuint)HProgram, 1, &posLoc, GL_INTERLEAVED_ATTRIBS);
+
+	const GLchar* Varyings[1];
+	Varyings[0] = "gl_Position";
+	//int posLoc = glGetVaryingLocationNV((GLuint)HProgram, "gl_Position");
+	GLuint prog = *(((GLuint*)HProgram + 3));
+	glTransformFeedbackVaryings(prog, 1, Varyings, GL_INTERLEAVED_ATTRIBS);
+
+	GLuint a;
+	glGenBuffers(1, &a);
+#ifdef _DEBUG
+	GLenum r1es = glGetError();
+	RTGI_ASSERT(r1es == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void AdaptiveCausticsPointSet::OnUpdateShaderConstants(int technique, int pass)

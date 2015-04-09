@@ -60,7 +60,7 @@ private:
         BufferInternalFormat internalFormat, int width, BufferFormat format, 
         BufferComponentType type, void* pixels);
     void __Texture1DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);
-    void __TextureBindToImageUnit(Texture* texture, unsigned int unit, BufferAccess access);
+	void __TextureBindToImageUnit(Texture* texture, unsigned int unit, bool layered, BufferAccess access);
     void __TextureBindToSampler(Texture* texture, unsigned int index, SamplerDesc* sampler);
     void __TextureGenerateMipmap(Texture* texture);
     void __Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData);
@@ -73,7 +73,7 @@ private:
     void __Texture2DGetImageData(Texture* texture, void* dstPixels);
     TextureHandle* __Tex2DArrayLoadFromSystemMemory(Texture* texture, 
         BufferInternalFormat internalFormat, int width, int height, int depth, 
-        BufferFormat format, BufferComponentType type, void* pixels);
+		BufferFormat format, BufferComponentType type, bool mipMap, void* pixels);
     TextureHandle* __Texture3DLoadFromSystemMemory(Texture* texture, 
         BufferInternalFormat internalFormat, int width, int height, int depth, 
         BufferFormat format, BufferComponentType type, void* pixels);

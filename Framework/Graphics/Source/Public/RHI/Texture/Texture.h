@@ -44,7 +44,7 @@ public:
     inline BufferComponentType GetComponentType() const { return mComponentType; }
     inline TextureType GetType() const { return mType; }
 
-    void BindToImageUnit(unsigned int unit, BufferAccess access);
+	void BindToImageUnit(unsigned int unit, BufferAccess access, bool layered = false);
     void BindToSampler(unsigned int index, SamplerDesc* sampler);
 
     void GenerateMipmap();

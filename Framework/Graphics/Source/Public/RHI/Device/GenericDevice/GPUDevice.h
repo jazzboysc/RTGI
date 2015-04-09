@@ -85,7 +85,7 @@ typedef TextureHandle* (GPUDevice::*GPUDeviceTexture1DLoadFromSystemMemory)(
 typedef void (GPUDevice::*GPUDeviceTexture1DUpdateFromPixelBuffer)(
     Texture* texture, PixelBuffer* pixelBuffer);
 typedef void (GPUDevice::*GPUDeviceTextureBindToImageUnit)(Texture* texture, 
-    unsigned int unit, BufferAccess access);
+	unsigned int unit, bool layered, BufferAccess access);
 typedef void (GPUDevice::*GPUDeviceTextureBindToSampler)(Texture* texture, 
     unsigned int index, SamplerDesc* sampler);
 typedef void (GPUDevice::*GPUDeviceTextureGenerateMipmap)(Texture* texture);
@@ -105,7 +105,7 @@ typedef void (GPUDevice::*GPUDeviceTexture2DGetImageData)(Texture* texture,
 typedef TextureHandle* (GPUDevice::*GPUDeviceTex2DArrayLoadFromSystemMemory)(
     Texture* texture, BufferInternalFormat internalFormat, int width,
     int height, int depth, BufferFormat format, BufferComponentType type,
-    void* pixels);
+	bool mipMap, void* pixels);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture3DLoadFromSystemMemory)(
     Texture* texture, BufferInternalFormat internalFormat, int width, 
     int height, int depth, BufferFormat format, BufferComponentType type, 
@@ -199,8 +199,8 @@ public:
         BufferComponentType type, void* pixels);
     inline 	void Texture1DUpdateFromPixelBuffer(Texture* texture, 
         PixelBuffer* pixelBuffer);
-    inline 	void TextureBindToImageUnit(Texture* texture, unsigned int unit, 
-        BufferAccess access);
+    inline 	void TextureBindToImageUnit(Texture* texture, unsigned int unit,
+		bool layered, BufferAccess access);
     inline 	void TextureBindToSampler(Texture* texture, unsigned int index, 
         SamplerDesc* sampler);
     inline void TextureGenerateMipmap(Texture* texture);
@@ -218,7 +218,7 @@ public:
     inline 	TextureHandle* Tex2DArrayLoadFromSystemMemory(Texture* texture, 
         BufferInternalFormat internalFormat, int width, int height, 
         int depth, BufferFormat format, BufferComponentType type, 
-        void* pixels);
+		bool mipMap, void* pixels);
     inline 	TextureHandle* Texture3DLoadFromSystemMemory(Texture* texture, 
         BufferInternalFormat internalFormat, int width, int height, 
         int depth, BufferFormat format, BufferComponentType type, 

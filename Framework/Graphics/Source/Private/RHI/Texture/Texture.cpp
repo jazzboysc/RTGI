@@ -27,9 +27,9 @@ Texture::~Texture()
     delete mTextureHandle;
 }
 //----------------------------------------------------------------------------
-void Texture::BindToImageUnit(unsigned int unit, BufferAccess access)
+void Texture::BindToImageUnit(unsigned int unit, BufferAccess access, bool layered)
 {
-    mTextureHandle->Device->TextureBindToImageUnit(this, unit, access);
+    mTextureHandle->Device->TextureBindToImageUnit(this, unit, layered, access);
 }
 //--------------------------------------------------------------------------
 void Texture::BindToSampler(unsigned int index, SamplerDesc* sampler)

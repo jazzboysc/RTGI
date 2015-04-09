@@ -220,6 +220,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	receiverResourceDesc.Width = this->Width;
 	receiverResourceDesc.Height = this->Height;
 	receiverResourceDesc.ReceiverPositionFormat = BF_RGBAF;
+	receiverResourceDesc.ReceiverPositionMipmap = true;
 	mReceiverResourceRenderer->CreateCausticsResource(&receiverResourceDesc);
 	mReceiverResourceRenderer->SetTimer(mTimer);
 
@@ -228,6 +229,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	refractorResourceDesc.Width = this->Width;
 	refractorResourceDesc.Height = this->Height;
 	refractorResourceDesc.RefractorFrontNormalFormat = BF_RGBAF;
+	refractorResourceDesc.RefractorFrontNormalMipmap = true;
 	mRefractorResourceRenderer->CreateCausticsResource(&refractorResourceDesc);
 	mRefractorResourceRenderer->SetTimer(mTimer);
 
@@ -240,6 +242,10 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	causticsMapDesc.Width = this->Width;
 	causticsMapDesc.Height = this->Height;
 	causticsMapDesc.CausticsMapFormat = BF_RGBAF;
+	mCausticMapRenderer->Initialize(device,
+		mReceiverResourceRenderer,
+		mRefractorResourceRenderer,
+		mMainCamera);
 	mCausticMapRenderer->CreateCausticsResource(&causticsMapDesc);
 	mCausticMapRenderer->SetTimer(mTimer);
 
@@ -279,7 +285,7 @@ void AdaptiveCausticsApp::FrameFunc()
  	infoPanel->SetTimingLabelValue("Shadow Map Pass", workLoad);
 
 	mCausticMapRenderer->Render(0, 0/*SMP_AdaptiveCaustics*/, mLightProjector);
-	workLoad = mShadowMapRenderer->GetTimeElapsed();
+	workLoad = mCausticMapRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Adaptive Caustic Map Pass", workLoad);
 	/*

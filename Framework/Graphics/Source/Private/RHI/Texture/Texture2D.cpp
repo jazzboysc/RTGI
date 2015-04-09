@@ -286,6 +286,11 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
         mComponentType = BCT_Unsigned_Byte;
         break;
 
+	case BF_RG:
+		mInternalFormat = BIF_RG32F;
+		mComponentType = BCT_Float;
+		break;
+
 	case BF_RGBF:
 		mInternalFormat = BIF_RGB32F;
         mComponentType = BCT_Float;

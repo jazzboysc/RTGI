@@ -57,5 +57,8 @@ void RefractorResourceRenderer::Render(int technique, int pass, Camera* camera)
 	auto dataPtr = (DebugBuffer*)bufferData;
 	mDebugBuffer->Unmap();
 	int a = 0;
+
+	auto tex = (Texture2D*)this->GetFrameBufferTextureByName(RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name);
+	//tex->GenerateMipmap();
 }
 //----------------------------------------------------------------------------

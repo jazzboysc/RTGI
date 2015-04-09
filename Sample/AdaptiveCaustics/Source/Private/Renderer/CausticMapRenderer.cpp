@@ -18,6 +18,44 @@ CausticMapRenderer::~CausticMapRenderer()
 {
 	mPSB = 0;
 }
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+AdaptiveCausticsTraversalInfo::AdaptiveCausticsTraversalInfo()
+{}
+//----------------------------------------------------------------------------
+AdaptiveCausticsTraversalInfo::~AdaptiveCausticsTraversalInfo()
+{}
+//----------------------------------------------------------------------------
+void AdaptiveCausticsTraversalInfo::OnGetShaderConstants()
+{
+	auto program = this->GetPass(0)->GetShaderProgram();
+	program->GetUniformLocation(&ImageUnit0Loc, "data");
+	program->GetUniformLocation(&ImageUnit1Loc, "refractorNormal");
+}
+//----------------------------------------------------------------------------
+void AdaptiveCausticsTraversalInfo::OnPreDispatch(unsigned int)
+{
+	SamplerDesc sampler;
+	sampler.MinFilter = FT_Linear_Linear;
+	sampler.MagFilter = FT_Linear;
+	sampler.WrapS = WT_Clamp;
+	sampler.WrapT = WT_Clamp;
+
+	ImageUnit0Loc.SetValue(0);
+	ImageUnit1Loc.SetValue(1);
+	mCompTexture->BindToImageUnit(0, BufferAccess::BA_Write_Only);
+	mNormalTextures->BindToImageUnit(1, BufferAccess::BA_Read_Only, true);
+	//mNormalTextures->BindToSampler(1, &sampler);
+
+	glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT);
+}
+//----------------------------------------------------------------------------
+void AdaptiveCausticsTraversalInfo::OnPostDispatch(unsigned int)
+{
+	glMemoryBarrier(GL_ALL_BARRIER_BITS);
+}
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 void CausticMapRenderer::Initialize(GPUDevice* device,
@@ -35,7 +73,8 @@ void CausticMapRenderer::Initialize(GPUDevice* device,
 		RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name);
 }
 //----------------------------------------------------------------------------
-void CausticMapRenderer::InitializeMinCausticHierarchy(GPUDevice* pDevice, VertexBuffer* pVB, int resolution)
+void CausticMapRenderer::InitializeMinCausticHierarchy(
+	GPUDevice* pDevice, VertexBuffer* pVB, int resolution)
 {
 	size_t bufSize = resolution * resolution * sizeof(fvec4);
 	float *causticStartPoints = (float *)malloc(bufSize);
@@ -52,7 +91,9 @@ void CausticMapRenderer::InitializeMinCausticHierarchy(GPUDevice* pDevice, Verte
 	pVB->LoadFromSystemMemory(pDevice, bufSize, causticStartPoints, RTGI::BufferUsage::BU_Static_Draw);
 
 	mPoints->LoadFromSystemMemory(bufSize/4, causticStartPoints, 4);
+
 	mPoints->CreateDeviceResource(mDevice);
+
 	free(causticStartPoints);
 }
 //----------------------------------------------------------------------------
@@ -65,12 +106,25 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 		desc->CausticsMapFormat, desc->CausticsMapMipmap);
 	CreateFrameBuffer(desc->Width, desc->Height, 0, TT_Texture2D);
 
+	// Create gather voxel fragment list info task.
+	ShaderProgramInfo PI_AdaptiveCausticsTraversal;
+	PI_AdaptiveCausticsTraversal <<
+		"AdaptiveCaustics/AdaptiveCausticsTraversal.comp";
+
+	ComputePass* PassInfo_AdaptiveCausticsTraversal = new ComputePass(
+		PI_AdaptiveCausticsTraversal);
+	mAdaptiveCausticsTraversalTask = new AdaptiveCausticsTraversalInfo();
+	mAdaptiveCausticsTraversalTask->AddPass(PassInfo_AdaptiveCausticsTraversal);
+	mAdaptiveCausticsTraversalTask->CreateDeviceResource(mDevice);
+
 	// Create Adaptive caustics traversal shader
+	//*
 	ShaderProgramInfo PI_Traversal;
 	PI_Traversal
 		<< "AdaptiveCaustics/TraversalShader_PassDownVertex.vert"
 		<< "AdaptiveCaustics/TraversalShader_MaxTraversal.geom"
 		<< "AdaptiveCaustics/TraversalShader_DoNothing.frag";
+	//*/
 
 	auto mtAdaptiveCausticsTraversal = new MaterialTemplate(
 		new Technique({
@@ -84,8 +138,7 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 	//    (so we need not start from a single photon).
 	tbd.genericTraversalStartBuffer = new VertexBuffer();
 	// Also initializes the initial data of mStartPoints
-	this->InitializeMinCausticHierarchy(
-		this->mDevice, tbd.genericTraversalStartBuffer, 64);
+	//this->InitializeMinCausticHierarchy(this->mDevice, tbd.genericTraversalStartBuffer, 64);
 
 
 	// Now we need more generic, large traversal buffers to ping-pong between
@@ -94,6 +147,8 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 	//     4 or 5.  They probably need not all be the same size, but if I use
 	//     different sizes, I have to remember which is which!  (And then they're
 	//     not generic!).
+
+
 	GLsizeiptr traversalBufSz = 2048 * 2048 * sizeof(float)* 4;
 	for (int i = 0, j = 5; i < j; ++i)
 	{
@@ -104,8 +159,8 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 	// Initialize various other OpenGL identifier data
 	glGenQueries(1, &mPrimCountQuery);
 
-
-
+	mCompTexture = new Texture2D();
+	mCompTexture->CreateRenderTarget(mDevice, desc->Width, desc->Height, BF_RGBAF);
 
 #ifdef _DEBUG
 	GLenum res = glGetError();
@@ -115,6 +170,7 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 //----------------------------------------------------------------------------
 void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 {
+	SubRenderer::PreRender(0, 0);
 	// The actual hierarchical traversal is given in code in utilRoutines.cpp.  This
 	//    code traverses our photon hierarchy and outputs the correct photons as 
 	//    splats into the current buffer (the causticMap[lightNum] enabled above)
@@ -155,7 +211,12 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 	mPoints->NormalTextures = mRefractorFrontAndBackNormalTextures;
 
 	// Don't rasterize these...
-	glEnable(GL_RASTERIZER_DISCARD);
+	//glEnable(GL_RASTERIZER_DISCARD);
+	//glDisable(GL_DEPTH_TEST);
+	mAdaptiveCausticsTraversalTask->mCompTexture = mCompTexture;
+	mAdaptiveCausticsTraversalTask->mNormalTextures = mRefractorFrontAndBackNormalTextures;
+	mAdaptiveCausticsTraversalTask->DispatchCompute(0, 32, 32, 1);
+	//glEnable(GL_DEPTH_TEST);
 
 	/*
 	traverse,
@@ -166,6 +227,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 	stepCount > 0 ? primCount : startResolution * startResolution );
 	*/
 
+	/*
 	auto deferredBufferWidth = mRefractorFrontAndBackNormalTextures->Width;
 
 	for (int stepCount = 0; stepCount < mMaxTraversalLevel - startLevel; stepCount++)
@@ -182,7 +244,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 
 		// Set our input buffer
 		glBindBuffer(GL_ARRAY_BUFFER, inputBuffer);
-		glVertexPointer(4, GL_FLOAT, 0, 0/*BUFFER_OFFSET(inputOffsetBytes)*/);
+		glVertexPointer(4, GL_FLOAT, 0, 0/*BUFFER_OFFSET(inputOffsetBytes));
 
 		// Figure out if we're using mipmap data or interpolating between texels at the
 		//    full resolution image of the geometry buffers.
@@ -211,6 +273,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 
 	// Disable raterization discards
 	glDisable(GL_RASTERIZER_DISCARD);
+	*/
 
 	/*
 
@@ -258,6 +321,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 	//*/
 
 
-	SubRenderer::Render(technique, pass, SRO_FrameBuffer, mPSB, camera);
+	//SubRenderer::Render(technique, pass, SRO_FrameBuffer, mPSB, camera);
+	SubRenderer::PostRender(0, 0);
 }
 //----------------------------------------------------------------------------

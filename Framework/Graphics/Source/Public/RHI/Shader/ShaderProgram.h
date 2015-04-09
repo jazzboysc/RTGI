@@ -79,6 +79,11 @@ struct ShaderProgramInfo
 			TEShaderFileName = shaderName;
 			ShaderStageFlag |= ShaderType::ST_TessellationEvaluation;
 		}
+		else if (fileExt == "comp")
+		{
+			CShaderFileName = shaderName;
+			ShaderStageFlag |= ShaderType::ST_Compute;
+		}
 		return *this;
 	}
 

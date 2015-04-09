@@ -548,7 +548,7 @@ void OpenGLDevice::__Texture1DUpdateFromPixelBuffer(Texture* texture,
 }
 //----------------------------------------------------------------------------
 void OpenGLDevice::__TextureBindToImageUnit(Texture* texture, 
-    unsigned int unit, BufferAccess access)
+	unsigned int unit, bool layered, BufferAccess access)
 {
 #if defined(__APPLE__)
     RTGI_ASSERT( false );
@@ -561,7 +561,7 @@ void OpenGLDevice::__TextureBindToImageUnit(Texture* texture,
         return;
     }
 
-    glBindImageTexture(unit, textureHandle->mTexture, 0, GL_FALSE, 0, 
+	glBindImageTexture(unit, textureHandle->mTexture, 0, layered, 0,
         gsBufferAccess[(int)access],
         gsBufferInternalFormat[(int)texture->GetInternalFormat()]);
     
@@ -797,7 +797,7 @@ void OpenGLDevice::__Texture2DGetImageData(Texture* texture, void* dstPixels)
 TextureHandle* OpenGLDevice::__Tex2DArrayLoadFromSystemMemory(
     Texture* texture, BufferInternalFormat internalFormat, int width, 
     int height, int depth, BufferFormat format, BufferComponentType type, 
-    void* pixels)
+	bool mipmap, void* pixels)
 {
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
     textureHandle->Device = this;
@@ -808,6 +808,11 @@ TextureHandle* OpenGLDevice::__Tex2DArrayLoadFromSystemMemory(
         gsBufferInternalFormat[(int)internalFormat], width, height, depth,
         0, gsBufferFormat[(int)format], gsBufferComponentType[(int)type], 
         pixels);
+
+	if (mipmap)
+	{
+		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+	}
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 

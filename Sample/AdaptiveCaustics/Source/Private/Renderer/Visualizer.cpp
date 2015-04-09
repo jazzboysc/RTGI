@@ -43,7 +43,9 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
 		case Visualizer::eSM_RefractorShadow:
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
-
+		case Visualizer::eSM_CausticMap:
+			DisplayTexture->BindToSampler(0, &samplerDesc);
+			break;
 		default:
 			assert(false);
 			break;
@@ -106,7 +108,7 @@ void Visualizer::Initialize(GPUDevice* device,
 	mCausticMapTexture =
 		(Texture2D*)causticMapRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_CausticMap_Name);
-	
+	mCompTexture = causticMapRenderer->mCompTexture;
 
 
     // Create screen quad.
@@ -155,7 +157,7 @@ void Visualizer::SetShowMode(eShowMode mode)
 		mScreenQuad->DisplayTexture = mShadowMapTexture;
 		break;
 	case eSM_CausticMap:
-		mScreenQuad->DisplayTexture = mShadowMapTexture;
+		mScreenQuad->DisplayTexture = mCompTexture;
 		break;
     default:
         assert(false);

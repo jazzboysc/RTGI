@@ -31,6 +31,28 @@ struct TraversalBufferData
 	VertexBufferPtr genericTraversalStartBuffer;
 	VertexBufferPtr genericTraversalBuffers[5];
 };
+//----------------------------------------------------------------------------
+// Author: Che Sun
+// Date: 01/26/2015
+//----------------------------------------------------------------------------
+class AdaptiveCausticsTraversalInfo : public ComputeTask
+{
+public:
+	AdaptiveCausticsTraversalInfo();
+	~AdaptiveCausticsTraversalInfo();
+
+	// Implement base class interface.
+	virtual void OnGetShaderConstants();
+	virtual void OnPreDispatch(unsigned int pass);
+	virtual void OnPostDispatch(unsigned int pass);
+
+	ShaderUniform ImageUnit0Loc;
+	ShaderUniform ImageUnit1Loc;
+	Texture2DPtr mCompTexture;
+	Texture2DArrayPtr mNormalTextures;
+};
+
+typedef RefPointer<AdaptiveCausticsTraversalInfo> GatherVoxelFragmentListInfoPtr;
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -53,11 +75,14 @@ public:
 	void CreateCausticsResource(CausticsMapDesc* desc);
 	void Render(int technique, int pass, Camera* camera);
 
+	Texture2DPtr mCompTexture;
+
 private:
 	PipelineStateBlockPtr mPSB;
 
 	CausticsPointSetPtr mPoints;
 
+	AdaptiveCausticsTraversalInfo* mAdaptiveCausticsTraversalTask;
 
 	TraversalBufferData tbd;
 	Texture2DPtr mReceiverPositionTexture;

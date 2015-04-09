@@ -22,7 +22,7 @@ Texture2DArray::~Texture2DArray()
 }
 //----------------------------------------------------------------------------
 void Texture2DArray::CreateRenderTarget(GPUDevice* device, int width, 
-    int height, int depth, BufferFormat format)
+	int height, int depth, BufferFormat format,bool generateMipMap)
 {
 	Width = width;
 	Height = height;
@@ -72,6 +72,6 @@ void Texture2DArray::CreateRenderTarget(GPUDevice* device, int width,
 
     mTextureHandle = device->Tex2DArrayLoadFromSystemMemory(
 		this, mInternalFormat, Width, 
-        Height, Depth, mFormat, mComponentType, 0);
+		Height, Depth, mFormat, mComponentType, generateMipMap, 0);
 }
 //--------------------------------------------------------------------------

@@ -137,10 +137,10 @@ TextureHandle* GPUDevice::Texture3DLoadFromSystemMemory(Texture* texture,
 //----------------------------------------------------------------------------
 TextureHandle* GPUDevice::Tex2DArrayLoadFromSystemMemory(Texture* texture, 
     BufferInternalFormat internalFormat, int width, int height, int depth, 
-    BufferFormat format, BufferComponentType type, void* pixels)
+	BufferFormat format, BufferComponentType type, bool mipmap, void* pixels)
 {
     return (this->*_Tex2DArrayLoadFromSystemMemory)(texture, internalFormat, 
-        width, height, depth, format, type, pixels);
+        width, height, depth, format, type, mipmap, pixels);
 }
 //----------------------------------------------------------------------------
 void GPUDevice::Texture2DGetImageData(Texture* texture, void* dstPixels)
@@ -186,9 +186,9 @@ void GPUDevice::TextureGenerateMipmap(Texture* texture)
 }
 //----------------------------------------------------------------------------
 void GPUDevice::TextureBindToImageUnit(Texture* texture, unsigned int unit, 
-    BufferAccess access)
+	bool layered, BufferAccess access)
 {
-    (this->*_TextureBindToImageUnit)(texture, unit, access);
+	(this->*_TextureBindToImageUnit)(texture, unit, layered, access);
 }
 //----------------------------------------------------------------------------
 void GPUDevice::Texture1DUpdateFromPixelBuffer(Texture* texture, 

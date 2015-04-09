@@ -78,6 +78,7 @@ private:
     Texture2DPtr mRefractorFrontAndBackNormalTextures;
 	Texture2DPtr mShadowMapTexture;
 	Texture2DPtr mCausticMapTexture;
+	Texture2DPtr mCompTexture;
 
 	/*
     Texture2DPtr mGBufferAlbedoTexture;
