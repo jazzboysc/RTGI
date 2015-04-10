@@ -84,6 +84,7 @@ protected:
 
     bool mIsIndirect;
     StructuredBufferPtr mIndirectCommandBuffer;
+    BufferViewPtr mIndirectCommandBufferView;
     unsigned int mCommandOffset;
 
 	AABB mModelSpaceBB;

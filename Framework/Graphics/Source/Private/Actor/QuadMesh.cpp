@@ -26,6 +26,7 @@ QuadMesh::QuadMesh(Material* material, Camera* camera)
 QuadMesh::~QuadMesh()
 {
     mIndirectCommandBuffer = 0;
+    mIndirectCommandBufferView = 0;
 }
 //----------------------------------------------------------------------------
 void QuadMesh::Render(int technique, int pass, SubRenderer* subRenderer)
@@ -65,6 +66,7 @@ void QuadMesh::OnRender(Pass* pass, PassInfo*)
         else
         {
             RTGI_ASSERT(mIndirectCommandBuffer != 0);
+            mIndirectCommandBuffer->BindTo(mIndirectCommandBufferView);
             glDrawElementsIndirect(GL_QUADS, GL_UNSIGNED_INT,
                 (void*)mCommandOffset);
         }
@@ -121,6 +123,12 @@ void QuadMesh::CreateDeviceResource(GPUDevice* device)
     if( mIsIndirect )
     {
         RTGI_ASSERT(mIndirectCommandBuffer);
+
+        BufferViewDesc viewDesc;
+        viewDesc.Type = BT_DrawIndirect;
+        mIndirectCommandBufferView = new BufferView(viewDesc);
+        mIndirectCommandBufferView->CreateDeviceResource(device);
+
         mIndirectCommandBuffer->Bind();
         char* bufferData = (char*)mIndirectCommandBuffer->Map(BA_Write_Only);
         RTGI_ASSERT( bufferData );

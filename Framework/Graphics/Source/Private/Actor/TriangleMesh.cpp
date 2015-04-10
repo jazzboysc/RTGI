@@ -38,6 +38,7 @@ TriangleMesh::TriangleMesh(Material* material, Camera* camera)
 TriangleMesh::~TriangleMesh()
 {
     mIndirectCommandBuffer = 0;
+    mIndirectCommandBufferView = 0;
 }
 //----------------------------------------------------------------------------
 int TriangleMesh::GetVoxelizerRasterDimension(Voxelizer* voxelizer)
@@ -93,6 +94,7 @@ void TriangleMesh::OnRender(Pass* pass, PassInfo*)
             else
             {
                 RTGI_ASSERT(mIndirectCommandBuffer != 0);
+                mIndirectCommandBuffer->BindTo(mIndirectCommandBufferView);
                 glDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, 
                     (void*)mCommandOffset);
             }
@@ -440,6 +442,12 @@ void TriangleMesh::CreateDeviceResource(GPUDevice* device)
     if( mIsIndirect )
     {
         RTGI_ASSERT(mIndirectCommandBuffer);
+
+        BufferViewDesc viewDesc;
+        viewDesc.Type = BT_DrawIndirect;
+        mIndirectCommandBufferView = new BufferView(viewDesc);
+        mIndirectCommandBufferView->CreateDeviceResource(device);
+
         mIndirectCommandBuffer->Bind();
         char* bufferData = (char*)mIndirectCommandBuffer->Map(BA_Write_Only);
         RTGI_ASSERT( bufferData );
