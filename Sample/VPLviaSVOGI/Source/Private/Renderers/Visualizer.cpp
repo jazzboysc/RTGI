@@ -526,7 +526,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
             + voxelCount*sizeof(float) * 4;
         AddGenericBufferTarget(RTGI_Visualizer_IndirectCommandBuffer_Name,
             RDT_StructuredBuffer, bufferSize, BU_Dynamic_Copy,
-            BF_BindIndexToIndirect, 1);
+            BF_BindIndexTo, 1);
 
         // Create gathered voxel GPU memory allocator counter.
         bufferSize = sizeof(unsigned int);

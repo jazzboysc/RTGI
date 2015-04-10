@@ -29,6 +29,7 @@ public:
 
     std::string Name;
     BufferBasePtr InputBuffer;
+    BufferViewPtr InputBufferView;
     RendererInputDataView View;
 };
 

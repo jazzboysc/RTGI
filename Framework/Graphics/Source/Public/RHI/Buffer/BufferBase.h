@@ -8,6 +8,7 @@
 
 #include "RefObject.h"
 #include "GPUResource.h"
+#include "BufferView.h"
 
 namespace RTGI
 {
@@ -53,17 +54,43 @@ enum BufferComponentType
     BufferComponentType_Max
 };
 
+//BT_Unknown = -1,
+//BT_AtomicCounter,
+//BT_DispatchIndirect,
+//BT_DrawIndirect,
+//BT_Pixel,
+//BT_Structured,
+//BT_Texture,
+//BT_Uniform,
+//BT_Vertex,
+//BT_Index,
+//BufferType_Max
+
+//enum RendererDataType
+//{
+//    RDT_Unknown                 = 0,
+//    RDT_Texture                 = 1,
+//    RDT_Image                   = 2,
+//    RDT_StructuredBuffer        = 4,
+//    RDT_AtomicCounterBuffer     = 8,
+//    RDT_UniformBuffer           = 16,
+//    RDT_DispatchIndirectBuffer  = 32,
+//    RDT_PixelBuffer             = 64,
+//    RDT_TextureBuffer           = 128
+//};
+
 enum RendererDataType
 {
-    RDT_Unknown                 = 0,
-    RDT_Texture                 = 1,
-    RDT_Image                   = 2,
-    RDT_StructuredBuffer        = 4,
-    RDT_AtomicCounterBuffer     = 8,
-    RDT_UniformBuffer           = 16,
-    RDT_DispatchIndirectBuffer  = 32,
-    RDT_PixelBuffer             = 64,
-    RDT_TextureBuffer           = 128
+    RDT_Unknown = -1,
+    RDT_AtomicCounterBuffer,
+    RDT_DispatchIndirectBuffer,
+    RDT_DrawIndirect,
+    RDT_PixelBuffer,
+    RDT_StructuredBuffer,
+    RDT_TextureBuffer,
+    RDT_UniformBuffer,
+    RDT_Texture,
+    RDT_Image
 };
 
 enum BindingFlag
@@ -71,8 +98,8 @@ enum BindingFlag
     BF_Bindless = 0,
     BF_Bind,
     BF_BindIndex,
-    BF_BindToIndirect,
-    BF_BindIndexToIndirect,
+    BF_BindTo,
+    BF_BindIndexTo,
     BindingFlag_Max
 };
 
@@ -150,6 +177,7 @@ struct RendererInputDataView
     BindingFlag BindingType;
     int BindingSlot;
     SamplerDesc Sampler;
+
 };
 
 //----------------------------------------------------------------------------

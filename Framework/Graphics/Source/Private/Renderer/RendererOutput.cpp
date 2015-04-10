@@ -14,7 +14,7 @@ RendererOutput::RendererOutput()
 //----------------------------------------------------------------------------
 RendererOutput::RendererOutput(const std::string& name, 
     BufferBase* outputBuffer, RendererOutputType outputType, BindingFlag flag,
-    unsigned int binding, bool reset, int resetValue)
+    BufferType viewType, unsigned int binding, bool reset, int resetValue)
 {
     Name = name;
     OutputBuffer = outputBuffer;
@@ -23,11 +23,19 @@ RendererOutput::RendererOutput(const std::string& name,
     Binding = binding;
     Reset = reset;
     ResetValue = resetValue;
+
+    if( Flag == BF_BindTo || Flag == BF_BindIndexTo )
+    {
+        BufferViewDesc viewDesc;
+        viewDesc.Type = viewType;
+        OutputBufferView = new BufferView(viewDesc);
+    }
 }
 //----------------------------------------------------------------------------
 RendererOutput::~RendererOutput()
 {
     OutputBuffer = 0;
+    OutputBufferView = 0;
 }
 //----------------------------------------------------------------------------
 void RendererOutput::Enable()
@@ -44,13 +52,13 @@ void RendererOutput::Enable()
         ((IndexableBuffer*)buffer)->Bind(Binding);
         break;
 
-    case BF_BindToIndirect:
-        buffer->BindToIndirect();
+    case BF_BindTo:
+        buffer->BindTo(OutputBufferView);
         break;
 
-    case BF_BindIndexToIndirect:
+    case BF_BindIndexTo:
         ((IndexableBuffer*)buffer)->Bind(Binding);
-        buffer->BindToIndirect();
+        buffer->BindTo(OutputBufferView);
         break;
 
     default:

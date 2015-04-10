@@ -28,8 +28,8 @@ class RendererOutput : public RefObject
 public:
     RendererOutput(const std::string& name, BufferBase* outputBuffer, 
         RendererOutputType outputType = ROT_Texture, 
-        BindingFlag flag = BF_Bindless, unsigned int binding = 0, 
-        bool reset = false, int resetValue = 0);
+        BindingFlag flag = BF_Bindless, BufferType viewType = BT_Unknown,
+        unsigned int binding = 0, bool reset = false, int resetValue = 0);
     virtual ~RendererOutput();
 
     void Enable();
@@ -37,6 +37,7 @@ public:
 
     std::string Name;
     BufferBasePtr OutputBuffer;
+    BufferViewPtr OutputBufferView;
     RendererOutputType OutputType;
     BindingFlag Flag;
     unsigned int Binding;

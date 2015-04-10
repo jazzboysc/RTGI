@@ -27,8 +27,8 @@ void EnableBuffer(RendererInput* input)
         ((IndexableBuffer*)buffer)->Bind(input->View.BindingSlot);
         break;
 
-    case BF_BindToIndirect:
-        buffer->BindToIndirect();
+    case BF_BindTo:
+        buffer->BindTo(input->InputBufferView);
         break;
 
     default:
@@ -45,11 +45,21 @@ RendererInput::RendererInput(const std::string& name,
     Name = name;
     InputBuffer = inputBuffer;
     View = *view;
+
+    RTGI_ASSERT(View.Type != RDT_Unknown);
+    if( View.Type != RDT_Texture && View.Type != RDT_Image )
+    {
+        // Create a buffer view's system footage.
+        BufferViewDesc viewDesc;
+        viewDesc.Type = (BufferType)View.Type;
+        InputBufferView = new BufferView(viewDesc);
+    }
 }
 //----------------------------------------------------------------------------
 RendererInput::~RendererInput()
 {
     InputBuffer = 0;
+    InputBufferView = 0;
 }
 //----------------------------------------------------------------------------
 void RendererInput::Enable()

@@ -118,7 +118,7 @@ protected:
 
 private:
     SubRenderer();
-    static SubRendererCreateRendererData msFactoryFunctions[6];
+    static SubRendererCreateRendererData msFactoryFunctions[7];
 };
 
 typedef RefPointer<SubRenderer> SubRendererPtr;

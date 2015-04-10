@@ -7,7 +7,6 @@
 #define RTGI_Buffer_H
 
 #include "BufferBase.h"
-#include "BufferView.h"
 
 namespace RTGI
 {

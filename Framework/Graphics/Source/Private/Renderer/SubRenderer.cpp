@@ -40,6 +40,14 @@ BufferBase* CreateDispatchIndirectBuffer(GPUDevice* device, int size,
     return (BufferBase*)buffer;
 }
 //----------------------------------------------------------------------------
+BufferBase* CreateDrawIndirectBuffer(GPUDevice* device, int size,
+    BufferUsage usage)
+{
+    // TODO:
+    RTGI_ASSERT(false);
+    return 0;
+}
+//----------------------------------------------------------------------------
 BufferBase* CreatePixelBuffer(GPUDevice* device, int size, BufferUsage usage)
 {
     PixelBuffer* buffer = new PixelBuffer();
@@ -56,14 +64,15 @@ BufferBase* CreateTextureBuffer(GPUDevice* device, int size,
 }
 //----------------------------------------------------------------------------
 
-SubRendererCreateRendererData SubRenderer::msFactoryFunctions[6] =
+SubRendererCreateRendererData SubRenderer::msFactoryFunctions[7] =
 {
-    CreateStructuredBuffer,
     CreateAtomicCounterBuffer,
-    CreateUniformBuffer,
     CreateDispatchIndirectBuffer,
+    CreateDrawIndirectBuffer,
     CreatePixelBuffer,
-    CreateTextureBuffer
+    CreateStructuredBuffer,
+    CreateTextureBuffer,
+    CreateUniformBuffer
 };
 
 //----------------------------------------------------------------------------
@@ -211,6 +220,10 @@ void SubRenderer::AddInputDependency(SubRenderer* producer,
 
     RendererInput* consumerInput = new RendererInput(producerOutput->Name,
         producerOutput->OutputBuffer, view);
+    if( consumerInput->InputBufferView )
+    {
+        consumerInput->InputBufferView->CreateDeviceResource(mDevice);
+    }
     mInputs.push_back(consumerInput);
 }
 //----------------------------------------------------------------------------
@@ -274,13 +287,15 @@ void SubRenderer::AddGenericBufferTarget(const std::string& name,
     RTGI_ASSERT(GetFrameBufferTargetByName(name) == 0);
     RTGI_ASSERT(GetGenericBufferTargetByName(name) == 0);
 
-    float typeValue = (float)(int)bufferType;
-    int functionIndex = (int)glm::log2(typeValue) - 2;
-    BufferBase* genericBufferTarget = msFactoryFunctions[functionIndex](
+    BufferBase* genericBufferTarget = msFactoryFunctions[(int)bufferType](
         mDevice, size, usage);
 
     RendererOutput* ro = new RendererOutput(name, genericBufferTarget, 
-        ROT_Buffer, flag, binding, reset, resetValue);
+        ROT_Buffer, flag, (BufferType)bufferType, binding, reset, resetValue);
+    if( ro->OutputBufferView )
+    {
+        ro->OutputBufferView->CreateDeviceResource(mDevice);
+    }
     mGenericBufferTargets.push_back(ro);
 }
 //----------------------------------------------------------------------------

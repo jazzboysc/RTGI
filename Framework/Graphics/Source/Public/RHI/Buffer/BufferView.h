@@ -20,7 +20,7 @@ enum BufferType
     BT_DrawIndirect,
     BT_Pixel,
     BT_Structured,
-    BT_Texture,
+    BT_TextureBuffer,
     BT_Uniform,
     BT_Vertex,
     BT_Index,
