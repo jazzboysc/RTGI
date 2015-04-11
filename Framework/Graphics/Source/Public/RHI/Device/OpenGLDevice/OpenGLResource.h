@@ -46,6 +46,10 @@ struct OpenGLBufferHandle : public BufferHandle
     GLuint mBuffer;
 };
 
+struct OpenGLBufferViewHandle : public BufferViewHandle
+{
+};
+
 }
 
 #endif

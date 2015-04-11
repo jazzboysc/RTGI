@@ -64,8 +64,11 @@ ShaderProgram::~ShaderProgram()
     mTessellationControlShader = 0;
     mTessellationEvaluationShader = 0;
 
-    mProgramHandle->Device->DeleteProgram(this);
-    delete mProgramHandle;
+    if( mProgramHandle )
+    {
+        mProgramHandle->Device->DeleteProgram(this);
+        delete mProgramHandle;
+    }
 }
 //----------------------------------------------------------------------------
 void ShaderProgram::CreateDeviceResource(GPUDevice* device)

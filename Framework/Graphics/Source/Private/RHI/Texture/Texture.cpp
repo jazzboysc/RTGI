@@ -23,8 +23,11 @@ Texture::Texture()
 //----------------------------------------------------------------------------
 Texture::~Texture()
 {
-    mTextureHandle->Device->DeleteTexture(this);
-    delete mTextureHandle;
+    if( mTextureHandle )
+    {
+        mTextureHandle->Device->DeleteTexture(this);
+        delete mTextureHandle;
+    }
 }
 //----------------------------------------------------------------------------
 void Texture::BindToImageUnit(unsigned int unit, BufferAccess access, bool layered)

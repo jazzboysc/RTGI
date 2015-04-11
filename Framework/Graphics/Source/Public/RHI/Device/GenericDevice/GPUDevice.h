@@ -42,6 +42,7 @@ struct ShaderUniformHandle;
 struct TextureHandle;
 struct FBOHandle;
 struct BufferHandle;
+struct BufferViewHandle;
 struct SamplerDesc;
 
 enum ShaderProgramParameter;
@@ -147,6 +148,8 @@ typedef void (GPUDevice::*GPUDeviceBufferBindIndexTo)(Buffer* buffer,
     unsigned int index, BufferView* view);
 typedef void (GPUDevice::*GPUDeviceBufferBind)(Buffer* buffer);
 typedef void (GPUDevice::*GPUDeviceBufferBindTo)(Buffer* buffer, BufferView* view);
+typedef BufferViewHandle* (GPUDevice::*GPUDeviceCreateBufferView)(BufferView* view);
+typedef void (GPUDevice::*GPUDeviceDeleteBufferView)(BufferView* view);
 typedef void (GPUDevice::*GPUDeviceBufferUpdateSubData)(Buffer* buffer, 
     int offset, size_t size, void* data);
 typedef BufferHandle* (GPUDevice::*GPUDeviceBufferLoadFromSystemMemory)(
@@ -254,6 +257,8 @@ public:
     inline  void BufferBindIndexTo(Buffer* buffer, unsigned int index, BufferView* view);
     inline 	void BufferBind(Buffer* buffer);
     inline  void BufferBindTo(Buffer* buffer, BufferView* view);
+    inline  BufferViewHandle* CreateBufferView(BufferView* view);
+    inline  void DeleteBufferView(BufferView* view);
     inline 	void BufferUpdateSubData(Buffer* buffer, int offset, size_t size, 
         void* data);
     inline 	BufferHandle* BufferLoadFromSystemMemory(Buffer* buffer, 
@@ -316,6 +321,8 @@ protected:
     GPUDeviceBufferBindIndexTo                    _BufferBindIndexTo;
     GPUDeviceBufferBind                           _BufferBind;
     GPUDeviceBufferBindTo                         _BufferBindTo;
+    GPUDeviceCreateBufferView                     _CreateBufferView;
+    GPUDeviceDeleteBufferView                     _DeleteBufferView;
     GPUDeviceBufferUpdateSubData                  _BufferUpdateSubData;
     GPUDeviceBufferLoadFromSystemMemory           _BufferLoadFromSystemMemory;
     GPUDeviceBufferLoadImmutableFromSystemMemory  _BufferLoadImmutableFromSystemMemory;

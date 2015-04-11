@@ -23,8 +23,11 @@ Shader::Shader(GLenum type, const std::string& shaderFileName)
 //----------------------------------------------------------------------------
 Shader::~Shader()
 {
-    mShaderHandle->Device->DeleteShader(this);
-    delete mShaderHandle;
+    if( mShaderHandle )
+    {
+        mShaderHandle->Device->DeleteShader(this);
+        delete mShaderHandle;
+    }
 }
 //----------------------------------------------------------------------------
 void Shader::CreateDeviceResource(GPUDevice* device)

@@ -109,6 +109,8 @@ private:
     void __BufferBindIndexTo(Buffer* buffer, unsigned int index, BufferView* view);
     void __BufferBind(Buffer* buffer);
     void __BufferBindTo(Buffer* buffer, BufferView* view);
+    BufferViewHandle* __CreateBufferView(BufferView* view);
+    void __DeleteBufferView(BufferView* view);
     void __BufferUpdateSubData(Buffer* buffer, int offset, size_t size, void* data);
     BufferHandle* __BufferLoadFromSystemMemory(Buffer* buffer, size_t size, 
         void* data, BufferUsage usage);

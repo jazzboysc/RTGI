@@ -28,7 +28,11 @@ Buffer::Buffer(BufferView* defaultView)
 //----------------------------------------------------------------------------
 Buffer::~Buffer()
 {
-	mBufferHandle->Device->DeleteBuffer(this);
+    if( mBufferHandle )
+    {
+        mBufferHandle->Device->DeleteBuffer(this);
+        delete mBufferHandle;
+    }
     mDefaultView = 0;
 }
 //----------------------------------------------------------------------------

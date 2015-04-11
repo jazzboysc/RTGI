@@ -19,17 +19,20 @@ BufferView::BufferView(const BufferViewDesc& viewDesc)
 //----------------------------------------------------------------------------
 BufferView::~BufferView()
 {
-    // TODO:
+    if( mBufferViewHandle )
+    {
+        mBufferViewHandle->Device->DeleteBufferView(this);
+        delete mBufferViewHandle;
+    }
 }
 //----------------------------------------------------------------------------
 void BufferView::CreateDeviceResource(GPUDevice* device, 
     BufferBase* bufferBase)
 {
-    // TODO:
     if( !mBufferViewHandle )
     {
-        // Create device resource.
         mBufferBase = bufferBase;
+        mBufferViewHandle = device->CreateBufferView(this);
     }
 }
 //----------------------------------------------------------------------------

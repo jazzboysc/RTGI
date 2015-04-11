@@ -39,6 +39,16 @@ void GPUDevice::BufferBindTo(Buffer* buffer, BufferView* view)
     (this->*_BufferBindTo)(buffer, view);
 }
 //----------------------------------------------------------------------------
+BufferViewHandle* GPUDevice::CreateBufferView(BufferView* view)
+{
+    return (this->*_CreateBufferView)(view);
+}
+//----------------------------------------------------------------------------
+void GPUDevice::DeleteBufferView(BufferView* view)
+{
+    (this->*_DeleteBufferView)(view);
+}
+//----------------------------------------------------------------------------
 void GPUDevice::BufferBindIndex(Buffer* buffer, unsigned int index)
 {
     (this->*_BufferBindIndex)(buffer, index);
