@@ -16,7 +16,7 @@ IndexableBuffer::IndexableBuffer(BufferType type)
 //----------------------------------------------------------------------------
 IndexableBuffer::IndexableBuffer()
     :
-    Buffer(BT_Unknown)
+    Buffer(BT_Typeless)
 {
 }
 //----------------------------------------------------------------------------

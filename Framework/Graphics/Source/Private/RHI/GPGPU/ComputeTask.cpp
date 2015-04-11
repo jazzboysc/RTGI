@@ -42,7 +42,8 @@ void ComputeTask::DispatchCompute(unsigned int pass, unsigned int globalX,
 }
 //----------------------------------------------------------------------------
 void ComputeTask::DispatchComputeIndirect(unsigned int pass,
-    StructuredBuffer* indirectCommandBuffer, void* indirect)
+    Buffer* indirectCommandBuffer, BufferView* indirectCommandBufferView, 
+    void* indirect)
 {
     // TODO:
     RTGI_ASSERT(false);
@@ -65,18 +66,19 @@ void ComputeTask::DispatchVertex(unsigned int pass, unsigned int threadCount)
 }
 //----------------------------------------------------------------------------
 void ComputeTask::DispatchVertexIndirect(unsigned int pass,
-    StructuredBuffer* indirectCommandBuffer, void* indirect)
+    Buffer* indirectCommandBuffer, BufferView* indirectCommandBufferView, 
+    void* indirect)
 {
     ComputePass* p = (ComputePass*)GetPass(pass);
     RTGI_ASSERT(p);
     RTGI_ASSERT(p->IsVertexPass() == true);
-    RTGI_ASSERT(indirectCommandBuffer);
+    RTGI_ASSERT(indirectCommandBuffer && indirectCommandBufferView);
 
     ShaderProgram* program = p->GetShaderProgram();
     program->Enable();
     OnPreDispatch(pass);
 
-    indirectCommandBuffer->BindToIndirect();
+    indirectCommandBuffer->BindTo(indirectCommandBufferView);
     program->GetProgramHandle()->Device->DispatchVertexIndirect(indirect);
 
     OnPostDispatch(pass);

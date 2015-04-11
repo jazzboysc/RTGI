@@ -147,6 +147,7 @@ public:
 
     StructuredBuffer* GetVoxelFragmentListBuffer() const;
     StructuredBuffer* GetSVOBuffer() const;
+    BufferView* GetSVOBufferIndirectView() const;
     UniformBuffer* GetSVOUniformBuffer() const;
 
 private:
@@ -154,7 +155,9 @@ private:
     GatherVoxelFragmentListInfoPtr mGatherVoxelFragmentListInfoTask;
     BuildSVOPtr mBuildSVOTask;
     StructuredBufferPtr mVoxelFragmentListBuffer;
+    BufferViewPtr mVoxelFragmentListBufferIndirectView;
     StructuredBufferPtr mSVOBuffer;
+    BufferViewPtr mSVOBufferIndirectView;
     UniformBufferPtr mSVOUniformBuffer;
 
     unsigned int mSVONodeMaxCount;

@@ -54,31 +54,6 @@ enum BufferComponentType
     BufferComponentType_Max
 };
 
-//BT_Unknown = -1,
-//BT_AtomicCounter,
-//BT_DispatchIndirect,
-//BT_DrawIndirect,
-//BT_Pixel,
-//BT_Structured,
-//BT_Texture,
-//BT_Uniform,
-//BT_Vertex,
-//BT_Index,
-//BufferType_Max
-
-//enum RendererDataType
-//{
-//    RDT_Unknown                 = 0,
-//    RDT_Texture                 = 1,
-//    RDT_Image                   = 2,
-//    RDT_StructuredBuffer        = 4,
-//    RDT_AtomicCounterBuffer     = 8,
-//    RDT_UniformBuffer           = 16,
-//    RDT_DispatchIndirectBuffer  = 32,
-//    RDT_PixelBuffer             = 64,
-//    RDT_TextureBuffer           = 128
-//};
-
 enum RendererDataType
 {
     RDT_Unknown = -1,

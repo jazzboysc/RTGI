@@ -127,7 +127,8 @@ void QuadMesh::CreateDeviceResource(GPUDevice* device)
         BufferViewDesc viewDesc;
         viewDesc.Type = BT_DrawIndirect;
         mIndirectCommandBufferView = new BufferView(viewDesc);
-        mIndirectCommandBufferView->CreateDeviceResource(device);
+        mIndirectCommandBufferView->CreateDeviceResource(device, 
+            mIndirectCommandBuffer);
 
         mIndirectCommandBuffer->Bind();
         char* bufferData = (char*)mIndirectCommandBuffer->Map(BA_Write_Only);

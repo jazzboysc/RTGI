@@ -8,7 +8,7 @@
 
 #include "PassManager.h"
 #include "ComputePass.h"
-#include "StructuredBuffer.h"
+#include "Buffer.h"
 
 namespace RTGI
 {
@@ -29,12 +29,14 @@ public:
         unsigned int globalY, unsigned int globalZ);
 
     void DispatchComputeIndirect(unsigned int pass, 
-        StructuredBuffer* indirectCommandBuffer, void* indirect);
+        Buffer* indirectCommandBuffer, BufferView* indirectCommandBufferView, 
+        void* indirect);
 
     void DispatchVertex(unsigned int pass, unsigned int threadCount);
 
     void DispatchVertexIndirect(unsigned int pass, 
-        StructuredBuffer* indirectCommandBuffer, void* indirect);
+        Buffer* indirectCommandBuffer, BufferView* indirectCommandBufferView, 
+        void* indirect);
 
     virtual void OnGetShaderConstants(){};
     virtual void OnPreDispatch(unsigned int pass){};

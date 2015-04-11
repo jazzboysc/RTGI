@@ -222,7 +222,8 @@ void SubRenderer::AddInputDependency(SubRenderer* producer,
         producerOutput->OutputBuffer, view);
     if( consumerInput->InputBufferView )
     {
-        consumerInput->InputBufferView->CreateDeviceResource(mDevice);
+        consumerInput->InputBufferView->CreateDeviceResource(mDevice, 
+            consumerInput->InputBuffer);
     }
     mInputs.push_back(consumerInput);
 }
@@ -294,7 +295,7 @@ void SubRenderer::AddGenericBufferTarget(const std::string& name,
         ROT_Buffer, flag, (BufferType)bufferType, binding, reset, resetValue);
     if( ro->OutputBufferView )
     {
-        ro->OutputBufferView->CreateDeviceResource(mDevice);
+        ro->OutputBufferView->CreateDeviceResource(mDevice, ro->OutputBuffer);
     }
     mGenericBufferTargets.push_back(ro);
 }

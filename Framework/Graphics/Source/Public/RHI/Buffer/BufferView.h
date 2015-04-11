@@ -14,7 +14,7 @@ namespace RTGI
 
 enum BufferType
 {
-    BT_Unknown = -1,
+    BT_Typeless = -1,
     BT_AtomicCounter,
     BT_DispatchIndirect,
     BT_DrawIndirect,
@@ -32,6 +32,8 @@ struct BufferViewDesc
     BufferType Type;
 };
 
+class BufferBase;
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 04/09/2015
@@ -44,11 +46,12 @@ public:
 
     inline BufferType GetBufferType() const { return mViewDesc.Type; }
 
-    void CreateDeviceResource(GPUDevice* device);
+    void CreateDeviceResource(GPUDevice* device, BufferBase* bufferBase);
 
 private:
     BufferViewDesc mViewDesc;
     BufferViewHandle* mBufferViewHandle;
+    BufferBase* mBufferBase;
 };
 
 typedef RefPointer<BufferView> BufferViewPtr;

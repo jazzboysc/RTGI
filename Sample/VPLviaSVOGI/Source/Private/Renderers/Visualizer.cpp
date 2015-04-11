@@ -547,11 +547,9 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     else if( mVoxelizerType == Voxelizer::VT_SVO )
     {
         // Cache SVO buffers.
-        mVoxelFragmentListBuffer = ((SVOVoxelizer*)voxelizer
-            )->GetVoxelFragmentListBuffer();
+        mVoxelFragmentListBuffer = ((SVOVoxelizer*)voxelizer)->GetVoxelFragmentListBuffer();
         mSVOBuffer = ((SVOVoxelizer*)voxelizer)->GetSVOBuffer();
-        mSVOUniformBuffer = ((SVOVoxelizer*)voxelizer
-            )->GetSVOUniformBuffer();
+        mSVOUniformBuffer = ((SVOVoxelizer*)voxelizer)->GetSVOUniformBuffer();
 
         ShaderProgramInfo showSVOProgramInfo;
         showSVOProgramInfo.VShaderFileName = "VPLviaSVOGI/vShowSVO.glsl";
@@ -655,7 +653,6 @@ void Visualizer::OnRender(int, int, Camera*)
         mSVOUniformBuffer->Bind(0);
         mVoxelFragmentListBuffer->Bind(1);
         mSVOBuffer->Bind(3);
-        mSVOBuffer->BindToIndirect();
         mSVONodeCubeModel->Render(0, 0);
     }
     else

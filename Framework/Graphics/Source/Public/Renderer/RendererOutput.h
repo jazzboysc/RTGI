@@ -28,7 +28,7 @@ class RendererOutput : public RefObject
 public:
     RendererOutput(const std::string& name, BufferBase* outputBuffer, 
         RendererOutputType outputType = ROT_Texture, 
-        BindingFlag flag = BF_Bindless, BufferType viewType = BT_Unknown,
+        BindingFlag flag = BF_Bindless, BufferType viewType = BT_Typeless,
         unsigned int binding = 0, bool reset = false, int resetValue = 0);
     virtual ~RendererOutput();
 

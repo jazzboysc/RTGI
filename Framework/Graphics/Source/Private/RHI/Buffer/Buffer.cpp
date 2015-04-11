@@ -56,16 +56,10 @@ void Buffer::BindTo(BufferView* view)
     mBufferHandle->Device->BufferBindTo(this, view);
 }
 //----------------------------------------------------------------------------
-void Buffer::BindToIndirect()
-{
-    RTGI_ASSERT(mBufferHandle);
-	mBufferHandle->Device->BufferBindToIndirect(this);
-}
-//----------------------------------------------------------------------------
 bool Buffer::LoadFromSystemMemory(GPUDevice* device, size_t size, void* data, 
     BufferUsage usage)
 {
-    mDefaultView->CreateDeviceResource(device);
+    mDefaultView->CreateDeviceResource(device, this);
 
 	mSize = size;
     mBufferHandle = device->BufferLoadFromSystemMemory(this, 
@@ -77,7 +71,7 @@ bool Buffer::LoadFromSystemMemory(GPUDevice* device, size_t size, void* data,
 void Buffer::ReserveMutableDeviceResource(GPUDevice* device, size_t size, 
     BufferUsage usage)
 {
-    mDefaultView->CreateDeviceResource(device);
+    mDefaultView->CreateDeviceResource(device, this);
 
 	mSize = size;
     mBufferHandle = device->BufferLoadFromSystemMemory(this, 
@@ -86,7 +80,7 @@ void Buffer::ReserveMutableDeviceResource(GPUDevice* device, size_t size,
 //----------------------------------------------------------------------------
 void Buffer::ReserveImmutableDeviceResource(GPUDevice* device, size_t size)
 {
-    mDefaultView->CreateDeviceResource(device);
+    mDefaultView->CreateDeviceResource(device, this);
 
     mSize = size;
     mBufferHandle = device->BufferLoadImmutableFromSystemMemory(this, size, 0);

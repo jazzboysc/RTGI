@@ -86,7 +86,9 @@ SVOVoxelizer::~SVOVoxelizer()
 {
     mAtomicCounterBuffer = 0;
     mVoxelFragmentListBuffer = 0;
+    mVoxelFragmentListBufferIndirectView = 0;
     mSVOBuffer = 0;
+    mSVOBufferIndirectView = 0;
     mSVOUniformBuffer = 0;
 
     mGatherVoxelFragmentListInfoTask = 0;
@@ -175,6 +177,12 @@ void SVOVoxelizer::Initialize(GPUDevice* device, int voxelGridDim,
     mVoxelFragmentListBuffer->ReserveMutableDeviceResource(mDevice, 
         bufferSize, BU_Dynamic_Copy);
 
+    BufferViewDesc viewDesc;
+    viewDesc.Type = BT_DrawIndirect;
+    mVoxelFragmentListBufferIndirectView = new BufferView(viewDesc);
+    mVoxelFragmentListBufferIndirectView->CreateDeviceResource(mDevice,
+        mVoxelFragmentListBuffer);
+
     // Create SVO buffer.
     mSVOMaxLevel = (unsigned int)glm::log2((float)VoxelGridDim);
     mSVOBuffer = new StructuredBuffer();
@@ -183,6 +191,9 @@ void SVOVoxelizer::Initialize(GPUDevice* device, int voxelGridDim,
     bufferSize = sizeof(SVONodeBufferHead) + mSVONodeMaxCount*sizeof(SVONode);
     mSVOBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, 
         BU_Dynamic_Copy);
+
+    mSVOBufferIndirectView = new BufferView(viewDesc);
+    mSVOBufferIndirectView->CreateDeviceResource(mDevice, mSVOBuffer);
 
     // Create SVO uniform buffer.
     mSVOUniformBuffer = new UniformBuffer();
@@ -294,7 +305,7 @@ void SVOVoxelizer::OnRender(int technique, int pass, Camera*)
         mVoxelFragmentListBuffer->Bind(1);
         mSVOBuffer->Bind(3);
         mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_FLAG_NODES_PASS,
-            mVoxelFragmentListBuffer, 0);
+            mVoxelFragmentListBuffer, mVoxelFragmentListBufferIndirectView, 0);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
         svoBufferData = mSVOBuffer->Map(BA_Read_Only);
@@ -305,7 +316,7 @@ void SVOVoxelizer::OnRender(int technique, int pass, Camera*)
 
         // Allocate SVO nodes pass.
         mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_ALLOC_NODES_PASS,
-            mSVOBuffer, 0);
+            mSVOBuffer, mSVOBufferIndirectView, 0);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
         svoBufferData = mSVOBuffer->Map(BA_Read_Only);
@@ -319,7 +330,7 @@ void SVOVoxelizer::OnRender(int technique, int pass, Camera*)
 
         // Init SVO nodes pass.
         mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_INIT_NODES_PASS,
-            mSVOBuffer, 0);
+            mSVOBuffer, mSVOBufferIndirectView, 0);
 #ifdef DEBUG_VOXEL
         mSVOBuffer->Bind();
         svoBufferData = mSVOBuffer->Map(BA_Read_Only);
@@ -333,7 +344,7 @@ void SVOVoxelizer::OnRender(int technique, int pass, Camera*)
     mVoxelFragmentListBuffer->Bind(1);
     mSVOBuffer->Bind(3);
     mBuildSVOTask->DispatchVertexIndirect(BUILD_SVO_SPLAT_LEAF_NODES_PASS,
-        mVoxelFragmentListBuffer, 0);
+        mVoxelFragmentListBuffer, mVoxelFragmentListBufferIndirectView, 0);
 #ifdef DEBUG_VOXEL
     mSVOBuffer->Bind();
     svoBufferData = mSVOBuffer->Map(BA_Read_Only);
@@ -360,6 +371,11 @@ StructuredBuffer* SVOVoxelizer::GetVoxelFragmentListBuffer() const
 StructuredBuffer* SVOVoxelizer::GetSVOBuffer() const
 {
     return mSVOBuffer;
+}
+//----------------------------------------------------------------------------
+BufferView* SVOVoxelizer::GetSVOBufferIndirectView() const
+{
+    return mSVOBufferIndirectView;
 }
 //----------------------------------------------------------------------------
 UniformBuffer* SVOVoxelizer::GetSVOUniformBuffer() const

@@ -29,11 +29,6 @@ void GPUDevice::BufferUpdateSubData(Buffer* buffer, int offset, size_t size,
     (this->*_BufferUpdateSubData)(buffer, offset, size, data);
 }
 //----------------------------------------------------------------------------
-void GPUDevice::BufferBindToIndirect(Buffer* buffer)
-{
-    (this->*_BufferBindToIndirect)(buffer);
-}
-//----------------------------------------------------------------------------
 void GPUDevice::BufferBind(Buffer* buffer)
 {
     (this->*_BufferBind)(buffer);

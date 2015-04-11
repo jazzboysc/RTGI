@@ -1173,16 +1173,6 @@ void OpenGLDevice::__BufferBindTo(Buffer* buffer, BufferView* view)
 #endif
 }
 //----------------------------------------------------------------------------
-void OpenGLDevice::__BufferBindToIndirect(Buffer* buffer)
-{
-    GLuint b = ((OpenGLBufferHandle*)buffer->GetBufferHandle())->mBuffer;
-    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, b);
-#ifdef _DEBUG
-    GLenum res = glGetError();
-    RTGI_ASSERT(res == GL_NO_ERROR);
-#endif
-}
-//----------------------------------------------------------------------------
 void OpenGLDevice::__BufferUpdateSubData(Buffer* buffer, int offset, 
     size_t size, void* data)
 {
@@ -1299,7 +1289,6 @@ OpenGLDevice::OpenGLDevice()
     _BufferBindIndexTo = (GPUDeviceBufferBindIndexTo)&OpenGLDevice::__BufferBindIndexTo;
     _BufferBind = (GPUDeviceBufferBind)&OpenGLDevice::__BufferBind;
     _BufferBindTo = (GPUDeviceBufferBindTo)&OpenGLDevice::__BufferBindTo;
-    _BufferBindToIndirect = (GPUDeviceBufferBindToIndirect)&OpenGLDevice::__BufferBindToIndirect;
     _BufferUpdateSubData = (GPUDeviceBufferUpdateSubData)&OpenGLDevice::__BufferUpdateSubData;
     _BufferLoadFromSystemMemory = (GPUDeviceBufferLoadFromSystemMemory)&OpenGLDevice::__BufferLoadFromSystemMemory;
     _BufferLoadImmutableFromSystemMemory = (GPUDeviceBufferLoadImmutableFromSystemMemory)&OpenGLDevice::__BufferLoadImmutableFromSystemMemory;

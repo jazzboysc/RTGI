@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------
 
 #include "BufferView.h"
+#include "BufferBase.h"
 
 using namespace RTGI;
 
@@ -11,7 +12,8 @@ using namespace RTGI;
 BufferView::BufferView(const BufferViewDesc& viewDesc)
     :
     mViewDesc(viewDesc),
-    mBufferViewHandle(0)
+    mBufferViewHandle(0),
+    mBufferBase(0)
 {
 }
 //----------------------------------------------------------------------------
@@ -20,12 +22,14 @@ BufferView::~BufferView()
     // TODO:
 }
 //----------------------------------------------------------------------------
-void BufferView::CreateDeviceResource(GPUDevice* device)
+void BufferView::CreateDeviceResource(GPUDevice* device, 
+    BufferBase* bufferBase)
 {
     // TODO:
     if( !mBufferViewHandle )
     {
         // Create device resource.
+        mBufferBase = bufferBase;
     }
 }
 //----------------------------------------------------------------------------
