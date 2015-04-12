@@ -48,10 +48,14 @@ void main(void)
 	vec2 texRes = vec2(ACMUniformBuffer.width, ACMUniformBuffer.height);
 
 
-	vec2 tCoord = vec2(gl_GlobalInvocationID.xy) / vec2(768, 768);
-	vec4 debugColor = texture(refractorNormal, vec3(tCoord, 1), 0);
-	//imageStore(data, ivec2(gl_GlobalInvocationID.xy), vec4(1,0,0,1));
+	vec2 TCoord = vec2(gl_GlobalInvocationID.xy) / vec2(768, 768);
+	ivec2 mipmap =  textureSize(refractorNormal, int(ACMUniformBuffer.mipmapLevel)).xy;
+	ivec2 iTCoord = ivec2(TCoord * mipmap);
+	vec4 debugColor = texelFetch(refractorNormal, ivec3(iTCoord, 1), int(ACMUniformBuffer.mipmapLevel));
 	imageStore(data, ivec2(gl_GlobalInvocationID.xy), debugColor);
+	
+	//vec4 debugColor = texture(refractorNormal, vec3(tCoord, 1), 4);
+	//imageStore(data, ivec2(gl_GlobalInvocationID.xy), vec4(1,0,0,1));
 
 	if(true)
 	{

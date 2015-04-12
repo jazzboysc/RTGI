@@ -43,7 +43,7 @@ void AdaptiveCausticsTraversalInfo::OnGetShaderConstants()
 void AdaptiveCausticsTraversalInfo::OnPreDispatch(unsigned int pass)
 {
 	SamplerDesc sampler;
-	sampler.MinFilter = FT_Linear_Linear;
+	sampler.MinFilter = FT_Linear;
 	sampler.MagFilter = FT_Nearest;
 	sampler.WrapS = WT_Clamp;
 	sampler.WrapT = WT_Clamp;
@@ -331,6 +331,9 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 		mTraversalTask->mACMUniformBuffer->Unmap();
 		//*/
 	}
+
+	//mCompTexture->GenerateMipmap();
+
 	SubRenderer::PostRender(0, 0);
 }
 //----------------------------------------------------------------------------

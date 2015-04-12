@@ -73,5 +73,6 @@ void Texture2DArray::CreateRenderTarget(GPUDevice* device, int width,
     mTextureHandle = device->Tex2DArrayLoadFromSystemMemory(
 		this, mInternalFormat, Width, 
 		Height, Depth, mFormat, mComponentType, generateMipMap, 0);
+	this->HasMipMap = generateMipMap;
 }
 //--------------------------------------------------------------------------

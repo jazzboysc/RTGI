@@ -28,7 +28,7 @@ void RefractorResourceRenderer::CreateCausticsResource(RefractorResourceDesc* de
 	AddFrameBufferTarget(RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name,
 		desc->Width, desc->Height, 2, TT_Texture2DArray,
 		desc->RefractorFrontNormalFormat, desc->RefractorFrontNormalMipmap);
-	CreateFrameBuffer(desc->Width, desc->Height, 2, TT_Texture2DArray);
+	CreateFrameBuffer(desc->Width, desc->Height, 2, TT_Texture2DArray, true);
 
 	// Create material templates.
 	mDebugBuffer = new StructuredBuffer();
@@ -59,6 +59,6 @@ void RefractorResourceRenderer::Render(int technique, int pass, Camera* camera)
 	int a = 0;
 
 	auto tex = (Texture2D*)this->GetFrameBufferTextureByName(RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name);
-	//tex->GenerateMipmap();
+	tex->GenerateMipmap();
 }
 //----------------------------------------------------------------------------
