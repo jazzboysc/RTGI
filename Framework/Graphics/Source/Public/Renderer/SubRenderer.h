@@ -107,6 +107,7 @@ protected:
 
     // Buffer outputs.
     std::vector<RendererOutputPtr> mFrameBufferTargets;
+    std::vector<Texture*> mFrameBufferTargetsMipmapped;
     RendererOutputPtr mDepthTarget;
     FrameBufferPtr mFrameBuffer;
     std::vector<RendererOutputPtr> mGenericBufferTargets;

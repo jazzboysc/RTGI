@@ -26,7 +26,7 @@ Texture2D::~Texture2D()
 //----------------------------------------------------------------------------
 bool Texture2D::LoadBMPFromFile(GPUDevice* device, 
     const std::string& fileName, bool generateMipMap, 
-    SamplerDesc* mipMapSampler)
+    SamplerDesc* sampler)
 {
     if( mTextureHandle )
     {
@@ -56,7 +56,7 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device,
 
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, bitmap.width, bitmap.height, mFormat, 
-        mComponentType, generateMipMap, mipMapSampler, bitmap.rgb_data);
+        mComponentType, generateMipMap, sampler, bitmap.rgb_data);
     HasMipMap = generateMipMap;
 
     bmpread_free(&bitmap);
@@ -71,7 +71,7 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device,
 //----------------------------------------------------------------------------
 bool Texture2D::LoadPNGFromFile(GPUDevice* device, 
     const std::string& fileName, bool generateMipMap, 
-    SamplerDesc* mipMapSampler)
+    SamplerDesc* sampler)
 {
     if( mTextureHandle )
     {
@@ -103,7 +103,7 @@ bool Texture2D::LoadPNGFromFile(GPUDevice* device,
 
             mTextureHandle = device->Texture2DLoadFromSystemMemory(
                 this, mInternalFormat, Width, Height, mFormat,
-                mComponentType, generateMipMap, mipMapSampler, buffer);
+                mComponentType, generateMipMap, sampler, buffer);
             HasMipMap = generateMipMap;
 
 #ifdef RTGI_OUTPUT_TEXTURE_RESOURCE_LOADING
@@ -125,7 +125,7 @@ bool Texture2D::LoadPNGFromFile(GPUDevice* device,
 //----------------------------------------------------------------------------
 bool Texture2D::LoadPFMFromFile(GPUDevice* device, 
     const std::string& fileName, bool generateMipMap, 
-    SamplerDesc* mipMapSampler)
+    SamplerDesc* sampler)
 {
 	// This function is based on the PFM loader of Thorsten Grosch and Tobias 
 	// Ritschel's demo.
@@ -203,7 +203,7 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device,
 
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
-        generateMipMap, mipMapSampler, pixels);
+        generateMipMap, sampler, pixels);
     HasMipMap = generateMipMap;
 
 	free(pixels);
@@ -222,7 +222,7 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device,
 bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
     BufferInternalFormat internalFormat, int width, int height,
     BufferFormat format, BufferComponentType type, void* pixels, 
-    bool generateMipMap, SamplerDesc* mipMapSampler)
+    bool generateMipMap, SamplerDesc* sampler)
 {
     if( mTextureHandle )
     {
@@ -238,7 +238,7 @@ bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
 
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
-        generateMipMap, mipMapSampler, pixels);
+        generateMipMap, sampler, pixels);
     HasMipMap = generateMipMap;
 
 	return true;
@@ -264,7 +264,7 @@ bool Texture2D::LoadFromTextureBuffer(GPUDevice* device,
 #endif
 //----------------------------------------------------------------------------
 void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
-    BufferFormat format, bool generateMipMap, SamplerDesc* mipMapSampler, 
+    BufferFormat format, bool generateMipMap, SamplerDesc* sampler, 
     void* initData)
 {
     if( mTextureHandle )
@@ -330,7 +330,7 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
-        generateMipMap, mipMapSampler, initData);
+        generateMipMap, sampler, initData);
     HasMipMap = generateMipMap;
 }
 //--------------------------------------------------------------------------

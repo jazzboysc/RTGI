@@ -41,13 +41,10 @@ void GBufferRenderer::CreateGBuffer(GBufferDesc* desc)
     }
 
     CreateFrameBuffer(desc->Width, desc->Height, 0, TT_Texture2D);
-
-    test = (Texture2D*)GetFrameBufferTextureByName(RTGI_GBuffer_Normal_Name);
 }
 //----------------------------------------------------------------------------
 void GBufferRenderer::Render(int technique, int pass, Camera* camera)
 {
     SubRenderer::Render(technique, pass, SRO_FrameBuffer, mPSB, camera);
-    test->GenerateMipmap();
 }
 //----------------------------------------------------------------------------

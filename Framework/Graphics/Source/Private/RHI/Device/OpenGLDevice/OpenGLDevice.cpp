@@ -654,7 +654,7 @@ void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture,
 TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
     BufferInternalFormat internalFormat, int width, int height,
     BufferFormat format, BufferComponentType type, bool mipMap, 
-    SamplerDesc* mipMapSampler, void* pixels)
+    SamplerDesc* sampler, void* pixels)
 {
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
     textureHandle->Device = this;
@@ -668,27 +668,27 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
 
     if( mipMap )
     {
-        if( mipMapSampler )
+        if( sampler )
         {
             // Mipmap filtering.
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                gsFilterType[(int)mipMapSampler->MinFilter]);
+                gsFilterType[(int)sampler->MinFilter]);
 
             OPENGL_DEVICE_CHECK_ERROR;
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                gsFilterType[(int)mipMapSampler->MagFilter]);
+                gsFilterType[(int)sampler->MagFilter]);
 
             OPENGL_DEVICE_CHECK_ERROR;
 
             // Texture coordinates wrapping.
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                gsWrapType[(int)mipMapSampler->WrapS]);
+                gsWrapType[(int)sampler->WrapS]);
 
             OPENGL_DEVICE_CHECK_ERROR;
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
-                gsWrapType[(int)mipMapSampler->WrapT]);
+                gsWrapType[(int)sampler->WrapT]);
 
             OPENGL_DEVICE_CHECK_ERROR;
         }

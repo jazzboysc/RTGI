@@ -6,7 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
-//#define SHOW_TIMING
+#define SHOW_TIMING
 
 //----------------------------------------------------------------------------
 VPLviaSVOGI::VPLviaSVOGI(int width, int height)
@@ -318,9 +318,6 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     gbufferDesc.PositionFormat = BF_RGBAF;
     gbufferDesc.NormalFormat = BF_RGBAF;
     gbufferDesc.AlbedoFormat = BF_RGBAF;
-    gbufferDesc.PositionMipmap = true;
-    gbufferDesc.NormalMipmap = true;
-    gbufferDesc.AlbedoMipmap = true;
     gbufferDesc.RPCFormat = BF_RGBAF;
     mGBufferRenderer = new GBufferRenderer(mDevice);
     mGBufferRenderer->CreateGBuffer(&gbufferDesc);

@@ -143,6 +143,11 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
 
     RendererOutput* ro = new RendererOutput(name, texture);
     mFrameBufferTargets.push_back(ro);
+
+    if( generateMipmap )
+    {
+        mFrameBufferTargetsMipmapped.push_back((Texture*)texture);
+    }
 }
 //----------------------------------------------------------------------------
 int SubRenderer::GetFrameBufferTargetCount() const
@@ -456,10 +461,15 @@ void SubRenderer::PostRender(unsigned int outputFlag,
         mInputs[i]->Disable();
     }
 
-    // Disable renderer framebuffer outputs.
+    // Disable renderer framebuffer outputs and possibly generate mipmaps.
     if( outputFlag & SRO_FrameBuffer )
     {
         mFrameBuffer->Disable();
+
+        for( int i = 0; i < (int)mFrameBufferTargetsMipmapped.size(); ++i )
+        {
+            mFrameBufferTargetsMipmapped[i]->GenerateMipmap();
+        }
     }
 
     // Disable renderer generic buffer outputs.

@@ -25,22 +25,22 @@ public:
 
 	// Load a ".bmp" file and create its resource.
     bool LoadBMPFromFile(GPUDevice* device, const std::string& fileName, 
-        bool generateMipMap = true, SamplerDesc* mipMapSampler = 0);
+        bool generateMipMap = true, SamplerDesc* sampler = 0);
 
     // Load a ".png" file and create its resource.
     bool LoadPNGFromFile(GPUDevice* device, const std::string& fileName,
-        bool generateMipMap = true, SamplerDesc* mipMapSampler = 0);
+        bool generateMipMap = true, SamplerDesc* sampler = 0);
 
 	// Load a ".pfm" file and create its resource.
     bool LoadPFMFromFile(GPUDevice* device, const std::string& fileName,
-        bool generateMipMap = true, SamplerDesc* mipMapSampler = 0);
+        bool generateMipMap = true, SamplerDesc* sampler = 0);
 
 	// Load texture data from system memory. User is responsible for deleting
 	// the system memory data.
     bool LoadFromSystemMemory(GPUDevice* device, 
         BufferInternalFormat internalFormat, int width, int height, 
         BufferFormat format, BufferComponentType type, void* pixels,
-        bool generateMipMap = true, SamplerDesc* mipMapSampler = 0);
+        bool generateMipMap = true, SamplerDesc* sampler = 0);
 
 #ifndef __APPLE__
 	// Load and create from texture buffer object.
@@ -50,7 +50,7 @@ public:
 
     void CreateRenderTarget(GPUDevice* device, int width, int height, 
         BufferFormat format, bool generateMipMap = false, 
-        SamplerDesc* mipMapSampler = 0, void* initData = 0);
+        SamplerDesc* sampler = 0, void* initData = 0);
 
 	// Update a render target from pixel buffer.
 	void UpdateFromPixelBuffer(PixelBuffer* pixelBuffer);
