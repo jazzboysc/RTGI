@@ -127,8 +127,6 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     switch( type )
     {
     case TT_Texture2D:
-        // TODO:
-        // Only support Texture2D mipmap for now.
         texture = new Texture2D();
         ((Texture2D*)texture)->CreateRenderTarget(mDevice, width, height, 
             format, generateMipmap);
@@ -136,7 +134,7 @@ void SubRenderer::AddFrameBufferTarget(const std::string& name, int width,
     case TT_Texture2DArray:
         texture = new Texture2DArray();
         ((Texture2DArray*)texture)->CreateRenderTarget(mDevice, width, height, 
-            depth, format);
+            depth, format, generateMipmap);
         break;
     default:
         RTGI_ASSERT(false);
