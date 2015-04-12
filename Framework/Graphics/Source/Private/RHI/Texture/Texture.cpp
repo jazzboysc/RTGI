@@ -48,6 +48,6 @@ void Texture::BindToSampler(unsigned int index, SamplerDesc* sampler)
 void Texture::GenerateMipmap()
 {
     RTGI_ASSERT(HasMipMap);
-
+    mTextureHandle->Device->TextureGenerateMipmap(this);
 }
 //--------------------------------------------------------------------------

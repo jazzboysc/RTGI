@@ -9,5 +9,8 @@ uniform sampler2D tempSampler;
 
 void main()
 {
-    Output = texture(tempSampler, pTCoord);
+    int level = 3;
+    ivec2 levelRes = textureSize(tempSampler, level);
+    ivec2 pos = ivec2(pTCoord.xy * vec2(levelRes));
+    Output = texelFetch(tempSampler, pos, level);
 }

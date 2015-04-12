@@ -680,6 +680,17 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
                 gsFilterType[(int)mipMapSampler->MagFilter]);
 
             OPENGL_DEVICE_CHECK_ERROR;
+
+            // Texture coordinates wrapping.
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+                gsWrapType[(int)mipMapSampler->WrapS]);
+
+            OPENGL_DEVICE_CHECK_ERROR;
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+                gsWrapType[(int)mipMapSampler->WrapT]);
+
+            OPENGL_DEVICE_CHECK_ERROR;
         }
 
         glGenerateMipmap(GL_TEXTURE_2D);

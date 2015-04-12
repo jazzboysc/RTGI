@@ -61,6 +61,7 @@ public:
 
 protected:
     PipelineStateBlockPtr mPSB;
+    Texture2D* test;
 };
 
 typedef RefPointer<GBufferRenderer> GBufferRendererPtr;

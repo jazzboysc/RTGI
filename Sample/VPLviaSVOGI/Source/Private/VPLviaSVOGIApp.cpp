@@ -318,6 +318,9 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     gbufferDesc.PositionFormat = BF_RGBAF;
     gbufferDesc.NormalFormat = BF_RGBAF;
     gbufferDesc.AlbedoFormat = BF_RGBAF;
+    gbufferDesc.PositionMipmap = true;
+    gbufferDesc.NormalMipmap = true;
+    gbufferDesc.AlbedoMipmap = true;
     gbufferDesc.RPCFormat = BF_RGBAF;
     mGBufferRenderer = new GBufferRenderer(mDevice);
     mGBufferRenderer->CreateGBuffer(&gbufferDesc);

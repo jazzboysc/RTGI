@@ -33,6 +33,8 @@ public:
 		Texture** colorTextures, Texture* depthTexture = 0, 
 		Texture* stencilTexture = 0);
 
+    //void ReplaceColorTarget
+
 	void Enable();
 	void Disable();
 
