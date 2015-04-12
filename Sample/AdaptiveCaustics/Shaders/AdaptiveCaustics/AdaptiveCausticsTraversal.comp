@@ -27,13 +27,6 @@ layout(std430, binding = 0)  buffer _ACMBuffer
     vec4 uv[];
 } ACMBuffer;
 
-	//uint uvLoadIdx = ACMBuffer.startIndex + invocationID;
-	//uint uvWriteIdx = ACMBuffer.startIndex + storageIdx;
-	//vec4 color = texture(refractorNormal, vec3(invocationCoord, 1), ACMUniformBuffer.mipmapLevel);
-	//vec4 color = texture(refractorNormal, vec3(gl_GlobalInvocationID.xy / tCoordMax, 1), ACMUniformBuffer.mipmapLevel);
-
-	//vec2 tCoordMax = vec2(ACMUniformBuffer.width, ACMUniformBuffer.height);
-	//vec2 invocationCoord = gl_GlobalInvocationID.xy * tCoordMax / vec2(gl_WorkGroupSize.xy * gl_NumWorkGroups.xy);
 
 
 layout (local_size_x = 1, local_size_y = 1) in;
@@ -43,24 +36,23 @@ void main(void)
 {
 	// local constants
 	uint readIndex = gl_GlobalInvocationID.y * gl_WorkGroupSize.y * gl_NumWorkGroups.y + gl_GlobalInvocationID.x;
+
+	if(readIndex >= ACMUniformBuffer.readCount)
+	{
+		// unneeded computation
+		//return;
+	}
+
 	vec4 uv = ACMBuffer.uv[ACMUniformBuffer.readOffset + readIndex];
 	vec4 color = texture(refractorNormal, vec3(uv.xy, 1), ACMUniformBuffer.mipmapLevel);
 	vec2 texRes = vec2(ACMUniformBuffer.width, ACMUniformBuffer.height);
 
+	ivec2 imageCoord = ivec2(uv.xy * texRes);
+	imageStore(data, imageCoord, vec4(0.3, 0.3, 0.3, 1));
 
-	vec2 TCoord = vec2(gl_GlobalInvocationID.xy) / vec2(768, 768);
-	ivec2 mipmap =  textureSize(refractorNormal, int(ACMUniformBuffer.mipmapLevel)).xy;
-	ivec2 iTCoord = ivec2(TCoord * mipmap);
-	vec4 debugColor = texelFetch(refractorNormal, ivec3(iTCoord, 1), int(ACMUniformBuffer.mipmapLevel));
-	imageStore(data, ivec2(gl_GlobalInvocationID.xy), debugColor);
-	
-	//vec4 debugColor = texture(refractorNormal, vec3(tCoord, 1), 4);
-	//imageStore(data, ivec2(gl_GlobalInvocationID.xy), vec4(1,0,0,1));
-
-	if(true)
+	if(color.a < 0.99)
 	{
-		//ivec2 imageCoord = ivec2(uv.xy * texRes);
-		//imageStore(data, imageCoord, color);
+
 	}
 
 	/*
@@ -108,3 +100,25 @@ void main(void)
 
 
 }
+
+
+
+
+
+
+// Mipmap visualization
+	/*
+	vec2 TCoord = vec2(gl_GlobalInvocationID.xy) / vec2(768, 768);
+	ivec2 mipmap =  textureSize(refractorNormal, int(ACMUniformBuffer.mipmapLevel)).xy;
+	ivec2 iTCoord = ivec2(TCoord * mipmap);
+	vec4 debugColor = texelFetch(refractorNormal, ivec3(iTCoord, 1), int(ACMUniformBuffer.mipmapLevel));
+	imageStore(data, ivec2(gl_GlobalInvocationID.xy), debugColor);
+	*/
+
+		//uint uvLoadIdx = ACMBuffer.startIndex + invocationID;
+	//uint uvWriteIdx = ACMBuffer.startIndex + storageIdx;
+	//vec4 color = texture(refractorNormal, vec3(invocationCoord, 1), ACMUniformBuffer.mipmapLevel);
+	//vec4 color = texture(refractorNormal, vec3(gl_GlobalInvocationID.xy / tCoordMax, 1), ACMUniformBuffer.mipmapLevel);
+
+	//vec2 tCoordMax = vec2(ACMUniformBuffer.width, ACMUniformBuffer.height);
+	//vec2 invocationCoord = gl_GlobalInvocationID.xy * tCoordMax / vec2(gl_WorkGroupSize.xy * gl_NumWorkGroups.xy);

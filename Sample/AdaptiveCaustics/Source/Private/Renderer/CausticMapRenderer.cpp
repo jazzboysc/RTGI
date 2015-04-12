@@ -238,6 +238,14 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 	//glClear(GL_COLOR_BUFFER_BIT);
 	mFBOClear->Disable();
 
+	/*
+	int result[6];
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &result[0]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &result[1]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &result[2]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &result[3]);
+	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, 0, &result[4]);
+	*/
 	uint currentLOD = (uint)START_LOD;  // The starting traversal level (2^6 = 64x64 photons)
 	int numLevels = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - currentLOD;
 	for (int i = 0; i < numLevels; ++i/*, ++currentLOD*/)
@@ -257,6 +265,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 
 		// Reset atomic counters.
 #ifdef DEBUG_CAUSTCIS
+		mTraversalTask->mAtomicCounterBuffer->Bind(0);
 		auto counterData = (ACMAtomicCounter*)mTraversalTask->mAtomicCounterBuffer->Map(BA_Read_Write);
 		assert(counterData);
 		if (counterData)
@@ -266,6 +275,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 			counterData->temp = 0;
 		}
 		mTraversalTask->mAtomicCounterBuffer->Unmap();
+
 #else
 		unsigned int counterData[2];
 		counterData[0] = 0;
@@ -294,12 +304,8 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 		mTraversalTask->mACMUniformBuffer->Bind(0);
 		mTraversalTask->mACMBuffer->Bind(0);
 		mTraversalTask->DispatchCompute(0,
-			//currentResolution,
-			//currentResolution,
-			768,
-			768,
-			//4 * mTraversalTask->AtomicCounterCache.writeCount,
-			//1,
+			4 * mTraversalTask->AtomicCounterCache.writeCount,
+			1,
 			1);
 		mTraversalTask->mACMBuffer->Bind(0);
 		mTraversalTask->mACMUniformBuffer->Bind(0);
