@@ -43,7 +43,7 @@ void AdaptiveCausticsTraversalInfo::OnGetShaderConstants()
 void AdaptiveCausticsTraversalInfo::OnPreDispatch(unsigned int pass)
 {
 	SamplerDesc sampler;
-	sampler.MinFilter = FT_Nearest;
+	sampler.MinFilter = FT_Linear_Linear;
 	sampler.MagFilter = FT_Nearest;
 	sampler.WrapS = WT_Clamp;
 	sampler.WrapT = WT_Clamp;

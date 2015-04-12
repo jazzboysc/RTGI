@@ -276,7 +276,7 @@ void AdaptiveCausticsApp::FrameFunc()
 	static double totalWorkLoad;
 	totalWorkLoad = 0.0;
 
-	static float angle = -60.0f;
+	static float angle = 30.0f;
 	if (bIsSpinningMesh)
 	{
 		angle -= 1.0f;
@@ -287,17 +287,6 @@ void AdaptiveCausticsApp::FrameFunc()
 		vec3 scale = mScene.mesh->GetWorldScale();
 		mScene.mesh->SetWorldTransform(rot);
 		mScene.mesh->SetWorldTranslation(trans);
-		mScene.mesh->SetWorldScale(scale);
-
-		auto matrix2 = mScene.mesh->GetWorldTransform();
-		mScene.mesh->SetWorldScale(vec3(3, 3, 3));
-
-	}
-	else
-	{
-		//mScene.mesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
-		//mScene.mesh->SetWorldTranslation(vec3(0.0f, -0.8f, 0.0f));
-		//mScene.mesh->SetWorldScale(vec3(3));
 	}
 
 	// Resource gathering pass
