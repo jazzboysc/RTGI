@@ -25,7 +25,8 @@ Texture2D::~Texture2D()
 }
 //----------------------------------------------------------------------------
 bool Texture2D::LoadBMPFromFile(GPUDevice* device, 
-    const std::string& fileName, bool generateMipMap)
+    const std::string& fileName, bool generateMipMap, 
+    SamplerDesc* mipMapSampler)
 {
     if( mTextureHandle )
     {
@@ -55,7 +56,7 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device,
 
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, bitmap.width, bitmap.height, mFormat, 
-        mComponentType, generateMipMap, bitmap.rgb_data);
+        mComponentType, generateMipMap, mipMapSampler, bitmap.rgb_data);
     HasMipMap = generateMipMap;
 
     bmpread_free(&bitmap);
@@ -69,7 +70,8 @@ bool Texture2D::LoadBMPFromFile(GPUDevice* device,
 }
 //----------------------------------------------------------------------------
 bool Texture2D::LoadPNGFromFile(GPUDevice* device, 
-    const std::string& fileName, bool generateMipMap)
+    const std::string& fileName, bool generateMipMap, 
+    SamplerDesc* mipMapSampler)
 {
     if( mTextureHandle )
     {
@@ -101,7 +103,7 @@ bool Texture2D::LoadPNGFromFile(GPUDevice* device,
 
             mTextureHandle = device->Texture2DLoadFromSystemMemory(
                 this, mInternalFormat, Width, Height, mFormat,
-                mComponentType, generateMipMap, buffer);
+                mComponentType, generateMipMap, mipMapSampler, buffer);
             HasMipMap = generateMipMap;
 
 #ifdef RTGI_OUTPUT_TEXTURE_RESOURCE_LOADING
@@ -122,7 +124,8 @@ bool Texture2D::LoadPNGFromFile(GPUDevice* device,
 }
 //----------------------------------------------------------------------------
 bool Texture2D::LoadPFMFromFile(GPUDevice* device, 
-    const std::string& fileName, bool generateMipMap)
+    const std::string& fileName, bool generateMipMap, 
+    SamplerDesc* mipMapSampler)
 {
 	// This function is based on the PFM loader of Thorsten Grosch and Tobias 
 	// Ritschel's demo.
@@ -200,7 +203,7 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device,
 
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
-        generateMipMap, pixels);
+        generateMipMap, mipMapSampler, pixels);
     HasMipMap = generateMipMap;
 
 	free(pixels);
@@ -219,7 +222,7 @@ bool Texture2D::LoadPFMFromFile(GPUDevice* device,
 bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
     BufferInternalFormat internalFormat, int width, int height,
     BufferFormat format, BufferComponentType type, void* pixels, 
-    bool generateMipMap)
+    bool generateMipMap, SamplerDesc* mipMapSampler)
 {
     if( mTextureHandle )
     {
@@ -235,7 +238,7 @@ bool Texture2D::LoadFromSystemMemory(GPUDevice* device,
 
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
-        generateMipMap, pixels);
+        generateMipMap, mipMapSampler, pixels);
     HasMipMap = generateMipMap;
 
 	return true;
@@ -261,7 +264,8 @@ bool Texture2D::LoadFromTextureBuffer(GPUDevice* device,
 #endif
 //----------------------------------------------------------------------------
 void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
-    BufferFormat format, bool generateMipMap, void* initData)
+    BufferFormat format, bool generateMipMap, SamplerDesc* mipMapSampler, 
+    void* initData)
 {
     if( mTextureHandle )
     {
@@ -326,7 +330,7 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
 
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType, 
-        generateMipMap, initData);
+        generateMipMap, mipMapSampler, initData);
     HasMipMap = generateMipMap;
 }
 //--------------------------------------------------------------------------
@@ -381,7 +385,7 @@ void Texture2D::CreateLDRandomTextureRGBF(GPUDevice* device,
 	
     mTextureHandle = device->Texture2DLoadFromSystemMemory(
         this, mInternalFormat, Width, Height, mFormat, mComponentType,
-        false, pixels);
+        false, 0, pixels);
 
 	delete[] pixels;
 }

@@ -43,7 +43,10 @@ TriangleMesh::~TriangleMesh()
 //----------------------------------------------------------------------------
 int TriangleMesh::GetVoxelizerRasterDimension(Voxelizer* voxelizer)
 {
-    float triangleDim = GetTriangleMaxEdgeLength();
+    float triangleDim = GetModelSpaceTriangleMaxEdgeLength();
+    glm::vec3 scale = mSpatialInfo->GetWorldScale();
+    float maxScale = RTGI_MAX(RTGI_MAX(scale.x, scale.y), scale.z);
+    triangleDim *= maxScale;
     float ratio = triangleDim / voxelizer->GetSceneBBMaxLength();
     int rasterizerDim = (int)ceilf(ratio * (float)voxelizer->VoxelGridDim) +
         voxelizer->RasterizerDimBias;
@@ -589,7 +592,7 @@ AABB TriangleMesh::GetWorldSpaceBB() const
 	return res;
 }
 //----------------------------------------------------------------------------
-float TriangleMesh::GetTriangleMaxEdgeLength() const
+float TriangleMesh::GetModelSpaceTriangleMaxEdgeLength() const
 {
     return mTriangleMaxEdgeLength;
 }

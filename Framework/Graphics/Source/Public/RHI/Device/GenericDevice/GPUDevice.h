@@ -95,8 +95,8 @@ typedef void (GPUDevice::*GPUDeviceTexture1DGetDataFromGPUMemory)(
     Texture* texture, void* dstData);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture2DLoadFromSystemMemory)(
     Texture* texture, BufferInternalFormat internalFormat, int width, 
-    int height, BufferFormat format, BufferComponentType type, bool mipMap,
-    void* pixels);
+    int height, BufferFormat format, BufferComponentType type, bool mipMap, 
+    SamplerDesc* mipMapSampler, void* pixels);
 typedef TextureHandle* (GPUDevice::*GPUDeviceTexture2DLoadFromTextureBuffer)(
     Texture* texture, TextureBuffer* textureBuffer, 
     BufferInternalFormat internalFormat);
@@ -215,7 +215,7 @@ public:
     inline 	TextureHandle* Texture2DLoadFromSystemMemory(Texture* texture, 
         BufferInternalFormat internalFormat, int width, int height, 
         BufferFormat format, BufferComponentType type, bool mipMap, 
-        void* pixels);
+        SamplerDesc* mipMapSampler, void* pixels);
     inline 	TextureHandle* Texture2DLoadFromTextureBuffer(Texture* texture, 
         TextureBuffer* textureBuffer, BufferInternalFormat internalFormat);
     inline 	void Texture2DUpdateFromPixelBuffer(Texture* texture, 

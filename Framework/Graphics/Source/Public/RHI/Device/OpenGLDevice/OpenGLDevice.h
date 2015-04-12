@@ -66,7 +66,8 @@ private:
     void __Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData);
     TextureHandle* __Texture2DLoadFromSystemMemory(Texture* texture, 
         BufferInternalFormat internalFormat, int width, int height, 
-        BufferFormat format, BufferComponentType type, bool mipMap, void* pixels);
+        BufferFormat format, BufferComponentType type, bool mipMap, 
+        SamplerDesc* mipMapSampler, void* pixels);
     TextureHandle* __Texture2DLoadFromTextureBuffer(Texture* texture, 
         TextureBuffer* textureBuffer, BufferInternalFormat internalFormat);
     void __Texture2DUpdateFromPixelBuffer(Texture* texture, PixelBuffer* pixelBuffer);

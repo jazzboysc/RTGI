@@ -654,7 +654,7 @@ void OpenGLDevice::__Texture1DGetDataFromGPUMemory(Texture* texture,
 TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
     BufferInternalFormat internalFormat, int width, int height,
     BufferFormat format, BufferComponentType type, bool mipMap, 
-    void* pixels)
+    SamplerDesc* mipMapSampler, void* pixels)
 {
     OpenGLTextureHandle* textureHandle = new OpenGLTextureHandle();
     textureHandle->Device = this;
@@ -668,6 +668,20 @@ TextureHandle* OpenGLDevice::__Texture2DLoadFromSystemMemory(Texture* texture,
 
     if( mipMap )
     {
+        if( mipMapSampler )
+        {
+            // Mipmap filtering.
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                gsFilterType[(int)mipMapSampler->MinFilter]);
+
+            OPENGL_DEVICE_CHECK_ERROR;
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                gsFilterType[(int)mipMapSampler->MagFilter]);
+
+            OPENGL_DEVICE_CHECK_ERROR;
+        }
+
         glGenerateMipmap(GL_TEXTURE_2D);
     }
 

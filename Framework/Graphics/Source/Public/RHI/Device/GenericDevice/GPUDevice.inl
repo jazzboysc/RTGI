@@ -179,10 +179,11 @@ TextureHandle* GPUDevice::Texture2DLoadFromTextureBuffer(Texture* texture,
 //----------------------------------------------------------------------------
 TextureHandle* GPUDevice::Texture2DLoadFromSystemMemory(Texture* texture, 
     BufferInternalFormat internalFormat, int width, int height, 
-    BufferFormat format, BufferComponentType type, bool mipMap, void* pixels)
+    BufferFormat format, BufferComponentType type, bool mipMap, 
+    SamplerDesc* mipMapSampler, void* pixels)
 {
     return (this->*_Texture2DLoadFromSystemMemory)(texture, internalFormat, 
-        width, height, format, type, mipMap, pixels);
+        width, height, format, type, mipMap, mipMapSampler, pixels);
 }
 //----------------------------------------------------------------------------
 void GPUDevice::Texture1DGetDataFromGPUMemory(Texture* texture, void* dstData)
