@@ -21,6 +21,15 @@ SpatialInfo::~SpatialInfo()
 void SpatialInfo::SetWorldTransform(const glm::mat4& worldTrans)
 {
     mWorldTransform = worldTrans;
+    mWorldTransform[0][0] *= mWorldScale[0];
+    mWorldTransform[0][1] *= mWorldScale[1];
+    mWorldTransform[0][2] *= mWorldScale[2];
+    mWorldTransform[1][0] *= mWorldScale[0];
+    mWorldTransform[1][1] *= mWorldScale[1];
+    mWorldTransform[1][2] *= mWorldScale[2];
+    mWorldTransform[2][0] *= mWorldScale[0];
+    mWorldTransform[2][1] *= mWorldScale[1];
+    mWorldTransform[2][2] *= mWorldScale[2];
 }
 //----------------------------------------------------------------------------
 void SpatialInfo::SetWorldTranslation(const glm::vec3& translation)
