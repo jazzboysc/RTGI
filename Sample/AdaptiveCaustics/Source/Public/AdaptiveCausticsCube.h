@@ -22,6 +22,8 @@ public:
 	vec3 MaterialColor;
 	TextureCubePtr CubeTexture;
 
+	float TessLevel = 14.0f;
+
 	LightPtr Light;
 
 private:
@@ -36,6 +38,8 @@ private:
 	ShaderUniform mWorldLoc2;
 	ShaderUniform mViewLoc2;
 	ShaderUniform mProjLoc2;
+
+	ShaderUniform mTessLevelLoc;
 
 	ShaderUniform mCubemapSampler;
 	ShaderUniform mLightProjectorNearFarLoc;

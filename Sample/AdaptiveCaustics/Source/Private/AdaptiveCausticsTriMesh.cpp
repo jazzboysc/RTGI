@@ -25,6 +25,7 @@ void AdaptiveCausticsTriMesh::OnGetShaderConstants()
 	program->GetUniformLocation(&mWorldLoc2, "World");
 	program->GetUniformLocation(&mViewLoc2, "View");
 	program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
+	program->GetUniformLocation(&mTessLevelLoc, "TessLevel");
 }
 //----------------------------------------------------------------------------
 void AdaptiveCausticsTriMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -48,6 +49,7 @@ void AdaptiveCausticsTriMesh::OnUpdateShaderConstants(int technique, int pass)
 		break;
 	case AdaptiveCausticsApp::SMP_ShadowMap:
 		mWorldLoc2.SetValue(worldTrans);
+		mTessLevelLoc.SetValue(TessLevel);
 		if (mCamera)
 		{
 			glm::mat4 viewTrans = mCamera->GetViewTransform();

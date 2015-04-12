@@ -7,7 +7,7 @@ VisualizerScreenQuad::VisualizerScreenQuad(Material* material)
     :
     ScreenQuad(material, 0)
 {
-    ShowMode = 0;
+	ShowMode = Visualizer::eSM_CausticMap;
 }
 //----------------------------------------------------------------------------
 VisualizerScreenQuad::~VisualizerScreenQuad()
@@ -121,7 +121,7 @@ void Visualizer::Initialize(GPUDevice* device,
     mScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mScreenQuad->CreateDeviceResource(device);
 
-	SetShowMode(eSM_ReceiverLightSpacePosition);
+	SetShowMode(eSM_CausticMap);
 }
 //----------------------------------------------------------------------------
 void Visualizer::Render(int technique, int pass)

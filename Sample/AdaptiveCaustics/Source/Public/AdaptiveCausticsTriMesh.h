@@ -22,10 +22,14 @@ public:
 	vec3 MaterialColor;
 	Texture2DPtr Texture;
 
+	float TessLevel = 14.0f;
+
 private:
 	ShaderUniform mWorldLoc2;
 	ShaderUniform mViewLoc2;
 	ShaderUniform mProjLoc2;
+
+	ShaderUniform mTessLevelLoc;
 
 	ShaderUniform mMaterialColorLoc;
 	ShaderUniform mLightProjectorNearFarLoc;

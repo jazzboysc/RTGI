@@ -37,6 +37,8 @@ private:
 	void InitializeScene();
 	void InitializeFBO();
 
+	bool bIsSpinningMesh = false;
+
 	ReceiverResourceRendererPtr mReceiverResourceRenderer;
 	RefractorResourceRendererPtr mRefractorResourceRenderer;
 	ShadowMapRendererPtr mShadowMapRenderer;

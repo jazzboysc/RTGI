@@ -31,6 +31,29 @@ struct TraversalBufferData
 	VertexBufferPtr genericTraversalStartBuffer;
 	VertexBufferPtr genericTraversalBuffers[5];
 };
+struct ACMBuffer
+{
+	vec4 something;
+};
+
+struct ACMAtomicCounter
+{
+	uint writeCount;
+	uint temp;
+};
+
+struct ACMUniformBuffer
+{
+	uint mipmapLevel; // 2^6 to start with
+	uint readOffset;
+	uint readCount;
+	uint writeOffset;
+	uint width;
+	uint height;
+	float deltaX;
+	float deltaY;
+};
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 01/26/2015
@@ -46,10 +69,18 @@ public:
 	virtual void OnPreDispatch(unsigned int pass);
 	virtual void OnPostDispatch(unsigned int pass);
 
+	ACMUniformBuffer UniformCache;
+	ACMAtomicCounter AtomicCounterCache;
+
 	ShaderUniform ImageUnit0Loc;
 	ShaderUniform ImageUnit1Loc;
 	Texture2DPtr mCompTexture;
 	Texture2DArrayPtr mNormalTextures;
+
+	AtomicCounterBufferPtr mAtomicCounterBuffer;
+
+	StructuredBufferPtr mACMBuffer;
+	UniformBufferPtr mACMUniformBuffer;
 };
 
 typedef RefPointer<AdaptiveCausticsTraversalInfo> GatherVoxelFragmentListInfoPtr;
@@ -71,18 +102,19 @@ public:
 		RefractorResourceRenderer* refractorResourceRenderer,
 		Camera* mainCamera);
 
-	void InitializeMinCausticHierarchy(GPUDevice* pDevice, VertexBuffer* pVB, int resolution);
+	void InitializeMinCausticHierarchy(GPUDevice* pDevice, AdaptiveCausticsTraversalInfo* pTask, int resolution);
 	void CreateCausticsResource(CausticsMapDesc* desc);
 	void Render(int technique, int pass, Camera* camera);
 
 	Texture2DPtr mCompTexture;
+	FrameBufferPtr mFBOClear;
 
 private:
 	PipelineStateBlockPtr mPSB;
 
 	CausticsPointSetPtr mPoints;
 
-	AdaptiveCausticsTraversalInfo* mAdaptiveCausticsTraversalTask;
+	AdaptiveCausticsTraversalInfo* mTraversalTask;
 
 	TraversalBufferData tbd;
 	Texture2DPtr mReceiverPositionTexture;

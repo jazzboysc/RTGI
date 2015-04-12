@@ -1,6 +1,12 @@
 #include "CausticMapRenderer.h"
 
 using namespace RTGI;
+#define DEBUG_CAUSTCIS
+#define START_LOD 6.0f
+#define START_KERNEL_WIDTH (uint)(pow(2.0f, (float)START_LOD) + 0.5f)
+#define START_KERNEL_SIZE START_KERNEL_WIDTH * START_KERNEL_WIDTH
+#define KERNEL_WIDTH(lod) (uint)(pow(2.0f, (float)lod) + 0.5f)
+#define KERNEL_SIZE(lod) KERNEL_WIDTH(lod) * KERNEL_WIDTH(lod)
 
 //----------------------------------------------------------------------------
 CausticMapRenderer::CausticMapRenderer(GPUDevice* device,
@@ -34,24 +40,27 @@ void AdaptiveCausticsTraversalInfo::OnGetShaderConstants()
 	program->GetUniformLocation(&ImageUnit1Loc, "refractorNormal");
 }
 //----------------------------------------------------------------------------
-void AdaptiveCausticsTraversalInfo::OnPreDispatch(unsigned int)
+void AdaptiveCausticsTraversalInfo::OnPreDispatch(unsigned int pass)
 {
 	SamplerDesc sampler;
-	sampler.MinFilter = FT_Linear_Linear;
-	sampler.MagFilter = FT_Linear;
+	sampler.MinFilter = FT_Nearest;
+	sampler.MagFilter = FT_Nearest;
 	sampler.WrapS = WT_Clamp;
 	sampler.WrapT = WT_Clamp;
 
-	ImageUnit0Loc.SetValue(0);
-	ImageUnit1Loc.SetValue(1);
-	mCompTexture->BindToImageUnit(0, BufferAccess::BA_Write_Only);
-	mNormalTextures->BindToImageUnit(1, BufferAccess::BA_Read_Only, true);
-	//mNormalTextures->BindToSampler(1, &sampler);
+	if (pass == 0)
+	{
+		ImageUnit0Loc.SetValue(0);
+		ImageUnit1Loc.SetValue(1);
+		mCompTexture->BindToImageUnit(0, BufferAccess::BA_Write_Only);
+		//mNormalTextures->BindToImageUnit(1, BufferAccess::BA_Read_Only, true);
+		mNormalTextures->BindToSampler(1, &sampler);
+	}
 
 	glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT);
 }
 //----------------------------------------------------------------------------
-void AdaptiveCausticsTraversalInfo::OnPostDispatch(unsigned int)
+void AdaptiveCausticsTraversalInfo::OnPostDispatch(unsigned int pass)
 {
 	glMemoryBarrier(GL_ALL_BARRIER_BITS);
 }
@@ -74,27 +83,30 @@ void CausticMapRenderer::Initialize(GPUDevice* device,
 }
 //----------------------------------------------------------------------------
 void CausticMapRenderer::InitializeMinCausticHierarchy(
-	GPUDevice* pDevice, VertexBuffer* pVB, int resolution)
+	GPUDevice* pDevice, AdaptiveCausticsTraversalInfo* pVB, int resolution)
 {
-	size_t bufSize = resolution * resolution * sizeof(fvec4);
-	float *causticStartPoints = (float *)malloc(bufSize);
+	size_t bufSize = resolution * resolution * sizeof(vec4);
+	vec4* causticStartPoints = (vec4*) malloc(bufSize);
 	for (int i = 0, j = resolution * resolution; i < j; ++i)
 	{
 		// 3D buffer: res * res * 4
 		int x = i % resolution;
 		int y = i / resolution;
-		causticStartPoints[4 * i + 0] = x / (float)resolution;
-		causticStartPoints[4 * i + 1] = y / (float)resolution;
-		causticStartPoints[4 * i + 2] = 0;
-		causticStartPoints[4 * i + 3] = 0;
+		causticStartPoints[i] = fvec4(x / (float)resolution, y / (float)resolution, 0, 0);
+		//causticStartPoints[i] = fvec4(1, 0, 0, 0);
 	}
-	pVB->LoadFromSystemMemory(pDevice, bufSize, causticStartPoints, RTGI::BufferUsage::BU_Static_Draw);
 
-	mPoints->LoadFromSystemMemory(bufSize/4, causticStartPoints, 4);
-
-	mPoints->CreateDeviceResource(mDevice);
+	mTraversalTask->mACMBuffer->Bind(0);
+	mTraversalTask->mACMBuffer->UpdateSubData(0, sizeof(ACMBuffer), bufSize, causticStartPoints);
 
 	free(causticStartPoints);
+
+	//pVB->LoadFromSystemMemory(pDevice, bufSize, causticStartPoints, RTGI::BufferUsage::BU_Static_Draw);
+
+	//mPoints->LoadFromSystemMemory(bufSize/4, causticStartPoints, 4);
+
+	//mPoints->CreateDeviceResource(mDevice);
+
 }
 //----------------------------------------------------------------------------
 void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
@@ -113,33 +125,9 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 
 	ComputePass* PassInfo_AdaptiveCausticsTraversal = new ComputePass(
 		PI_AdaptiveCausticsTraversal);
-	mAdaptiveCausticsTraversalTask = new AdaptiveCausticsTraversalInfo();
-	mAdaptiveCausticsTraversalTask->AddPass(PassInfo_AdaptiveCausticsTraversal);
-	mAdaptiveCausticsTraversalTask->CreateDeviceResource(mDevice);
-
-	// Create Adaptive caustics traversal shader
-	//*
-	ShaderProgramInfo PI_Traversal;
-	PI_Traversal
-		<< "AdaptiveCaustics/TraversalShader_PassDownVertex.vert"
-		<< "AdaptiveCaustics/TraversalShader_MaxTraversal.geom"
-		<< "AdaptiveCaustics/TraversalShader_DoNothing.frag";
-	//*/
-
-	auto mtAdaptiveCausticsTraversal = new MaterialTemplate(
-		new Technique({
-		new Pass(PI_Traversal) })
-		);
-
-	mPoints = new AdaptiveCausticsPointSet(
-		new Material(mtAdaptiveCausticsTraversal));
-
-	// First a low-resolution start buffer to begin our hierarchical traversal
-	//    (so we need not start from a single photon).
-	tbd.genericTraversalStartBuffer = new VertexBuffer();
-	// Also initializes the initial data of mStartPoints
-	//this->InitializeMinCausticHierarchy(this->mDevice, tbd.genericTraversalStartBuffer, 64);
-
+	mTraversalTask = new AdaptiveCausticsTraversalInfo();
+	mTraversalTask->AddPass(PassInfo_AdaptiveCausticsTraversal);
+	mTraversalTask->CreateDeviceResource(mDevice);
 
 	// Now we need more generic, large traversal buffers to ping-pong between
 	//     for other rendering modes.  Here I allocate an array of these.  Many
@@ -148,20 +136,42 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 	//     different sizes, I have to remember which is which!  (And then they're
 	//     not generic!).
 
-
-	GLsizeiptr traversalBufSz = 2048 * 2048 * sizeof(float)* 4;
-	for (int i = 0, j = 5; i < j; ++i)
-	{
-		tbd.genericTraversalBuffers[i] = new VertexBuffer();
-		tbd.genericTraversalBuffers[i]->ReserveMutableDeviceResource(this->mDevice, traversalBufSz, BU_Stream_Copy);
-	}
-
-	// Initialize various other OpenGL identifier data
-	glGenQueries(1, &mPrimCountQuery);
-
 	mCompTexture = new Texture2D();
 	mCompTexture->CreateRenderTarget(mDevice, desc->Width, desc->Height, BF_RGBAF);
 
+	// Clear without drawing
+	Texture2D* textures[] = { mCompTexture };
+	mFBOClear = new FrameBuffer(mDevice);
+	mFBOClear->SetRenderTargets(1, (Texture**)&mCompTexture);
+	mFBOClear->Enable();
+	glClear(GL_COLOR_BUFFER_BIT);
+	mFBOClear->Disable();
+
+	mTraversalTask->mAtomicCounterBuffer = new AtomicCounterBuffer();
+#ifdef DEBUG_CAUSTCIS
+	mTraversalTask->mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice,
+		sizeof(ACMAtomicCounter), BU_Dynamic_Copy);
+#else
+	mTraversalTask->mAtomicCounterBuffer->ReserveImmutableDeviceResource(mDevice,
+		sizeof(ACMAtomicCounter));
+#endif
+
+	// Initialize atomic counter
+	mTraversalTask->AtomicCounterCache.writeCount = START_KERNEL_SIZE / 4;
+	mTraversalTask->AtomicCounterCache.temp = 0;
+	mTraversalTask->mAtomicCounterBuffer->UpdateSubData(0, 0, sizeof(ACMAtomicCounter),
+		(void*)&mTraversalTask->AtomicCounterCache);
+
+	// Storage buffer
+	mTraversalTask->mACMBuffer = new StructuredBuffer();
+	auto bufferSize = sizeof(ACMBuffer) + KERNEL_SIZE(11) * sizeof(vec4);
+	mTraversalTask->mACMBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Stream_Copy);
+	InitializeMinCausticHierarchy(mDevice, mTraversalTask, START_KERNEL_WIDTH);
+
+	// Uniform buffer
+	mTraversalTask->mACMUniformBuffer = new UniformBuffer();
+	mTraversalTask->mACMUniformBuffer->ReserveMutableDeviceResource(mDevice, sizeof(ACMUniformBuffer), BU_Dynamic_Draw);
+	mTraversalTask->mACMUniformBuffer->UpdateSubData(0, 0, sizeof(ACMUniformBuffer), (void*)&mTraversalTask->UniformCache);
 #ifdef _DEBUG
 	GLenum res = glGetError();
 	assert(res == GL_NO_ERROR);
@@ -171,157 +181,156 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 {
 	SubRenderer::PreRender(0, 0);
-	// The actual hierarchical traversal is given in code in utilRoutines.cpp.  This
-	//    code traverses our photon hierarchy and outputs the correct photons as 
-	//    splats into the current buffer (the causticMap[lightNum] enabled above)
-	glBlendFunc(GL_ONE, GL_ONE);
-	int startLevel = 6;  // The starting traversal level (2^6 = 64x64 photons)
+	// Setup input and output
+	mTraversalTask->mCompTexture = mCompTexture;
+	mTraversalTask->mNormalTextures = mRefractorFrontAndBackNormalTextures;
 
-// 	HierarchicalTransformFeedbackTraversalWithBatching(
-//		data->shader->adaptCaustic_traverse,
-// 		data->shader->adaptCaustic_splat,
-// 		startLevel,
-// 		lightNum);
-
-	// Setup shortcuts to make code more readable
-	auto travBuf = tbd.genericTraversalBuffers;
-	auto startBuf = tbd.genericTraversalStartBuffer;
-
-	// We have a specific resolution level to start at (64x64, 2^6 x 2^6, or "level" 6).  
-	//   Unfortunately, mipmaps count "0" as the highest resolution, and we count "0" 
-	//   as a 1 x 1 image, so we need this computation to get the correct mipmap level 
-	//   for our shader.  This is then decremented (because we increase resolution) 
-	//   each step as we traverse.
-	int decrCounter = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - startLevel;
-
-	// What resolution is the start of our traversal at?  We'll have 
-	//   startResolution*startResolution photon clusters to process during
-	//   the first traversal step.
-	int startResolution = (int)(pow(2.0f, (float)startLevel) + 0.5);
-
-	// We do ping-ponging back and forth between two temporary vertex buffers
-	//   that store our intermediate photons.  To guarantee we always end with
-	//   out last pass output to the SAME BUFFER, no matter the # of traversals,
-	//   we compute which buffer we should start with.
-	int currBuf = 1 - (mMaxTraversalLevel - startLevel) % 2; // Computed so last standard traversal outputs travBuf[0] 
-
-	// A primitive count temporary we'll reuse a lot.
-	int primCount = startResolution * startResolution;
-
-	mPoints->NormalTextures = mRefractorFrontAndBackNormalTextures;
-
-	// Don't rasterize these...
-	//glEnable(GL_RASTERIZER_DISCARD);
-	//glDisable(GL_DEPTH_TEST);
-	mAdaptiveCausticsTraversalTask->mCompTexture = mCompTexture;
-	mAdaptiveCausticsTraversalTask->mNormalTextures = mRefractorFrontAndBackNormalTextures;
-	mAdaptiveCausticsTraversalTask->DispatchCompute(0, 32, 32, 1);
-	//glEnable(GL_DEPTH_TEST);
-
-	/*
-	traverse,
-	stepCount > 0 ? travBuf[1-currBuf] : startBuf,
-	travBuf[currBuf],
-	data->fbo->deferredCaustic_refractorGeom->GetWidth(),
-	decrCounter--,
-	stepCount > 0 ? primCount : startResolution * startResolution );
-	*/
-
-	/*
-	auto deferredBufferWidth = mRefractorFrontAndBackNormalTextures->Width;
-
-	for (int stepCount = 0; stepCount < mMaxTraversalLevel - startLevel; stepCount++)
+	// Reset atomic counters.
+#ifdef DEBUG_CAUSTCIS
+	auto counterData0 =
+		(ACMAtomicCounter*)mTraversalTask->mAtomicCounterBuffer->Map(BA_Read_Write);
+	assert(counterData0);
+	if (counterData0)
 	{
-		int resolution;
-		auto inputBuffer = (GLuint)(stepCount > 0 ? travBuf[1 - currBuf] : startBuf)->GetBufferHandle();
-		auto outputBuffer = (GLuint)travBuf[currBuf]->GetBufferHandle();
-		mPoints->inputBuffer = inputBuffer;
-		mPoints->outputBuffer = outputBuffer;
-		// Set our output buffer
-		glBindBufferBaseNV(GL_TRANSFORM_FEEDBACK_BUFFER_NV, 0, outputBuffer);
-		glBeginTransformFeedbackNV(GL_POINTS);
-		glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN_NV, mPrimCountQuery);
-
-		// Set our input buffer
-		glBindBuffer(GL_ARRAY_BUFFER, inputBuffer);
-		glVertexPointer(4, GL_FLOAT, 0, 0/*BUFFER_OFFSET(inputOffsetBytes));
-
-		// Figure out if we're using mipmap data or interpolating between texels at the
-		//    full resolution image of the geometry buffers.
-		if (decrCounter > 0)
-			resolution = deferredBufferWidth / (int)(pow(2.0f, (float)decrCounter) + 0.5);
-		else
-			resolution = deferredBufferWidth * (int)(pow(2.0f, (float)-decrCounter) + 0.5);
-
-		// How far apart are texels at our current mipmap/traversal level?
-		mPoints->deltaHierRes = 0.5f / resolution;
-		// What level are we at in the hierarchy?
-		mPoints->currHierarchyLevel = (float)decrCounter;
-
-		// Go ahead and draw
-		glDrawArrays(GL_POINTS, 0, primCount);
-
-		// Return the number of primitives (photons) output in this pass
-		GLint TransformFeedbackPrimCount;
-		glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN_NV);
-		glEndTransformFeedbackNV();
-		glGetQueryObjectiv(mPrimCountQuery, GL_QUERY_RESULT, &TransformFeedbackPrimCount);
-
-		primCount = TransformFeedbackPrimCount;
-		currBuf = 1 - currBuf;
+		mTraversalTask->AtomicCounterCache = *counterData0;
+		counterData0->writeCount = START_KERNEL_SIZE / 4;
+		counterData0->temp = 0;
 	}
+	mTraversalTask->mAtomicCounterBuffer->Unmap();
+#else
+	unsigned int counterData0[2];
+	counterData0[0] = 0;
+	counterData0[1] = 0;
+	mTraversalTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int,
+		counterData0);
+#endif
 
-	// Disable raterization discards
-	glDisable(GL_RASTERIZER_DISCARD);
-	*/
-
-	/*
-
-	for (int stepCount = 0; stepCount < *data->param->maxTraversalLevel - startLevel; stepCount++,currBuf=1-currBuf)
+	// Initialize uniform buffer
+	auto uniformData = (ACMUniformBuffer*)mTraversalTask->mACMUniformBuffer->Map(BA_Read_Write);
+	assert(uniformData);
+	if (uniformData)
 	{
-		int resolution;
-
-		// Set our output buffer
-		glBindBufferBaseNV( GL_TRANSFORM_FEEDBACK_BUFFER_NV, 0, outputBuffer );
-		BeginPrimitiveCount( GL_POINTS, data->glID->primCountQuery  );
-
-		// Set our input buffer
-		glBindBuffer( GL_ARRAY_BUFFER, inputBuffer );
-		glVertexPointer( 4, GL_FLOAT, 0, BUFFER_OFFSET( inputOffsetBytes ) );
-
-		// Figure out if we're using mipmap data or interpolating between texels at the
-		//    full resolution image of the geometry buffers.
-		if (mipLevel>0)
-		resolution = deferredBufferWidth / (int)( pow( 2.0f, (float)mipLevel ) + 0.5 );
-		else
-		resolution = deferredBufferWidth * (int)( pow( 2.0f, (float)-mipLevel ) + 0.5 );
-
-		// How far apart are texels at our current mipmap/traversal level?
-		traverse->SetParameter( "deltaHierRes", 0.5f/resolution );
-
-		// What level are we at in the hierarchy?
-		traverse->SetParameter( "currHierarchyLevel", (float)mipLevel );
-
-		// Go ahead and draw
-		glDrawArrays( GL_POINTS, 0, inputPrims );
-
-		// Return the number of primitives (photons) output in this pass
-		return EndPrimitiveCount( data->glID->primCountQuery  );
+		uniformData->readOffset = 0;
+		uniformData->readCount = START_KERNEL_SIZE;
+		uniformData->writeOffset = START_KERNEL_SIZE;
+		uniformData->width = mCompTexture->Width;
+		uniformData->height = mCompTexture->Height;
+		uniformData->deltaX = 0.5f / (float)START_KERNEL_WIDTH;
+		uniformData->deltaY = 0.5f / (float)START_KERNEL_WIDTH;
 	}
+	mTraversalTask->mACMUniformBuffer->Unmap();
 
-	// Disable raterization discards
-	glDisable( GL_RASTERIZER_DISCARD_NV );
+	// Initialize uniform buffer cache
+	mTraversalTask->UniformCache.mipmapLevel = 0;
+	mTraversalTask->UniformCache.readOffset = 0;
+	mTraversalTask->UniformCache.readCount = START_KERNEL_SIZE;
+	mTraversalTask->UniformCache.writeOffset = START_KERNEL_SIZE / 4; // Every vertex plits into 4
+	mTraversalTask->UniformCache.width = mCompTexture->Width;
+	mTraversalTask->UniformCache.height = mCompTexture->Height;
+	mTraversalTask->UniformCache.deltaX = 0.5f / (float)START_KERNEL_WIDTH;
+	mTraversalTask->UniformCache.deltaY = 0.5f / (float)START_KERNEL_WIDTH;
 
-	// Disable the shader
-	FrameBuffer *inputBuf  = data->fbo->deferredCaustic_refractorGeom;
-	traverse->DisableTexture( GL_TEXTURE0, inputBuf->GetTextureType( FBO_COLOR0 ) );
-	traverse->DisableShader();
+	// Initialize atomic counter
+	mTraversalTask->AtomicCounterCache.writeCount = START_KERNEL_SIZE / 4;
+	mTraversalTask->AtomicCounterCache.temp = 0;
 
+	mFBOClear->Enable();
+	//glClear(GL_COLOR_BUFFER_BIT);
+	mFBOClear->Disable();
 
-	//*/
+	uint currentLOD = (uint)START_LOD;  // The starting traversal level (2^6 = 64x64 photons)
+	int numLevels = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - currentLOD;
+	for (int i = 0; i < numLevels; ++i/*, ++currentLOD*/)
+	{
 
+		// We have a specific resolution level to start at (64x64, 2^6 x 2^6, or "level" 6).  
+		//   Unfortunately, mipmaps count "0" as the highest resolution, and we count "0" 
+		//   as a 1 x 1 image, so we need this computation to get the correct mipmap level 
+		//   for our shader.  This is then decremented (because we increase resolution) 
+		//   each step as we traverse.
+		int glMipmapLevel = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - currentLOD;
 
-	//SubRenderer::Render(technique, pass, SRO_FrameBuffer, mPSB, camera);
+		// What resolution is the start of our traversal at?  We'll have 
+		//   startResolution*startResolution photon clusters to process during
+		//   the first traversal step.
+		int currentResolution = KERNEL_WIDTH(currentLOD);
+
+		// Reset atomic counters.
+#ifdef DEBUG_CAUSTCIS
+		auto counterData = (ACMAtomicCounter*)mTraversalTask->mAtomicCounterBuffer->Map(BA_Read_Write);
+		assert(counterData);
+		if (counterData)
+		{
+			mTraversalTask->AtomicCounterCache = *counterData;
+			counterData->writeCount = 0;
+			counterData->temp = 0;
+		}
+		mTraversalTask->mAtomicCounterBuffer->Unmap();
+#else
+		unsigned int counterData[2];
+		counterData[0] = 0;
+		counterData[1] = 0;
+		mTraversalTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int,
+			counterData);
+#endif
+
+		// Pass in new argument
+		auto uniformData0 = (ACMUniformBuffer*)mTraversalTask->mACMUniformBuffer->Map(BA_Read_Write);
+		assert(uniformData0);
+		if (uniformData0)
+		{
+			mTraversalTask->UniformCache = *uniformData0;
+			uniformData0->mipmapLevel = glMipmapLevel;
+			uniformData0->deltaX = 0.5f / currentResolution;
+			uniformData0->deltaY = 0.5f / currentResolution;
+		}
+		mTraversalTask->mACMUniformBuffer->Unmap();
+
+		// Check input
+		auto data1 = (ACMBuffer*)mTraversalTask->mACMBuffer->Map(BA_Read_Write);
+		mTraversalTask->mACMBuffer->Unmap();
+
+		// Execute traversal task
+		mTraversalTask->mACMUniformBuffer->Bind(0);
+		mTraversalTask->mACMBuffer->Bind(0);
+		mTraversalTask->DispatchCompute(0,
+			//currentResolution,
+			//currentResolution,
+			768,
+			768,
+			//4 * mTraversalTask->AtomicCounterCache.writeCount,
+			//1,
+			1);
+		mTraversalTask->mACMBuffer->Bind(0);
+		mTraversalTask->mACMUniformBuffer->Bind(0);
+
+#ifdef DEBUG_CAUSTCIS
+		auto bufferData = (unsigned int*)mTraversalTask->mACMBuffer->Map(BA_Read_Write);
+		mTraversalTask->mACMBuffer->Unmap();
+#endif
+
+		// Generate statistics
+		auto counterData1 = (ACMAtomicCounter*)mTraversalTask->mAtomicCounterBuffer->Map(BA_Read_Write);
+		assert(counterData1);
+		if (counterData1)
+		{
+			mTraversalTask->AtomicCounterCache = *counterData1;
+		}
+		mTraversalTask->mAtomicCounterBuffer->Unmap();
+
+		/* Increment uniform data for next lod
+		auto uniformData = (ACMUniformBuffer*)mTraversalTask->mACMUniformBuffer->Map(BA_Read_Write);
+		assert(uniformData);
+		if (uniformData)
+		{
+			mTraversalTask->UniformCache = *uniformData;
+			uniformData->readOffset += mTraversalTask->UniformCache.readCount;
+			uniformData->readCount = 4 * mTraversalTask->AtomicCounterCache.writeCount;
+			uniformData->writeOffset += 4 * mTraversalTask->AtomicCounterCache.writeCount;
+		}
+		mTraversalTask->mACMUniformBuffer->Unmap();
+		//*/
+	}
 	SubRenderer::PostRender(0, 0);
 }
 //----------------------------------------------------------------------------

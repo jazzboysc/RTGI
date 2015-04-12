@@ -58,7 +58,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	mLight = new Light;
 	mLight->SetProjector(mLightProjector);
-	mLight->Color = vec3(0.9f, 0.9f, 0.7f);
+	mLight->Intensity = vec3(0.9f, 0.9f, 0.7f);
 
 	// Create light.
 	ShaderProgramInfo PI_LightMesh;
@@ -162,7 +162,14 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mScene.mesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
 	mScene.mesh->SetWorldTranslation(vec3(0.0f, -0.8f, 0.0f));
 	mScene.mesh->SetWorldScale(vec3(3.0f));
-	mScene.mesh->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
+	auto scale = glm::scale(mat4(), vec3(3));
+	mScene.mesh->UpdateModelSpaceVertices(scale);
+    mScene.mesh->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
+	auto matrix = mScene.mesh->GetWorldTransform();
+	auto size = sizeof(mat4);
+	auto size1 = sizeof(fmat4);
+	auto size2 = sizeof(fmat4x4);
+	mScene.mesh->TessLevel = 1.0f;
 
 	// Render sets
 	mScene.receiver = new RenderSet();
@@ -197,7 +204,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 
 	infoStartY = 20;
-	InformationPanel::GetInstance()->AddRadioButton("Receiver Light Space Position", 16, infoStartY, 60, 20, true);
+	InformationPanel::GetInstance()->AddRadioButton("Receiver Light Space Position", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Refractor Light Space Front Normal", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
@@ -205,11 +212,12 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Shadow Map", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, true);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddCheckBox("Spin Mesh", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
 
-	infoPanel->SetTimingLabelValue("Debug A", 0.01);
 
 
 
@@ -267,6 +275,30 @@ void AdaptiveCausticsApp::FrameFunc()
 	static double workLoad;
 	static double totalWorkLoad;
 	totalWorkLoad = 0.0;
+
+	static float angle = -60.0f;
+	if (bIsSpinningMesh)
+	{
+		angle -= 1.0f;
+		mat4 rot;
+		rot = rotate(mat4(), radians(angle), vec3(0, 1, 0));
+		vec3 trans = mScene.mesh->GetWorldTranslation();
+		auto matrix = mScene.mesh->GetWorldTransform();
+		vec3 scale = mScene.mesh->GetWorldScale();
+		mScene.mesh->SetWorldTransform(rot);
+		mScene.mesh->SetWorldTranslation(trans);
+		mScene.mesh->SetWorldScale(scale);
+
+		auto matrix2 = mScene.mesh->GetWorldTransform();
+		mScene.mesh->SetWorldScale(vec3(3, 3, 3));
+
+	}
+	else
+	{
+		//mScene.mesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
+		//mScene.mesh->SetWorldTranslation(vec3(0.0f, -0.8f, 0.0f));
+		//mScene.mesh->SetWorldScale(vec3(3));
+	}
 
 	// Resource gathering pass
 	mReceiverResourceRenderer->Render(0, SMP_Resource, mLightProjector);
@@ -372,6 +404,19 @@ void AdaptiveCausticsApp::OnCheckBoxClick(System::Object^ sender, System::EventA
 	if (checkBox->Name == "Show Direct Shadow")
 	{
 	}
+
+	if (checkBox->Name == "Spin Mesh")
+	{
+		if (checkBox->Checked)
+		{
+			this->bIsSpinningMesh = true;
+		}
+		else
+		{
+			this->bIsSpinningMesh = false;
+		}
+	}
+
 
 	//mIndirectLightingRenderer->VPLVisibilityTest(checkBox->Checked);
 }
