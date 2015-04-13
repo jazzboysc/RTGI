@@ -7,7 +7,7 @@ layout(binding = 1, offset = 4) uniform atomic_uint storageCounter2;
 layout (rgba32f, binding = 0) uniform image2D data;
 layout (binding = 1) uniform sampler2DArray refractorNormal;
 
-layout(std140, binding = 0) uniform _ACMUniformBuffer
+layout(std430, binding = 0) buffer _ACMSharedCommandBuffer
 {
 	uint mipmapLevel; // 3
 	uint readOffset; // 0
@@ -17,7 +17,7 @@ layout(std140, binding = 0) uniform _ACMUniformBuffer
 	uint height;
 	float deltaX;
 	float deltaY;
-} ACMUniformBuffer;
+} ACMSharedCommandBuffer;
 
 layout(std430, binding = 0)  buffer _ACMBuffer
 {
@@ -35,12 +35,12 @@ layout (local_size_x = 1, local_size_y = 1) in;
 void main(void)
 {
 	// local constants
-	vec2 texRes = vec2(ACMUniformBuffer.width, ACMUniformBuffer.height);
+	vec2 texRes = vec2(ACMSharedCommandBuffer.width, ACMSharedCommandBuffer.height);
 
 	vec2 TCoord = vec2(gl_GlobalInvocationID.xy) / texRes;
-	ivec2 mipmap =  textureSize(refractorNormal, int(ACMUniformBuffer.mipmapLevel)).xy;
+	ivec2 mipmap =  textureSize(refractorNormal, int(ACMSharedCommandBuffer.mipmapLevel)).xy;
 	ivec2 iTCoord = ivec2(TCoord * mipmap);
-	vec4 debugColor = texelFetch(refractorNormal, ivec3(iTCoord, 1), int(ACMUniformBuffer.mipmapLevel));
+	vec4 debugColor = texelFetch(refractorNormal, ivec3(iTCoord, 1), int(ACMSharedCommandBuffer.mipmapLevel));
 	imageStore(data, ivec2(gl_GlobalInvocationID.xy), debugColor);
 
 }

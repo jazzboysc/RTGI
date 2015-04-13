@@ -1,0 +1,45 @@
+#version 430 core
+
+// An image to store data into.
+layout(binding = 0, offset = 0) uniform atomic_uint writeCount;
+
+layout (binding = 1) uniform sampler2DArray refractorNormal;
+
+layout(std430, binding = 2) buffer _ACMSharedCommandBuffer
+{
+	uint mipmapLevel; // 3
+	uint readOffset; // 0
+	uint readCount; // 64 * 64 = 4096
+	uint writeOffset; // 4096
+	uint width;
+	uint height;
+	float deltaX;
+	float deltaY;
+} ACMSharedCommandBuffer;
+
+layout (local_size_x = 1, local_size_y = 1) in;
+
+void main(void)
+{
+	uint id = gl_GlobalInvocationID.y * gl_WorkGroupSize.y * gl_NumWorkGroups.y + gl_GlobalInvocationID.x;
+	
+	if(id == 0)
+	{
+		if( ACMSharedCommandBuffer.mipmapLevel > 0)
+		{
+			uint a =  ACMSharedCommandBuffer.mipmapLevel;
+			ACMSharedCommandBuffer.mipmapLevel = a - 1;
+		}
+
+		ivec2 texSizeMipmap =  textureSize(refractorNormal, int(ACMSharedCommandBuffer.mipmapLevel)).xy;
+		ACMSharedCommandBuffer.deltaX = 0.5 / texSizeMipmap.x;
+		ACMSharedCommandBuffer.deltaY = 0.5 / texSizeMipmap.y;
+		ACMSharedCommandBuffer.readOffset += ACMSharedCommandBuffer.readCount;
+		barrier();
+		ACMSharedCommandBuffer.readCount = 4 * atomicCounter(writeCount);
+		barrier();
+		ACMSharedCommandBuffer.writeOffset += 4 * atomicCounter(writeCount);
+	}
+
+	
+}

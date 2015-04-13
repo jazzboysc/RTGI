@@ -42,7 +42,7 @@ struct ACMAtomicCounter
 	uint temp;
 };
 
-struct ACMUniformBuffer
+struct ACMSharedCommandBuffer
 {
 	uint mipmapLevel; // 2^6 to start with
 	uint readOffset;
@@ -69,7 +69,7 @@ public:
 	virtual void OnPreDispatch(unsigned int pass);
 	virtual void OnPostDispatch(unsigned int pass);
 
-	ACMUniformBuffer UniformCache;
+	ACMSharedCommandBuffer UniformCache;
 	ACMAtomicCounter AtomicCounterCache;
 
 	ShaderUniform ImageUnit0Loc;
@@ -80,7 +80,7 @@ public:
 	AtomicCounterBufferPtr mAtomicCounterBuffer;
 
 	StructuredBufferPtr mACMBuffer;
-	UniformBufferPtr mACMUniformBuffer;
+	StructuredBufferPtr mACMSharedCommandBuffer;
 };
 
 typedef RefPointer<AdaptiveCausticsTaskInfo> GatherVoxelFragmentListInfoPtr;

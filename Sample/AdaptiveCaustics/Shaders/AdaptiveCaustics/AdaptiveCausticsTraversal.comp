@@ -7,7 +7,7 @@ layout(binding = 1, offset = 4) uniform atomic_uint storageCounter2;
 layout (rgba32f, binding = 0) uniform image2D data;
 layout (binding = 1) uniform sampler2DArray refractorNormal;
 
-layout(std140, binding = 0) uniform _ACMUniformBuffer
+layout(std430, binding = 0) buffer _ACMSharedCommandBuffer
 {
 	uint mipmapLevel; // 3
 	uint readOffset; // 0
@@ -17,9 +17,9 @@ layout(std140, binding = 0) uniform _ACMUniformBuffer
 	uint height;
 	float deltaX;
 	float deltaY;
-} ACMUniformBuffer;
+} ACMSharedCommandBuffer;
 
-layout(std430, binding = 0)  buffer _ACMBuffer
+layout(std430, binding = 1)  buffer _ACMBuffer
 {
 	vec4 debug;
 
@@ -37,37 +37,40 @@ void main(void)
 	// local constants
 	uint readIndex = gl_GlobalInvocationID.y * gl_WorkGroupSize.y * gl_NumWorkGroups.y + gl_GlobalInvocationID.x;
 
-	if(readIndex >= ACMUniformBuffer.readCount)
+	if(readIndex >= ACMSharedCommandBuffer.readCount)
 	{
 		// unneeded computation
 		//return;
 	}
 
-	vec4 uv = ACMBuffer.uv[ACMUniformBuffer.readOffset + readIndex];
-	vec4 color = texture(refractorNormal, vec3(uv.xy, 1), ACMUniformBuffer.mipmapLevel);
-	vec2 texRes = vec2(ACMUniformBuffer.width, ACMUniformBuffer.height);
+	vec4 uv = ACMBuffer.uv[ACMSharedCommandBuffer.readOffset + readIndex];
 
+	ivec2 mipmapTexSize =  textureSize(refractorNormal, int(ACMSharedCommandBuffer.mipmapLevel)).xy;
+	ivec2 iTCoordMipmap = ivec2(uv.xy * mipmapTexSize);
+	vec4 color = texelFetch(refractorNormal, ivec3(iTCoordMipmap, 1), int(ACMSharedCommandBuffer.mipmapLevel));
 
 	if(color.a == 0)
 	{
-		ivec2 imageCoord = ivec2(uv.xy * texRes);
-		imageStore(data, imageCoord, vec4(0.3, 0.3, 0.3, 1));
+		vec2 texSize = vec2(ACMSharedCommandBuffer.width, ACMSharedCommandBuffer.height);
+		imageStore(data, ivec2(uv.xy * texSize), vec4(0.3, 0.3, 0.3, 1));
 	}
 	else
 	{
 		// Allocate storage
 		uint writeIndex = 4 * atomicCounterIncrement(writeCount);
-		uint writeOffset = ACMUniformBuffer.writeOffset + writeIndex;
+		uint writeOffset = ACMSharedCommandBuffer.writeOffset + writeIndex;
 
-		vec4 texCoord0 = vec4( uv.x                          , uv.y                          , 0, 0 );
-		vec4 texCoord1 = vec4( uv.x - ACMUniformBuffer.deltaX, uv.y                          , 0, 0 );
-		vec4 texCoord2 = vec4( uv.x - ACMUniformBuffer.deltaX, uv.y - ACMUniformBuffer.deltaY, 0, 0 );
-		vec4 texCoord3 = vec4( uv.x                          , uv.y - ACMUniformBuffer.deltaY, 0, 0 );
+		vec2 texSize = vec2(ACMSharedCommandBuffer.width, ACMSharedCommandBuffer.height);
 
-		ivec2 imageCoord0 = ivec2(texCoord0.xy * texRes);
-		ivec2 imageCoord1 = ivec2(texCoord1.xy * texRes);
-		ivec2 imageCoord2 = ivec2(texCoord2.xy * texRes);
-		ivec2 imageCoord3 = ivec2(texCoord3.xy * texRes);
+		vec4 texCoord0 = vec4( uv.x                                , uv.y                                , 0, 0 );
+		vec4 texCoord1 = vec4( uv.x + ACMSharedCommandBuffer.deltaX, uv.y                                , 0, 0 );
+		vec4 texCoord2 = vec4( uv.x + ACMSharedCommandBuffer.deltaX, uv.y + ACMSharedCommandBuffer.deltaY, 0, 0 );
+		vec4 texCoord3 = vec4( uv.x                                , uv.y + ACMSharedCommandBuffer.deltaY, 0, 0 );
+
+		ivec2 imageCoord0 = ivec2(texCoord0.xy * texSize);
+		ivec2 imageCoord1 = ivec2(texCoord1.xy * texSize);
+		ivec2 imageCoord2 = ivec2(texCoord2.xy * texSize);
+		ivec2 imageCoord3 = ivec2(texCoord3.xy * texSize);
 	
 
 		ACMBuffer.uv[writeOffset + 0] = texCoord0;
@@ -82,15 +85,12 @@ void main(void)
 		vec4 color2 = texture(refractorNormal, vec3(texCoord2.xy, 1));
 		vec4 color3 = texture(refractorNormal, vec3(texCoord3.xy, 1));
 
-		if(writeIndex == 24)
-		{
-			//ACMBuffer.debug = color2;
-		}
-
+		//*
 		imageStore(data, imageCoord0, color0 + vec4(0.5, 0.1, 0.6, 0));
 		imageStore(data, imageCoord1, color1 + vec4(0.5, 0.1, 0.6, 0));
 		imageStore(data, imageCoord2, color2 + vec4(0.5, 0.1, 0.6, 0));
 		imageStore(data, imageCoord3, color3 + vec4(0.5, 0.1, 0.6, 0));
+		//*/
 	}
 }
 
