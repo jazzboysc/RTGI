@@ -33,7 +33,11 @@ public:
 		Texture** colorTextures, Texture* depthTexture = 0, 
 		Texture* stencilTexture = 0);
 
-    //void ReplaceColorTarget
+    void ReserveColorTargets(unsigned int colorTextureCount, int width, 
+        int height, int depth);
+    void SetColorTarget(unsigned int attachPoint, Texture* colorTexture);
+    void SetDepthTarget(Texture* depthTexture);
+    void SetStencilTarget(Texture* stencilTexture);
 
 	void Enable();
 	void Disable();

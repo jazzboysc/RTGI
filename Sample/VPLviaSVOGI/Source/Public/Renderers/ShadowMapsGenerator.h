@@ -1,7 +1,8 @@
 #ifndef RTGI_ShadowMapsGenerator_H
 #define RTGI_ShadowMapsGenerator_H
 
-#include "GraphicsFrameworkHeader.h"
+#include "SubRenderer.h"
+#include "LightManager.h"
 
 namespace RTGI
 {
@@ -18,11 +19,13 @@ public:
     ShadowMapsGenerator(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~ShadowMapsGenerator();
 
-    void CreateShadowMap(int width, int height, BufferFormat format);
+    void Initialize(int width, int height, BufferFormat format, 
+        LightManager* lightManager);
     void Render(int technique, int pass, Camera* camera);
 
 protected:
     PipelineStateBlockPtr mPSB;
+    LightManagerPtr mLightManager;
 };
 
 typedef RefPointer<ShadowMapsGenerator> ShadowMapsGeneratorPtr;

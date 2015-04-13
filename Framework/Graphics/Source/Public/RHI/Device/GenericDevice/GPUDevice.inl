@@ -109,6 +109,25 @@ void GPUDevice::FrameBufferSetRenderTargets(FrameBuffer* frameBuffer,
         colorTextures, depthTexture, stencilTexture);
 }
 //----------------------------------------------------------------------------
+void GPUDevice::FrameBufferSetColorTarget(FrameBuffer* frameBuffer, 
+    unsigned int attachPoint, Texture* colorTexture)
+{
+    (this->*_FrameBufferSetColorTarget)(frameBuffer, attachPoint, 
+        colorTexture);
+}
+//----------------------------------------------------------------------------
+void GPUDevice::FrameBufferSetDepthTarget(FrameBuffer* frameBuffer, 
+    Texture* depthTexture)
+{
+    (this->*_FrameBufferSetDepthTarget)(frameBuffer, depthTexture);
+}
+//----------------------------------------------------------------------------
+void GPUDevice::FrameBufferSetStencilTarget(FrameBuffer* frameBuffer, 
+    Texture* stencilTexture)
+{
+    (this->*_FrameBufferSetStencilTarget)(frameBuffer, stencilTexture);
+}
+//----------------------------------------------------------------------------
 void GPUDevice::DeleteFrameBuffer(FrameBuffer* frameBuffer)
 {
     (this->*_DeleteFrameBuffer)(frameBuffer);

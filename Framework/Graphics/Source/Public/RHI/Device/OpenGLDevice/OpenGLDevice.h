@@ -93,6 +93,12 @@ private:
     void __FrameBufferSetRenderTargets(FrameBuffer* frameBuffer, 
         unsigned int colorTextureCount, Texture** colorTextures, 
         Texture* depthTexture, Texture* stencilTexture);
+    void __FrameBufferSetColorTarget(FrameBuffer* frameBuffer, 
+        unsigned int attachPoint, Texture* colorTexture);
+    void __FrameBufferSetDepthTarget(FrameBuffer* frameBuffer, 
+        Texture* depthTexture);
+    void __FrameBufferSetStencilTarget(FrameBuffer* frameBuffer, 
+        Texture* stencilTexture);
     void __FrameBufferEnable(FrameBuffer* frameBuffer);
     void __FrameBufferDisable(FrameBuffer* frameBuffer);
 

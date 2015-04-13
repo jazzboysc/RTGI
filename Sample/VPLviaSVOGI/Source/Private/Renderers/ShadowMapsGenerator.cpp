@@ -16,11 +16,15 @@ ShadowMapsGenerator::ShadowMapsGenerator(GPUDevice* device, RenderSet* renderSet
 ShadowMapsGenerator::~ShadowMapsGenerator()
 {
     mPSB = 0;
+    mLightManager = 0;
 }
 //----------------------------------------------------------------------------
-void ShadowMapsGenerator::CreateShadowMap(int width, int height,
-    BufferFormat format)
+void ShadowMapsGenerator::Initialize(int width, int height,
+    BufferFormat format, LightManager* lightManager)
 {
+    RTGI_ASSERT(lightManager);
+    mLightManager = lightManager;
+
     AddFrameBufferTarget(RTGI_ShadowMapRenderer_ShadowMap_Name, width, height,
         0, TT_Texture2D, format);
     CreateFrameBuffer(width, height, 0, TT_Texture2D);

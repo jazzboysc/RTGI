@@ -968,6 +968,93 @@ void OpenGLDevice::__FrameBufferSetRenderTargets(FrameBuffer* frameBuffer,
     OPENGL_DEVICE_CHECK_ERROR;
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__FrameBufferSetColorTarget(FrameBuffer* frameBuffer, 
+    unsigned int attachPoint, Texture* colorTexture)
+{
+    OpenGLFBOHandle* fboHandle =
+        (OpenGLFBOHandle*)frameBuffer->GetFBOHandle();
+    RTGI_ASSERT(fboHandle);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fboHandle->mFBO);
+
+    if( colorTexture )
+    {
+        OpenGLTextureHandle* textureHandle =
+            (OpenGLTextureHandle*)colorTexture->GetTextureHandle();
+        RTGI_ASSERT(textureHandle);
+
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachPoint,
+            textureHandle->mTexture, 0);
+    }
+    else
+    {
+        glFramebufferTexture(GL_FRAMEBUFFER, 
+            GL_COLOR_ATTACHMENT0 + attachPoint, 0, 0);
+    }
+    frameBuffer->mColorBuffers[attachPoint] =
+        GL_COLOR_ATTACHMENT0 + attachPoint;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    OPENGL_DEVICE_CHECK_ERROR;
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__FrameBufferSetDepthTarget(FrameBuffer* frameBuffer, 
+    Texture* depthTexture)
+{
+    OpenGLFBOHandle* fboHandle =
+        (OpenGLFBOHandle*)frameBuffer->GetFBOHandle();
+    RTGI_ASSERT(fboHandle);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fboHandle->mFBO);
+
+    if( depthTexture )
+    {
+        OpenGLTextureHandle* textureHandle =
+            (OpenGLTextureHandle*)depthTexture->GetTextureHandle();
+        RTGI_ASSERT(textureHandle);
+
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+            textureHandle->mTexture, 0);
+    }
+    else
+    {
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, 0, 0);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    OPENGL_DEVICE_CHECK_ERROR;
+}
+//----------------------------------------------------------------------------
+void OpenGLDevice::__FrameBufferSetStencilTarget(FrameBuffer* frameBuffer, 
+    Texture* stencilTexture)
+{
+    OpenGLFBOHandle* fboHandle =
+        (OpenGLFBOHandle*)frameBuffer->GetFBOHandle();
+    RTGI_ASSERT(fboHandle);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fboHandle->mFBO);
+
+    if( stencilTexture )
+    {
+        OpenGLTextureHandle* textureHandle =
+            (OpenGLTextureHandle*)stencilTexture->GetTextureHandle();
+        RTGI_ASSERT(textureHandle);
+
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+            textureHandle->mTexture, 0);
+    }
+    else
+    {
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, 0, 0);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    OPENGL_DEVICE_CHECK_ERROR;
+}
+//----------------------------------------------------------------------------
 static GLint oldViewport[4];
 //----------------------------------------------------------------------------
 void OpenGLDevice::__FrameBufferEnable(FrameBuffer* frameBuffer)
@@ -1197,6 +1284,9 @@ OpenGLDevice::OpenGLDevice()
     _CreateFrameBuffer = (GPUDeviceCreateFrameBuffer)&OpenGLDevice::__CreateFrameBuffer;
     _DeleteFrameBuffer = (GPUDeviceDeleteFrameBuffer)&OpenGLDevice::__DeleteFrameBuffer;
     _FrameBufferSetRenderTargets = (GPUDeviceFrameBufferSetRenderTargets)&OpenGLDevice::__FrameBufferSetRenderTargets;
+    _FrameBufferSetColorTarget = (GPUDeviceFrameBufferSetColorTarget)&OpenGLDevice::__FrameBufferSetColorTarget;
+    _FrameBufferSetDepthTarget = (GPUDeviceFrameBufferSetDepthTarget)&OpenGLDevice::__FrameBufferSetDepthTarget;
+    _FrameBufferSetStencilTarget = (GPUDeviceFrameBufferSetStencilTarget)&OpenGLDevice::__FrameBufferSetStencilTarget;
     _FrameBufferEnable = (GPUDeviceFrameBufferEnable)&OpenGLDevice::__FrameBufferEnable;
     _FrameBufferDisable = (GPUDeviceFrameBufferDisable)&OpenGLDevice::__FrameBufferDisable;
     _ComputeShaderDispatch = (GPUDeviceComputeShaderDispatch)&OpenGLDevice::__ComputeShaderDispatch;

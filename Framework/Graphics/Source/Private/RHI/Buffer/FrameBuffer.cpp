@@ -34,46 +34,92 @@ FBOHandle* FrameBuffer::GetFBOHandle()
 void FrameBuffer::SetRenderTargets(unsigned int colorTextureCount, 
     Texture** colorTextures, Texture* depthTexture, Texture* stencilTexture)
 {
-    RTGI_ASSERT(colorTextureCount > 0 && 
-        colorTextureCount <= FBO_MAX_COLOR_TARGETS && colorTextures );
-
-
-	mColorTextures.clear();
-	if( mColorBuffers )
-	{
-		delete[] mColorBuffers;
-	}
-
-	mColorTextureCount = colorTextureCount;
-	mColorBuffers = new unsigned int[colorTextureCount];
-
-    // TODO:
-    // Only support uniform size targets for now.
-    TextureType textureType = colorTextures[0]->GetType();
-    switch( textureType )
+    if( colorTextureCount > 0 )
     {
-    case TT_Texture1D:
-        mWidth = ((Texture1D*)colorTextures[0])->Width;
-        break;
+        RTGI_ASSERT(colorTextureCount <= FBO_MAX_COLOR_TARGETS && 
+            colorTextures);
 
-    case TT_Texture2D:
-        mWidth = ((Texture2D*)colorTextures[0])->Width;
-        mHeight = ((Texture2D*)colorTextures[0])->Height;
-        break;
+        mColorTextures.clear();
+        if( mColorBuffers )
+        {
+            delete[] mColorBuffers;
+        }
 
-    case TT_Texture2DArray:
-        mWidth = ((Texture2DArray*)colorTextures[0])->Width;
-        mHeight = ((Texture2DArray*)colorTextures[0])->Height;
-        mDepth = ((Texture2DArray*)colorTextures[0])->Depth;
-        break;
+        mColorTextureCount = colorTextureCount;
+        mColorBuffers = new unsigned int[colorTextureCount];
 
-    default:
-        RTGI_ASSERT( false );
-        break;
+        // Only support uniform size targets.
+        TextureType textureType = colorTextures[0]->GetType();
+        switch( textureType )
+        {
+        case TT_Texture1D:
+            mWidth = ((Texture1D*)colorTextures[0])->Width;
+            break;
+
+        case TT_Texture2D:
+            mWidth = ((Texture2D*)colorTextures[0])->Width;
+            mHeight = ((Texture2D*)colorTextures[0])->Height;
+            break;
+
+        case TT_Texture2DArray:
+            mWidth = ((Texture2DArray*)colorTextures[0])->Width;
+            mHeight = ((Texture2DArray*)colorTextures[0])->Height;
+            mDepth = ((Texture2DArray*)colorTextures[0])->Depth;
+            break;
+
+        default:
+            RTGI_ASSERT(false);
+            break;
+        }
     }
+    mDepthTexture = depthTexture;
+    mStencilTexture = stencilTexture;
 
     mFBO->Device->FrameBufferSetRenderTargets(this, 
         colorTextureCount, colorTextures, depthTexture, stencilTexture);
+}
+//--------------------------------------------------------------------------
+void FrameBuffer::ReserveColorTargets(unsigned int colorTextureCount, 
+    int width, int height, int depth)
+{
+    if( colorTextureCount > 0 )
+    {
+        RTGI_ASSERT(colorTextureCount <= FBO_MAX_COLOR_TARGETS);
+
+        mWidth = width;
+        mHeight = height;
+        mDepth = depth;
+
+        mColorTextures.clear();
+        mColorTextures.reserve(colorTextureCount);
+        if( mColorBuffers )
+        {
+            delete[] mColorBuffers;
+        }
+        mColorBuffers = new unsigned int[colorTextureCount];
+    }
+}
+//--------------------------------------------------------------------------
+void FrameBuffer::SetColorTarget(unsigned int attachPoint, 
+    Texture* colorTexture)
+{
+    RTGI_ASSERT(attachPoint >= 0 && attachPoint <
+        (unsigned int)mColorTextures.size());
+    
+    mColorTextures[attachPoint] = colorTexture;
+    mFBO->Device->FrameBufferSetColorTarget(this, attachPoint, colorTexture);
+}
+//--------------------------------------------------------------------------
+void FrameBuffer::SetDepthTarget(Texture* depthTexture)
+{
+    mDepthTexture = depthTexture;
+    mFBO->Device->FrameBufferSetDepthTarget(this, mDepthTexture);
+}
+//--------------------------------------------------------------------------
+void FrameBuffer::SetStencilTarget(Texture* stencilTexture)
+{
+    mStencilTexture = stencilTexture;
+    mFBO->Device->FrameBufferSetStencilTarget(this, mStencilTexture);
 }
 //--------------------------------------------------------------------------
 void FrameBuffer::Enable()

@@ -129,6 +129,12 @@ typedef void (GPUDevice::*GPUDeviceDeleteFrameBuffer)(
 typedef void (GPUDevice::*GPUDeviceFrameBufferSetRenderTargets)(
     FrameBuffer* frameBuffer, unsigned int colorTextureCount, 
     Texture** colorTextures, Texture* depthTexture, Texture* stencilTexture);
+typedef void (GPUDevice::*GPUDeviceFrameBufferSetColorTarget)(FrameBuffer* frameBuffer,
+    unsigned int attachPoint, Texture* colorTexture);
+typedef void (GPUDevice::*GPUDeviceFrameBufferSetDepthTarget)(FrameBuffer* frameBuffer, 
+    Texture* depthTexture);
+typedef void (GPUDevice::*GPUDeviceFrameBufferSetStencilTarget)(FrameBuffer* frameBuffer, 
+    Texture* stencilTexture);
 typedef void (GPUDevice::*GPUDeviceFrameBufferEnable)(
     FrameBuffer* frameBuffer);
 typedef void (GPUDevice::*GPUDeviceFrameBufferDisable)(
@@ -244,6 +250,12 @@ public:
     inline 	void FrameBufferSetRenderTargets(FrameBuffer* frameBuffer, 
         unsigned int colorTextureCount, Texture** colorTextures, 
         Texture* depthTexture, Texture* stencilTexture);
+    inline  void FrameBufferSetColorTarget(FrameBuffer* frameBuffer, 
+        unsigned int attachPoint, Texture* colorTexture);
+    inline  void FrameBufferSetDepthTarget(FrameBuffer* frameBuffer, 
+        Texture* depthTexture);
+    inline  void FrameBufferSetStencilTarget(FrameBuffer* frameBuffer, 
+        Texture* stencilTexture);
     inline 	void FrameBufferEnable(FrameBuffer* frameBuffer);
     inline 	void FrameBufferDisable(FrameBuffer* frameBuffer);
     inline 	void ComputeShaderDispatch(ShaderProgram* program, 
@@ -309,6 +321,9 @@ protected:
     GPUDeviceCreateFrameBuffer                    _CreateFrameBuffer;
     GPUDeviceDeleteFrameBuffer                    _DeleteFrameBuffer;
     GPUDeviceFrameBufferSetRenderTargets          _FrameBufferSetRenderTargets;
+    GPUDeviceFrameBufferSetColorTarget            _FrameBufferSetColorTarget;
+    GPUDeviceFrameBufferSetDepthTarget            _FrameBufferSetDepthTarget;
+    GPUDeviceFrameBufferSetStencilTarget          _FrameBufferSetStencilTarget;
     GPUDeviceFrameBufferEnable                    _FrameBufferEnable;
     GPUDeviceFrameBufferDisable                   _FrameBufferDisable;
     GPUDeviceComputeShaderDispatch                _ComputeShaderDispatch;
