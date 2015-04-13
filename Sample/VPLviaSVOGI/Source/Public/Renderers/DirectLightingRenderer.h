@@ -2,7 +2,7 @@
 #define RTGI_DirectLightingRenderer_H
 
 #include "GraphicsFrameworkHeader.h"
-#include "ShadowMapRenderer.h"
+#include "ShadowMapsGenerator.h"
 #include "LightManager.h"
 
 namespace RTGI
@@ -52,7 +52,7 @@ public:
 
     void Initialize(GPUDevice* device, int width, int height, 
         BufferFormat format, GBufferRenderer* gbufferRenderer, 
-        ShadowMapRenderer* shadowMapRenderer, LightManager* lightManager);
+        ShadowMapsGenerator* shadowMapsGenerator, LightManager* lightManager);
 
     void Render();
 

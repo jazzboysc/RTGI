@@ -324,7 +324,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mGBufferRenderer->SetRenderSet(mSceneObjects);
 
     // Create shadow map renderer.
-    mShadowMapRenderer = new ShadowMapRenderer(mDevice);
+    mShadowMapRenderer = new ShadowMapsGenerator(mDevice);
     mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBAF);
     mShadowMapRenderer->SetRenderSet(mShadowCasters);
 

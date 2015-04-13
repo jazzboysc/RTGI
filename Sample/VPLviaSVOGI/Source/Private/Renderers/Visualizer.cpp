@@ -362,7 +362,7 @@ Visualizer::~Visualizer()
 }
 //----------------------------------------------------------------------------
 void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer, 
-    VPLGenerator* vplGenerator, ShadowMapRenderer* shadowMapRenderer, 
+    VPLGenerator* vplGenerator, ShadowMapsGenerator* shadowMapsGenerator, 
     GBufferRenderer* gbufferRenderer, RSMRenderer* rsmRenderer, 
     DirectLightingRenderer* directLightingRenderer,
     IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
@@ -428,7 +428,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
 
     // Cache temp buffer and textures needed for visualization.
     mShadowMapTexture = 
-        (Texture2D*)shadowMapRenderer->GetFrameBufferTextureByName(
+        (Texture2D*)shadowMapsGenerator->GetFrameBufferTextureByName(
         RTGI_ShadowMapRenderer_ShadowMap_Name);
     mGBufferPositionTexture = 
         (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(

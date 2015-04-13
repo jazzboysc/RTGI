@@ -61,7 +61,7 @@ DirectLightingRenderer::~DirectLightingRenderer()
 //----------------------------------------------------------------------------
 void DirectLightingRenderer::Initialize(GPUDevice* device, int width, 
     int height, BufferFormat format, GBufferRenderer* gbufferRenderer, 
-    ShadowMapRenderer* shadowMapRenderer, LightManager* lightManager)
+    ShadowMapsGenerator* shadowMapsGenerator, LightManager* lightManager)
 {
     mLightManager = lightManager;
 
@@ -110,7 +110,7 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
     AddInputDependency(gbufferRenderer, "Albedo", &view);
 
     view.BindingSlot = 3;
-    AddInputDependency(shadowMapRenderer, "ShadowMap", &view);
+    AddInputDependency(shadowMapsGenerator, "ShadowMap", &view);
 
     // Create output.
     AddFrameBufferTarget(RTGI_DirectLightingRenderer_DirectLighting_Name, 

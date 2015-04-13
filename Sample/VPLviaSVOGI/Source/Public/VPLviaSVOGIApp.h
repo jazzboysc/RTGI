@@ -4,7 +4,7 @@
 #include "LightManager.h"
 #include "SceneMesh.h"
 #include "GPUTimer.h"
-#include "ShadowMapRenderer.h"
+#include "ShadowMapsGenerator.h"
 #include "RSMRenderer.h"
 #include "VPLGenerator.h"
 #include "DirectLightingRenderer.h"
@@ -60,7 +60,7 @@ private:
     GBufferRendererPtr mGBufferRenderer;
 
     // Scene shadow map.
-    ShadowMapRendererPtr mShadowMapRenderer;
+    ShadowMapsGeneratorPtr mShadowMapRenderer;
 
     // Direct lighting.
     DirectLightingRendererPtr mDirectLightingRenderer;

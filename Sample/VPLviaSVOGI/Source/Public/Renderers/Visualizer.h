@@ -4,7 +4,7 @@
 #include "GraphicsFrameworkHeader.h"
 #include "GridVoxelizer.h"
 #include "SVOVoxelizer.h"
-#include "ShadowMapRenderer.h"
+#include "ShadowMapsGenerator.h"
 #include "RSMRenderer.h"
 #include "DirectLightingRenderer.h"
 #include "IndirectLightingRenderer.h"
@@ -212,7 +212,7 @@ public:
     virtual ~Visualizer();
 
     void Initialize(GPUDevice* device, Voxelizer* voxelizer, 
-        VPLGenerator* vplGenerator, ShadowMapRenderer* shadowMapRenderer, 
+        VPLGenerator* vplGenerator, ShadowMapsGenerator* shadowMapsGenerator, 
         GBufferRenderer* gbufferRenderer, RSMRenderer* rsmRenderer, 
         DirectLightingRenderer* directLightingRenderer, 
         IndirectLightingRenderer* indirectLightingRenderer, AABB* sceneBB, 
