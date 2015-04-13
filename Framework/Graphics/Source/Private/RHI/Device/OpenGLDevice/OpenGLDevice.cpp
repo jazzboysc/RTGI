@@ -28,6 +28,19 @@ GLenum gsBufferTargets[BufferType_Max] =
     GL_ELEMENT_ARRAY_BUFFER
 };
 
+GLenum gsBufferBindings[BufferType_Max] =
+{
+    GL_ATOMIC_COUNTER_BUFFER_BINDING,
+    GL_DISPATCH_INDIRECT_BUFFER_BINDING,
+    GL_DRAW_INDIRECT_BUFFER_BINDING,
+    GL_PIXEL_UNPACK_BUFFER_BINDING,
+    GL_SHADER_STORAGE_BUFFER_BINDING,
+    GL_TEXTURE_BUFFER_BINDING,
+    GL_UNIFORM_BUFFER_BINDING,
+    GL_ARRAY_BUFFER_BINDING,
+    GL_ELEMENT_ARRAY_BUFFER_BINDING
+};
+
 GLenum gsBufferFormat[BufferFormat_Max] =
 {
     GL_R,
@@ -1116,6 +1129,16 @@ void OpenGLDevice::__DeleteBuffer(Buffer* buffer)
 //----------------------------------------------------------------------------
 void* OpenGLDevice::__BufferMap(Buffer* buffer, BufferAccess access)
 {
+#ifdef _DEBUG
+    OpenGLBufferHandle* bufferHandle =
+        (OpenGLBufferHandle*)buffer->GetBufferHandle();
+    RTGI_ASSERT(bufferHandle);
+
+    GLint curBufferBound;
+    glGetIntegerv(gsBufferBindings[(int)buffer->GetType()], &curBufferBound);
+    RTGI_ASSERT(bufferHandle->mBuffer == curBufferBound);
+#endif
+
     void* data = glMapBuffer(gsBufferTargets[(int)buffer->GetType()], 
         gsBufferAccess[(int)access]);
 
@@ -1163,7 +1186,8 @@ void OpenGLDevice::__BufferBindIndexTo(Buffer* buffer, unsigned int index,
 void OpenGLDevice::__BufferBind(Buffer* buffer)
 {
     GLuint b = ((OpenGLBufferHandle*)buffer->GetBufferHandle())->mBuffer;
-    glBindBuffer(gsBufferTargets[(int)buffer->GetType()], b);
+    GLenum target = gsBufferTargets[(int)buffer->GetType()];
+    glBindBuffer(target, b);
 
     OPENGL_DEVICE_CHECK_ERROR;
 }
