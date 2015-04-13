@@ -47,16 +47,12 @@ void main(void)
 	vec4 color = texture(refractorNormal, vec3(uv.xy, 1), ACMUniformBuffer.mipmapLevel);
 	vec2 texRes = vec2(ACMUniformBuffer.width, ACMUniformBuffer.height);
 
-	ivec2 imageCoord = ivec2(uv.xy * texRes);
-	imageStore(data, imageCoord, vec4(0.3, 0.3, 0.3, 1));
 
-	if(color.a < 0.99)
+	if(color.a == 0)
 	{
-
+		ivec2 imageCoord = ivec2(uv.xy * texRes);
+		imageStore(data, imageCoord, vec4(0.3, 0.3, 0.3, 1));
 	}
-
-	/*
-
 	else
 	{
 		// Allocate storage
@@ -81,14 +77,14 @@ void main(void)
 
 
 		// Debug display
-		vec4 color0 = texture(refractorNormal, vec3(texCoord0.xy, 1), ACMUniformBuffer.mipmapLevel);
-		vec4 color1 = texture(refractorNormal, vec3(texCoord1.xy, 1), ACMUniformBuffer.mipmapLevel);
-		vec4 color2 = texture(refractorNormal, vec3(texCoord2.xy, 1), ACMUniformBuffer.mipmapLevel);
-		vec4 color3 = texture(refractorNormal, vec3(texCoord3.xy, 1), ACMUniformBuffer.mipmapLevel);
+		vec4 color0 = texture(refractorNormal, vec3(texCoord0.xy, 1));
+		vec4 color1 = texture(refractorNormal, vec3(texCoord1.xy, 1));
+		vec4 color2 = texture(refractorNormal, vec3(texCoord2.xy, 1));
+		vec4 color3 = texture(refractorNormal, vec3(texCoord3.xy, 1));
 
 		if(writeIndex == 24)
 		{
-			ACMBuffer.debug = color2;
+			//ACMBuffer.debug = color2;
 		}
 
 		imageStore(data, imageCoord0, color0 + vec4(0.5, 0.1, 0.6, 0));
@@ -96,9 +92,6 @@ void main(void)
 		imageStore(data, imageCoord2, color2 + vec4(0.5, 0.1, 0.6, 0));
 		imageStore(data, imageCoord3, color3 + vec4(0.5, 0.1, 0.6, 0));
 	}
-	*/
-
-
 }
 
 

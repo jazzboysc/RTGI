@@ -214,10 +214,12 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, true);
 	infoStartY += infoIncY;
+	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Spin Mesh", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddCheckBox("Draw Debug Mipmap", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
-
 
 
 
@@ -396,15 +398,13 @@ void AdaptiveCausticsApp::OnCheckBoxClick(System::Object^ sender, System::EventA
 
 	if (checkBox->Name == "Spin Mesh")
 	{
-		if (checkBox->Checked)
-		{
-			this->bIsSpinningMesh = true;
-		}
-		else
-		{
-			this->bIsSpinningMesh = false;
-		}
+		this->bIsSpinningMesh = checkBox->Checked;
 	}
+	if (checkBox->Name == "Draw Debug Mipmap")
+	{
+		this->mCausticMapRenderer->DrawDebugMipmap = checkBox->Checked;
+	}
+	
 
 
 	//mIndirectLightingRenderer->VPLVisibilityTest(checkBox->Checked);
@@ -413,9 +413,36 @@ void AdaptiveCausticsApp::OnCheckBoxClick(System::Object^ sender, System::EventA
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::ProcessInput()
 {
+	if (glfwGetKey(Window, GLFW_KEY_0) == GLFW_PRESS)
+	{
+		mCausticMapRenderer->DebugMipmapLevel = 0;
+	}
 	if (glfwGetKey(Window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-// 		mSSDOTempResultQuad->TempTexture = mSSDOTexture;
-// 		mShowMode = SM_SSDO;
+		mCausticMapRenderer->DebugMipmapLevel = 1;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_2) == GLFW_PRESS)
+	{
+		mCausticMapRenderer->DebugMipmapLevel = 2;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_3) == GLFW_PRESS)
+	{
+		mCausticMapRenderer->DebugMipmapLevel = 3;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_4) == GLFW_PRESS)
+	{
+		mCausticMapRenderer->DebugMipmapLevel = 4;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_5) == GLFW_PRESS)
+	{
+		mCausticMapRenderer->DebugMipmapLevel = 5;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_6) == GLFW_PRESS)
+	{
+		mCausticMapRenderer->DebugMipmapLevel = 6;
+	}
+	if (glfwGetKey(Window, GLFW_KEY_7) == GLFW_PRESS)
+	{
+		mCausticMapRenderer->DebugMipmapLevel = 7;
 	}
 }

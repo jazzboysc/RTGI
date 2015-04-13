@@ -1,0 +1,68 @@
+#version 430 core
+
+// An image to store data into.
+layout(binding = 0, offset = 0) uniform atomic_uint writeCount;
+layout(binding = 1, offset = 4) uniform atomic_uint storageCounter2;
+
+layout (rgba32f, binding = 0) uniform image2D data;
+layout (binding = 1) uniform sampler2DArray refractorNormal;
+
+layout(std140, binding = 0) uniform _ACMUniformBuffer
+{
+	uint mipmapLevel; // 3
+	uint readOffset; // 0
+	uint readCount; // 64 * 64 = 4096
+	uint writeOffset; // 4096
+	uint width;
+	uint height;
+	float deltaX;
+	float deltaY;
+} ACMUniformBuffer;
+
+layout(std430, binding = 0)  buffer _ACMBuffer
+{
+	vec4 debug;
+
+    // photon uv buffer. Must be big enough.
+    vec4 uv[];
+} ACMBuffer;
+
+
+
+layout (local_size_x = 1, local_size_y = 1) in;
+
+
+void main(void)
+{
+	// local constants
+	vec2 texRes = vec2(ACMUniformBuffer.width, ACMUniformBuffer.height);
+
+	vec2 TCoord = vec2(gl_GlobalInvocationID.xy) / texRes;
+	ivec2 mipmap =  textureSize(refractorNormal, int(ACMUniformBuffer.mipmapLevel)).xy;
+	ivec2 iTCoord = ivec2(TCoord * mipmap);
+	vec4 debugColor = texelFetch(refractorNormal, ivec3(iTCoord, 1), int(ACMUniformBuffer.mipmapLevel));
+	imageStore(data, ivec2(gl_GlobalInvocationID.xy), debugColor);
+
+}
+
+
+
+
+
+
+// Mipmap visualization
+	/*
+	vec2 TCoord = vec2(gl_GlobalInvocationID.xy) / vec2(768, 768);
+	ivec2 mipmap =  textureSize(refractorNormal, int(ACMUniformBuffer.mipmapLevel)).xy;
+	ivec2 iTCoord = ivec2(TCoord * mipmap);
+	vec4 debugColor = texelFetch(refractorNormal, ivec3(iTCoord, 1), int(ACMUniformBuffer.mipmapLevel));
+	imageStore(data, ivec2(gl_GlobalInvocationID.xy), debugColor);
+	*/
+
+		//uint uvLoadIdx = ACMBuffer.startIndex + invocationID;
+	//uint uvWriteIdx = ACMBuffer.startIndex + storageIdx;
+	//vec4 color = texture(refractorNormal, vec3(invocationCoord, 1), ACMUniformBuffer.mipmapLevel);
+	//vec4 color = texture(refractorNormal, vec3(gl_GlobalInvocationID.xy / tCoordMax, 1), ACMUniformBuffer.mipmapLevel);
+
+	//vec2 tCoordMax = vec2(ACMUniformBuffer.width, ACMUniformBuffer.height);
+	//vec2 invocationCoord = gl_GlobalInvocationID.xy * tCoordMax / vec2(gl_WorkGroupSize.xy * gl_NumWorkGroups.xy);

@@ -58,11 +58,11 @@ struct ACMUniformBuffer
 // Author: Che Sun
 // Date: 01/26/2015
 //----------------------------------------------------------------------------
-class AdaptiveCausticsTraversalInfo : public ComputeTask
+class AdaptiveCausticsTaskInfo : public ComputeTask
 {
 public:
-	AdaptiveCausticsTraversalInfo();
-	~AdaptiveCausticsTraversalInfo();
+	AdaptiveCausticsTaskInfo();
+	~AdaptiveCausticsTaskInfo();
 
 	// Implement base class interface.
 	virtual void OnGetShaderConstants();
@@ -83,7 +83,7 @@ public:
 	UniformBufferPtr mACMUniformBuffer;
 };
 
-typedef RefPointer<AdaptiveCausticsTraversalInfo> GatherVoxelFragmentListInfoPtr;
+typedef RefPointer<AdaptiveCausticsTaskInfo> GatherVoxelFragmentListInfoPtr;
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -102,20 +102,24 @@ public:
 		RefractorResourceRenderer* refractorResourceRenderer,
 		Camera* mainCamera);
 
-	void InitializeMinCausticHierarchy(GPUDevice* pDevice, AdaptiveCausticsTraversalInfo* pTask, int resolution);
+	void InitializeMinCausticHierarchy(GPUDevice* pDevice, AdaptiveCausticsTaskInfo* pTask, int resolution);
 	void CreateCausticsResource(CausticsMapDesc* desc);
 	void Render(int technique, int pass, Camera* camera);
 
 	Texture2DPtr mCompTexture;
 	FrameBufferPtr mFBOClear;
 
+	int DebugMipmapLevel;
+	bool DrawDebugMipmap;
+
 private:
 	PipelineStateBlockPtr mPSB;
 
 	CausticsPointSetPtr mPoints;
 
-	AdaptiveCausticsTraversalInfo* mTraversalTask;
-
+	AdaptiveCausticsTaskInfo* mTraversalTask;
+	AdaptiveCausticsTaskInfo* mDebugDrawTask;
+	
 	TraversalBufferData tbd;
 	Texture2DPtr mReceiverPositionTexture;
 	Texture2DArrayPtr mRefractorFrontAndBackNormalTextures;
