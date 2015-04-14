@@ -19,7 +19,7 @@ layout(std430, binding = 0) buffer _ACMSharedCommandBuffer
 	float deltaY;
 } ACMSharedCommandBuffer;
 
-layout(std430, binding = 0)  buffer _ACMBuffer
+layout(std430, binding = 1)  buffer _ACMBuffer
 {
 	vec4 debug;
 

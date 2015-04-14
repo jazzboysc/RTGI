@@ -220,10 +220,10 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 	{
 		mDebugDrawTask->mCompTexture = mCompTexture;
 		mDebugDrawTask->mNormalTextures = mRefractorFrontAndBackNormalTextures;
-		// Before anything,
-		// Draw debug mipmap normal
-		mDebugDrawTask->mACMSharedCommandBuffer->Bind(0);
-		auto uniformData3 = (ACMSharedCommandBuffer*)mDebugDrawTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
+
+		// Add in debug parameters
+		mDebugDrawTask->mACMSharedCommandBuffer->Bind();
+		auto uniformData3 = (ACMSharedCommandBuffer*)mDebugDrawTask->mACMSharedCommandBuffer->Map(BA_Write_Only);
 		assert(uniformData3);
 		if (uniformData3)
 		{
@@ -232,6 +232,10 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 			uniformData3->height = mCompTexture->Height;
 		}
 		mDebugDrawTask->mACMSharedCommandBuffer->Unmap();
+
+		// Draw debug mipmap normal
+		mTraversalTask->mACMSharedCommandBuffer->Bind(0);
+		mTraversalTask->mACMBuffer->Bind(1);
 		mDebugDrawTask->DispatchCompute(0, mCompTexture->Width, mCompTexture->Height, 1);
 	}
 
@@ -259,6 +263,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 #ifdef DEBUG_CAUSTCIS
 	auto uniformData = (ACMUniformBuffer*)mTraversalTask->mACMUniformBuffer->Map(BA_Read_Write);
 #else
+	mTraversalTask->mACMSharedCommandBuffer->Bind();
 	auto uniformData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Write_Only);
 #endif
 	assert(uniformData);
@@ -300,7 +305,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 	uint currentLOD = (uint)START_LOD;  // The starting traversal level (2^6 = 64x64 photons)
 	int numLevels = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - currentLOD;
 
-	for (int i = 0; i < 2; ++i, ++currentLOD)
+	for (int i = 0; i < 1; ++i, ++currentLOD)
 	{
 		// We have a specific resolution level to start at (64x64, 2^6 x 2^6, or "level" 6).  
 		//   Unfortunately, mipmaps count "0" as the highest resolution, and we count "0" 
@@ -334,58 +339,24 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 		//mTraversalTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int, counterData);
 #endif
 
-		// Pass in new argument
-		/*
-		auto uniformData0 = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
-		assert(uniformData0);
-		if (uniformData0)
-		{
-			mTraversalTask->UniformCache = *uniformData0;
-			uniformData0->mipmapLevel = glMipmapLevel;
-			uniformData0->deltaX = 0.5f / currentResolution;
-			uniformData0->deltaY = 0.5f / currentResolution;
-		}
-		mTraversalTask->mACMSharedCommandBuffer->Unmap();
-		*/
-		// Check input
-#ifdef DEBUG_CAUSTCIS
-		auto data1 = (ACMBuffer*)mTraversalTask->mACMBuffer->Map(BA_Read_Write);
-		mTraversalTask->mACMBuffer->Unmap();
-#else
-		//auto data1 = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
-		//mTraversalTask->mACMSharedCommandBuffer->Unmap();
-#endif
-		mTraversalTask->mACMSharedCommandBuffer->Bind();
-		auto data1 = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
-		mTraversalTask->mACMSharedCommandBuffer->Unmap();
 		// Execute traversal task
-		//mTraversalTask->mACMSharedCommandBuffer->Bind(0);
-		//mTraversalTask->mACMBuffer->Bind(1);
-		/*
+		mTraversalTask->mACMSharedCommandBuffer->Bind(0);
+		mTraversalTask->mACMBuffer->Bind(1);
+		//*
 		mTraversalTask->DispatchCompute(0,
 			4 * mTraversalTask->AtomicCounterCache.writeCount,
 			1,
 			1);
 		//*/
-		mTraversalTask->mACMSharedCommandBuffer->Bind(2);
-		mTraversalTask->mACMBuffer->Bind(2);
-		data1 = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
-		mTraversalTask->mACMSharedCommandBuffer->Unmap();
-
 		mTraversalTask->DispatchCompute(1, 1, 1, 1);
-		data1 = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
-		mTraversalTask->mACMSharedCommandBuffer->Unmap();
-		mTraversalTask->mACMBuffer->Bind(1);
-		mTraversalTask->mACMSharedCommandBuffer->Bind(0);
-		data1 = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
-		mTraversalTask->mACMSharedCommandBuffer->Unmap();
 #ifdef DEBUG_CAUSTCIS
 		auto bufferData = (unsigned int*)mTraversalTask->mACMBuffer->Map(BA_Read_Write);
 		mTraversalTask->mACMBuffer->Unmap();
 #endif
 
 		// Generate statistics
-		/*
+		//*
+		mTraversalTask->mAtomicCounterBuffer->Bind();
 		auto counterData1 = (ACMAtomicCounter*)mTraversalTask->mAtomicCounterBuffer->Map(BA_Read_Write);
 		assert(counterData1);
 		if (counterData1)
@@ -393,7 +364,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 			mTraversalTask->AtomicCounterCache = *counterData1;
 		}
 		mTraversalTask->mAtomicCounterBuffer->Unmap();
-		*/
+		//*/
 
 		/* Increment uniform data for next lod
 		auto uniformData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
@@ -408,8 +379,6 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 		mTraversalTask->mACMSharedCommandBuffer->Unmap();
 		//*/
 	}
-
-	//mCompTexture->GenerateMipmap();
 
 	SubRenderer::PostRender(0, 0);
 }

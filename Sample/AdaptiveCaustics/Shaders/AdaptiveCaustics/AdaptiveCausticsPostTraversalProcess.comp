@@ -5,7 +5,7 @@ layout(binding = 0, offset = 0) uniform atomic_uint writeCount;
 
 layout (binding = 1) uniform sampler2DArray refractorNormal;
 
-layout(std430, binding = 2) buffer _ACMSharedCommandBuffer
+layout(std430, binding = 0) buffer _ACMSharedCommandBuffer
 {
 	uint mipmapLevel; // 3
 	uint readOffset; // 0
@@ -25,21 +25,13 @@ void main(void)
 	
 	if(id == 0)
 	{
-		if( ACMSharedCommandBuffer.mipmapLevel > 0)
-		{
-			uint a =  ACMSharedCommandBuffer.mipmapLevel;
-			ACMSharedCommandBuffer.mipmapLevel = a - 1;
-		}
+		ACMSharedCommandBuffer.mipmapLevel --;
 
 		ivec2 texSizeMipmap =  textureSize(refractorNormal, int(ACMSharedCommandBuffer.mipmapLevel)).xy;
 		ACMSharedCommandBuffer.deltaX = 0.5 / texSizeMipmap.x;
 		ACMSharedCommandBuffer.deltaY = 0.5 / texSizeMipmap.y;
 		ACMSharedCommandBuffer.readOffset += ACMSharedCommandBuffer.readCount;
-		barrier();
 		ACMSharedCommandBuffer.readCount = 4 * atomicCounter(writeCount);
-		barrier();
 		ACMSharedCommandBuffer.writeOffset += 4 * atomicCounter(writeCount);
 	}
-
-	
 }
