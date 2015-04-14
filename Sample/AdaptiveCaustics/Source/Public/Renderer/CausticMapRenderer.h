@@ -111,6 +111,7 @@ public:
 
 	int DebugMipmapLevel;
 	bool DrawDebugMipmap;
+	int TraversalLevel;
 
 private:
 	PipelineStateBlockPtr mPSB;

@@ -445,4 +445,22 @@ void AdaptiveCausticsApp::ProcessInput()
 	{
 		mCausticMapRenderer->DebugMipmapLevel = 7;
 	}
+	if (glfwGetKey(Window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+	{
+		mCausticMapRenderer->TraversalLevel++;
+
+		if (mCausticMapRenderer->TraversalLevel > 4)
+		{
+			mCausticMapRenderer->TraversalLevel = 4;
+		}
+	}
+	if (glfwGetKey(Window, GLFW_KEY_MINUS) == GLFW_PRESS)
+	{
+		mCausticMapRenderer->TraversalLevel--;
+
+		if (mCausticMapRenderer->TraversalLevel == 0)
+		{
+			mCausticMapRenderer->TraversalLevel = 1;
+		}
+	}
 }

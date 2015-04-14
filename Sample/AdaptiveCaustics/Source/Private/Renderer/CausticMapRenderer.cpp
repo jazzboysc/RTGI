@@ -20,6 +20,7 @@ SubRenderer(device, receiverSet)
 
 	DebugMipmapLevel = 0;
 	DrawDebugMipmap = false;
+	TraversalLevel = 1;
 }
 //----------------------------------------------------------------------------
 CausticMapRenderer::~CausticMapRenderer()
@@ -305,7 +306,9 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 	uint currentLOD = (uint)START_LOD;  // The starting traversal level (2^6 = 64x64 photons)
 	int numLevels = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - currentLOD;
 
-	for (int i = 0; i < numLevels + 1; ++i, ++currentLOD)
+	int arg = min(TraversalLevel, numLevels + 1);
+
+	for (int i = 0; i < arg; ++i, ++currentLOD)
 	{
 		// We have a specific resolution level to start at (64x64, 2^6 x 2^6, or "level" 6).  
 		//   Unfortunately, mipmaps count "0" as the highest resolution, and we count "0" 
