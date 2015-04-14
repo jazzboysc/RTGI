@@ -305,7 +305,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 	uint currentLOD = (uint)START_LOD;  // The starting traversal level (2^6 = 64x64 photons)
 	int numLevels = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - currentLOD;
 
-	for (int i = 0; i < 1; ++i, ++currentLOD)
+	for (int i = 0; i < numLevels + 1; ++i, ++currentLOD)
 	{
 		// We have a specific resolution level to start at (64x64, 2^6 x 2^6, or "level" 6).  
 		//   Unfortunately, mipmaps count "0" as the highest resolution, and we count "0" 
@@ -348,12 +348,21 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 			1,
 			1);
 		//*/
+
+		//mTraversalTask->mACMSharedCommandBuffer->Bind();
+		//auto bufferData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
+		//mTraversalTask->mACMSharedCommandBuffer->Unmap();
+
+
+
 		mTraversalTask->DispatchCompute(1, 1, 1, 1);
 #ifdef DEBUG_CAUSTCIS
 		auto bufferData = (unsigned int*)mTraversalTask->mACMBuffer->Map(BA_Read_Write);
 		mTraversalTask->mACMBuffer->Unmap();
 #endif
-
+		//mTraversalTask->mACMSharedCommandBuffer->Bind();
+		//bufferData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
+		//mTraversalTask->mACMSharedCommandBuffer->Unmap();
 		// Generate statistics
 		//*
 		mTraversalTask->mAtomicCounterBuffer->Bind();

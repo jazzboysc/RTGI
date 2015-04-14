@@ -67,10 +67,10 @@ void main(void)
 		vec4 texCoord2 = vec4( uv.x + ACMSharedCommandBuffer.deltaX, uv.y + ACMSharedCommandBuffer.deltaY, 0, 0 );
 		vec4 texCoord3 = vec4( uv.x                                , uv.y + ACMSharedCommandBuffer.deltaY, 0, 0 );
 
-		ivec2 imageCoord0 = ivec2(texCoord0.xy * texSize);
-		ivec2 imageCoord1 = ivec2(texCoord1.xy * texSize);
-		ivec2 imageCoord2 = ivec2(texCoord2.xy * texSize);
-		ivec2 imageCoord3 = ivec2(texCoord3.xy * texSize);
+		ivec2 imageCoord0 = ivec2(texCoord0.xy * texSize + 0.5f);
+		ivec2 imageCoord1 = ivec2(texCoord1.xy * texSize + 0.5f);
+		ivec2 imageCoord2 = ivec2(texCoord2.xy * texSize + 0.5f);
+		ivec2 imageCoord3 = ivec2(texCoord3.xy * texSize + 0.5f);
 	
 
 		ACMBuffer.uv[writeOffset + 0] = texCoord0;

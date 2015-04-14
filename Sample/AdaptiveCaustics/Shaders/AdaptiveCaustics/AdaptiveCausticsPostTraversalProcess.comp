@@ -25,13 +25,15 @@ void main(void)
 	
 	if(id == 0)
 	{
-		ACMSharedCommandBuffer.mipmapLevel --;
 
 		ivec2 texSizeMipmap =  textureSize(refractorNormal, int(ACMSharedCommandBuffer.mipmapLevel)).xy;
-		ACMSharedCommandBuffer.deltaX = 0.5 / texSizeMipmap.x;
-		ACMSharedCommandBuffer.deltaY = 0.5 / texSizeMipmap.y;
+		ACMSharedCommandBuffer.deltaX = 0.5f / texSizeMipmap.x;
+		ACMSharedCommandBuffer.deltaY = 0.5f / texSizeMipmap.y;
+
 		ACMSharedCommandBuffer.readOffset += ACMSharedCommandBuffer.readCount;
 		ACMSharedCommandBuffer.readCount = 4 * atomicCounter(writeCount);
 		ACMSharedCommandBuffer.writeOffset += 4 * atomicCounter(writeCount);
+
+		ACMSharedCommandBuffer.mipmapLevel --;
 	}
 }
