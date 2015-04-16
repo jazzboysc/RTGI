@@ -1,16 +1,16 @@
 #version 430 core
 
-in float teViewPosZ;
-in float teDepth;
+in float gViewPosZ;
+in float gDepth;
 
 out vec4 Output;
 
 void main()
 {
-    if( teViewPosZ >= 0.0 )
+    if( gViewPosZ >= 0.0 )
     {
         discard;
     }
     
-    Output = vec4(teDepth, teDepth, teDepth, 1.0);
+    Output = vec4(gDepth, gDepth, gDepth, 1.0);
 }

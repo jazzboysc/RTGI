@@ -1,7 +1,6 @@
 #version 430 core
 
 uniform mat4 View;
-uniform mat4 Proj;
 uniform vec2 LightProjectorNearFar;
 
 layout(triangles, equal_spacing, ccw) in;

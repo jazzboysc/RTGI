@@ -108,10 +108,12 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     shadowProgramInfo.FShaderFileName = "VPLviaSVOGI/fShadow.glsl";
     shadowProgramInfo.TCShaderFileName = "VPLviaSVOGI/tcShadow.glsl";
     shadowProgramInfo.TEShaderFileName = "VPLviaSVOGI/teShadow.glsl";
+    shadowProgramInfo.GShaderFileName = "VPLviaSVOGI/gShadow.glsl";
     shadowProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
                                         ShaderType::ST_Fragment | 
                                         ShaderType::ST_TessellationControl |
-                                        ShaderType::ST_TessellationEvaluation;
+                                        ShaderType::ST_TessellationEvaluation |
+                                        ShaderType::ST_Geometry;
     Pass* passShadow = new Pass(shadowProgramInfo);
 
     ShaderProgramInfo gbufferProgramInfo;
