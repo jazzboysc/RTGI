@@ -1,5 +1,13 @@
 #define MAX_LIGHT_COUNT 256
 
+struct LightBufferHead
+{
+    uint CurLightIndex;
+    uint PointLightCount;
+    uint SpotLightCount;
+    uint Reserved3;
+};
+
 //----------------------------------------------------------------------------
 // Scene Light. Currently support point and spot lights.
 //----------------------------------------------------------------------------
@@ -18,6 +26,7 @@ struct SceneLight
 
 layout(std140, binding = 1) uniform _sceneLightUniformBuffer
 {
+    LightBufferHead info;
     SceneLight lights[MAX_LIGHT_COUNT];
 } sceneLightUniformBuffer;
 

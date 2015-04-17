@@ -25,8 +25,6 @@ public:
     virtual void OnGetShaderConstants();
 
     bool ShowShadow;
-    int PointLightCount;
-    int SpotLightCount;
 
 private:
     ShaderUniform mGBufferPositionSamplerLoc;
@@ -34,8 +32,6 @@ private:
     ShaderUniform mGBufferAlbedoSamplerLoc;
     ShaderUniform mShadowMapSamplerLoc;
     ShaderUniform mShowShadow;
-    ShaderUniform mPointLightCount;
-    ShaderUniform mSpotLightCount;
 };
 
 typedef RefPointer<DirectLightingScreenQuad> DirectLightingScreenQuadPtr;
@@ -52,14 +48,13 @@ public:
 
     void Initialize(GPUDevice* device, int width, int height, 
         BufferFormat format, GBufferRenderer* gbufferRenderer, 
-        ShadowMapsGenerator* shadowMapsGenerator, LightManager* lightManager);
+        ShadowMapsGenerator* shadowMapsGenerator);
 
     void Render();
 
     void ShowShadow(bool value);
 
 private:
-    LightManagerPtr mLightManager;
     PipelineStateBlockPtr mPSB;
     DirectLightingScreenQuadPtr mDirectLightingScreenQuad;
 };

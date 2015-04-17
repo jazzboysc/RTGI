@@ -8,8 +8,6 @@ DirectLightingScreenQuad::DirectLightingScreenQuad(Material* material)
     ScreenQuad(material, 0)
 {
     ShowShadow = true;
-    PointLightCount = 0;
-    SpotLightCount = 0;
 }
 //----------------------------------------------------------------------------
 DirectLightingScreenQuad::~DirectLightingScreenQuad()
@@ -23,8 +21,6 @@ void DirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
     mGBufferAlbedoSamplerLoc.SetValue(2);
     mShadowMapSamplerLoc.SetValue(3);
     mShowShadow.SetValue(ShowShadow);
-    mPointLightCount.SetValue(PointLightCount);
-    mSpotLightCount.SetValue(SpotLightCount);
 }
 //----------------------------------------------------------------------------
 void DirectLightingScreenQuad::OnGetShaderConstants()
@@ -36,8 +32,6 @@ void DirectLightingScreenQuad::OnGetShaderConstants()
     program->GetUniformLocation(&mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
     program->GetUniformLocation(&mShadowMapSamplerLoc, "ShadowMapSampler");
     program->GetUniformLocation(&mShowShadow, "ShowShadow");
-    program->GetUniformLocation(&mPointLightCount, "PointLightCount");
-    program->GetUniformLocation(&mSpotLightCount, "SpotLightCount");
 }
 //----------------------------------------------------------------------------
 
@@ -55,16 +49,13 @@ DirectLightingRenderer::DirectLightingRenderer(GPUDevice* device,
 //----------------------------------------------------------------------------
 DirectLightingRenderer::~DirectLightingRenderer()
 {
-    mLightManager = 0;
     mPSB = 0;
 }
 //----------------------------------------------------------------------------
 void DirectLightingRenderer::Initialize(GPUDevice* device, int width, 
     int height, BufferFormat format, GBufferRenderer* gbufferRenderer, 
-    ShadowMapsGenerator* shadowMapsGenerator, LightManager* lightManager)
+    ShadowMapsGenerator* shadowMapsGenerator)
 {
-    mLightManager = lightManager;
-
     ShaderProgramInfo directLightingProgramInfo;
     directLightingProgramInfo.VShaderFileName = "VPLviaSVOGI/vDirectLighting.glsl";
     directLightingProgramInfo.FShaderFileName = "VPLviaSVOGI/fDirectLighting.glsl";
@@ -85,8 +76,6 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
     mDirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
     mDirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mDirectLightingScreenQuad->CreateDeviceResource(device);
-    mDirectLightingScreenQuad->PointLightCount = lightManager->GetPointLightCount();
-    mDirectLightingScreenQuad->SpotLightCount = lightManager->GetSpotLightCount();
 
     // Setup inputs.
 

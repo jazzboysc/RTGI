@@ -343,7 +343,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     // Create direct lighting renderer.
     mDirectLightingRenderer = new DirectLightingRenderer(mDevice);
     mDirectLightingRenderer->Initialize(mDevice, Width, Height, BF_RGBAF, 
-        mGBufferRenderer, mShadowMapRenderer, mLightManager);
+        mGBufferRenderer, mShadowMapRenderer);
 
     // Create indirect lighting renderer.
     mIndirectLightingRenderer = new IndirectLightingRenderer(mDevice);

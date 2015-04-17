@@ -13,6 +13,14 @@
 namespace RTGI
 {
 
+struct LightBufferHead
+{
+    unsigned int CurLightIndex;
+    unsigned int PointLightCount;
+    unsigned int SpotLightCount;
+    unsigned int Reserved3;
+};
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 04/07/2015
@@ -42,7 +50,7 @@ private:
     std::vector<LightPtr> mSpotLights;
     unsigned int mLightBufferBindingPoint;
     UniformBufferPtr mLightBuffer;
-    SceneLight mLightBufferCache[MAX_LIGHT_COUNT];
+    unsigned char* mLightBufferCache;
 };
 
 typedef RefPointer<LightManager> LightManagerPtr;

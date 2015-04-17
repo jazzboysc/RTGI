@@ -12,7 +12,10 @@ LightManager::LightManager()
     :
     mLightBufferBindingPoint(0)
 {
-    memset(mLightBufferCache, 0, sizeof(SceneLight)*MAX_LIGHT_COUNT);
+    size_t bufferSize = sizeof(LightBufferHead) + 
+        sizeof(SceneLight)*MAX_LIGHT_COUNT;
+    mLightBufferCache = new unsigned char[bufferSize];
+    memset(mLightBufferCache, 0, bufferSize);
 }
 //----------------------------------------------------------------------------
 LightManager::~LightManager()
@@ -27,6 +30,7 @@ LightManager::~LightManager()
         mSpotLights[i] = 0;
     }
 
+    delete[] mLightBufferCache;
     mLightBuffer = 0;
 }
 //----------------------------------------------------------------------------
@@ -69,7 +73,8 @@ void LightManager::CreateLightBuffer(GPUDevice* device)
     if( mPointLights.size() > 0 || mSpotLights.size() > 0 )
     {
         mLightBuffer = new UniformBuffer();
-        size_t bufferSize = sizeof(SceneLight) * MAX_LIGHT_COUNT;
+        size_t bufferSize = sizeof(LightBufferHead) + 
+            sizeof(SceneLight)*MAX_LIGHT_COUNT;
         mLightBuffer->ReserveMutableDeviceResource(device, bufferSize,
             BU_Dynamic_Draw);
 
@@ -79,17 +84,26 @@ void LightManager::CreateLightBuffer(GPUDevice* device)
 //----------------------------------------------------------------------------
 void LightManager::UpdateLightBuffer()
 {
-    int i = 0;
-    for( ; i < (int)mPointLights.size(); ++i )
+    LightBufferHead* info = (LightBufferHead*)mLightBufferCache;
+    info->CurLightIndex = 0;
+    info->PointLightCount = (unsigned int)mPointLights.size();
+    info->SpotLightCount = (unsigned int)mSpotLights.size();
+
+    SceneLight* curLight = (SceneLight*)(mLightBufferCache + 
+        sizeof(LightBufferHead));
+    for( int i = 0; i < (int)mPointLights.size(); ++i )
     {
-        mPointLights[i]->OnUpdateLightBufferCache(&mLightBufferCache[i]);
+        mPointLights[i]->OnUpdateLightBufferCache(curLight);
+        curLight++;
     }
-    for( int j = 0 ; j < (int)mSpotLights.size(); ++j )
+    for( int i = 0; i < (int)mSpotLights.size(); ++i )
     {
-        mSpotLights[j]->OnUpdateLightBufferCache(&mLightBufferCache[i + j]);
+        mSpotLights[i]->OnUpdateLightBufferCache(curLight);
+        curLight++;
     }
 
-    size_t bufferSize = sizeof(SceneLight) * MAX_LIGHT_COUNT;
+    size_t bufferSize = sizeof(LightBufferHead) + 
+        sizeof(SceneLight)*MAX_LIGHT_COUNT;
     mLightBuffer->UpdateSubData(mLightBufferBindingPoint, 0, bufferSize,
         (void*)mLightBufferCache);
 }
