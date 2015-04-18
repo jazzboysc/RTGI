@@ -41,7 +41,8 @@ private:
 
 	bool bIsSpinningMesh = false;
 
-	GBufferRendererPtr mGBufferRenderer;
+	GBufferRendererPtr mReceiverGBufferRenderer;
+	GBufferRendererPtr mRefractorGBufferRenderer;
 	ReceiverResourceRendererPtr mReceiverResourceRenderer;
 	RefractorResourceRendererPtr mRefractorResourceRenderer;
 	ShadowMapRendererPtr mShadowMapRenderer;
@@ -90,7 +91,7 @@ private:
 
 	Camera* mLightProjector;
 	LightPtr mLight;
-
+	LightManagerPtr mLightManager;
 	TextureCubePtr mCubeMap;
 
 	StructuredBufferPtr mCausticsDebugBuffer;

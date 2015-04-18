@@ -55,12 +55,14 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	mLightProjector = new Camera;
 	mLightProjector->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 0.01f, 25.0f);
-	mLightProjector->SetLookAt(vec3(-0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
-
-
+	mLightProjector->SetLookAt(vec3(-0.0f, 0.5f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
 	mLight = new Light;
 	mLight->SetProjector(mLightProjector);
-	mLight->Intensity = vec3(0.9f, 0.9f, 0.7f);
+	mLight->Intensity = vec3(1.f, 1.f, 1.f);
+
+	mLightManager = new LightManager();
+	mLightManager->AddPointLight(mLight);
+	mLightManager->CreateLightBuffer(mDevice);
 
 	mTimer = new GPUTimer();
 	mTimer->CreateDeviceResource();
@@ -98,6 +100,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	lightMesh->SetWorldTranslation(mLightProjector->GetLocation());
 #pragma endregion Init LightMesh
 
+#pragma region Shaders and Materials
 	//*/
 	// Pass: geometry buffer
 	ShaderProgramInfo PI_GBuffer;
@@ -205,8 +208,10 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mScene.all->AddRenderObject(mScene.pool);
 	mScene.all->AddRenderObject(mScene.ground);
 	mScene.all->AddRenderObject(mScene.mesh);
+#pragma endregion Shaders and Materials
 
-	// Create information panel.
+#pragma region GUI
+// Create information panel.
 	int screenX, screenY;
 	glfwGetWindowPos(Window, &screenX, &screenY);
 	InformationPanel^ infoPanel = gcnew InformationPanel();
@@ -216,7 +221,9 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	InformationPanel::GetInstance()->AddListener(this);
 	int infoStartY = 20;
 	int infoIncY = 20;
-	InformationPanel::GetInstance()->AddTimingLabel("G-Buffer Pass", 16, infoStartY);
+	InformationPanel::GetInstance()->AddTimingLabel("Receiver G-Buffer Pass", 16, infoStartY);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddTimingLabel("Refractor G-Buffer Pass", 16, infoStartY);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddTimingLabel("Light Space Receiver Position Pass", 16, infoStartY);
 	infoStartY += infoIncY;
@@ -226,13 +233,17 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddTimingLabel("Adaptive Caustic Map Pass", 16, infoStartY);
 	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddTimingLabel("Direct Lighting Pass", 16, infoStartY);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddTimingLabel("Total", 16, infoStartY);
+	infoStartY += infoIncY;
 
 	infoStartY = 20;
-	InformationPanel::GetInstance()->AddRadioButton("G-Buffer Position", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Receiver G-Buffer Position", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("G-Buffer Normal", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Receiver G-Buffer Normal", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("G-Buffer Albedo", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Receiver G-Buffer Albedo", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Light Space Receiver Position", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
@@ -244,36 +255,43 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, true);
 	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddRadioButton("Direct Lighting", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Spin Mesh", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Draw Debug Mipmap", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
+#pragma endregion GUI
 
 
 
 
 	// Step 1: Render resources needed for caustics computation
-	mGBufferRenderer = new GBufferRenderer(device, mScene.all);
+	mReceiverGBufferRenderer = new GBufferRenderer(device, mScene.receiver);
 	GBufferDesc gBufferDesc;
 	gBufferDesc.Width = this->Width;
 	gBufferDesc.Height = this->Height;
 	gBufferDesc.PositionFormat = BF_RGBAF;
-	gBufferDesc.PositionMipmap = true;
+	gBufferDesc.PositionMipmap = false;
 	gBufferDesc.NormalFormat = BF_RGBAF;
-	gBufferDesc.NormalMipmap = true;
+	gBufferDesc.NormalMipmap = false;
 	gBufferDesc.AlbedoFormat = BF_RGBAF;
-	gBufferDesc.AlbedoMipmap = true;
-	mGBufferRenderer->CreateGBuffer(&gBufferDesc);
-	mGBufferRenderer->SetTimer(mTimer);
+	gBufferDesc.AlbedoMipmap = false;
+	mReceiverGBufferRenderer->CreateGBuffer(&gBufferDesc);
+	mReceiverGBufferRenderer->SetTimer(mTimer);
+
+	mRefractorGBufferRenderer = new GBufferRenderer(device, mScene.refractor);
+	mRefractorGBufferRenderer->CreateGBuffer(&gBufferDesc);
+	mRefractorGBufferRenderer->SetTimer(mTimer);
 
 	mReceiverResourceRenderer = new ReceiverResourceRenderer(device, mScene.receiver);
 	ReceiverResourceDesc receiverResourceDesc;
 	receiverResourceDesc.Width = this->Width;
 	receiverResourceDesc.Height = this->Height;
 	receiverResourceDesc.ReceiverPositionFormat = BF_RGBAF;
-	receiverResourceDesc.ReceiverPositionMipmap = true;
+	receiverResourceDesc.ReceiverPositionMipmap = false;
 	mReceiverResourceRenderer->CreateCausticsResource(&receiverResourceDesc);
 	mReceiverResourceRenderer->SetTimer(mTimer);
 
@@ -302,18 +320,26 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mCausticMapRenderer->CreateCausticsResource(&causticsMapDesc);
 	mCausticMapRenderer->SetTimer(mTimer);
 
+	mDirectLightingRenderer = new DirectLightingRenderer(device);
+	mDirectLightingRenderer->Initialize(mDevice, this->Width, this->Height, BF_RGBAF,
+		mReceiverGBufferRenderer, mShadowMapRenderer);
+	mDirectLightingRenderer->SetTimer(mTimer);
 
 	mVisualizer = new Visualizer(device);
 	mVisualizer->Initialize(device,
-		mGBufferRenderer,
+		mReceiverGBufferRenderer,
 		mReceiverResourceRenderer,
 		mRefractorResourceRenderer,
 		mShadowMapRenderer,
 		mCausticMapRenderer,
+		mDirectLightingRenderer,
 		mMainCamera);
 	mVisualizer->SetTimer(mTimer);
 	mVisualizer->SetShowMode(DEFAULT_SHOWMODE);
 }
+
+#define PROFILE_ENABLED
+//#undef PROFILE_ENABLED
 
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::FrameFunc()
@@ -330,41 +356,63 @@ void AdaptiveCausticsApp::FrameFunc()
 		mat4 rot;
 		rot = rotate(mat4(), radians(angle), vec3(0, 1, 0));
 		vec3 trans = mScene.mesh->GetWorldTranslation();
-		auto matrix = mScene.mesh->GetWorldTransform();
-		vec3 scale = mScene.mesh->GetWorldScale();
 		mScene.mesh->SetWorldTransform(rot);
 		mScene.mesh->SetWorldTranslation(trans);
 	}
 
-	// Resource gathering pass
-	mGBufferRenderer->Render(0, SMP_GBuffer, mMainCamera);
-	workLoad = mReceiverResourceRenderer->GetTimeElapsed();
-	totalWorkLoad += workLoad;
-	infoPanel->SetTimingLabelValue("G-Buffer Pass", workLoad);
+	mLightManager->SetLightBufferBindingPoint(1);
+	mLightManager->UpdateLightBuffer();
 
+	// Resource gathering pass
+ 	mReceiverGBufferRenderer->Render(0, SMP_GBuffer, mMainCamera);
+#ifdef PROFILE_ENABLED
+	workLoad = mReceiverGBufferRenderer->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("Receiver G-Buffer Pass", workLoad);
+#endif // PROFILE_ENABLED
+
+	mRefractorGBufferRenderer->Render(0, SMP_GBuffer, mMainCamera);
+#ifdef PROFILE_ENABLED
+	workLoad = mRefractorGBufferRenderer->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("Refractor G-Buffer Pass", workLoad);
+#endif // PROFILE_ENABLED
 
 	mReceiverResourceRenderer->Render(0, SMP_Resource, mLightProjector);
+#ifdef PROFILE_ENABLED
 	workLoad = mReceiverResourceRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Light Space Receiver Position Pass", workLoad);
+#endif // PROFILE_ENABLED
 
 	mRefractorResourceRenderer->Render(0, SMP_Resource, mLightProjector);
+#ifdef PROFILE_ENABLED
 	workLoad = mRefractorResourceRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Light Space Refractor Normal Pass", workLoad);
+#endif // PROFILE_ENABLED
 
 	mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);
+#ifdef PROFILE_ENABLED
 	workLoad = mShadowMapRenderer->GetTimeElapsed();
  	totalWorkLoad += workLoad;
  	infoPanel->SetTimingLabelValue("Paraboloid Shadow Map Pass", workLoad);
+#endif // PROFILE_ENABLED
 
 	mCausticMapRenderer->Render(0, 0/*SMP_AdaptiveCaustics*/, mLightProjector);
+#ifdef PROFILE_ENABLED
 	workLoad = mCausticMapRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Adaptive Caustic Map Pass", workLoad);
+#endif // PROFILE_ENABLED
 
-	//mDirectLightingRenderer->Render();
-	
+	mDirectLightingRenderer->Render();
+#ifdef PROFILE_ENABLED
+	workLoad = mDirectLightingRenderer->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("Direct Lighting Pass", workLoad);
+#endif // PROFILE_ENABLED
+
 	/*
 	// OK.  Now that we have all the information to compute all the photons
 	//    stored in our temporary FBOs, adaptively traverse the "mipmap" levels
@@ -396,6 +444,11 @@ void AdaptiveCausticsApp::FrameFunc()
 
 	// Show rendering result.
 	mVisualizer->Render(0, 0);
+#ifdef PROFILE_ENABLED
+	workLoad = mVisualizer->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("Total", totalWorkLoad);
+#endif // PROFILE_ENABLED
 
 	// Post processing: add light mesh
 	//mLight->RenderLightMesh(0, 0);
@@ -416,29 +469,26 @@ void AdaptiveCausticsApp::OnRadioButtonClick(System::Object^ sender, System::Eve
 		return;
 	}
 
-	if (radioButton->Name == "G-Buffer Position")
+	if (radioButton->Name == "Receiver G-Buffer Position")
 	{
-		mVisualizer->SetShowMode(Visualizer::eSM_GBufferPosition);
+		mVisualizer->SetShowMode(Visualizer::eSM_ReceiverGBufferPosition);
 	}
-	if (radioButton->Name == "G-Buffer Normal")
+	if (radioButton->Name == "Receiver G-Buffer Normal")
 	{
-		mVisualizer->SetShowMode(Visualizer::eSM_GBufferNormal);
+		mVisualizer->SetShowMode(Visualizer::eSM_ReceiverGBufferNormal);
 	}
-	if (radioButton->Name == "G-Buffer Albedo")
+	if (radioButton->Name == "Receiver G-Buffer Albedo")
 	{
-		mVisualizer->SetShowMode(Visualizer::eSM_GBufferAlbedo);
+		mVisualizer->SetShowMode(Visualizer::eSM_ReceiverGBufferAlbedo);
 	}
-
 	if (radioButton->Name == "Light Space Receiver Position")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_ReceiverLightSpacePosition);
 	}
-
 	if (radioButton->Name == "Light Space Refractor Front Normal")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_RefractorLightSpaceFrontNorm);
 	}
-
 	if (radioButton->Name == "Light Space Refractor Back Normal")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_RefractorLightSpaceBackNorm);
@@ -451,6 +501,10 @@ void AdaptiveCausticsApp::OnRadioButtonClick(System::Object^ sender, System::Eve
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_CausticMap);
 	}
+	if (radioButton->Name == "Direct Lighting")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_DirectLighting);
+	}
 
 }
 
@@ -462,7 +516,6 @@ void AdaptiveCausticsApp::OnCheckBoxClick(System::Object^ sender, System::EventA
 	if (checkBox->Name == "Show Direct Shadow")
 	{
 	}
-
 	if (checkBox->Name == "Spin Mesh")
 	{
 		this->bIsSpinningMesh = checkBox->Checked;

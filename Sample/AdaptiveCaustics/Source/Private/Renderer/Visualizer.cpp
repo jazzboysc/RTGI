@@ -31,13 +31,13 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
     {
 		switch (ShowMode)
 		{
-		case Visualizer::eSM_GBufferPosition:
+		case Visualizer::eSM_ReceiverGBufferPosition:
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
-		case Visualizer::eSM_GBufferNormal:
+		case Visualizer::eSM_ReceiverGBufferNormal:
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
-		case Visualizer::eSM_GBufferAlbedo:
+		case Visualizer::eSM_ReceiverGBufferAlbedo:
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
 		case Visualizer::eSM_ReceiverLightSpacePosition:
@@ -53,6 +53,9 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
 		case Visualizer::eSM_CausticMap:
+			DisplayTexture->BindToSampler(0, &samplerDesc);
+			break;
+		case Visualizer::eSM_DirectLighting:
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
 		default:
@@ -96,6 +99,7 @@ void Visualizer::Initialize(GPUDevice* device,
 	RefractorResourceRenderer* refractorResourceRenderer,
 	ShadowMapRenderer* shadowMapRenderer,
 	CausticMapRenderer* causticMapRenderer,
+	DirectLightingRenderer* directLightingRenderer,
 	Camera* mainCamera)
 {
     ShaderProgramInfo visualizerProgramInfo;
@@ -128,7 +132,9 @@ void Visualizer::Initialize(GPUDevice* device,
 		(Texture2D*)causticMapRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_CausticMap_Name);
 	mCompTexture = causticMapRenderer->mCompTexture;
-
+	mDirectLightingTexture =
+		(Texture2D*)directLightingRenderer->GetFrameBufferTextureByName(
+		RTGI_DirectLightingRenderer_DirectLighting_Name);
 
     // Create screen quad.
     Material* material = new Material(mtScreenQuad);
@@ -162,13 +168,13 @@ void Visualizer::SetShowMode(eShowMode mode)
 	mScreenQuad->ShowMode = mShowMode;
     switch( mShowMode )
     {
-	case eSM_GBufferPosition:
+	case eSM_ReceiverGBufferPosition:
 		mScreenQuad->DisplayTexture = mScenePositionTexture;
 		break;
-	case eSM_GBufferNormal:
+	case eSM_ReceiverGBufferNormal:
 		mScreenQuad->DisplayTexture = mSceneNormalTexture;
 		break;
-	case eSM_GBufferAlbedo:
+	case eSM_ReceiverGBufferAlbedo:
 		mScreenQuad->DisplayTexture = mSceneAlbedoTexture;
 		break;
 	case eSM_ReceiverLightSpacePosition:
@@ -185,6 +191,9 @@ void Visualizer::SetShowMode(eShowMode mode)
 		break;
 	case eSM_CausticMap:
 		mScreenQuad->DisplayTexture = mCompTexture;
+		break;
+	case eSM_DirectLighting:
+		mScreenQuad->DisplayTexture = mDirectLightingTexture;
 		break;
     default:
         assert(false);

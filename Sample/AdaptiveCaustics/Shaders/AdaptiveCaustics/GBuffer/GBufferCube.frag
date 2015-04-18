@@ -17,6 +17,6 @@ void main()
 
 	gl_FragData[0] = vPositionWorld;
 	// Flip normal because we want the light to affect the inside of the cube
-	gl_FragData[1] = vec4(vNormal, 1.0);
+	gl_FragData[1] = vec4(-vNormal, 1.0);
 	gl_FragData[2] = vec4(texColor);
 }

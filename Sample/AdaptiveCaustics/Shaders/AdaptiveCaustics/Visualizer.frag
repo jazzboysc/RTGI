@@ -11,15 +11,16 @@ uniform sampler2DArray tempSamplerArray;
 
 void main()
 {
-    if( ShowMode == 0 ||
-		ShowMode == 2 ||
-		ShowMode == 3 ||
-		ShowMode == 7)
+    if(	ShowMode == 2 ||
+		ShowMode == 7 ||
+		ShowMode == 8)
     {
         Output = texture(tempSampler, pTCoord);
     }
 
-	if( ShowMode == 1) // Normal
+	if( ShowMode == 0 ||
+		ShowMode == 1 || // Normal
+		ShowMode == 3)
 	{
         Output = texture(tempSampler, pTCoord);
 		Output = Output / 2 + vec4(0.5);
@@ -42,5 +43,6 @@ void main()
 		ShowMode == 5)
     {
         Output = texture(tempSamplerArray, vec3(pTCoord, ShowMode - 4));
+		Output = Output / 2 + vec4(0.5);
     }
 }

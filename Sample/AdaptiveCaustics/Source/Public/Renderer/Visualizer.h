@@ -5,6 +5,7 @@
 #include "ReceiverResourceRenderer.h"
 #include "RefractorResourceRenderer.h"
 #include "CausticMapRenderer.h"
+#include "DirectLightingRenderer.h"
 
 namespace RTGI
 {
@@ -43,14 +44,15 @@ class Visualizer : public SubRenderer
 public:
     enum eShowMode
     {
-		eSM_GBufferPosition,
-		eSM_GBufferNormal,
-		eSM_GBufferAlbedo,
+		eSM_ReceiverGBufferPosition,
+		eSM_ReceiverGBufferNormal,
+		eSM_ReceiverGBufferAlbedo,
 		eSM_ReceiverLightSpacePosition,
 		eSM_RefractorLightSpaceFrontNorm,
 		eSM_RefractorLightSpaceBackNorm,
 		eSM_RefractorShadow,
 		eSM_CausticMap,
+		eSM_DirectLighting,
 		eSM_Final
     };
 
@@ -63,6 +65,7 @@ public:
 		RefractorResourceRenderer* refractorResourceRenderer,
 		ShadowMapRenderer* shadowMapRenderer,
 		CausticMapRenderer* causticMapRenderer,
+		DirectLightingRenderer* directLightingRenderer,
         Camera* mainCamera);
 
     void Render(int technique, int pass);
@@ -86,6 +89,7 @@ private:
     Texture2DPtr mRefractorFrontAndBackNormalTextures;
 	Texture2DPtr mShadowMapTexture;
 	Texture2DPtr mCausticMapTexture;
+	Texture2DPtr mDirectLightingTexture;
 	Texture2DPtr mCompTexture;
 
 	/*

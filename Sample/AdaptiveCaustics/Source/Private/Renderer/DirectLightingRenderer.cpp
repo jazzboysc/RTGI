@@ -21,20 +21,19 @@ void DirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 	mGBufferAlbedoSamplerLoc.SetValue(2);
 	mShadowMapSamplerLoc.SetValue(3);
 
-	assert(LightProjector);
-	if (LightProjector)
-	{
-		mat4 viewTrans = LightProjector->GetViewTransform();
-		mLightProjectorViewLoc.SetValue(viewTrans);
-
-		vec3 lightPosition = LightProjector->GetLocation();
-		mLightPositionWorldLoc.SetValue(lightPosition);
-
-		float nearFarPlane[2];
-		LightProjector->GetNearFarPlane(nearFarPlane);
-		mLightProjectorNearFarLoc.SetValue(nearFarPlane);
-	}
-	mLightColorLoc.SetValue(LightColor);
+// 	if (LightProjector)
+// 	{
+// 		mat4 viewTrans = LightProjector->GetViewTransform();
+// 		mLightProjectorViewLoc.SetValue(viewTrans);
+// 
+// 		vec3 lightPosition = LightProjector->GetLocation();
+// 		mLightPositionWorldLoc.SetValue(lightPosition);
+// 
+// 		float nearFarPlane[2];
+// 		LightProjector->GetNearFarPlane(nearFarPlane);
+// 		mLightProjectorNearFarLoc.SetValue(nearFarPlane);
+// 	}
+	//mLightColorLoc.SetValue(LightColor);
 	mShowShadow.SetValue(ShowShadow);
 }
 //----------------------------------------------------------------------------
@@ -46,11 +45,11 @@ void DirectLightingScreenQuad::OnGetShaderConstants()
 	program->GetUniformLocation(&mGBufferNormalSamplerLoc, "GBufferNormalSampler");
 	program->GetUniformLocation(&mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
 	program->GetUniformLocation(&mShadowMapSamplerLoc, "ShadowMapSampler");
-	program->GetUniformLocation(&mLightProjectorViewLoc, "LightProjectorView");
-	program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
-	program->GetUniformLocation(&mLightColorLoc, "LightColor");
-	program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
 	program->GetUniformLocation(&mShowShadow, "ShowShadow");
+	// 	program->GetUniformLocation(&mLightProjectorViewLoc, "LightProjectorView");
+// 	program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
+// 	program->GetUniformLocation(&mLightColorLoc, "LightColor");
+// 	program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
 }
 //----------------------------------------------------------------------------
 
@@ -72,20 +71,17 @@ DirectLightingRenderer::~DirectLightingRenderer()
 }
 //----------------------------------------------------------------------------
 void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
-	int height, BufferFormat format, Camera* lightProjector,
-	GBufferRenderer* gbufferRenderer, ShadowMapRenderer* shadowMapRenderer)
+	int height, BufferFormat format,GBufferRenderer* gbufferRenderer,
+	ShadowMapRenderer* shadowMapRenderer)
 {
 	ShaderProgramInfo directLightingProgramInfo;
-	directLightingProgramInfo.VShaderFileName = "BidirectionalVoxelGI/vDirectLighting.glsl";
-	directLightingProgramInfo.FShaderFileName = "BidirectionalVoxelGI/fDirectLighting.glsl";
-	directLightingProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-		ShaderType::ST_Fragment;
-	Pass* passDirectLighting = new Pass(directLightingProgramInfo);
+	directLightingProgramInfo
+		<< "AdaptiveCaustics/DirectLighting/DirectLighting.vert"
+		<< "AdaptiveCaustics/DirectLighting/DirectLighting.frag";
 
-	Technique* techDirectLighting = new Technique();
-	techDirectLighting->AddPass(passDirectLighting);
-	MaterialTemplate* mtDirectLighting = new MaterialTemplate();
-	mtDirectLighting->AddTechnique(techDirectLighting);
+	MaterialTemplate* mtDirectLighting =
+		new MaterialTemplate(
+		new Technique(new Pass(directLightingProgramInfo)));
 
 	Material* material = new Material(mtDirectLighting);
 	mDirectLightingScreenQuad = new DirectLightingScreenQuad(material);
@@ -95,7 +91,7 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 	mDirectLightingScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
 	mDirectLightingScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
 	mDirectLightingScreenQuad->CreateDeviceResource(device);
-	mDirectLightingScreenQuad->LightProjector = lightProjector;
+	//mDirectLightingScreenQuad->LightProjector = lightProjector;
 
 	// Setup inputs.
 
@@ -110,16 +106,16 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 	ClearInputDependency();
 
 	view.BindingSlot = 0;
-	AddInputDependency(gbufferRenderer, "Position", &view);
+	AddInputDependency(gbufferRenderer, RTGI_GBuffer_Position_Name, &view);
 
 	view.BindingSlot = 1;
-	AddInputDependency(gbufferRenderer, "Normal", &view);
+	AddInputDependency(gbufferRenderer, RTGI_GBuffer_Normal_Name, &view);
 
 	view.BindingSlot = 2;
-	AddInputDependency(gbufferRenderer, "Albedo", &view);
+	AddInputDependency(gbufferRenderer, RTGI_GBuffer_Albedo_Name, &view);
 
 	view.BindingSlot = 3;
-	AddInputDependency(shadowMapRenderer, "ShadowMap", &view);
+	AddInputDependency(shadowMapRenderer, RTGI_ShadowMapRenderer_ShadowMap_Name, &view);
 
 	// Create output.
 	AddFrameBufferTarget(RTGI_DirectLightingRenderer_DirectLighting_Name,

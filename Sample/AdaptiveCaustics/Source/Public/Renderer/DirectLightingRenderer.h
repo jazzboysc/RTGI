@@ -14,7 +14,7 @@ public:
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 	virtual void OnGetShaderConstants();
 
-	Camera* LightProjector;
+	//Camera* LightProjector;
 	vec3 LightColor;
 	bool ShowShadow;
 
@@ -43,8 +43,7 @@ public:
 	virtual ~DirectLightingRenderer();
 
 	void Initialize(GPUDevice* device, int width, int height,
-		BufferFormat format, Camera* LightProjector,
-		GBufferRenderer* gbufferRenderer,
+		BufferFormat format, GBufferRenderer* gbufferRenderer,
 		ShadowMapRenderer* shadowMapRenderer);
 
 	void Render();
