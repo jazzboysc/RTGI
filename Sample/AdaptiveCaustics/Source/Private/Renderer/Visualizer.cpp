@@ -140,7 +140,6 @@ void Visualizer::Initialize(GPUDevice* device,
     mScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
     mScreenQuad->CreateDeviceResource(device);
 
-	SetShowMode(eSM_CausticMap);
 }
 //----------------------------------------------------------------------------
 void Visualizer::Render(int technique, int pass)

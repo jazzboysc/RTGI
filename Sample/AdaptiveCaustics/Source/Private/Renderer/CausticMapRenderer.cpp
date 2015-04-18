@@ -124,11 +124,11 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 	// Create gather voxel fragment list info task.
 	ShaderProgramInfo PI_AdaptiveCausticsTraversal;
 	PI_AdaptiveCausticsTraversal
-		<< "AdaptiveCaustics/AdaptiveCausticsTraversal.comp";
+		<< "AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsTraversal.comp";
 
 	ShaderProgramInfo PI_AdaptiveCausticsPostTraversalProcess;
 	PI_AdaptiveCausticsPostTraversalProcess
-	<< "AdaptiveCaustics/AdaptiveCausticsPostTraversalProcess.comp";
+	<< "AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsPostTraversalProcess.comp";
 
 
 	ComputePass* PassInfo_AdaptiveCausticsTraversal = new ComputePass(
@@ -142,7 +142,7 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 
 	ShaderProgramInfo PI_AdaptiveCausticsDebugDraw;
 	PI_AdaptiveCausticsDebugDraw <<
-		"AdaptiveCaustics/AdaptiveCausticsDrawDebug.comp";
+		"AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsDrawDebug.comp";
 
 	ComputePass* PassInfo_AdaptiveCausticsDebugDraw = new ComputePass(
 		PI_AdaptiveCausticsDebugDraw);

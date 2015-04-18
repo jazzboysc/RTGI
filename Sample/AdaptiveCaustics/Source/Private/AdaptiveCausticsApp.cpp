@@ -6,6 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
+#define DEFAULT_SHOWMODE Visualizer::eSM_CausticMap
 //----------------------------------------------------------------------------
 AdaptiveCausticsApp::AdaptiveCausticsApp(int width, int height)
 {
@@ -124,10 +125,10 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	// Pass: Render Shadow Map for refractor
 	ShaderProgramInfo PI_ShadowMap;
 	PI_ShadowMap
-		<< "AdaptiveCaustics/ParabolicShadowmap/ShadowMap.vert"
-		<< "AdaptiveCaustics/ParabolicShadowmap/ShadowMap.frag"
-		<< "AdaptiveCaustics/ParabolicShadowmap/ShadowMap.ctrl"
-		<< "AdaptiveCaustics/ParabolicShadowmap/ShadowMap.eval";
+		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.vert"
+		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.frag"
+		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.ctrl"
+		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.eval";
 
 	auto mtReceiverCausticsResourceCube = new MaterialTemplate(
 		new Technique({
@@ -217,11 +218,11 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	int infoIncY = 20;
 	InformationPanel::GetInstance()->AddTimingLabel("G-Buffer Pass", 16, infoStartY);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddTimingLabel("Receiver Light Space Position Pass", 16, infoStartY);
+	InformationPanel::GetInstance()->AddTimingLabel("Light Space Receiver Position Pass", 16, infoStartY);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddTimingLabel("Refractor Light Space Front Normal Pass", 16, infoStartY);
+	InformationPanel::GetInstance()->AddTimingLabel("Light Space Refractor Normal Pass", 16, infoStartY);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddTimingLabel("Shadow Map Pass", 16, infoStartY);
+	InformationPanel::GetInstance()->AddTimingLabel("Paraboloid Shadow Map Pass", 16, infoStartY);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddTimingLabel("Adaptive Caustic Map Pass", 16, infoStartY);
 	infoStartY += infoIncY;
@@ -233,13 +234,13 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("G-Buffer Albedo", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("Receiver Light Space Position", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Light Space Receiver Position", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("Refractor Light Space Front Normal", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Light Space Refractor Front Normal", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("Refractor Light Space Back Normal", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Light Space Refractor Back Normal", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("Shadow Map", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Paraboloid Shadow Map", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, true);
 	infoStartY += infoIncY;
@@ -311,7 +312,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 		mCausticMapRenderer,
 		mMainCamera);
 	mVisualizer->SetTimer(mTimer);
-
+	mVisualizer->SetShowMode(DEFAULT_SHOWMODE);
 }
 
 //----------------------------------------------------------------------------
@@ -345,17 +346,17 @@ void AdaptiveCausticsApp::FrameFunc()
 	mReceiverResourceRenderer->Render(0, SMP_Resource, mLightProjector);
 	workLoad = mReceiverResourceRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
-	infoPanel->SetTimingLabelValue("Receiver Light Space Position Pass", workLoad);
+	infoPanel->SetTimingLabelValue("Light Space Receiver Position Pass", workLoad);
 
 	mRefractorResourceRenderer->Render(0, SMP_Resource, mLightProjector);
 	workLoad = mRefractorResourceRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
-	infoPanel->SetTimingLabelValue("Refractor Light Space Front Normal Pass", workLoad);
+	infoPanel->SetTimingLabelValue("Light Space Refractor Normal Pass", workLoad);
 
 	mShadowMapRenderer->Render(0, SMP_ShadowMap, mLightProjector);
 	workLoad = mShadowMapRenderer->GetTimeElapsed();
  	totalWorkLoad += workLoad;
- 	infoPanel->SetTimingLabelValue("Shadow Map Pass", workLoad);
+ 	infoPanel->SetTimingLabelValue("Paraboloid Shadow Map Pass", workLoad);
 
 	mCausticMapRenderer->Render(0, 0/*SMP_AdaptiveCaustics*/, mLightProjector);
 	workLoad = mCausticMapRenderer->GetTimeElapsed();
@@ -428,21 +429,21 @@ void AdaptiveCausticsApp::OnRadioButtonClick(System::Object^ sender, System::Eve
 		mVisualizer->SetShowMode(Visualizer::eSM_GBufferAlbedo);
 	}
 
-	if (radioButton->Name == "Receiver Light Space Position")
+	if (radioButton->Name == "Light Space Receiver Position")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_ReceiverLightSpacePosition);
 	}
 
-	if (radioButton->Name == "Refractor Light Space Front Normal")
+	if (radioButton->Name == "Light Space Refractor Front Normal")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_RefractorLightSpaceFrontNorm);
 	}
 
-	if (radioButton->Name == "Refractor Light Space Back Normal")
+	if (radioButton->Name == "Light Space Refractor Back Normal")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_RefractorLightSpaceBackNorm);
 	}
-	if (radioButton->Name == "Shadow Map")
+	if (radioButton->Name == "Paraboloid Shadow Map")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_RefractorShadow);
 	}
