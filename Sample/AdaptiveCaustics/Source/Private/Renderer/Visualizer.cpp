@@ -31,6 +31,15 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
     {
 		switch (ShowMode)
 		{
+		case Visualizer::eSM_GBufferPosition:
+			DisplayTexture->BindToSampler(0, &samplerDesc);
+			break;
+		case Visualizer::eSM_GBufferNormal:
+			DisplayTexture->BindToSampler(0, &samplerDesc);
+			break;
+		case Visualizer::eSM_GBufferAlbedo:
+			DisplayTexture->BindToSampler(0, &samplerDesc);
+			break;
 		case Visualizer::eSM_ReceiverLightSpacePosition:
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
@@ -82,6 +91,7 @@ Visualizer::~Visualizer()
 }
 //----------------------------------------------------------------------------
 void Visualizer::Initialize(GPUDevice* device,
+	GBufferRenderer* gBufferRenderer,
 	ReceiverResourceRenderer* receiverResourceRenderer,
 	RefractorResourceRenderer* refractorResourceRenderer,
 	ShadowMapRenderer* shadowMapRenderer,
@@ -96,6 +106,15 @@ void Visualizer::Initialize(GPUDevice* device,
 		new Pass(visualizerProgramInfo)));
 
 	// Cache temp buffer and textures needed for visualization.
+	mScenePositionTexture =
+		(Texture2D*)gBufferRenderer->GetFrameBufferTextureByName(
+		RTGI_GBuffer_Position_Name);
+	mSceneNormalTexture =
+		(Texture2D*)gBufferRenderer->GetFrameBufferTextureByName(
+		RTGI_GBuffer_Normal_Name);
+	mSceneAlbedoTexture =
+		(Texture2D*)gBufferRenderer->GetFrameBufferTextureByName(
+		RTGI_GBuffer_Albedo_Name);
 	mReceiverPositionTexture =
 		(Texture2D*)receiverResourceRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_ReceiverPosition_Name);
@@ -144,6 +163,15 @@ void Visualizer::SetShowMode(eShowMode mode)
 	mScreenQuad->ShowMode = mShowMode;
     switch( mShowMode )
     {
+	case eSM_GBufferPosition:
+		mScreenQuad->DisplayTexture = mScenePositionTexture;
+		break;
+	case eSM_GBufferNormal:
+		mScreenQuad->DisplayTexture = mSceneNormalTexture;
+		break;
+	case eSM_GBufferAlbedo:
+		mScreenQuad->DisplayTexture = mSceneAlbedoTexture;
+		break;
 	case eSM_ReceiverLightSpacePosition:
 		mScreenQuad->DisplayTexture = mReceiverPositionTexture;
         break;

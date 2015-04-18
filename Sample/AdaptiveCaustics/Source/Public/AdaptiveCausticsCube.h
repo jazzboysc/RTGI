@@ -39,6 +39,9 @@ private:
 	ShaderUniform mViewLoc2;
 	ShaderUniform mProjLoc2;
 
+	ShaderUniform mWorldLoc3;
+	ShaderUniform mViewLoc3;
+
 	ShaderUniform mTessLevelLoc;
 
 	ShaderUniform mCubemapSampler;

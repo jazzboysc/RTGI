@@ -35,6 +35,7 @@ void AdaptiveCausticsApp::InitializeFBO()
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 {
+#pragma region Scene Misc
 	// Init things
 	float color = 0.0f;
 	glClearColor(color, color, color, 0.0f);
@@ -60,6 +61,11 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mLight->SetProjector(mLightProjector);
 	mLight->Intensity = vec3(0.9f, 0.9f, 0.7f);
 
+	mTimer = new GPUTimer();
+	mTimer->CreateDeviceResource();
+#pragma endregion Scene Misc
+
+#pragma region Init LightMesh
 	// Create light.
 	ShaderProgramInfo PI_LightMesh;
 	PI_LightMesh
@@ -89,9 +95,18 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	mLight->SetLightMesh(lightMesh);
 	lightMesh->SetWorldTranslation(mLightProjector->GetLocation());
+#pragma endregion Init LightMesh
+
 	//*/
-	mTimer = new GPUTimer();
-	mTimer->CreateDeviceResource();
+	// Pass: geometry buffer
+	ShaderProgramInfo PI_GBuffer;
+	PI_GBuffer
+		<< "AdaptiveCaustics/GBuffer/GBuffer.vert"
+		<< "AdaptiveCaustics/GBuffer/GBuffer.frag";
+	ShaderProgramInfo PI_GBufferCube;
+	PI_GBufferCube
+		<< "AdaptiveCaustics/GBuffer/GBufferCube.vert"
+		<< "AdaptiveCaustics/GBuffer/GBufferCube.frag";
 
 	// Pass: Render light space position of receiver geometry
 	ShaderProgramInfo PI_outputEyeSpacePosition;
@@ -114,13 +129,23 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 		<< "AdaptiveCaustics/ShadowMap.ctrl"
 		<< "AdaptiveCaustics/ShadowMap.eval";
 
-	auto mtCausticsResourceReceiver = new MaterialTemplate(
+	auto mtReceiverCausticsResourceCube = new MaterialTemplate(
 		new Technique({
+		new Pass(PI_GBufferCube),
 		new Pass(PI_outputEyeSpacePosition),
 		new Pass(PI_ShadowMap)})
 		);
-	auto mtCausticsResourceRefractor = new MaterialTemplate(
+
+	auto mtReceiverCausticsResource = new MaterialTemplate(
 		new Technique({
+		new Pass(PI_GBuffer),
+		new Pass(PI_outputEyeSpacePosition),
+		new Pass(PI_ShadowMap) })
+		);
+
+		auto mtRefractorCausticsResource = new MaterialTemplate(
+		new Technique({
+		new Pass(PI_GBuffer),
 		new Pass(PI_FrontBackNormals),
 		new Pass(PI_ShadowMap)})
 		);
@@ -136,7 +161,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 		"Textures/pool.bmp");
 
 	mScene.pool = new AdaptiveCausticsCube(
-		new Material(mtCausticsResourceReceiver), mMainCamera);
+		new Material(mtReceiverCausticsResourceCube), mMainCamera);
 	mScene.pool->LoadFromPLYFile("cube.ply");
 	mScene.pool->GenerateNormals();
 	mScene.pool->CreateDeviceResource(mDevice);
@@ -146,7 +171,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mScene.pool->CubeTexture = mCubeMap;
 	
 	mScene.ground = new AdaptiveCausticsTriMesh(
-		new Material(mtCausticsResourceReceiver), mMainCamera);
+		new Material(mtReceiverCausticsResource), mMainCamera);
 	mScene.ground->LoadFromPLYFile("ground.ply");
 	mScene.ground->GenerateNormals();
 	mScene.ground->CreateDeviceResource(mDevice);
@@ -155,7 +180,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	// Refractor mesh
 	mScene.mesh = new AdaptiveCausticsTriMesh(
-		new Material(mtCausticsResourceRefractor), mMainCamera);
+		new Material(mtRefractorCausticsResource), mMainCamera);
 	mScene.mesh->LoadFromPLYFile("dragon_s.ply");
 	mScene.mesh->GenerateNormals();
 	mScene.mesh->CreateDeviceResource(mDevice);
@@ -165,10 +190,6 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	auto scale = glm::scale(mat4(), vec3(3));
 	mScene.mesh->UpdateModelSpaceVertices(scale);
     mScene.mesh->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-	auto matrix = mScene.mesh->GetWorldTransform();
-	auto size = sizeof(mat4);
-	auto size1 = sizeof(fmat4);
-	auto size2 = sizeof(fmat4x4);
 	mScene.mesh->TessLevel = 1.0f;
 
 	// Render sets
@@ -194,6 +215,8 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	InformationPanel::GetInstance()->AddListener(this);
 	int infoStartY = 20;
 	int infoIncY = 20;
+	InformationPanel::GetInstance()->AddTimingLabel("G-Buffer Pass", 16, infoStartY);
+	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddTimingLabel("Receiver Light Space Position Pass", 16, infoStartY);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddTimingLabel("Refractor Light Space Front Normal Pass", 16, infoStartY);
@@ -204,6 +227,12 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 
 	infoStartY = 20;
+	InformationPanel::GetInstance()->AddRadioButton("G-Buffer Position", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddRadioButton("G-Buffer Normal", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddRadioButton("G-Buffer Albedo", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Receiver Light Space Position", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Refractor Light Space Front Normal", 16, infoStartY, 60, 20, false);
@@ -225,6 +254,19 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 
 	// Step 1: Render resources needed for caustics computation
+	mGBufferRenderer = new GBufferRenderer(device, mScene.all);
+	GBufferDesc gBufferDesc;
+	gBufferDesc.Width = this->Width;
+	gBufferDesc.Height = this->Height;
+	gBufferDesc.PositionFormat = BF_RGBAF;
+	gBufferDesc.PositionMipmap = true;
+	gBufferDesc.NormalFormat = BF_RGBAF;
+	gBufferDesc.NormalMipmap = true;
+	gBufferDesc.AlbedoFormat = BF_RGBAF;
+	gBufferDesc.AlbedoMipmap = true;
+	mGBufferRenderer->CreateGBuffer(&gBufferDesc);
+	mGBufferRenderer->SetTimer(mTimer);
+
 	mReceiverResourceRenderer = new ReceiverResourceRenderer(device, mScene.receiver);
 	ReceiverResourceDesc receiverResourceDesc;
 	receiverResourceDesc.Width = this->Width;
@@ -261,7 +303,9 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 
 	mVisualizer = new Visualizer(device);
-	mVisualizer->Initialize(device, mReceiverResourceRenderer,
+	mVisualizer->Initialize(device,
+		mGBufferRenderer,
+		mReceiverResourceRenderer,
 		mRefractorResourceRenderer,
 		mShadowMapRenderer,
 		mCausticMapRenderer,
@@ -292,6 +336,12 @@ void AdaptiveCausticsApp::FrameFunc()
 	}
 
 	// Resource gathering pass
+	mGBufferRenderer->Render(0, SMP_GBuffer, mMainCamera);
+	workLoad = mReceiverResourceRenderer->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("G-Buffer Pass", workLoad);
+
+
 	mReceiverResourceRenderer->Render(0, SMP_Resource, mLightProjector);
 	workLoad = mReceiverResourceRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
@@ -311,6 +361,9 @@ void AdaptiveCausticsApp::FrameFunc()
 	workLoad = mCausticMapRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Adaptive Caustic Map Pass", workLoad);
+
+	//mDirectLightingRenderer->Render();
+	
 	/*
 	// OK.  Now that we have all the information to compute all the photons
 	//    stored in our temporary FBOs, adaptively traverse the "mipmap" levels
@@ -360,6 +413,19 @@ void AdaptiveCausticsApp::OnRadioButtonClick(System::Object^ sender, System::Eve
 	if (!mVisualizer)
 	{
 		return;
+	}
+
+	if (radioButton->Name == "G-Buffer Position")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_GBufferPosition);
+	}
+	if (radioButton->Name == "G-Buffer Normal")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_GBufferNormal);
+	}
+	if (radioButton->Name == "G-Buffer Albedo")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_GBufferAlbedo);
 	}
 
 	if (radioButton->Name == "Receiver Light Space Position")

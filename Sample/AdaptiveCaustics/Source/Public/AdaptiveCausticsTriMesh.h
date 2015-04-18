@@ -25,9 +25,14 @@ public:
 	float TessLevel = 14.0f;
 
 private:
+
 	ShaderUniform mWorldLoc2;
 	ShaderUniform mViewLoc2;
 	ShaderUniform mProjLoc2;
+
+
+	ShaderUniform mWorldLoc3;
+	ShaderUniform mViewLoc3;
 
 	ShaderUniform mTessLevelLoc;
 

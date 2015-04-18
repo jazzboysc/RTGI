@@ -12,12 +12,20 @@ uniform sampler2DArray tempSamplerArray;
 void main()
 {
     if( ShowMode == 0 ||
-		ShowMode == 4)
+		ShowMode == 2 ||
+		ShowMode == 3 ||
+		ShowMode == 7)
     {
         Output = texture(tempSampler, pTCoord);
     }
 
-	if( ShowMode == 3)
+	if( ShowMode == 1) // Normal
+	{
+        Output = texture(tempSampler, pTCoord);
+		Output = Output / 2 + vec4(0.5);
+	}
+
+	if( ShowMode == 6)
     {
 		vec4 color = texture(tempSampler, pTCoord);
 		if( color.a != 0)
@@ -30,10 +38,9 @@ void main()
 		}
     }
 
-	if( ShowMode == 1 ||
-		ShowMode == 2)
+	if( ShowMode == 4 ||
+		ShowMode == 5)
     {
-        Output = texture(tempSamplerArray, vec3(pTCoord, ShowMode - 1));
+        Output = texture(tempSamplerArray, vec3(pTCoord, ShowMode - 4));
     }
-
 }

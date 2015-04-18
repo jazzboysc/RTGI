@@ -2,10 +2,12 @@
 #include "AdaptiveCausticsTriMesh.h"
 #include "AdaptiveCausticsCube.h"
 
+#include "GBufferRenderer.h"
 #include "ReceiverResourceRenderer.h"
 #include "RefractorResourceRenderer.h"
 #include "ShadowMapRenderer.h"
 #include "CausticMapRenderer.h"
+#include "DirectLightingRenderer.h"
 #include "Visualizer.h"
 
 #include "GPUTimer.h"
@@ -39,10 +41,13 @@ private:
 
 	bool bIsSpinningMesh = false;
 
+	GBufferRendererPtr mGBufferRenderer;
 	ReceiverResourceRendererPtr mReceiverResourceRenderer;
 	RefractorResourceRendererPtr mRefractorResourceRenderer;
 	ShadowMapRendererPtr mShadowMapRenderer;
 	CausticsMapRendererPtr mCausticMapRenderer;
+	DirectLightingRendererPtr mDirectLightingRenderer;
+
 	VisualizerPtr mVisualizer;
 
 	struct DebugBuffer
@@ -77,7 +82,8 @@ private:
 	friend class AdaptiveCausticsCube;
 	enum SceneModelPass
 	{
-		SMP_Resource = 0,
+		SMP_GBuffer = 0,
+		SMP_Resource,
 		SMP_ShadowMap,
 		SMP_AdaptiveCaustics
 	};

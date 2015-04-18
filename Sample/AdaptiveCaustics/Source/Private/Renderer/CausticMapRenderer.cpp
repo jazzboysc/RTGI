@@ -339,7 +339,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 		counterData[0] = 0;
 		counterData[1] = 0;
 		mTraversalTask->mAtomicCounterBuffer->Bind(0);
-		//mTraversalTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int, counterData);
+		mTraversalTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int, counterData);
 #endif
 
 		// Execute traversal task
@@ -376,19 +376,6 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 			mTraversalTask->AtomicCounterCache = *counterData1;
 		}
 		mTraversalTask->mAtomicCounterBuffer->Unmap();
-		//*/
-
-		/* Increment uniform data for next lod
-		auto uniformData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
-		assert(uniformData);
-		if (uniformData)
-		{
-			mTraversalTask->UniformCache = *uniformData;
-			uniformData->readOffset += mTraversalTask->UniformCache.readCount;
-			uniformData->readCount = 4 * mTraversalTask->AtomicCounterCache.writeCount;
-			uniformData->writeOffset += 4 * mTraversalTask->AtomicCounterCache.writeCount;
-		}
-		mTraversalTask->mACMSharedCommandBuffer->Unmap();
 		//*/
 	}
 

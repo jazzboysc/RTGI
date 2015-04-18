@@ -43,6 +43,9 @@ class Visualizer : public SubRenderer
 public:
     enum eShowMode
     {
+		eSM_GBufferPosition,
+		eSM_GBufferNormal,
+		eSM_GBufferAlbedo,
 		eSM_ReceiverLightSpacePosition,
 		eSM_RefractorLightSpaceFrontNorm,
 		eSM_RefractorLightSpaceBackNorm,
@@ -54,7 +57,8 @@ public:
     Visualizer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~Visualizer();
 
-    void Initialize(GPUDevice* device,
+	void Initialize(GPUDevice* device,
+		GBufferRenderer* gBufferRenderer,
 		ReceiverResourceRenderer* receiverResourceRenderer,
 		RefractorResourceRenderer* refractorResourceRenderer,
 		ShadowMapRenderer* shadowMapRenderer,
@@ -73,6 +77,10 @@ private:
 
 	PipelineStateBlockPtr mPSB;
     VisualizerScreenQuadPtr mScreenQuad;
+
+	Texture2DPtr mScenePositionTexture;
+	Texture2DPtr mSceneNormalTexture;
+	Texture2DPtr mSceneAlbedoTexture;
 
     Texture2DPtr mReceiverPositionTexture;
     Texture2DPtr mRefractorFrontAndBackNormalTextures;
