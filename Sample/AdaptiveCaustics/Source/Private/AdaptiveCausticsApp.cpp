@@ -111,23 +111,23 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	// Pass: Render light space position of receiver geometry
 	ShaderProgramInfo PI_outputEyeSpacePosition;
 	PI_outputEyeSpacePosition
-		<< "AdaptiveCaustics/RenderEyeSpacePosition.vert"
-		<< "AdaptiveCaustics/RenderEyeSpacePosition.frag";
+		<< "AdaptiveCaustics/CausticsResource/RenderEyeSpacePosition.vert"
+		<< "AdaptiveCaustics/CausticsResource/RenderEyeSpacePosition.frag";
 
 	// Pass: Render light space front and back normal of refractor geometry
 	ShaderProgramInfo PI_FrontBackNormals;
 	PI_FrontBackNormals
-		<< "AdaptiveCaustics/RenderFrontAndBackNormals.vert"
-		<< "AdaptiveCaustics/RenderFrontAndBackNormals.geom"
-		<< "AdaptiveCaustics/RenderFrontAndBackNormals.frag";
+		<< "AdaptiveCaustics/CausticsResource/RenderFrontAndBackNormals.vert"
+		<< "AdaptiveCaustics/CausticsResource/RenderFrontAndBackNormals.geom"
+		<< "AdaptiveCaustics/CausticsResource/RenderFrontAndBackNormals.frag";
 
 	// Pass: Render Shadow Map for refractor
 	ShaderProgramInfo PI_ShadowMap;
 	PI_ShadowMap
-		<< "AdaptiveCaustics/ShadowMap.vert"
-		<< "AdaptiveCaustics/ShadowMap.frag"
-		<< "AdaptiveCaustics/ShadowMap.ctrl"
-		<< "AdaptiveCaustics/ShadowMap.eval";
+		<< "AdaptiveCaustics/ParabolicShadowmap/ShadowMap.vert"
+		<< "AdaptiveCaustics/ParabolicShadowmap/ShadowMap.frag"
+		<< "AdaptiveCaustics/ParabolicShadowmap/ShadowMap.ctrl"
+		<< "AdaptiveCaustics/ParabolicShadowmap/ShadowMap.eval";
 
 	auto mtReceiverCausticsResourceCube = new MaterialTemplate(
 		new Technique({
@@ -143,7 +143,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 		new Pass(PI_ShadowMap) })
 		);
 
-		auto mtRefractorCausticsResource = new MaterialTemplate(
+	auto mtRefractorCausticsResource = new MaterialTemplate(
 		new Technique({
 		new Pass(PI_GBuffer),
 		new Pass(PI_FrontBackNormals),
