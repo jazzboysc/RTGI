@@ -38,6 +38,26 @@ private:
 
 typedef RefPointer<DeferredRefractionScreenQuad> DeferredRefractionScreenQuadPtr;
 
+class CopyTextureScreenQuad : public ScreenQuad
+{
+public:
+	CopyTextureScreenQuad(Material* material);
+	virtual ~CopyTextureScreenQuad();
+
+	// Implement base class interface.
+	virtual void OnUpdateShaderConstants(int technique, int pass);
+	virtual void OnGetShaderConstants();
+
+	Texture2D* mInputColorTex;
+	Texture2D* mInputDepthTex;
+
+private:
+	ShaderUniform mInputColorTexLoc;
+	ShaderUniform mInputDepthTexLoc;
+};
+typedef RefPointer<CopyTextureScreenQuad> CopyTextureScreenQuadPtr;
+
+
 class ReceiverResourceRenderer;
 class RefractorResourceRenderer;
 class DirectLightingRenderer;
@@ -65,6 +85,8 @@ public:
 private:
 	PipelineStateBlockPtr mPSB;
 	DeferredRefractionScreenQuadPtr mDeferredRefractionScreenQuad;
+	CopyTextureScreenQuadPtr mCopyTextureScreenQuad;
+	FrameBufferPtr mFBOCopy;
 };
 
 typedef RefPointer<DeferredRefractionRenderer> DeferredRefractionRendererPtr;

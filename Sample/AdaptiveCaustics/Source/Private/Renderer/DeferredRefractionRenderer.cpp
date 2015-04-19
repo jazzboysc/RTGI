@@ -77,7 +77,37 @@ void DeferredRefractionScreenQuad::OnGetShaderConstants()
 	program->GetUniformLocation(&mViewLoc, "View");
 }
 //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+CopyTextureScreenQuad::CopyTextureScreenQuad(Material* material)
+:
+ScreenQuad(material, 0)
+{}
+//----------------------------------------------------------------------------
+CopyTextureScreenQuad::~CopyTextureScreenQuad()
+{}
+//----------------------------------------------------------------------------
+void CopyTextureScreenQuad::OnUpdateShaderConstants(int, int)
+{
+	SamplerDesc sampler;
+	sampler.MinFilter = FT_Nearest;
+	sampler.MagFilter = FT_Nearest;
+	sampler.WrapS = WT_Clamp;
+	sampler.WrapT = WT_Clamp;
 
+	mInputColorTexLoc.SetValue(0);
+	mInputDepthTexLoc.SetValue(1);
+	mInputColorTex->BindToSampler(0, &sampler);
+	mInputDepthTex->BindToSampler(1, &sampler);
+}
+//----------------------------------------------------------------------------
+void CopyTextureScreenQuad::OnGetShaderConstants()
+{
+	ShaderProgram* program = mMaterial->GetProgram(0, 0);
+
+	program->GetUniformLocation(&mInputColorTexLoc, "ColorTex");
+	program->GetUniformLocation(&mInputDepthTexLoc, "DepthTex");
+}
+//----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 DeferredRefractionRenderer::DeferredRefractionRenderer(GPUDevice* device,
 	RenderSet* renderSet)
@@ -104,6 +134,30 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 	RefractorResourceRenderer* refractorNormalRenderer,
 	DirectLightingRenderer* directLightingRenderer)
 {
+	ShaderProgramInfo copyTextureProgramInfo;
+	copyTextureProgramInfo
+		<< "AdaptiveCaustics/CopyTexture/CopyTexture.vert"
+		<< "AdaptiveCaustics/CopyTexture/CopyTexture.frag";
+
+	MaterialTemplate* mtCopyTexture =
+		new MaterialTemplate(
+		new Technique(new Pass(copyTextureProgramInfo)));
+
+	mCopyTextureScreenQuad = new CopyTextureScreenQuad(
+		new Material(mtCopyTexture));
+	mCopyTextureScreenQuad->LoadFromPLYFile("screenquad.ply");
+	mCopyTextureScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+	mCopyTextureScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+	mCopyTextureScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+	mCopyTextureScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+	mCopyTextureScreenQuad->CreateDeviceResource(device);
+
+	mCopyTextureScreenQuad->mInputColorTex =
+		(Texture2D*)directLightingRenderer->GetFrameBufferTextureByName(
+		RTGI_DirectLightingRenderer_DirectLighting_Name);
+	mCopyTextureScreenQuad->mInputDepthTex =
+		(Texture2D*)directLightingRenderer->GetDepthTexture();
+
 	ShaderProgramInfo deferredRefractionProgramInfo;
 	deferredRefractionProgramInfo
 		<< "AdaptiveCaustics/DeferredRefraction/DeferredRefraction.vert"
@@ -113,15 +167,14 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 		new MaterialTemplate(
 		new Technique(new Pass(deferredRefractionProgramInfo)));
 
-	Material* material = new Material(mtDeferredRefraction);
-	mDeferredRefractionScreenQuad = new DeferredRefractionScreenQuad(material);
+	mDeferredRefractionScreenQuad = new DeferredRefractionScreenQuad(
+		new Material(mtDeferredRefraction));
 	mDeferredRefractionScreenQuad->LoadFromPLYFile("screenquad.ply");
 	mDeferredRefractionScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
 	mDeferredRefractionScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
 	mDeferredRefractionScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
 	mDeferredRefractionScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
 	mDeferredRefractionScreenQuad->CreateDeviceResource(device);
-	//mDirectLightingScreenQuad->LightProjector = lightProjector;
 
 	// Setup inputs.
 	mDeferredRefractionScreenQuad->SetCamera(camera);
@@ -145,11 +198,8 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 
 	view.BindingSlot = 2;
 	
-	//AddInputDependency(refractorResourceRenderer, RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name, &view);
 	AddInputDependency(refractorNormalRenderer, RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name, &view);
 
-	//mDeferredRefractionScreenQuad->mRefractorDepthTex =
-	//	(Texture2DArray*)refractorResourceRenderer->GetDepthTexture();
 	mDeferredRefractionScreenQuad->mRefractorDepthTex =
 		(Texture2DArray*)refractorNormalRenderer->GetDepthTexture();
 
@@ -157,11 +207,29 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 	AddFrameBufferTarget(RTGI_DeferredRefractionRenderer_DeferredRefraction_Name,
 		width, height, 0, TT_Texture2D, format);
 	CreateFrameBuffer(width, height, 0, TT_Texture2D);
+
+	
+	Texture* textures[] = {
+		(Texture*)GetFrameBufferTextureByName(
+		RTGI_DeferredRefractionRenderer_DeferredRefraction_Name) };
+	Texture* depthTexture = GetDepthTexture();
+	mFBOCopy = new FrameBuffer(mDevice);
+	mFBOCopy->SetRenderTargets(1, (Texture**)&textures, depthTexture);
 }
 //----------------------------------------------------------------------------
 void DeferredRefractionRenderer::Render()
 {
+	// Copy texture
+	mFBOCopy->Enable();
+	//mCopyTextureScreenQuad->Render(0, 0);
+	mFBOCopy->Disable();
+
+	// Add deferred refraction
 	SubRenderer::RenderSingle(mDeferredRefractionScreenQuad, 0, 0,
 		SRO_FrameBuffer, mPSB, mDeferredRefractionScreenQuad->GetCamera());
+
+	mFBOCopy->Enable();
+	mCopyTextureScreenQuad->Render(0, 0);
+	mFBOCopy->Disable();
 }
 //----------------------------------------------------------------------------
