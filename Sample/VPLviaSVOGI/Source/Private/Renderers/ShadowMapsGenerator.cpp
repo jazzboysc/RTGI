@@ -29,7 +29,7 @@ void ShadowMapsGenerator::Initialize(int width, int height,
     int spotLightCount = mLightManager->GetSpotLightCount();
     int totalCount = pointLightCount + spotLightCount;
 
-    AddFrameBufferTarget(RTGI_ShadowMapRenderer_ShadowMap_Names, width, height,
+    AddFrameBufferTarget(RTGI_ShadowMapRenderer_ShadowMaps_Name, width, height,
         totalCount, TT_Texture2DArray, format);
     CreateFrameBuffer(width, height, totalCount, TT_Texture2DArray);
 }

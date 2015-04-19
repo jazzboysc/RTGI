@@ -38,8 +38,7 @@ private:
     ShaderUniform mInv2SceneBBExtensionLocSV;
 
     // Scene shadow map pass.
-    ShaderUniform mWorldLocShadowMap, mViewLocShadowMap, mProjLocShadowMap;
-    ShaderUniform mLightProjectorNearFarLoc;
+    ShaderUniform mWorldLocShadowMap;
     ShaderUniform mTessLevelLoc;
 
     // G-buffer pass.

@@ -7,7 +7,7 @@
 namespace RTGI
 {
 
-#define RTGI_ShadowMapRenderer_ShadowMap_Names "ShadowMaps"
+#define RTGI_ShadowMapRenderer_ShadowMaps_Name "ShadowMaps"
 
 //----------------------------------------------------------------------------
 // Author: Che Sun

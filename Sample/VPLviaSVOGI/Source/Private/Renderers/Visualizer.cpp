@@ -429,7 +429,7 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     // Cache temp buffer and textures needed for visualization.
     mShadowMapTexture = 
         (Texture2D*)shadowMapsGenerator->GetFrameBufferTextureByName(
-        RTGI_ShadowMapRenderer_ShadowMap_Names);
+        RTGI_ShadowMapRenderer_ShadowMaps_Name);
     mGBufferPositionTexture = 
         (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
         RTGI_GBuffer_Position_Name);

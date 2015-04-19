@@ -36,9 +36,6 @@ void SceneMesh::OnGetShaderConstants()
 	// Get shadow map pass uniform locations.
     program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_ShadowMap);
     program->GetUniformLocation(&mWorldLocShadowMap, "World");
-    program->GetUniformLocation(&mViewLocShadowMap, "View");
-    program->GetUniformLocation(&mProjLocShadowMap, "Proj");
-    program->GetUniformLocation(&mLightProjectorNearFarLoc, "LightProjectorNearFar");
     program->GetUniformLocation(&mTessLevelLoc, "TessLevel");
 
     // Get G-buffer pass uniform locations.
@@ -90,19 +87,6 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
     {
         mWorldLocShadowMap.SetValue(worldTrans);
         mTessLevelLoc.SetValue(TessLevel);
-
-        if( mCamera )
-        {
-            mat4 viewTrans = mCamera->GetViewTransform();
-            mViewLocShadowMap.SetValue(viewTrans);
-
-            mat4 projTrans = mCamera->GetProjectionTransform();
-            mProjLocShadowMap.SetValue(projTrans);
-
-            float nearFarPlane[2];
-            mCamera->GetNearFarPlane(nearFarPlane);
-            mLightProjectorNearFarLoc.SetValue(nearFarPlane);
-        }
 	}
 
     // Update G-buffer pass uniform data.

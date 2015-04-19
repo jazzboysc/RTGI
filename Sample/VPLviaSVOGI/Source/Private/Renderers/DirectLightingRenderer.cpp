@@ -100,7 +100,7 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 
     view.BindingSlot = 3;
     AddInputDependency(shadowMapsGenerator, 
-        RTGI_ShadowMapRenderer_ShadowMap_Names, &view);
+        RTGI_ShadowMapRenderer_ShadowMaps_Name, &view);
 
     // Create output.
     AddFrameBufferTarget(RTGI_DirectLightingRenderer_DirectLighting_Name, 
