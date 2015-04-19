@@ -22,6 +22,6 @@ void main( void )
 	// Eye space normal
 	Output.rgb = normalize(gNormalView.xyz);
 	// Facing direction flag
-	Output.a = max( gNormalView.w, 1.0 );
+	Output.a = max( gNormalView.w, 0.0 );
 }
 

@@ -27,6 +27,8 @@ void DeferredRefractionScreenQuad::OnUpdateShaderConstants(int, int)
 
 	glm::mat4 projTrans = mCamera->GetProjectionTransform();
 	mProjLoc.SetValue(projTrans);
+	glm::mat4 viewTrans = mCamera->GetViewTransform();
+	mViewLoc.SetValue(viewTrans);
 
 	float nearFarPlane[2];
 	mCamera->GetNearFarPlane(nearFarPlane);
@@ -71,6 +73,7 @@ void DeferredRefractionScreenQuad::OnGetShaderConstants()
 	program->GetUniformLocation(&mReceiverAlbedoLoc, "ReceiverAlbedo");
 	program->GetUniformLocation(&mReceiverDepthLoc, "ReceiverDepth");
 	program->GetUniformLocation(&mProjLoc, "Proj");
+	program->GetUniformLocation(&mViewLoc, "View");
 }
 //----------------------------------------------------------------------------
 

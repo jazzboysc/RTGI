@@ -26,7 +26,7 @@ out vec4 gNormalView;
 void main( void )
 { 
 	gl_Layer       = vNormalView[0].w < 0.0 ? 1 : 0;
-	float back     = vNormalView[0].w < 0.0 ? -1 : 1;
+	float back     = 1;//vNormalView[0].w < 0.0 ? -1 : 1;
 	
 	//causticsDebugBuffer.second = vNormalView[1].w;
 	//causticsDebugBuffer.third = vNormalView[2].w;

@@ -14,6 +14,7 @@ in vec2 pTCoord;
 out vec4 Output;
 
 uniform mat4 Proj;
+uniform mat4 View;
 
 uniform vec4 NearFarInfo;
 uniform vec4 RefractionIndexInfo;
@@ -76,7 +77,7 @@ void main( void )
 	if (dot(tmp.xyz,tmp.xyz) < 0.1 ) discard;
 
 	// Get front facing position and normal
-	vec4 P_1 = vec4( tmp.w * DirectionFromScreenCoord( pTCoord ), 1.0 );
+	vec4 P_1 = vec4( tmp.w * DirectionFromScreenCoord( pTCoord ), 1.0 ) * View;
 	
 	// Check if this pixel has refractive materials or not.
 	outside = dot(tmp.xyz,tmp.xyz) < 0.01 ? 1.0 : 0.0;
