@@ -1,12 +1,24 @@
 @echo off
+setlocal enableextensions enabledelayedexpansion
 
 rem ## back up CWD
 pushd "%~dp0"
 
 rem ## Find Git from GitHub
 for /d %%a in ("%APPDATA%\..\Local\GitHub\PortableGit*") do (set Git=%%~fa\bin\Git.exe)
-if Git == "" ( goto Error_MissingGitHub )
+if exist "%Git%" (
+	goto Setup
+) else (
+	rem ## Find git from system PATH
+	for /f "delims=" %%a in ('where git') do (set Git="%%a")
+	if exist "!Git!" (
+		goto Setup
+	) else (
+		goto Error_MissingGitHub
+	)
+)
 
+:Setup
 rem ## Find CMake or clone from Git
 for %%X in (cmake.exe) do (set CMakePath=%%~$PATH:X)
 if not defined CMakePath (
@@ -113,3 +125,5 @@ goto Exit
 :Exit
 rem ## Restore original CWD in case we change it
 popd
+
+endlocal
