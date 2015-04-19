@@ -40,6 +40,7 @@ typedef RefPointer<DeferredRefractionScreenQuad> DeferredRefractionScreenQuadPtr
 
 class ReceiverResourceRenderer;
 class RefractorResourceRenderer;
+class DirectLightingRenderer;
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 12/05/2014
@@ -56,7 +57,8 @@ public:
 		GBufferRenderer* refractorGBufferRenderer,
 		ReceiverResourceRenderer* receiverResourceRenderer,
 		RefractorResourceRenderer* refractorResourceRenderer,
-		RefractorResourceRenderer* refractorNormalRenderer);
+		RefractorResourceRenderer* refractorNormalRenderer,
+		DirectLightingRenderer* directLightingRenderer);
 
 	void Render();
 

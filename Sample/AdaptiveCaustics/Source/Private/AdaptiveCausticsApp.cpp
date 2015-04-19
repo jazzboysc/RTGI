@@ -341,8 +341,9 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 		mRefractorGBufferRenderer,
 		mReceiverResourceRenderer,
 		mRefractorResourceRenderer,
-		mRefractorNormalRenderer);
-	mDeferredRefractionRenderer->SetTimer(mTimer);
+		mRefractorNormalRenderer,
+		mDirectLightingRenderer);
+		mDeferredRefractionRenderer->SetTimer(mTimer);
 
 	mVisualizer = new Visualizer(device);
 	mVisualizer->Initialize(device,

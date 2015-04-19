@@ -166,4 +166,5 @@ void main( void )
 	vec4 transmitColor = vec4( exp(-d_V * RefractorAlbedo.a) * RefractorAlbedo.rgb, 1.0);
 	vec4 refractedColor = transmitColor * texture2D( ReceiverAlbedo, ProjectToTexCoord( P_2_tilde + distOld * tmpT2 ) );
 	Output = vec4( reflectedColor.xyz + fresnel.y * refractedColor.xyz, 1.0); 
+	Output = texture2D( ReceiverAlbedo, pTCoord);
 }

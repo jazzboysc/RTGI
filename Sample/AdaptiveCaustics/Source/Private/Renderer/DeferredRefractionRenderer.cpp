@@ -1,6 +1,7 @@
 #include "DeferredRefractionRenderer.h"
 #include "ReceiverResourceRenderer.h"
 #include "RefractorResourceRenderer.h"
+#include "DirectLightingRenderer.h"
 
 using namespace RTGI;
 
@@ -100,7 +101,8 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 	GBufferRenderer* refractorGBufferRenderer,
 	ReceiverResourceRenderer* receiverResourceRenderer,
 	RefractorResourceRenderer* refractorResourceRenderer,
-	RefractorResourceRenderer* refractorNormalRenderer)
+	RefractorResourceRenderer* refractorNormalRenderer,
+	DirectLightingRenderer* directLightingRenderer)
 {
 	ShaderProgramInfo deferredRefractionProgramInfo;
 	deferredRefractionProgramInfo
@@ -135,8 +137,8 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 	ClearInputDependency();
 
 	view.BindingSlot = 0;
-	AddInputDependency(receiverGBufferRenderer,
-		RTGI_GBuffer_Albedo_Name, &view);
+	AddInputDependency(directLightingRenderer,
+		RTGI_DirectLightingRenderer_DirectLighting_Name, &view);
 
 	mDeferredRefractionScreenQuad->mReceiverDepthTex =
 		(Texture2D*)receiverGBufferRenderer->GetDepthTexture();
