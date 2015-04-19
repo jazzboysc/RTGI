@@ -424,6 +424,9 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("Scene Shadow Map", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddButton("Prev Shadow Map", 30, infoStartY, 110, 24);
+    InformationPanel::GetInstance()->AddButton("Next Shadow Map", 145, infoStartY, 110, 24);
+    infoStartY += infoIncY + 5;
     InformationPanel::GetInstance()->AddRadioButton("G-Buffer Position", 16, infoStartY, 60, 20, false);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("G-Buffer Normal", 16, infoStartY, 60, 20, false);
@@ -774,6 +777,20 @@ void VPLviaSVOGI::OnButtonClick(System::Object^  sender,
         int curVPLSubsetIndex = mVisualizer->GetCurVPLSubsetIndex();
         ++curVPLSubsetIndex;
         mVisualizer->SetCurVPLSubsetIndex(curVPLSubsetIndex);
+    }
+
+    if( button->Name == "Prev Shadow Map" )
+    {
+        int curShadowMapIndex = mVisualizer->GetCurShadowMapIndex();
+        --curShadowMapIndex;
+        mVisualizer->SetCurShadowMapIndex(curShadowMapIndex);
+    }
+
+    if( button->Name == "Next Shadow Map" )
+    {
+        int curShadowMapIndex = mVisualizer->GetCurShadowMapIndex();
+        ++curShadowMapIndex;
+        mVisualizer->SetCurShadowMapIndex(curShadowMapIndex);
     }
 }
 //----------------------------------------------------------------------------

@@ -23,9 +23,12 @@ public:
         LightManager* lightManager);
     void Render(int technique, int pass, Camera* camera);
 
+    inline int GetShadowMapCount() const { return mShadowMapCount; };
+
 protected:
     PipelineStateBlockPtr mPSB;
     LightManagerPtr mLightManager;
+    int mShadowMapCount;
 };
 
 typedef RefPointer<ShadowMapsGenerator> ShadowMapsGeneratorPtr;

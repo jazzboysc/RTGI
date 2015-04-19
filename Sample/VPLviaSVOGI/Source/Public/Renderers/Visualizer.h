@@ -227,6 +227,8 @@ public:
     void SetShowMode(ShowMode mode);
     int GetCurVPLSubsetIndex() const;
     void SetCurVPLSubsetIndex(int value);
+    int GetCurShadowMapIndex() const;
+    void SetCurShadowMapIndex(int value);
     void SetShowVPL(bool value);
     void SetShowVPLSubset(bool value);
     void SetShowVPLFluxContrast(bool value);
@@ -242,10 +244,12 @@ private:
     bool mShowVPLSubset;
     int mVPLSubsetCount;
     int mCurVPLSubsetIndex;
+    int mShadowMapCount;
+    int mCurShadowMapIndex;
 
     VisualizerScreenQuadPtr mScreenQuad;
 
-    Texture2DPtr mShadowMapTexture;
+    Texture2DArrayPtr mShadowMapsTexture;
     Texture2DPtr mGBufferPositionTexture;
     Texture2DPtr mGBufferNormalTexture;
     Texture2DPtr mGBufferAlbedoTexture;

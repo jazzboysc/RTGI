@@ -332,6 +332,8 @@ Visualizer::Visualizer(GPUDevice* device, RenderSet* renderSet)
     mShowVPLSubset = false;
     mVPLSubsetCount = 0;
     mCurVPLSubsetIndex = 0;
+    mShadowMapCount = 0;
+    mCurShadowMapIndex = 0;
 }
 //----------------------------------------------------------------------------
 Visualizer::~Visualizer()
@@ -346,7 +348,7 @@ Visualizer::~Visualizer()
     mSVOUniformBuffer = 0;
     mSVONodeCubeModel = 0;
 
-    mShadowMapTexture = 0;
+    mShadowMapsTexture = 0;
     mGBufferPositionTexture = 0;
     mGBufferNormalTexture = 0;
     mGBufferAlbedoTexture = 0;
@@ -426,9 +428,11 @@ void Visualizer::Initialize(GPUDevice* device, Voxelizer* voxelizer,
     MaterialTemplate* mtScreenQuad = new MaterialTemplate();
     mtScreenQuad->AddTechnique(techScreenQuad);
 
+    mShadowMapCount = shadowMapsGenerator->GetShadowMapCount();
+
     // Cache temp buffer and textures needed for visualization.
-    mShadowMapTexture = 
-        (Texture2D*)shadowMapsGenerator->GetFrameBufferTextureByName(
+    mShadowMapsTexture = 
+        (Texture2DArray*)shadowMapsGenerator->GetFrameBufferTextureByName(
         RTGI_ShadowMapRenderer_ShadowMaps_Name);
     mGBufferPositionTexture = 
         (Texture2D*)gbufferRenderer->GetFrameBufferTextureByName(
@@ -687,8 +691,9 @@ void Visualizer::SetShowMode(ShowMode mode)
         break;
 
     case SM_Shadow:
-        mScreenQuad->ShowMode = 0;
-        mScreenQuad->TempTexture = mShadowMapTexture;
+        mScreenQuad->ShowMode = 1;
+        mScreenQuad->TextureArrayIndex = 0;
+        mScreenQuad->TempTextureArray = mShadowMapsTexture;
         break;
 
     case SM_VPLShadow:
@@ -716,16 +721,19 @@ void Visualizer::SetShowMode(ShowMode mode)
 
     case SM_RSMPosition:
         mScreenQuad->ShowMode = 1;
+        mScreenQuad->TextureArrayIndex = 0;
         mScreenQuad->TempTextureArray = mRSMPositionTextureArray;
         break;
 
     case SM_RSMNormal:
         mScreenQuad->ShowMode = 1;
+        mScreenQuad->TextureArrayIndex = 0;
         mScreenQuad->TempTextureArray = mRSMNormalTextureArray;
         break;
 
     case SM_RSMFlux:
         mScreenQuad->ShowMode = 1;
+        mScreenQuad->TextureArrayIndex = 0;
         mScreenQuad->TempTextureArray = mRSMFluxTextureArray;
         break;
 
@@ -764,6 +772,17 @@ int Visualizer::GetCurVPLSubsetIndex() const
 void Visualizer::SetCurVPLSubsetIndex(int value)
 {
     mCurVPLSubsetIndex = RTGI_MIN(RTGI_MAX(0, value), mVPLSubsetCount - 1);
+}
+//----------------------------------------------------------------------------
+int Visualizer::GetCurShadowMapIndex() const
+{
+    return mCurShadowMapIndex;
+}
+//----------------------------------------------------------------------------
+void Visualizer::SetCurShadowMapIndex(int value)
+{
+    mCurShadowMapIndex = RTGI_MIN(RTGI_MAX(0, value), mShadowMapCount - 1);
+    mScreenQuad->TextureArrayIndex = mCurShadowMapIndex;
 }
 //----------------------------------------------------------------------------
 void Visualizer::SetShowVPL(bool value)
