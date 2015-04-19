@@ -53,6 +53,7 @@ public:
 	void Initialize(GPUDevice* device, int width, int height,
 		BufferFormat format, Camera* camera,
 		GBufferRenderer* receiverGBufferRenderer,
+		GBufferRenderer* refractorGBufferRenderer,
 		ReceiverResourceRenderer* receiverResourceRenderer,
 		RefractorResourceRenderer* refractorResourceRenderer,
 		RefractorResourceRenderer* refractorNormalRenderer);

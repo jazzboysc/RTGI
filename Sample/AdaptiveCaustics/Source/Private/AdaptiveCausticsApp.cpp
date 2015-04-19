@@ -286,6 +286,10 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mReceiverGBufferRenderer->CreateGBuffer(&gBufferDesc);
 	mReceiverGBufferRenderer->SetTimer(mTimer);
 
+	mRefractorGBufferRenderer = new GBufferRenderer(device, mScene.refractor);
+	mRefractorGBufferRenderer->CreateGBuffer(&gBufferDesc);
+	mRefractorGBufferRenderer->SetTimer(mTimer);
+
 	mReceiverResourceRenderer = new ReceiverResourceRenderer(device, mScene.receiver);
 	ReceiverResourceDesc receiverResourceDesc;
 	receiverResourceDesc.Width = this->Width;
@@ -327,12 +331,16 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	mDirectLightingRenderer = new DirectLightingRenderer(device);
 	mDirectLightingRenderer->Initialize(mDevice, this->Width, this->Height, BF_RGBAF,
-		mReceiverGBufferRenderer, mShadowMapRenderer);
+		mReceiverGBufferRenderer,
+		mShadowMapRenderer);
 	mDirectLightingRenderer->SetTimer(mTimer);
 
 	mDeferredRefractionRenderer = new DeferredRefractionRenderer(device);
 	mDeferredRefractionRenderer->Initialize(device, this->Width, this->Height, BF_RGBAF, mMainCamera,
-		mReceiverGBufferRenderer, mReceiverResourceRenderer, mRefractorResourceRenderer,
+		mReceiverGBufferRenderer,
+		mRefractorGBufferRenderer,
+		mReceiverResourceRenderer,
+		mRefractorResourceRenderer,
 		mRefractorNormalRenderer);
 	mDeferredRefractionRenderer->SetTimer(mTimer);
 

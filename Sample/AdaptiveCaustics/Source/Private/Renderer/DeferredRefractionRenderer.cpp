@@ -9,7 +9,7 @@ DeferredRefractionScreenQuad::DeferredRefractionScreenQuad(Material* material)
 :
 ScreenQuad(material, 0)
 {
-	this->RefractionIndex = 1.1;
+	this->RefractionIndex = 1.1f;
 	this->SplatResolution = 768;
 	this->RefractorAlbedo = vec4(1.f, 1.f, 1.f, 1.f);
 }
@@ -94,6 +94,7 @@ DeferredRefractionRenderer::~DeferredRefractionRenderer()
 void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 	int height, BufferFormat format, Camera* camera,
 	GBufferRenderer* receiverGBufferRenderer,
+	GBufferRenderer* refractorGBufferRenderer,
 	ReceiverResourceRenderer* receiverResourceRenderer,
 	RefractorResourceRenderer* refractorResourceRenderer,
 	RefractorResourceRenderer* refractorNormalRenderer)
@@ -138,8 +139,12 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 		(Texture2D*)receiverGBufferRenderer->GetDepthTexture();
 
 	view.BindingSlot = 2;
+	
+	//AddInputDependency(refractorResourceRenderer, RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name, &view);
 	AddInputDependency(refractorNormalRenderer, RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name, &view);
 
+	//mDeferredRefractionScreenQuad->mRefractorDepthTex =
+	//	(Texture2DArray*)refractorResourceRenderer->GetDepthTexture();
 	mDeferredRefractionScreenQuad->mRefractorDepthTex =
 		(Texture2DArray*)refractorNormalRenderer->GetDepthTexture();
 

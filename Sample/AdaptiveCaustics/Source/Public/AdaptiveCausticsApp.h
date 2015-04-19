@@ -43,6 +43,7 @@ private:
 	bool bIsSpinningMesh = false;
 
 	GBufferRendererPtr mReceiverGBufferRenderer;
+	GBufferRendererPtr mRefractorGBufferRenderer;
 	RefractorResourceRendererPtr mRefractorNormalRenderer;
 	ReceiverResourceRendererPtr mReceiverResourceRenderer;
 	RefractorResourceRendererPtr mRefractorResourceRenderer;
