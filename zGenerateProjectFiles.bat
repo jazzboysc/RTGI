@@ -9,15 +9,17 @@ for /d %%a in ("%APPDATA%\..\Local\GitHub\PortableGit*") do (set Git=%%~fa\bin\G
 if exist "%Git%" (
 	goto Setup
 ) else (
-	rem ## Find git from system PATH
-	for /f "delims=" %%a in ('where git') do (set Git="%%a")
-	if exist "!Git!" (
-		goto Setup
-	) else (
-		goto Error_MissingGitHub
-	)
+	goto FindGit
 )
 
+:FindGit
+rem ## Find git from system PATH
+for /f "delims=" %%a in ('where git') do (set Git=%%a)
+if exist ""%Git%"" (
+	goto Setup
+) else (
+	goto Error_MissingGitHub
+)
 :Setup
 rem ## Find CMake or clone from Git
 for %%X in (cmake.exe) do (set CMakePath=%%~$PATH:X)
@@ -27,7 +29,7 @@ if not defined CMakePath (
 		echo.
 		mkdir CMake
 		Attrib +h +s +r CMake
-		%Git% clone https://github.com/piaoasd123/PortableCMake-Win32.git CMake
+		"%Git%" clone https://github.com/piaoasd123/PortableCMake-Win32.git CMake
 		echo.
 	)
 	set CMakePath="%~dp0\CMake\bin\cmake.exe"
