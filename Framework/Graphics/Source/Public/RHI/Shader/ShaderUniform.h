@@ -38,7 +38,8 @@ public:
     void SetValue(float value);
     void SetValue(float value[2]);
     void SetValue(const glm::mat4& value);
-    void SetValue(const glm::vec3& value);
+	void SetValue(const glm::vec3& value);
+	void SetValue(const glm::vec4& value);
 
 public:
     std::string mName;

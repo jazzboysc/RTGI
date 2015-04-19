@@ -48,7 +48,8 @@ private:
     void __GetUniformLocation(ShaderProgram* program, ShaderUniform* uniform, 
         const char* name);
     void __SetUniformValueMat4(ShaderUniform* uniform, const glm::mat4* value);
-    void __SetUniformValueVec3(ShaderUniform* uniform, const glm::vec3* value);
+	void __SetUniformValueVec3(ShaderUniform* uniform, const glm::vec3* value);
+	void __SetUniformValueVec4(ShaderUniform* uniform, const glm::vec4* value);
     void __SetUniformValueInt(ShaderUniform* uniform, int value);
     void __SetUniformValueUInt(ShaderUniform* uniform, unsigned int value);
     void __SetUniformValueFloat(ShaderUniform* uniform, float value);

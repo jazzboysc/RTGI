@@ -50,3 +50,8 @@ void ShaderUniform::SetValue(const glm::vec3& value)
 	this->mUniformHandle->Device->SetUniformValueVec3(this, &value);
 }
 //----------------------------------------------------------------------------
+void ShaderUniform::SetValue(const glm::vec4& value)
+{
+	this->mUniformHandle->Device->SetUniformValueVec4(this, &value);
+}
+//----------------------------------------------------------------------------

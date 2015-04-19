@@ -338,8 +338,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mVisualizer->SetShowMode(DEFAULT_SHOWMODE);
 }
 
-#define PROFILE_ENABLED
-//#undef PROFILE_ENABLED
+//#define PROFILE_ENABLED
 
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::FrameFunc()

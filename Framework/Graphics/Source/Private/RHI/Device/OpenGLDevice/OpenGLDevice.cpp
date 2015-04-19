@@ -436,6 +436,18 @@ void OpenGLDevice::__SetUniformValueVec3(ShaderUniform* uniform,
     OPENGL_DEVICE_CHECK_ERROR;
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__SetUniformValueVec4(ShaderUniform* uniform,
+	const glm::vec4* value)
+{
+	OpenGLShaderUniformHandle* uniformHandle =
+		(OpenGLShaderUniformHandle*)uniform->mUniformHandle;
+	RTGI_ASSERT(uniformHandle);
+
+	glUniform4fv(uniformHandle->mUniform, 1, (GLfloat*)value);
+
+	OPENGL_DEVICE_CHECK_ERROR;
+}
+//----------------------------------------------------------------------------
 void OpenGLDevice::__SetUniformValueInt(ShaderUniform* uniform, int value)
 {
     OpenGLShaderUniformHandle* uniformHandle =
@@ -1284,7 +1296,8 @@ OpenGLDevice::OpenGLDevice()
     _SetProgramParameterInt = (GPUDeviceSetProgramParameterInt)&OpenGLDevice::__SetProgramParameterInt;
     _GetUniformLocation = (GPUDeviceGetUniformLocation)&OpenGLDevice::__GetUniformLocation;
     _SetUniformValueMat4 = (GPUDeviceSetUniformValueMat4)&OpenGLDevice::__SetUniformValueMat4;
-    _SetUniformValueVec3 = (GPUDeviceSetUniformValueVec3)&OpenGLDevice::__SetUniformValueVec3;
+	_SetUniformValueVec3 = (GPUDeviceSetUniformValueVec3)&OpenGLDevice::__SetUniformValueVec3;
+	_SetUniformValueVec4 = (GPUDeviceSetUniformValueVec4)&OpenGLDevice::__SetUniformValueVec4;
     _SetUniformValueInt = (GPUDeviceSetUniformValueInt)&OpenGLDevice::__SetUniformValueInt;
     _SetUniformValueUInt = (GPUDeviceSetUniformValueUInt)&OpenGLDevice::__SetUniformValueUInt;
     _SetUniformValueFloat = (GPUDeviceSetUniformValueFloat)&OpenGLDevice::__SetUniformValueFloat;

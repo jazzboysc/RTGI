@@ -70,6 +70,8 @@ typedef void (GPUDevice::*GPUDeviceSetUniformValueMat4)(ShaderUniform* uniform,
     const glm::mat4* value);
 typedef void (GPUDevice::*GPUDeviceSetUniformValueVec3)(ShaderUniform* uniform, 
     const glm::vec3* value);
+typedef void (GPUDevice::*GPUDeviceSetUniformValueVec4)(ShaderUniform* uniform,
+	const glm::vec4* value);
 typedef void (GPUDevice::*GPUDeviceSetUniformValueInt)(ShaderUniform* uniform, 
     int value);
 typedef void (GPUDevice::*GPUDeviceSetUniformValueUInt)(ShaderUniform* uniform,
@@ -196,6 +198,8 @@ public:
         const glm::mat4* value);
     inline 	void SetUniformValueVec3(ShaderUniform* uniform,
         const glm::vec3* value);
+	inline 	void SetUniformValueVec4(ShaderUniform* uniform,
+		const glm::vec4* value);
     inline 	void SetUniformValueInt(ShaderUniform* uniform,
         int value);
     inline 	void SetUniformValueUInt(ShaderUniform* uniform,
@@ -296,7 +300,8 @@ protected:
     GPUDeviceDeletePassInfo                       _DeletePassInfo;
     GPUDeviceGetUniformLocation                   _GetUniformLocation;
     GPUDeviceSetUniformValueMat4                  _SetUniformValueMat4;
-    GPUDeviceSetUniformValueVec3                  _SetUniformValueVec3;
+	GPUDeviceSetUniformValueVec3                  _SetUniformValueVec3;
+	GPUDeviceSetUniformValueVec4                  _SetUniformValueVec4;
     GPUDeviceSetUniformValueInt                   _SetUniformValueInt;
     GPUDeviceSetUniformValueUInt                  _SetUniformValueUInt;
     GPUDeviceSetUniformValueFloat                 _SetUniformValueFloat;

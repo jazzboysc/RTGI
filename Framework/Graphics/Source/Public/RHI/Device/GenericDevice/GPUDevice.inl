@@ -280,6 +280,12 @@ void GPUDevice::SetUniformValueVec3(ShaderUniform* uniform,
     (this->*_SetUniformValueVec3)(uniform, value);
 }
 //----------------------------------------------------------------------------
+void GPUDevice::SetUniformValueVec4(ShaderUniform* uniform,
+	const glm::vec4* value)
+{
+	(this->*_SetUniformValueVec4)(uniform, value);
+}
+//----------------------------------------------------------------------------
 void GPUDevice::SetUniformValueMat4(ShaderUniform* uniform, 
     const glm::mat4* value)
 {
