@@ -391,7 +391,7 @@ void AdaptiveCausticsApp::FrameFunc()
 	infoPanel->SetTimingLabelValue("Receiver G-Buffer Pass", workLoad);
 #endif // PROFILE_ENABLED
 
-	mRefractorNormalRenderer->Render(0, SMP_GBuffer, mMainCamera);
+	mRefractorNormalRenderer->Render(0, SMP_Resource, mMainCamera);
 #ifdef PROFILE_ENABLED
 	workLoad = mRefractorNormalRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;

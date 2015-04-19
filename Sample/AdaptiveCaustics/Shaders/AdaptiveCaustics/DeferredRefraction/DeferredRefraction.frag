@@ -77,13 +77,13 @@ void main( void )
 	if (dot(tmp.xyz,tmp.xyz) < 0.1 ) discard;
 
 	// Get front facing position and normal
-	vec4 P_1 = vec4( tmp.w * DirectionFromScreenCoord( pTCoord ), 1.0 ) * View;
+	vec4 P_1 = vec4( tmp.w * DirectionFromScreenCoord( pTCoord ), 1.0 );
 	
 	// Check if this pixel has refractive materials or not.
 	outside = dot(tmp.xyz,tmp.xyz) < 0.01 ? 1.0 : 0.0;
 	
 	// Compute normalized V and N_1 values.
-	vec3 N_1 = normalize( tmp.xyz );   // Surface Normal
+	vec3 N_1 = normalize( tmp.xyz );   // View Surface Normal
 	vec3 V   = normalize( P_1.xyz  );   // View direction
 	float NdotV = dot( -V, N_1 );
 	
@@ -166,5 +166,5 @@ void main( void )
 	vec4 transmitColor = vec4( exp(-d_V * RefractorAlbedo.a) * RefractorAlbedo.rgb, 1.0);
 	vec4 refractedColor = transmitColor * texture2D( ReceiverAlbedo, ProjectToTexCoord( P_2_tilde + distOld * tmpT2 ) );
 	Output = vec4( reflectedColor.xyz + fresnel.y * refractedColor.xyz, 1.0); 
-	Output = texture2D( ReceiverAlbedo, pTCoord);
+	//Output = vec4(NdotV, NdotV, NdotV, 1);//texture2D( ReceiverAlbedo, pTCoord);
 }
