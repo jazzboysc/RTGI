@@ -14,12 +14,12 @@ public:
 	virtual void OnUpdateShaderConstants(int technique, int pass);
 	virtual void OnGetShaderConstants();
 
-	vec3 RefractorColor;
+	vec4 RefractorAlbedo;
 	vec4 SceneAmbient;
 	float RefractionIndex;
 	float SplatResolution;
-	Texture2D* mRefractorNormTex;
-	Texture2D* mRefractorDepthTex;
+	Texture2DArray* mRefractorNormTex;
+	Texture2DArray* mRefractorDepthTex;
 	Texture2D* mReceiverColorTex;
 	Texture2D* mReceiverDepthTex;
 
@@ -31,13 +31,15 @@ private:
 	ShaderUniform mTanEyeFovy2Loc;
 	ShaderUniform mRefractorNormLoc;
 	ShaderUniform mRefractorDepthLoc;
-	ShaderUniform mRefractorColorLoc;
-	ShaderUniform mReceiverColorLoc;
+	ShaderUniform mRefractorAlbedoLoc;
+	ShaderUniform mReceiverAlbedoLoc;
 	ShaderUniform mReceiverDepthLoc;
 };
 
 typedef RefPointer<DeferredRefractionScreenQuad> DeferredRefractionScreenQuadPtr;
 
+class ReceiverResourceRenderer;
+class RefractorResourceRenderer;
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 12/05/2014
@@ -49,8 +51,11 @@ public:
 	virtual ~DeferredRefractionRenderer();
 
 	void Initialize(GPUDevice* device, int width, int height,
-		BufferFormat format, GBufferRenderer* gbufferRenderer,
-		ShadowMapRenderer* shadowMapRenderer);
+		BufferFormat format, Camera* camera,
+		GBufferRenderer* receiverGBufferRenderer,
+		ReceiverResourceRenderer* receiverResourceRenderer,
+		RefractorResourceRenderer* refractorResourceRenderer,
+		RefractorResourceRenderer* refractorNormalRenderer);
 
 	void Render();
 

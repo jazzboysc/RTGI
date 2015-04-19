@@ -235,6 +235,8 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddTimingLabel("Direct Lighting Pass", 16, infoStartY);
 	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddTimingLabel("Deferred Refraction Pass", 16, infoStartY);
+	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddTimingLabel("Total", 16, infoStartY);
 	infoStartY += infoIncY;
 
@@ -256,6 +258,8 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, true);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Direct Lighting", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddRadioButton("Deferred Refraction", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Spin Mesh", 16, infoStartY, 60, 20, false);
@@ -282,10 +286,6 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mReceiverGBufferRenderer->CreateGBuffer(&gBufferDesc);
 	mReceiverGBufferRenderer->SetTimer(mTimer);
 
-	mRefractorGBufferRenderer = new GBufferRenderer(device, mScene.refractor);
-	mRefractorGBufferRenderer->CreateGBuffer(&gBufferDesc);
-	mRefractorGBufferRenderer->SetTimer(mTimer);
-
 	mReceiverResourceRenderer = new ReceiverResourceRenderer(device, mScene.receiver);
 	ReceiverResourceDesc receiverResourceDesc;
 	receiverResourceDesc.Width = this->Width;
@@ -303,6 +303,11 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	refractorResourceDesc.RefractorFrontNormalMipmap = true;
 	mRefractorResourceRenderer->CreateCausticsResource(&refractorResourceDesc);
 	mRefractorResourceRenderer->SetTimer(mTimer);
+
+	mRefractorNormalRenderer = new RefractorResourceRenderer(device, mScene.refractor);
+	refractorResourceDesc.RefractorFrontNormalMipmap = false;
+	mRefractorNormalRenderer->CreateCausticsResource(&refractorResourceDesc);
+	mRefractorNormalRenderer->SetTimer(mTimer);
 
 	mShadowMapRenderer = new ShadowMapRenderer(device, mScene.all);
 	mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBAF);
@@ -325,6 +330,12 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 		mReceiverGBufferRenderer, mShadowMapRenderer);
 	mDirectLightingRenderer->SetTimer(mTimer);
 
+	mDeferredRefractionRenderer = new DeferredRefractionRenderer(device);
+	mDeferredRefractionRenderer->Initialize(device, this->Width, this->Height, BF_RGBAF, mMainCamera,
+		mReceiverGBufferRenderer, mReceiverResourceRenderer, mRefractorResourceRenderer,
+		mRefractorNormalRenderer);
+	mDeferredRefractionRenderer->SetTimer(mTimer);
+
 	mVisualizer = new Visualizer(device);
 	mVisualizer->Initialize(device,
 		mReceiverGBufferRenderer,
@@ -333,6 +344,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 		mShadowMapRenderer,
 		mCausticMapRenderer,
 		mDirectLightingRenderer,
+		mDeferredRefractionRenderer,
 		mMainCamera);
 	mVisualizer->SetTimer(mTimer);
 	mVisualizer->SetShowMode(DEFAULT_SHOWMODE);
@@ -370,9 +382,9 @@ void AdaptiveCausticsApp::FrameFunc()
 	infoPanel->SetTimingLabelValue("Receiver G-Buffer Pass", workLoad);
 #endif // PROFILE_ENABLED
 
-	mRefractorGBufferRenderer->Render(0, SMP_GBuffer, mMainCamera);
+	mRefractorNormalRenderer->Render(0, SMP_GBuffer, mMainCamera);
 #ifdef PROFILE_ENABLED
-	workLoad = mRefractorGBufferRenderer->GetTimeElapsed();
+	workLoad = mRefractorNormalRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Refractor G-Buffer Pass", workLoad);
 #endif // PROFILE_ENABLED
@@ -410,6 +422,13 @@ void AdaptiveCausticsApp::FrameFunc()
 	workLoad = mDirectLightingRenderer->GetTimeElapsed();
 	totalWorkLoad += workLoad;
 	infoPanel->SetTimingLabelValue("Direct Lighting Pass", workLoad);
+#endif // PROFILE_ENABLED
+
+	mDeferredRefractionRenderer->Render();
+#ifdef PROFILE_ENABLED
+	workLoad = mDeferredRefractionRenderer->GetTimeElapsed();
+	totalWorkLoad += workLoad;
+	infoPanel->SetTimingLabelValue("Deferred Refraction Pass", workLoad);
 #endif // PROFILE_ENABLED
 
 	/*
@@ -503,6 +522,10 @@ void AdaptiveCausticsApp::OnRadioButtonClick(System::Object^ sender, System::Eve
 	if (radioButton->Name == "Direct Lighting")
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_DirectLighting);
+	}
+	if (radioButton->Name == "Deferred Refraction")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_DeferredRefraction);
 	}
 
 }

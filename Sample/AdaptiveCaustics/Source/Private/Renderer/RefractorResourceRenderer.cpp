@@ -59,6 +59,9 @@ void RefractorResourceRenderer::Render(int technique, int pass, Camera* camera)
 	int a = 0;
 
 	auto tex = (Texture2D*)this->GetFrameBufferTextureByName(RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name);
-	tex->GenerateMipmap();
+	if (tex->HasMipMap)
+	{
+		tex->GenerateMipmap();
+	}
 }
 //----------------------------------------------------------------------------

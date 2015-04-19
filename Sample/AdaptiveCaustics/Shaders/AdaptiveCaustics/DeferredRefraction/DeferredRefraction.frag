@@ -18,19 +18,18 @@ uniform mat4 Proj;
 uniform vec4 NearFarInfo;
 uniform vec4 RefractionIndexInfo;
 uniform vec4 SceneAmbient;
-uniform vec4 RefractorColor;
+uniform vec4 RefractorAlbedo;
 
 uniform float SplatResolution;
 uniform float TanEyeFovy2;
 
-uniform sampler2D ReceiverDepth;   
 uniform sampler2D ReceiverAlbedo;	  
-
+uniform sampler2D ReceiverDepth;   
 uniform sampler2DArray RefractorNorm;
 uniform sampler2DArray RefractorDepth;
 
 // Take the eye-space position and project it into a 2D image coordinate
-inline vec2 ProjectToTexCoord( vec4 eyeSpacePos )
+vec2 ProjectToTexCoord( vec4 eyeSpacePos )
 {
 	vec4 projLoc = Proj * eyeSpacePos;
 	return ( 0.5 * (projLoc.xy / projLoc.w) + 0.5 );
@@ -60,13 +59,12 @@ vec2 fresnelApprox( float cosAng )
 //    an eye-space viewing direction.
 vec3 DirectionFromScreenCoord( vec2 texPos )
 {
-	vec3 dir = vec3(TanEyeFovy2 * 2.0 * texPos - TanEyeFovy2), -1.0 );
+	vec3 dir = vec3(TanEyeFovy2 * 2.0 * texPos - TanEyeFovy2, -1.0 );
 	return normalize( dir );
 }
 
 void main( void )
 {
-	vec3 coord = pTCoord;
 	float outside = 0.0, noBackNorm=0.0;
 	vec2 Dist, fresnel;
 	vec4 reflectedColor;
@@ -78,7 +76,7 @@ void main( void )
 	if (dot(tmp.xyz,tmp.xyz) < 0.1 ) discard;
 
 	// Get front facing position and normal
-	vec4 P_1 = vec4( tmp.w * DirectionFromScreenCoord( coord.xy ), 1.0 );
+	vec4 P_1 = vec4( tmp.w * DirectionFromScreenCoord( pTCoord ), 1.0 );
 	
 	// Check if this pixel has refractive materials or not.
 	outside = dot(tmp.xyz,tmp.xyz) < 0.01 ? 1.0 : 0.0;
@@ -92,8 +90,8 @@ void main( void )
     SceneLight light = sceneLightUniformBuffer.lights[0];
 
 	vec3 toLight = normalize(  light.WorldPositionAndType.xyz - P_1.xyz );
-	vec3 half = normalize( toLight -V ); 
-	float NdotH = max( 0.0, dot( N_1, half ) );
+	vec3 halfV = normalize( toLight - V ); 
+	float NdotH = max( 0.0, dot( N_1, halfV ) );
 	vec4 reflectedLightColor = pow( NdotH, 50.0 ) * vec4(1.0f); // Get actual spotlight color
 	
 	// Find the relective (.x) and refractive (.y) fresnel coefficients 
@@ -101,7 +99,7 @@ void main( void )
 
 	// Find the distance to front & back surface, first as normalized [0..1] values, than unprojected
 	Dist.y = length( P_1.xyz );
-	Dist.x = texture( RefractorDepth, vec3(coord.xy,1) ).z;	
+	Dist.x = texture( RefractorDepth, vec3(pTCoord, 1) ).z;	
 	Dist.x = 2.0 * NearFarInfo.x / (Dist.x * NearFarInfo.y - NearFarInfo.z );
 
 	// Distance between front & back surfaces
@@ -164,7 +162,7 @@ void main( void )
 		distOld = -(NearFarInfo.x / (texel1 * NearFarInfo.y - NearFarInfo.w)) + P_2_tilde.z;
 	}
 	
-	vec4 transmitColor = vec4( exp(-d_V * glassColor.a) * RefractorColor.rgb, 1.0);
-	vec4 refractedColor = transmitColor * texture2D( ReceiverColor, ProjectToTexCoord( P_2_tilde + distOld * tmpT2 ) );
+	vec4 transmitColor = vec4( exp(-d_V * RefractorAlbedo.a) * RefractorAlbedo.rgb, 1.0);
+	vec4 refractedColor = transmitColor * texture2D( ReceiverAlbedo, ProjectToTexCoord( P_2_tilde + distOld * tmpT2 ) );
 	Output = vec4( reflectedColor.xyz + fresnel.y * refractedColor.xyz, 1.0); 
 }

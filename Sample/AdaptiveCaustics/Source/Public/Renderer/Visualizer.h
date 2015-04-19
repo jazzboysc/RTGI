@@ -6,6 +6,7 @@
 #include "RefractorResourceRenderer.h"
 #include "CausticMapRenderer.h"
 #include "DirectLightingRenderer.h"
+#include "DeferredRefractionRenderer.h"
 
 namespace RTGI
 {
@@ -53,6 +54,7 @@ public:
 		eSM_RefractorShadow,
 		eSM_CausticMap,
 		eSM_DirectLighting,
+		eSM_DeferredRefraction,
 		eSM_Final
     };
 
@@ -66,6 +68,7 @@ public:
 		ShadowMapRenderer* shadowMapRenderer,
 		CausticMapRenderer* causticMapRenderer,
 		DirectLightingRenderer* directLightingRenderer,
+		DeferredRefractionRenderer* deferredRefractionRenderer,
         Camera* mainCamera);
 
     void Render(int technique, int pass);
@@ -90,6 +93,7 @@ private:
 	Texture2DPtr mShadowMapTexture;
 	Texture2DPtr mCausticMapTexture;
 	Texture2DPtr mDirectLightingTexture;
+	Texture2DPtr mDeferredRefractionTexture;
 	Texture2DPtr mCompTexture;
 
 	/*

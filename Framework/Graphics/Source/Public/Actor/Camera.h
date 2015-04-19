@@ -53,7 +53,7 @@ public:
 	glm::vec3 GetDirection() const;
 	glm::vec3 GetRight() const;
 	void GetAngle(float& _horizontalAngle, float& _verticalAngle);
-
+	float GetFoV() const;
     void GetNearFarPlane(float* nearFarPlane) const;
 	glm::mat4 GetViewTransform();
 	glm::mat4 GetProjectionTransform();

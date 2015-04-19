@@ -58,6 +58,9 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
 		case Visualizer::eSM_DirectLighting:
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
+		case Visualizer::eSM_DeferredRefraction:
+			DisplayTexture->BindToSampler(0, &samplerDesc);
+			break;
 		default:
 			assert(false);
 			break;
@@ -100,6 +103,7 @@ void Visualizer::Initialize(GPUDevice* device,
 	ShadowMapRenderer* shadowMapRenderer,
 	CausticMapRenderer* causticMapRenderer,
 	DirectLightingRenderer* directLightingRenderer,
+	DeferredRefractionRenderer* deferredRefractionRenderer,
 	Camera* mainCamera)
 {
     ShaderProgramInfo visualizerProgramInfo;
@@ -135,6 +139,9 @@ void Visualizer::Initialize(GPUDevice* device,
 	mDirectLightingTexture =
 		(Texture2D*)directLightingRenderer->GetFrameBufferTextureByName(
 		RTGI_DirectLightingRenderer_DirectLighting_Name);
+	mDeferredRefractionTexture =
+		(Texture2D*)deferredRefractionRenderer->GetFrameBufferTextureByName(
+		RTGI_DeferredRefractionRenderer_DeferredRefraction_Name);
 
     // Create screen quad.
     Material* material = new Material(mtScreenQuad);
@@ -194,6 +201,9 @@ void Visualizer::SetShowMode(eShowMode mode)
 		break;
 	case eSM_DirectLighting:
 		mScreenQuad->DisplayTexture = mDirectLightingTexture;
+		break;
+	case eSM_DeferredRefraction:
+		mScreenQuad->DisplayTexture = mDeferredRefractionTexture;
 		break;
     default:
         assert(false);

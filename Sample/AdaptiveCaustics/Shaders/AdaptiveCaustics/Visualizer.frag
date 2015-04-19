@@ -13,7 +13,8 @@ void main()
 {
     if(	ShowMode == 2 ||
 		ShowMode == 7 ||
-		ShowMode == 8)
+		ShowMode == 8 ||
+		ShowMode == 9)
     {
         Output = texture(tempSampler, pTCoord);
     }

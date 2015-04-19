@@ -1,4 +1,6 @@
 #include "DeferredRefractionRenderer.h"
+#include "ReceiverResourceRenderer.h"
+#include "RefractorResourceRenderer.h"
 
 using namespace RTGI;
 
@@ -6,13 +8,23 @@ using namespace RTGI;
 DeferredRefractionScreenQuad::DeferredRefractionScreenQuad(Material* material)
 :
 ScreenQuad(material, 0)
-{}
+{
+	this->RefractionIndex = 1.1;
+	this->SplatResolution = 768;
+	this->RefractorAlbedo = vec4(1.f, 1.f, 1.f, 1.f);
+}
 //----------------------------------------------------------------------------
 DeferredRefractionScreenQuad::~DeferredRefractionScreenQuad()
 {}
 //----------------------------------------------------------------------------
 void DeferredRefractionScreenQuad::OnUpdateShaderConstants(int, int)
 {
+	SamplerDesc sampler;
+	sampler.MinFilter = FT_Linear;
+	sampler.MagFilter = FT_Nearest;
+	sampler.WrapS = WT_Clamp;
+	sampler.WrapT = WT_Clamp;
+
 	glm::mat4 projTrans = mCamera->GetProjectionTransform();
 	mProjLoc.SetValue(projTrans);
 
@@ -23,7 +35,25 @@ void DeferredRefractionScreenQuad::OnUpdateShaderConstants(int, int)
 		nearFarPlane[1] - nearFarPlane[0],
 		nearFarPlane[1] + nearFarPlane[0], nearFarPlane[1]));
 
+	mRefractionIndexInfoLoc.SetValue(vec4(
+		1.f / RefractionIndex,
+		1.f / (RefractionIndex * RefractionIndex),
+		RefractionIndex,
+		RefractionIndex * RefractionIndex));
 
+	mSceneAmbientLoc.SetValue(vec4(1.f, 1.f, 1.f, 1.f));
+	mSplatResolutionModifierLoc.SetValue(1.f); // depends on the ratio
+	mRefractorAlbedoLoc.SetValue(RefractorAlbedo);
+	mTanEyeFovy2Loc.SetValue(glm::pi<float>() * mCamera->GetFoV() / 360.0f);
+
+	mReceiverAlbedoLoc.SetValue(0);
+	mReceiverDepthLoc.SetValue(1);
+	mRefractorNormLoc.SetValue(2);
+	mRefractorDepthLoc.SetValue(3);
+
+	mReceiverDepthTex->BindToSampler(1, &sampler);
+	mRefractorDepthTex->BindToSampler(3, &sampler);
+	
 }
 //----------------------------------------------------------------------------
 void DeferredRefractionScreenQuad::OnGetShaderConstants()
@@ -37,8 +67,8 @@ void DeferredRefractionScreenQuad::OnGetShaderConstants()
 	program->GetUniformLocation(&mTanEyeFovy2Loc, "TanEyeFovy2");
 	program->GetUniformLocation(&mRefractorNormLoc, "RefractorNorm");
 	program->GetUniformLocation(&mRefractorDepthLoc, "RefractorDepth");
-	program->GetUniformLocation(&mRefractorColorLoc, "RefractorColor");
-	program->GetUniformLocation(&mReceiverColorLoc, "ReceiverAlbedo");
+	program->GetUniformLocation(&mRefractorAlbedoLoc, "RefractorAlbedo");
+	program->GetUniformLocation(&mReceiverAlbedoLoc, "ReceiverAlbedo");
 	program->GetUniformLocation(&mReceiverDepthLoc, "ReceiverDepth");
 	program->GetUniformLocation(&mProjLoc, "Proj");
 }
@@ -62,8 +92,11 @@ DeferredRefractionRenderer::~DeferredRefractionRenderer()
 }
 //----------------------------------------------------------------------------
 void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
-	int height, BufferFormat format, GBufferRenderer* gbufferRenderer,
-	ShadowMapRenderer* shadowMapRenderer)
+	int height, BufferFormat format, Camera* camera,
+	GBufferRenderer* receiverGBufferRenderer,
+	ReceiverResourceRenderer* receiverResourceRenderer,
+	RefractorResourceRenderer* refractorResourceRenderer,
+	RefractorResourceRenderer* refractorNormalRenderer)
 {
 	ShaderProgramInfo deferredRefractionProgramInfo;
 	deferredRefractionProgramInfo
@@ -85,6 +118,7 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 	//mDirectLightingScreenQuad->LightProjector = lightProjector;
 
 	// Setup inputs.
+	mDeferredRefractionScreenQuad->SetCamera(camera);
 
 	RendererInputDataView view;
 	view.Type = RDT_Texture;
@@ -97,16 +131,17 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 	ClearInputDependency();
 
 	view.BindingSlot = 0;
-	AddInputDependency(gbufferRenderer, RTGI_GBuffer_Position_Name, &view);
+	AddInputDependency(receiverGBufferRenderer,
+		RTGI_GBuffer_Albedo_Name, &view);
 
-	view.BindingSlot = 1;
-	AddInputDependency(gbufferRenderer, RTGI_GBuffer_Normal_Name, &view);
+	mDeferredRefractionScreenQuad->mReceiverDepthTex =
+		(Texture2D*)receiverGBufferRenderer->GetDepthTexture();
 
 	view.BindingSlot = 2;
-	AddInputDependency(gbufferRenderer, RTGI_GBuffer_Albedo_Name, &view);
+	AddInputDependency(refractorNormalRenderer, RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name, &view);
 
-	view.BindingSlot = 3;
-	AddInputDependency(shadowMapRenderer, RTGI_ShadowMapRenderer_ShadowMap_Name, &view);
+	mDeferredRefractionScreenQuad->mRefractorDepthTex =
+		(Texture2DArray*)refractorNormalRenderer->GetDepthTexture();
 
 	// Create output.
 	AddFrameBufferTarget(RTGI_DeferredRefractionRenderer_DeferredRefraction_Name,
@@ -117,6 +152,6 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 void DeferredRefractionRenderer::Render()
 {
 	SubRenderer::RenderSingle(mDeferredRefractionScreenQuad, 0, 0,
-		SRO_FrameBuffer, mPSB, 0);
+		SRO_FrameBuffer, mPSB, mDeferredRefractionScreenQuad->GetCamera());
 }
 //----------------------------------------------------------------------------

@@ -199,6 +199,10 @@ void Camera::GetAngle(float& _horizontalAngle, float& _verticalAngle)
 	_horizontalAngle = euler.y;
 	_verticalAngle = euler.x;
 }
+float Camera::GetFoV() const
+{
+	return mUpFovDegrees;
+}
 //----------------------------------------------------------------------------
 void Camera::Rotate(glm::vec3 _rotation)
 {

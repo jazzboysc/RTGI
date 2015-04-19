@@ -8,6 +8,7 @@
 #include "ShadowMapRenderer.h"
 #include "CausticMapRenderer.h"
 #include "DirectLightingRenderer.h"
+#include "DeferredRefractionRenderer.h"
 #include "Visualizer.h"
 
 #include "GPUTimer.h"
@@ -42,12 +43,13 @@ private:
 	bool bIsSpinningMesh = false;
 
 	GBufferRendererPtr mReceiverGBufferRenderer;
-	GBufferRendererPtr mRefractorGBufferRenderer;
+	RefractorResourceRendererPtr mRefractorNormalRenderer;
 	ReceiverResourceRendererPtr mReceiverResourceRenderer;
 	RefractorResourceRendererPtr mRefractorResourceRenderer;
 	ShadowMapRendererPtr mShadowMapRenderer;
 	CausticsMapRendererPtr mCausticMapRenderer;
 	DirectLightingRendererPtr mDirectLightingRenderer;
+	DeferredRefractionRendererPtr mDeferredRefractionRenderer;
 
 	VisualizerPtr mVisualizer;
 
