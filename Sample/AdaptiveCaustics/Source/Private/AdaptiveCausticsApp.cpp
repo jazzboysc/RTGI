@@ -55,7 +55,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	mLightProjector = new Camera;
 	mLightProjector->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 0.01f, 25.0f);
-	mLightProjector->SetLookAt(vec3(-0.0f, 0.5f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
+	mLightProjector->SetLookAt(vec3(-0.5f, 0.5f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
 	mLight = new Light;
 	mLight->SetProjector(mLightProjector);
 	mLight->Intensity = vec3(1.f, 1.f, 1.f);
@@ -339,6 +339,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mDirectLightingRenderer->Initialize(mDevice, this->Width, this->Height, BF_RGBAF,
 		mReceiverGBufferRenderer,
 		mCausticMapRenderer,
+		mReceiverResourceRenderer,
 		mShadowMapRenderer);
 	mDirectLightingRenderer->SetTimer(mTimer);
 
