@@ -1,4 +1,5 @@
 #include "DirectLightingRenderer.h"
+#include "CausticMapRenderer.h"
 
 using namespace RTGI;
 
@@ -20,6 +21,7 @@ void DirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 	mGBufferNormalSamplerLoc.SetValue(1);
 	mGBufferAlbedoSamplerLoc.SetValue(2);
 	mShadowMapSamplerLoc.SetValue(3);
+	mCausticMapSamplerLoc.SetValue(4);
 
 // 	if (LightProjector)
 // 	{
@@ -45,6 +47,7 @@ void DirectLightingScreenQuad::OnGetShaderConstants()
 	program->GetUniformLocation(&mGBufferNormalSamplerLoc, "GBufferNormalSampler");
 	program->GetUniformLocation(&mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
 	program->GetUniformLocation(&mShadowMapSamplerLoc, "ShadowMapSampler");
+	program->GetUniformLocation(&mCausticMapSamplerLoc, "CausticMapSampler");
 	program->GetUniformLocation(&mShowShadow, "ShowShadow");
 	// 	program->GetUniformLocation(&mLightProjectorViewLoc, "LightProjectorView");
 // 	program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
@@ -72,6 +75,7 @@ DirectLightingRenderer::~DirectLightingRenderer()
 //----------------------------------------------------------------------------
 void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 	int height, BufferFormat format,GBufferRenderer* gbufferRenderer,
+	CausticMapRenderer* causticMapRenderer,
 	ShadowMapRenderer* shadowMapRenderer)
 {
 	ShaderProgramInfo directLightingProgramInfo;
@@ -116,6 +120,9 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 
 	view.BindingSlot = 3;
 	AddInputDependency(shadowMapRenderer, RTGI_ShadowMapRenderer_ShadowMap_Name, &view);
+
+	view.BindingSlot = 4;
+	AddInputDependency(causticMapRenderer, RTGI_CausticsBuffer_CausticMap_Name, &view);
 
 	// Create output.
 	AddFrameBufferTarget(RTGI_DirectLightingRenderer_DirectLighting_Name,

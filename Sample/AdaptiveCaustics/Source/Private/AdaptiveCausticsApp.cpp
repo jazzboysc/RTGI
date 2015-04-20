@@ -338,6 +338,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mDirectLightingRenderer = new DirectLightingRenderer(device);
 	mDirectLightingRenderer->Initialize(mDevice, this->Width, this->Height, BF_RGBAF,
 		mReceiverGBufferRenderer,
+		mCausticMapRenderer,
 		mShadowMapRenderer);
 	mDirectLightingRenderer->SetTimer(mTimer);
 
@@ -586,13 +587,14 @@ void AdaptiveCausticsApp::OnButtonClick(System::Object^  sender,
 		}
 	}
 
+#define MAX_ITERATION 9
 	if (button->Name == "Increase Iteration")
 	{
 		mCausticMapRenderer->TraversalLevel++;
 
-		if (mCausticMapRenderer->TraversalLevel > 5)
+		if (mCausticMapRenderer->TraversalLevel > MAX_ITERATION)
 		{
-			mCausticMapRenderer->TraversalLevel = 5;
+			mCausticMapRenderer->TraversalLevel = MAX_ITERATION;
 		}
 	}
 }

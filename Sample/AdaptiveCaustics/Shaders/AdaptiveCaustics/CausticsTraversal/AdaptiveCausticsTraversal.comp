@@ -40,7 +40,7 @@ void main(void)
 	if(readIndex >= ACMSharedCommandBuffer.readCount)
 	{
 		// unneeded computation
-		//return;
+		return;
 	}
 
 	vec4 uv = ACMBuffer.uv[ACMSharedCommandBuffer.readOffset + readIndex];

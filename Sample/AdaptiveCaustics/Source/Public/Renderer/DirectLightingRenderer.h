@@ -23,6 +23,7 @@ private:
 	ShaderUniform mGBufferNormalSamplerLoc;
 	ShaderUniform mGBufferAlbedoSamplerLoc;
 	ShaderUniform mShadowMapSamplerLoc;
+	ShaderUniform mCausticMapSamplerLoc;
 	ShaderUniform mLightProjectorViewLoc;
 	ShaderUniform mLightPositionWorldLoc;
 	ShaderUniform mLightColorLoc;
@@ -32,6 +33,8 @@ private:
 
 typedef RefPointer<DirectLightingScreenQuad> DirectLightingScreenQuadPtr;
 
+
+class CausticMapRenderer;
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 12/05/2014
@@ -44,6 +47,7 @@ public:
 
 	void Initialize(GPUDevice* device, int width, int height,
 		BufferFormat format, GBufferRenderer* gbufferRenderer,
+		CausticMapRenderer* causticMapRenderer,
 		ShadowMapRenderer* shadowMapRenderer);
 
 	void Render();

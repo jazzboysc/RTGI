@@ -80,6 +80,7 @@ public:
 	Texture2DPtr mReceiverDepthTexture;
 
 	// pass 2
+	int TraversalLevel;
 	float RefractionIndex;
 	float splatResolutionModifier;
 	float renderBufRes;

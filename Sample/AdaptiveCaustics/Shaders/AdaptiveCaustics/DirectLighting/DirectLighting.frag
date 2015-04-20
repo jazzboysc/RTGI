@@ -9,6 +9,25 @@ out vec4 Output;
 uniform sampler2D GBufferPositionSampler;
 uniform sampler2D GBufferNormalSampler;
 uniform sampler2D GBufferAlbedoSampler;
+uniform sampler2D CausticMapSampler;
+uniform sampler2D CausticMapDepthSampler;
+
+/*
+vec4 CausticContribution( sampler2DShadow cDepth, sampler2D cMap, vec4 smapCoord )
+{
+	return ( all(equal(smapCoord.xyz,clamp(smapCoord.xyz,vec3(0),vec3(1)))) ? 
+					shadow2D( cDepth, smapCoord.xyz ).x * texture2D( cMap, smapCoord.xy ): 
+					vec4(0.0) );
+}
+*/
+
+vec4 CausticContribution( vec4 WorldPos)
+{
+	SceneLight light = sceneLightUniformBuffer.lights[0];
+	vec4 viewPos = light.LightProjectorView * WorldPos;
+	viewPos = viewPos * 0.5 + 0.5;
+	return texture(CausticMapSampler, viewPos.xy);
+}
 
 void main()
 {
@@ -37,5 +56,5 @@ void main()
         accumulation += ComputeSpotLight(i, PositionWorld, NormalWorld, Material);
     }
 
-    Output = accumulation;
+    Output = accumulation + CausticContribution(PositionWorld);
 }

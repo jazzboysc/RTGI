@@ -78,7 +78,8 @@ void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
 	}
 	if (pass == 2)
 	{
-		splatResolutionModifierLoc.SetValue(3.0f);
+		int maxPhotonRes = (int)(pow(2.0, (float)TraversalLevel + 7) + 0.1);
+		splatResolutionModifierLoc.SetValue(2048.0f / maxPhotonRes);
 		renderBufResLoc.SetValue(2048.0f);
 		lightProjLoc.SetValue(mCamera->GetProjectionTransform());
 		TanLightFovy2Loc.SetValue(glm::pi<float>() * mCamera->GetFoV() / 360.0f);
@@ -227,7 +228,7 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 	//	counterData0);
 	// Storage buffer
 	mCausticsTask->mACMBuffer = new StructuredBuffer();
-	auto bufferSize = sizeof(ACMBuffer)+KERNEL_SIZE(11) * sizeof(vec4);
+	auto bufferSize = sizeof(ACMBuffer)+KERNEL_SIZE(12) * sizeof(vec4);
 	mCausticsTask->mACMBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Stream_Copy);
 	InitializeMinCausticHierarchy(mDevice, mCausticsTask, START_KERNEL_WIDTH);
 
@@ -293,6 +294,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 //----------------------------------------------------------------------------
 void CausticMapRenderer::DoTraversal()
 {
+	mCausticsTask->TraversalLevel = TraversalLevel;
 
 	mFBOComputeTemp->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -387,7 +389,7 @@ void CausticMapRenderer::DoTraversal()
 	uint currentLOD = (uint)START_LOD;  // The starting traversal level (2^6 = 64x64 photons)
 	int numLevels = (int)(log2(float(mRefractorNormalTextures->Width)) + 0.01) - currentLOD;
 
-	int arg = min(TraversalLevel, numLevels + 2);
+	int arg = min(TraversalLevel, numLevels + 6);
 
 	for (int i = 0; i < arg; ++i, ++currentLOD)
 	{
@@ -427,9 +429,10 @@ void CausticMapRenderer::DoTraversal()
 		mCausticsTask->mACMSharedCommandBuffer->Bind(0);
 		mCausticsTask->mACMBuffer->Bind(1);
 		//*
+		auto res = (int)(glm::sqrt((float)mCausticsTask->AtomicCounterCache.writeCount) + 1.0f);
 		mCausticsTask->DispatchCompute(0,
-			4 * mCausticsTask->AtomicCounterCache.writeCount,
-			1,
+			2 * res,
+			2 * res,
 			1);
 		//*/
 
