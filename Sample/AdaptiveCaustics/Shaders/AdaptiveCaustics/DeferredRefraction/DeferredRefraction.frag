@@ -100,11 +100,12 @@ void main( void )
 
 	// Find the distance to front & back surface, first as normalized [0..1] values, than unprojected
 	Dist.y = length( P_1.xyz );
-	Dist.x = texture( RefractorDepth, vec3(pTCoord, 1) ).z;	
+	Dist.x = texture( RefractorDepth, vec3(pTCoord, 1) ).z;
+	Dist.x = Dist.x * 2.0 - 1.0;
 	Dist.x = 2.0 * NearFarInfo.x / (Dist.x * NearFarInfo.y - NearFarInfo.z );
 
 	// Distance between front & back surfaces
-	float d_V = -Dist.y - Dist.x;
+	float d_V = (-Dist.y - Dist.x) * 0.2;
 	
 	// compute the reflection direction and the reflection color
 	//    we do a matrix multiply to account for (potential) user rotation of the environment
@@ -166,5 +167,5 @@ void main( void )
 	vec4 transmitColor = vec4( exp(-d_V * RefractorAlbedo.a) * RefractorAlbedo.rgb, 1.0);
 	vec4 refractedColor = transmitColor * texture2D( ReceiverAlbedo, ProjectToTexCoord( P_2_tilde + distOld * tmpT2 ) );
 	Output = vec4( reflectedColor.xyz + fresnel.y * refractedColor.xyz, 1.0); 
-	//Output = vec4(NdotV, NdotV, NdotV, 1);//texture2D( ReceiverAlbedo, pTCoord);
+	//Output = vec4(d_V, d_V, d_V, 1);//texture2D( ReceiverAlbedo, pTCoord);
 }

@@ -44,7 +44,7 @@ void DeferredRefractionScreenQuad::OnUpdateShaderConstants(int, int)
 		RefractionIndex,
 		RefractionIndex * RefractionIndex));
 
-	mSceneAmbientLoc.SetValue(vec4(1.f, 1.f, 1.f, 1.f));
+	mSceneAmbientLoc.SetValue(vec4(.4f, .4f, .4f, 1.f));
 	mSplatResolutionModifierLoc.SetValue(1.f); // depends on the ratio
 	mRefractorAlbedoLoc.SetValue(RefractorAlbedo);
 	mTanEyeFovy2Loc.SetValue(glm::pi<float>() * mCamera->GetFoV() / 360.0f);
@@ -219,15 +219,12 @@ void DeferredRefractionRenderer::Initialize(GPUDevice* device, int width,
 //----------------------------------------------------------------------------
 void DeferredRefractionRenderer::Render()
 {
-	// Copy texture
-	mFBOCopy->Enable();
-	//mCopyTextureScreenQuad->Render(0, 0);
-	mFBOCopy->Disable();
 
 	// Add deferred refraction
 	SubRenderer::RenderSingle(mDeferredRefractionScreenQuad, 0, 0,
 		SRO_FrameBuffer, mPSB, mDeferredRefractionScreenQuad->GetCamera());
 
+	// Copy texture
 	mFBOCopy->Enable();
 	mCopyTextureScreenQuad->Render(0, 0);
 	mFBOCopy->Disable();

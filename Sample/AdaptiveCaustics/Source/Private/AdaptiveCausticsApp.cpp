@@ -6,7 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
-#define DEFAULT_SHOWMODE Visualizer::eSM_CausticMap
+#define DEFAULT_SHOWMODE Visualizer::eSM_DeferredRefraction
 //----------------------------------------------------------------------------
 AdaptiveCausticsApp::AdaptiveCausticsApp(int width, int height)
 {
@@ -49,7 +49,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Create camera and light
-	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 150.0f);
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 1000.0f);
 	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
@@ -255,11 +255,11 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Paraboloid Shadow Map", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, true);
+	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Direct Lighting", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("Deferred Refraction", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Deferred Refraction", 16, infoStartY, 60, 20, true);
 	infoStartY += infoIncY;
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Spin Mesh", 16, infoStartY, 60, 20, false);
