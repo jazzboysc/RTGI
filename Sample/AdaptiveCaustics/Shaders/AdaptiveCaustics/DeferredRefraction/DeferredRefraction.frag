@@ -105,7 +105,7 @@ void main( void )
 	Dist.x = 2.0 * NearFarInfo.x / (Dist.x * NearFarInfo.y - NearFarInfo.z );
 
 	// Distance between front & back surfaces
-	float d_V = (-Dist.y - Dist.x) * 0.2;
+	float d_V = (-Dist.y - Dist.x);
 	
 	// compute the reflection direction and the reflection color
 	//    we do a matrix multiply to account for (potential) user rotation of the environment

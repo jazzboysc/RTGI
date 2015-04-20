@@ -31,7 +31,9 @@ CausticMapRenderer::~CausticMapRenderer()
 
 //----------------------------------------------------------------------------
 AdaptiveCausticsTaskInfo::AdaptiveCausticsTaskInfo()
-{}
+{
+	RefractionIndex = 1.1f;
+}
 //----------------------------------------------------------------------------
 AdaptiveCausticsTaskInfo::~AdaptiveCausticsTaskInfo()
 {}
@@ -41,6 +43,21 @@ void AdaptiveCausticsTaskInfo::OnGetShaderConstants()
 	auto program = this->GetPass(0)->GetShaderProgram();
 	program->GetUniformLocation(&ImageUnit0Loc, "data");
 	program->GetUniformLocation(&ImageUnit1Loc, "refractorNormal");
+
+	if (this->GetPassCount() >= 2)
+	{
+		program = this->GetPass(2)->GetShaderProgram();
+		program->GetUniformLocation(&splatResolutionModifierLoc, "splatResolutionModifier");
+		program->GetUniformLocation(&renderBufResLoc, "renderBufRes");
+		program->GetUniformLocation(&lightProjLoc, "LightProj");
+
+		program->GetUniformLocation(&TanLightFovy2Loc, "TanLightFovy2");
+		program->GetUniformLocation(&NearFarInfoLoc, "NearFarInfo");
+		program->GetUniformLocation(&RefractionIndexInfoLoc, "RefractionIndexInfo");
+		program->GetUniformLocation(&RefractorNormTexLoc, "RefractorNorm");
+		program->GetUniformLocation(&RefractorDepthTexLoc, "RefractorDepth");
+		program->GetUniformLocation(&ReceiverDepthTexLoc, "ReceiverDepth");
+	}
 }
 //----------------------------------------------------------------------------
 void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
@@ -55,9 +72,44 @@ void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
 	{
 		ImageUnit0Loc.SetValue(0);
 		ImageUnit1Loc.SetValue(1);
-		mCompTexture->BindToImageUnit(0, BufferAccess::BA_Write_Only);
+		mComputeTempTexture->BindToImageUnit(0, BufferAccess::BA_Write_Only);
 		//mNormalTextures->BindToImageUnit(1, BufferAccess::BA_Read_Only, true);
-		mNormalTextures->BindToSampler(1, &sampler);
+		mRefractorNormalTextures->BindToSampler(1, &sampler);
+	}
+	if (pass == 2)
+	{
+		splatResolutionModifierLoc.SetValue(3.0f);
+		renderBufResLoc.SetValue(2048.0f);
+		lightProjLoc.SetValue(mCamera->GetProjectionTransform());
+		TanLightFovy2Loc.SetValue(glm::pi<float>() * mCamera->GetFoV() / 360.0f);
+
+		float nearFarPlane[2];
+		mCamera->GetNearFarPlane(nearFarPlane);
+		NearFarInfoLoc.SetValue(vec4(
+			nearFarPlane[0] * nearFarPlane[1],
+			nearFarPlane[1] - nearFarPlane[0],
+			nearFarPlane[1] + nearFarPlane[0], nearFarPlane[1]));
+
+		RefractionIndexInfoLoc.SetValue(vec4(
+			1.f / RefractionIndex,
+			1.f / (RefractionIndex * RefractionIndex),
+			RefractionIndex,
+			RefractionIndex * RefractionIndex));
+
+		RefractorNormTexLoc.SetValue(0);
+		RefractorDepthTexLoc.SetValue(1);
+		ReceiverDepthTexLoc.SetValue(2);
+		sampler.MinFilter = FT_Linear_Linear;
+		mRefractorNormalTextures->BindToSampler(0, &sampler);
+		sampler.MinFilter = FT_Linear;
+		mRefractorDepthTextures->BindToSampler(1, &sampler);
+		mReceiverDepthTexture->BindToSampler(2, &sampler);
+
+		//ImageUnit0Loc.SetValue(0);
+		//ImageUnit1Loc.SetValue(1);
+		//mCompTexture->BindToImageUnit(0, BufferAccess::BA_Write_Only);
+		//mNormalTextures->BindToImageUnit(1, BufferAccess::BA_Read_Only, true);
+		//mNormalTextures->BindToSampler(1, &sampler);
 	}
 
 	glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT);
@@ -70,19 +122,133 @@ void AdaptiveCausticsTaskInfo::OnPostDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-void CausticMapRenderer::Initialize(GPUDevice* device,
+void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
+	CausticsMapDesc* desc,
 	ReceiverResourceRenderer* receiverResourceRenderer,
 	RefractorResourceRenderer* refractorResourceRenderer,
-	Camera* mainCamera)
+	Camera* light)
 {
 
 	// Cache temp buffer and textures needed for visualization.
 	mReceiverPositionTexture =
 		(Texture2D*)receiverResourceRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_ReceiverPosition_Name);
-	mRefractorFrontAndBackNormalTextures =
+	mReceiverDepthTexture =
+		(Texture2D*)receiverResourceRenderer->GetDepthTexture();
+	mRefractorNormalTextures =
 		(Texture2DArray*)refractorResourceRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name);
+	mRefractorDepthTextures =
+		(Texture2DArray*)refractorResourceRenderer->GetDepthTexture();
+
+	assert(desc);
+
+	AddFrameBufferTarget(RTGI_CausticsBuffer_CausticMap_Name,
+		desc->Width, desc->Height, 0, TT_Texture2D,
+		desc->CausticsMapFormat, desc->CausticsMapMipmap);
+	CreateFrameBuffer(desc->Width, desc->Height, 0, TT_Texture2D);
+
+	// Create gather voxel fragment list info task.
+	ShaderProgramInfo PI_AdaptiveCausticsTraversal;
+	PI_AdaptiveCausticsTraversal
+		<< "AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsTraversal.comp";
+
+	ShaderProgramInfo PI_AdaptiveCausticsPostTraversalProcess;
+	PI_AdaptiveCausticsPostTraversalProcess
+		<< "AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsPostTraversalProcess.comp";
+
+	ShaderProgramInfo PI_AdaptiveCausticsDebugDraw;
+	PI_AdaptiveCausticsDebugDraw <<
+		"AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsDrawDebug.comp";
+
+	ShaderProgramInfo PI_AdaptiveCausticsSplat;
+	PI_AdaptiveCausticsSplat
+		// 		<< "AdaptiveCaustics/CausticsSplat/CausticsSplat.vert"
+		// 		<< "AdaptiveCaustics/CausticsSplat/CausticsSplat.frag";
+		<< "AdaptiveCaustics/CausticsSplat/CausticsSplatTest.vert"
+		<< "AdaptiveCaustics/CausticsSplat/CausticsSplatTest.frag";
+
+	ComputePass* PassInfo_AdaptiveCausticsTraversal = new ComputePass(
+		PI_AdaptiveCausticsTraversal);
+	ComputePass* PassInfo_AdaptivePostTraversalProcess = new ComputePass(
+		PI_AdaptiveCausticsPostTraversalProcess);
+	ComputePass* PassInfo_AdaptiveCausticsDebugDraw = new ComputePass(
+		PI_AdaptiveCausticsDebugDraw);
+	ComputePass* PassInfo_AdaptiveSplat = new ComputePass(
+		PI_AdaptiveCausticsSplat);
+
+	mCausticsTask = new AdaptiveCausticsTaskInfo();
+	mCausticsTask->AddPass(PassInfo_AdaptiveCausticsTraversal);
+	mCausticsTask->AddPass(PassInfo_AdaptivePostTraversalProcess);
+	mCausticsTask->AddPass(PassInfo_AdaptiveSplat);
+	mCausticsTask->CreateDeviceResource(mDevice);
+
+
+	mDebugDrawTask = new AdaptiveCausticsTaskInfo();
+	mDebugDrawTask->AddPass(PassInfo_AdaptiveCausticsDebugDraw);
+	mDebugDrawTask->CreateDeviceResource(mDevice);
+
+	// Now we need more generic, large traversal buffers to ping-pong between
+	//     for other rendering modes.  Here I allocate an array of these.  Many
+	//     render modes need only 1 or 2, those some of the complex ones need
+	//     4 or 5.  They probably need not all be the same size, but if I use
+	//     different sizes, I have to remember which is which!  (And then they're
+	//     not generic!).
+
+	mCompTexture = new Texture2D();
+	mCompTexture->CreateRenderTarget(mDevice, 768, 768, BF_RGBAF);
+
+	mCausticsTexture = (Texture2D*)GetFrameBufferTextureByName(
+		RTGI_CausticsBuffer_CausticMap_Name);
+
+	// Clear without drawing
+	mFBOCaustics = new FrameBuffer(mDevice);
+	mFBOCaustics->SetRenderTargets(1, (Texture**)&mCausticsTexture);
+
+	// Clear without drawing
+	mFBOComputeTemp = new FrameBuffer(mDevice);
+	mFBOComputeTemp->SetRenderTargets(1, (Texture**)&mCompTexture);
+
+	mCausticsTask->mAtomicCounterBuffer = new AtomicCounterBuffer();
+#ifdef DEBUG_CAUSTCIS
+	mCausticsTask->mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice,
+		sizeof(ACMAtomicCounter), BU_Dynamic_Copy);
+#else
+	mCausticsTask->mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice,
+		sizeof(ACMAtomicCounter), BU_Dynamic_Copy);
+#endif
+
+	// Initialize atomic counter
+	mCausticsTask->AtomicCounterCache.writeCount = START_KERNEL_SIZE / 4;
+	mCausticsTask->AtomicCounterCache.temp = 0;
+	mCausticsTask->mAtomicCounterBuffer->UpdateSubData(0, 0, sizeof(ACMAtomicCounter),
+		(void*)&mCausticsTask->AtomicCounterCache);
+	//mTraversalTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int,
+	//	counterData0);
+	// Storage buffer
+	mCausticsTask->mACMBuffer = new StructuredBuffer();
+	auto bufferSize = sizeof(ACMBuffer)+KERNEL_SIZE(11) * sizeof(vec4);
+	mCausticsTask->mACMBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Stream_Copy);
+	InitializeMinCausticHierarchy(mDevice, mCausticsTask, START_KERNEL_WIDTH);
+
+	// Shared Command buffer
+	mCausticsTask->mACMSharedCommandBuffer = new StructuredBuffer();
+	auto bufferSize1 = sizeof(ACMSharedCommandBuffer);
+	mCausticsTask->mACMSharedCommandBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
+
+	// Shared command buffer for debug draw
+	mDebugDrawTask->mACMSharedCommandBuffer = mCausticsTask->mACMSharedCommandBuffer;
+
+	// Setup input and output
+	mCausticsTask->mComputeTempTexture = mCompTexture;
+	mCausticsTask->mRefractorNormalTextures = mRefractorNormalTextures;
+	mCausticsTask->mRefractorDepthTextures = mRefractorDepthTextures;
+	mCausticsTask->mReceiverDepthTexture = mReceiverDepthTexture;
+	mCausticsTask->mCamera = light;
+#ifdef _DEBUG
+	GLenum res = glGetError();
+	assert(res == GL_NO_ERROR);
+#endif
 }
 //----------------------------------------------------------------------------
 void CausticMapRenderer::InitializeMinCausticHierarchy(
@@ -99,8 +265,8 @@ void CausticMapRenderer::InitializeMinCausticHierarchy(
 		//causticStartPoints[i] = fvec4(1, 0, 0, 0);
 	}
 
-	mTraversalTask->mACMBuffer->Bind(0);
-	mTraversalTask->mACMBuffer->UpdateSubData(0, sizeof(ACMBuffer), bufSize, causticStartPoints);
+	mCausticsTask->mACMBuffer->Bind(0);
+	mCausticsTask->mACMBuffer->UpdateSubData(0, sizeof(ACMBuffer), bufSize, causticStartPoints);
 
 	free(causticStartPoints);
 
@@ -114,113 +280,28 @@ void CausticMapRenderer::InitializeMinCausticHierarchy(
 //----------------------------------------------------------------------------
 void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 {
-	assert(desc);
 
-	AddFrameBufferTarget(RTGI_CausticsBuffer_CausticMap_Name,
-		desc->Width, desc->Height, 0, TT_Texture2D,
-		desc->CausticsMapFormat, desc->CausticsMapMipmap);
-	CreateFrameBuffer(desc->Width, desc->Height, 0, TT_Texture2D);
-
-	// Create gather voxel fragment list info task.
-	ShaderProgramInfo PI_AdaptiveCausticsTraversal;
-	PI_AdaptiveCausticsTraversal
-		<< "AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsTraversal.comp";
-
-	ShaderProgramInfo PI_AdaptiveCausticsPostTraversalProcess;
-	PI_AdaptiveCausticsPostTraversalProcess
-	<< "AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsPostTraversalProcess.comp";
-
-
-	ComputePass* PassInfo_AdaptiveCausticsTraversal = new ComputePass(
-		PI_AdaptiveCausticsTraversal);
-	ComputePass* PassInfo_AdaptivePostTraversalProcess = new ComputePass(
-		PI_AdaptiveCausticsPostTraversalProcess);
-	mTraversalTask = new AdaptiveCausticsTaskInfo();
-	mTraversalTask->AddPass(PassInfo_AdaptiveCausticsTraversal);
-	mTraversalTask->AddPass(PassInfo_AdaptivePostTraversalProcess);
-	mTraversalTask->CreateDeviceResource(mDevice);
-
-	ShaderProgramInfo PI_AdaptiveCausticsDebugDraw;
-	PI_AdaptiveCausticsDebugDraw <<
-		"AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsDrawDebug.comp";
-
-	ComputePass* PassInfo_AdaptiveCausticsDebugDraw = new ComputePass(
-		PI_AdaptiveCausticsDebugDraw);
-	mDebugDrawTask = new AdaptiveCausticsTaskInfo();
-	mDebugDrawTask->AddPass(PassInfo_AdaptiveCausticsDebugDraw);
-	mDebugDrawTask->CreateDeviceResource(mDevice);
-
-	// Now we need more generic, large traversal buffers to ping-pong between
-	//     for other rendering modes.  Here I allocate an array of these.  Many
-	//     render modes need only 1 or 2, those some of the complex ones need
-	//     4 or 5.  They probably need not all be the same size, but if I use
-	//     different sizes, I have to remember which is which!  (And then they're
-	//     not generic!).
-
-	mCompTexture = new Texture2D();
-	mCompTexture->CreateRenderTarget(mDevice, desc->Width, desc->Height, BF_RGBAF);
-
-	// Clear without drawing
-	Texture2D* textures[] = { mCompTexture };
-	mFBOClear = new FrameBuffer(mDevice);
-	mFBOClear->SetRenderTargets(1, (Texture**)&mCompTexture);
-
-	mTraversalTask->mAtomicCounterBuffer = new AtomicCounterBuffer();
-#ifdef DEBUG_CAUSTCIS
-	mTraversalTask->mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice,
-		sizeof(ACMAtomicCounter), BU_Dynamic_Copy);
-#else
-	mTraversalTask->mAtomicCounterBuffer->ReserveMutableDeviceResource(mDevice,
-		sizeof(ACMAtomicCounter), BU_Dynamic_Copy);
-#endif
-
-	// Initialize atomic counter
-	mTraversalTask->AtomicCounterCache.writeCount = START_KERNEL_SIZE / 4;
-	mTraversalTask->AtomicCounterCache.temp = 0;
-	mTraversalTask->mAtomicCounterBuffer->UpdateSubData(0, 0, sizeof(ACMAtomicCounter),
-		(void*)&mTraversalTask->AtomicCounterCache);
-	//mTraversalTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int,
-	//	counterData0);
-	// Storage buffer
-	mTraversalTask->mACMBuffer = new StructuredBuffer();
-	auto bufferSize = sizeof(ACMBuffer) + KERNEL_SIZE(11) * sizeof(vec4);
-	mTraversalTask->mACMBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Stream_Copy);
-	InitializeMinCausticHierarchy(mDevice, mTraversalTask, START_KERNEL_WIDTH);
-
-	// Shared Command buffer
-	mTraversalTask->mACMSharedCommandBuffer = new StructuredBuffer();
-	auto bufferSize1 = sizeof(ACMSharedCommandBuffer);
-	mTraversalTask->mACMSharedCommandBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
-
-	// Shared command buffer for debug draw
-	mDebugDrawTask->mACMSharedCommandBuffer = mTraversalTask->mACMSharedCommandBuffer;
-
-#ifdef _DEBUG
-	GLenum res = glGetError();
-	assert(res == GL_NO_ERROR);
-#endif
 }
 
 //#define DEBUG_CAUSTCIS
-
-
 //----------------------------------------------------------------------------
 void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 {
-	SubRenderer::PreRender(0, 0);
-	
-	mFBOClear->Enable();
+	DoTraversal();
+	DoSplat();
+}
+//----------------------------------------------------------------------------
+void CausticMapRenderer::DoTraversal()
+{
+
+	mFBOComputeTemp->Enable();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mFBOClear->Disable();
-	
-	// Setup input and output
-	mTraversalTask->mCompTexture = mCompTexture;
-	mTraversalTask->mNormalTextures = mRefractorFrontAndBackNormalTextures;
+	mFBOComputeTemp->Disable();
 
 	if (DrawDebugMipmap)
 	{
-		mDebugDrawTask->mCompTexture = mCompTexture;
-		mDebugDrawTask->mNormalTextures = mRefractorFrontAndBackNormalTextures;
+		mDebugDrawTask->mComputeTempTexture = mCompTexture;
+		mDebugDrawTask->mRefractorNormalTextures = mRefractorNormalTextures;
 
 		// Add in debug parameters
 		mDebugDrawTask->mACMSharedCommandBuffer->Bind();
@@ -235,42 +316,42 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 		mDebugDrawTask->mACMSharedCommandBuffer->Unmap();
 
 		// Draw debug mipmap normal
-		mTraversalTask->mACMSharedCommandBuffer->Bind(0);
-		mTraversalTask->mACMBuffer->Bind(1);
+		mCausticsTask->mACMSharedCommandBuffer->Bind(0);
+		mCausticsTask->mACMBuffer->Bind(1);
 		mDebugDrawTask->DispatchCompute(0, mCompTexture->Width, mCompTexture->Height, 1);
 	}
 
 	// Reset atomic counters.
 #ifdef DEBUG_CAUSTCIS
 	auto counterData0 =
-		(ACMAtomicCounter*)mTraversalTask->mAtomicCounterBuffer->Map(BA_Read_Write);
+		(ACMAtomicCounter*)mCausticsTask->mAtomicCounterBuffer->Map(BA_Read_Write);
 	assert(counterData0);
 	if (counterData0)
 	{
-		mTraversalTask->AtomicCounterCache = *counterData0;
+		mCausticsTask->AtomicCounterCache = *counterData0;
 		counterData0->writeCount = START_KERNEL_SIZE / 4;
 		counterData0->temp = 0;
 	}
-	mTraversalTask->mAtomicCounterBuffer->Unmap();
+	mCausticsTask->mAtomicCounterBuffer->Unmap();
 #else
-	unsigned int counterData0[2];
+	static unsigned int counterData0[2];
 	counterData0[0] = 0;
 	counterData0[1] = 0;
-	mTraversalTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int,
+	mCausticsTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int,
 		counterData0);
 #endif
 
 	// Initialize uniform buffer
 #ifdef DEBUG_CAUSTCIS
-	auto uniformData = (ACMUniformBuffer*)mTraversalTask->mACMUniformBuffer->Map(BA_Read_Write);
+	auto uniformData = (ACMUniformBuffer*)mCausticsTask->mACMUniformBuffer->Map(BA_Read_Write);
 #else
-	mTraversalTask->mACMSharedCommandBuffer->Bind();
-	auto uniformData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Write_Only);
+	mCausticsTask->mACMSharedCommandBuffer->Bind();
+	auto uniformData = (ACMSharedCommandBuffer*)mCausticsTask->mACMSharedCommandBuffer->Map(BA_Write_Only);
 #endif
 	assert(uniformData);
 	if (uniformData)
 	{
-		uniformData->mipmapLevel = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - (uint)START_LOD;
+		uniformData->mipmapLevel = (int)(log2(float(mRefractorNormalTextures->Width)) + 0.01) - (uint)START_LOD;
 		uniformData->readOffset = 0;
 		uniformData->readCount = START_KERNEL_SIZE;
 		uniformData->writeOffset = START_KERNEL_SIZE;
@@ -279,21 +360,21 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 		uniformData->deltaX = 0.5f / (float)START_KERNEL_WIDTH;
 		uniformData->deltaY = 0.5f / (float)START_KERNEL_WIDTH;
 	}
-	mTraversalTask->mACMSharedCommandBuffer->Unmap();
+	mCausticsTask->mACMSharedCommandBuffer->Unmap();
 
 	// Initialize uniform buffer cache
-	mTraversalTask->UniformCache.mipmapLevel = 0;
-	mTraversalTask->UniformCache.readOffset = 0;
-	mTraversalTask->UniformCache.readCount = START_KERNEL_SIZE;
-	mTraversalTask->UniformCache.writeOffset = START_KERNEL_SIZE / 4; // Every vertex plits into 4
-	mTraversalTask->UniformCache.width = mCompTexture->Width;
-	mTraversalTask->UniformCache.height = mCompTexture->Height;
-	mTraversalTask->UniformCache.deltaX = 0.5f / (float)START_KERNEL_WIDTH;
-	mTraversalTask->UniformCache.deltaY = 0.5f / (float)START_KERNEL_WIDTH;
+	mCausticsTask->UniformCache.mipmapLevel = 0;
+	mCausticsTask->UniformCache.readOffset = 0;
+	mCausticsTask->UniformCache.readCount = START_KERNEL_SIZE;
+	mCausticsTask->UniformCache.writeOffset = START_KERNEL_SIZE / 4; // Every vertex plits into 4
+	mCausticsTask->UniformCache.width = mCompTexture->Width;
+	mCausticsTask->UniformCache.height = mCompTexture->Height;
+	mCausticsTask->UniformCache.deltaX = 0.5f / (float)START_KERNEL_WIDTH;
+	mCausticsTask->UniformCache.deltaY = 0.5f / (float)START_KERNEL_WIDTH;
 
 	// Initialize atomic counter
-	mTraversalTask->AtomicCounterCache.writeCount = START_KERNEL_SIZE / 4;
-	mTraversalTask->AtomicCounterCache.temp = 0;
+	mCausticsTask->AtomicCounterCache.writeCount = START_KERNEL_SIZE / 4;
+	mCausticsTask->AtomicCounterCache.temp = 0;
 
 	/*
 	int result[6];
@@ -304,9 +385,9 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, 0, &result[4]);
 	*/
 	uint currentLOD = (uint)START_LOD;  // The starting traversal level (2^6 = 64x64 photons)
-	int numLevels = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - currentLOD;
+	int numLevels = (int)(log2(float(mRefractorNormalTextures->Width)) + 0.01) - currentLOD;
 
-	int arg = min(TraversalLevel, numLevels + 1);
+	int arg = min(TraversalLevel, numLevels + 2);
 
 	for (int i = 0; i < arg; ++i, ++currentLOD)
 	{
@@ -315,7 +396,7 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 		//   as a 1 x 1 image, so we need this computation to get the correct mipmap level 
 		//   for our shader.  This is then decremented (because we increase resolution) 
 		//   each step as we traverse.
-		int glMipmapLevel = (int)(log2(float(mRefractorFrontAndBackNormalTextures->Width)) + 0.01) - currentLOD;
+		int glMipmapLevel = (int)(log2(float(mRefractorNormalTextures->Width)) + 0.01) - currentLOD;
 
 		// What resolution is the start of our traversal at?  We'll have 
 		//   startResolution*startResolution photon clusters to process during
@@ -324,30 +405,30 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 
 		// Reset atomic counters.
 #ifdef DEBUG_CAUSTCIS
-		mTraversalTask->mAtomicCounterBuffer->Bind(0);
-		auto counterData = (ACMAtomicCounter*)mTraversalTask->mAtomicCounterBuffer->Map(BA_Read_Write);
+		mCausticsTask->mAtomicCounterBuffer->Bind(0);
+		auto counterData = (ACMAtomicCounter*)mCausticsTask->mAtomicCounterBuffer->Map(BA_Read_Write);
 		assert(counterData);
 		if (counterData)
 		{
-			mTraversalTask->AtomicCounterCache = *counterData;
+			mCausticsTask->AtomicCounterCache = *counterData;
 			counterData->writeCount = 0;
 			counterData->temp = 0;
 		}
-		mTraversalTask->mAtomicCounterBuffer->Unmap();
+		mCausticsTask->mAtomicCounterBuffer->Unmap();
 #else
 		unsigned int counterData[2];
 		counterData[0] = 0;
 		counterData[1] = 0;
-		mTraversalTask->mAtomicCounterBuffer->Bind(0);
-		mTraversalTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int, counterData);
+		mCausticsTask->mAtomicCounterBuffer->Bind(0);
+		mCausticsTask->mAtomicCounterBuffer->Clear(BIF_R32UI, BF_R32UI, BCT_Unsigned_Int, counterData);
 #endif
 
 		// Execute traversal task
-		mTraversalTask->mACMSharedCommandBuffer->Bind(0);
-		mTraversalTask->mACMBuffer->Bind(1);
+		mCausticsTask->mACMSharedCommandBuffer->Bind(0);
+		mCausticsTask->mACMBuffer->Bind(1);
 		//*
-		mTraversalTask->DispatchCompute(0,
-			4 * mTraversalTask->AtomicCounterCache.writeCount,
+		mCausticsTask->DispatchCompute(0,
+			4 * mCausticsTask->AtomicCounterCache.writeCount,
 			1,
 			1);
 		//*/
@@ -358,27 +439,45 @@ void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 
 
 
-		mTraversalTask->DispatchCompute(1, 1, 1, 1);
+		mCausticsTask->DispatchCompute(1, 1, 1, 1);
 #ifdef DEBUG_CAUSTCIS
-		auto bufferData = (unsigned int*)mTraversalTask->mACMBuffer->Map(BA_Read_Write);
-		mTraversalTask->mACMBuffer->Unmap();
+		auto bufferData = (unsigned int*)mCausticsTask->mACMBuffer->Map(BA_Read_Write);
+		mCausticsTask->mACMBuffer->Unmap();
 #endif
 		//mTraversalTask->mACMSharedCommandBuffer->Bind();
 		//bufferData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
 		//mTraversalTask->mACMSharedCommandBuffer->Unmap();
 		// Generate statistics
 		//*
-		mTraversalTask->mAtomicCounterBuffer->Bind();
-		auto counterData1 = (ACMAtomicCounter*)mTraversalTask->mAtomicCounterBuffer->Map(BA_Read_Write);
+		mCausticsTask->mAtomicCounterBuffer->Bind(0);
+		auto counterData1 = (ACMAtomicCounter*)mCausticsTask->mAtomicCounterBuffer->Map(BA_Read_Write);
 		assert(counterData1);
 		if (counterData1)
 		{
-			mTraversalTask->AtomicCounterCache = *counterData1;
+			mCausticsTask->AtomicCounterCache = *counterData1;
 		}
-		mTraversalTask->mAtomicCounterBuffer->Unmap();
+		mCausticsTask->mAtomicCounterBuffer->Unmap();
 		//*/
 	}
 
-	SubRenderer::PostRender(0, 0);
 }
 //----------------------------------------------------------------------------
+void CausticMapRenderer::DoSplat()
+{
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	mFBOCaustics->Enable();
+	mCausticsTask->mAtomicCounterBuffer->Bind(0);
+	mCausticsTask->mACMSharedCommandBuffer->Bind(0);
+	mCausticsTask->mACMBuffer->Bind(1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	mCausticsTask->DispatchVertex(2, 4 * mCausticsTask->AtomicCounterCache.writeCount);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_BLEND);
+	mFBOCaustics->Disable();
+	glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	glEnable(GL_DEPTH_TEST);
+}

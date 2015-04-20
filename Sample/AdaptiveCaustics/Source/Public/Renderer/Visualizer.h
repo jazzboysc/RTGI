@@ -52,7 +52,8 @@ public:
 		eSM_RefractorLightSpaceFrontNorm,
 		eSM_RefractorLightSpaceBackNorm,
 		eSM_RefractorShadow,
-		eSM_CausticMap,
+		eSM_CausticMapTraversal,
+		eSM_CausticMapSplat,
 		eSM_DirectLighting,
 		eSM_DeferredRefraction,
 		eSM_Final
@@ -91,10 +92,10 @@ private:
     Texture2DPtr mReceiverPositionTexture;
     Texture2DPtr mRefractorFrontAndBackNormalTextures;
 	Texture2DPtr mShadowMapTexture;
+	Texture2DPtr mComputeTempTexture;
 	Texture2DPtr mCausticMapTexture;
 	Texture2DPtr mDirectLightingTexture;
 	Texture2DPtr mDeferredRefractionTexture;
-	Texture2DPtr mCompTexture;
 
 	/*
     Texture2DPtr mGBufferAlbedoTexture;

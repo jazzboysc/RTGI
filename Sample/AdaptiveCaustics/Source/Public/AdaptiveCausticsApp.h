@@ -34,7 +34,7 @@ public:
 
 	void OnRadioButtonClick(System::Object^  sender, System::EventArgs^  e) override;
 	void OnCheckBoxClick(System::Object^  sender, System::EventArgs^  e) override;
-
+	void OnButtonClick(System::Object^  sender, System::EventArgs^  e) override;
 private:
 	void InitializeTextures();
 	void InitializeScene();

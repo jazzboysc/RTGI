@@ -74,8 +74,27 @@ public:
 
 	ShaderUniform ImageUnit0Loc;
 	ShaderUniform ImageUnit1Loc;
-	Texture2DPtr mCompTexture;
-	Texture2DArrayPtr mNormalTextures;
+	Texture2DPtr mComputeTempTexture;
+	Texture2DArrayPtr mRefractorNormalTextures;
+	Texture2DArrayPtr mRefractorDepthTextures;
+	Texture2DPtr mReceiverDepthTexture;
+
+	// pass 2
+	float RefractionIndex;
+	float splatResolutionModifier;
+	float renderBufRes;
+	Camera* mCamera;
+	ShaderUniform splatResolutionModifierLoc;
+	ShaderUniform renderBufResLoc;
+	ShaderUniform lightProjLoc;
+
+	ShaderUniform TanLightFovy2Loc;
+	ShaderUniform NearFarInfoLoc;
+	ShaderUniform RefractionIndexInfoLoc;
+	ShaderUniform RefractorNormTexLoc;
+	ShaderUniform RefractorDepthTexLoc;
+	ShaderUniform ReceiverDepthTexLoc;
+
 
 	AtomicCounterBufferPtr mAtomicCounterBuffer;
 
@@ -83,7 +102,7 @@ public:
 	StructuredBufferPtr mACMSharedCommandBuffer;
 };
 
-typedef RefPointer<AdaptiveCausticsTaskInfo> GatherVoxelFragmentListInfoPtr;
+typedef RefPointer<AdaptiveCausticsTaskInfo> AdaptiveCausticsTaskInfoPtr;
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -98,16 +117,20 @@ public:
 
 
 	void Initialize(GPUDevice* device,
+		CausticsMapDesc* desc,
 		ReceiverResourceRenderer* receiverResourceRenderer,
 		RefractorResourceRenderer* refractorResourceRenderer,
-		Camera* mainCamera);
+		Camera* light);
 
 	void InitializeMinCausticHierarchy(GPUDevice* pDevice, AdaptiveCausticsTaskInfo* pTask, int resolution);
 	void CreateCausticsResource(CausticsMapDesc* desc);
 	void Render(int technique, int pass, Camera* camera);
-
+	void DoTraversal();
+	void DoSplat();
 	Texture2DPtr mCompTexture;
-	FrameBufferPtr mFBOClear;
+	Texture2DPtr mCausticsTexture;
+	FrameBufferPtr mFBOComputeTemp;
+	FrameBufferPtr mFBOCaustics;
 
 	int DebugMipmapLevel;
 	bool DrawDebugMipmap;
@@ -118,12 +141,15 @@ private:
 
 	CausticsPointSetPtr mPoints;
 
-	AdaptiveCausticsTaskInfo* mTraversalTask;
+	AdaptiveCausticsTaskInfo* mCausticsTask;
 	AdaptiveCausticsTaskInfo* mDebugDrawTask;
-	
+	AdaptiveCausticsTaskInfo* mSplatTask;
+
 	TraversalBufferData tbd;
 	Texture2DPtr mReceiverPositionTexture;
-	Texture2DArrayPtr mRefractorFrontAndBackNormalTextures;
+	Texture2DPtr mReceiverDepthTexture;
+	Texture2DArrayPtr mRefractorNormalTextures;
+	Texture2DArrayPtr mRefractorDepthTextures;
 	const int mMaxTraversalLevel = 10;
 	GLuint mPrimCountQuery;
 };

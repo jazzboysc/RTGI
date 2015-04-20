@@ -225,8 +225,10 @@ void DeferredRefractionRenderer::Render()
 		SRO_FrameBuffer, mPSB, mDeferredRefractionScreenQuad->GetCamera());
 
 	// Copy texture
+	//glDisable(GL_DEPTH_TEST);
 	mFBOCopy->Enable();
 	mCopyTextureScreenQuad->Render(0, 0);
 	mFBOCopy->Disable();
+	//glEnable(GL_DEPTH_TEST);
 }
 //----------------------------------------------------------------------------

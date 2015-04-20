@@ -6,7 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
-#define DEFAULT_SHOWMODE Visualizer::eSM_DeferredRefraction
+#define DEFAULT_SHOWMODE Visualizer::eSM_CausticMapSplat
 //----------------------------------------------------------------------------
 AdaptiveCausticsApp::AdaptiveCausticsApp(int width, int height)
 {
@@ -255,11 +255,17 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Paraboloid Shadow Map", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map", 16, infoStartY, 60, 20, false);
+	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map Traversal", 16, infoStartY, 60, 20, false);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddRadioButton("Adaptive Caustic Map Splat", 16, infoStartY, 60, 20, true);
+	infoStartY += infoIncY;
+	InformationPanel::GetInstance()->AddButton("Decrease Iteration", 30, infoStartY, 110, 24);
+	InformationPanel::GetInstance()->AddButton("Increase Iteration", 145, infoStartY, 110, 24);
+	infoStartY += infoIncY;
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddRadioButton("Direct Lighting", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
-	InformationPanel::GetInstance()->AddRadioButton("Deferred Refraction", 16, infoStartY, 60, 20, true);
+	InformationPanel::GetInstance()->AddRadioButton("Deferred Refraction", 16, infoStartY, 60, 20, false);
 	infoStartY += infoIncY;
 	infoStartY += infoIncY;
 	InformationPanel::GetInstance()->AddCheckBox("Spin Mesh", 16, infoStartY, 60, 20, false);
@@ -319,10 +325,10 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	mCausticMapRenderer = new CausticMapRenderer(device);
 	CausticsMapDesc causticsMapDesc;
-	causticsMapDesc.Width = this->Width;
-	causticsMapDesc.Height = this->Height;
+	causticsMapDesc.Width = 2048;
+	causticsMapDesc.Height = 2048;
 	causticsMapDesc.CausticsMapFormat = BF_RGBAF;
-	mCausticMapRenderer->Initialize(device,
+	mCausticMapRenderer->Initialize(device, &causticsMapDesc,
 		mReceiverResourceRenderer,
 		mRefractorResourceRenderer,
 		mMainCamera);
@@ -524,9 +530,13 @@ void AdaptiveCausticsApp::OnRadioButtonClick(System::Object^ sender, System::Eve
 	{
 		mVisualizer->SetShowMode(Visualizer::eSM_RefractorShadow);
 	}
-	if (radioButton->Name == "Adaptive Caustic Map")
+	if (radioButton->Name == "Adaptive Caustic Map Traversal")
 	{
-		mVisualizer->SetShowMode(Visualizer::eSM_CausticMap);
+		mVisualizer->SetShowMode(Visualizer::eSM_CausticMapTraversal);
+	}
+	if (radioButton->Name == "Adaptive Caustic Map Splat")
+	{
+		mVisualizer->SetShowMode(Visualizer::eSM_CausticMapSplat);
 	}
 	if (radioButton->Name == "Direct Lighting")
 	{
@@ -560,7 +570,32 @@ void AdaptiveCausticsApp::OnCheckBoxClick(System::Object^ sender, System::EventA
 
 	//mIndirectLightingRenderer->VPLVisibilityTest(checkBox->Checked);
 }
+//----------------------------------------------------------------------------
+void AdaptiveCausticsApp::OnButtonClick(System::Object^  sender,
+	System::EventArgs^  e)
+{
+	Button^ button = (Button^)sender;
 
+	if (button->Name == "Decrease Iteration")
+	{
+		mCausticMapRenderer->TraversalLevel--;
+
+		if (mCausticMapRenderer->TraversalLevel == 0)
+		{
+			mCausticMapRenderer->TraversalLevel = 1;
+		}
+	}
+
+	if (button->Name == "Increase Iteration")
+	{
+		mCausticMapRenderer->TraversalLevel++;
+
+		if (mCausticMapRenderer->TraversalLevel > 5)
+		{
+			mCausticMapRenderer->TraversalLevel = 5;
+		}
+	}
+}
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::ProcessInput()
 {

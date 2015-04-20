@@ -7,7 +7,7 @@ VisualizerScreenQuad::VisualizerScreenQuad(Material* material)
     :
     ScreenQuad(material, 0)
 {
-	ShowMode = Visualizer::eSM_CausticMap;
+	ShowMode = Visualizer::eSM_CausticMapTraversal;
 }
 //----------------------------------------------------------------------------
 VisualizerScreenQuad::~VisualizerScreenQuad()
@@ -52,7 +52,10 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int, int)
 		case Visualizer::eSM_RefractorShadow:
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
-		case Visualizer::eSM_CausticMap:
+		case Visualizer::eSM_CausticMapTraversal:
+			DisplayTexture->BindToSampler(0, &samplerDesc);
+			break;
+		case Visualizer::eSM_CausticMapSplat:
 			DisplayTexture->BindToSampler(0, &samplerDesc);
 			break;
 		case Visualizer::eSM_DirectLighting:
@@ -135,7 +138,7 @@ void Visualizer::Initialize(GPUDevice* device,
 	mCausticMapTexture =
 		(Texture2D*)causticMapRenderer->GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_CausticMap_Name);
-	mCompTexture = causticMapRenderer->mCompTexture;
+	mComputeTempTexture = causticMapRenderer->mCompTexture;
 	mDirectLightingTexture =
 		(Texture2D*)directLightingRenderer->GetFrameBufferTextureByName(
 		RTGI_DirectLightingRenderer_DirectLighting_Name);
@@ -196,8 +199,11 @@ void Visualizer::SetShowMode(eShowMode mode)
 	case eSM_RefractorShadow:
 		mScreenQuad->DisplayTexture = mShadowMapTexture;
 		break;
-	case eSM_CausticMap:
-		mScreenQuad->DisplayTexture = mCompTexture;
+	case eSM_CausticMapTraversal:
+		mScreenQuad->DisplayTexture = mComputeTempTexture;
+		break;
+	case eSM_CausticMapSplat:
+		mScreenQuad->DisplayTexture = mCausticMapTexture;
 		break;
 	case eSM_DirectLighting:
 		mScreenQuad->DisplayTexture = mDirectLightingTexture;
