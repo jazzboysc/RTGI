@@ -2,9 +2,17 @@
 
 struct LightBufferHead
 {
-    uint CurLightIndex;
     uint PointLightCount;
     uint SpotLightCount;
+    uint Reserved1;
+    uint Reserved2;
+};
+
+struct ShadowMapInfo
+{
+    uint CurLightIndex;
+    uint Reserved1;
+    uint Reserved2;
     uint Reserved3;
 };
 
@@ -29,6 +37,11 @@ layout(std140, binding = 1) uniform _sceneLightUniformBuffer
     LightBufferHead info;
     SceneLight lights[MAX_LIGHT_COUNT];
 } sceneLightUniformBuffer;
+
+layout(std140, binding = 2) uniform _shadowMapUniformBuffer
+{
+    ShadowMapInfo info;
+} shadowMapUniformBuffer;
 
 uniform bool ShowShadow;
 uniform sampler2DArray ShadowMapSampler;
