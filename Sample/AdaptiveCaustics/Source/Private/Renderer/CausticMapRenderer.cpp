@@ -1,4 +1,5 @@
 #include "CausticMapRenderer.h"
+#include "DeferredRefractionRenderer.h"
 
 using namespace RTGI;
 #define START_LOD 6.0f
@@ -79,7 +80,7 @@ void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
 	if (pass == 2)
 	{
 		int maxPhotonRes = (int)(pow(2.0, (float)TraversalLevel + 7) + 0.1);
-		splatResolutionModifierLoc.SetValue(2048.0f / maxPhotonRes);
+		splatResolutionModifierLoc.SetValue(4096.0f / maxPhotonRes);
 		renderBufResLoc.SetValue(2048.0f);
 		lightProjLoc.SetValue(mCamera->GetProjectionTransform());
 		TanLightFovy2Loc.SetValue(glm::pi<float>() * mCamera->GetFoV() / 360.0f);
@@ -169,6 +170,13 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 		<< "AdaptiveCaustics/CausticsSplat/CausticsSplatTest.vert"
 		<< "AdaptiveCaustics/CausticsSplat/CausticsSplatTest.frag";
 
+// 	ShaderProgramInfo PI_CopyDepth;
+// 	PI_CopyDepth
+// 		// 		<< "AdaptiveCaustics/CausticsSplat/CausticsSplat.vert"
+// 		// 		<< "AdaptiveCaustics/CausticsSplat/CausticsSplat.frag";
+// 		<< "AdaptiveCaustics/CopyTexture/CopyTexture.vert"
+// 		<< "AdaptiveCaustics/CopyTexture/CopyTextureDepth.frag";
+
 	ComputePass* PassInfo_AdaptiveCausticsTraversal = new ComputePass(
 		PI_AdaptiveCausticsTraversal);
 	ComputePass* PassInfo_AdaptivePostTraversalProcess = new ComputePass(
@@ -188,6 +196,19 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 	mDebugDrawTask = new AdaptiveCausticsTaskInfo();
 	mDebugDrawTask->AddPass(PassInfo_AdaptiveCausticsDebugDraw);
 	mDebugDrawTask->CreateDeviceResource(mDevice);
+
+// 	MaterialTemplate* mtCopyTexture =
+// 		new MaterialTemplate(
+// 		new Technique(new Pass(PI_CopyDepth)));
+// 
+// 	mCopyTextureScreenQuad = new CopyTextureScreenQuad(
+// 		new Material(mtCopyTexture));
+// 	mCopyTextureScreenQuad->LoadFromPLYFile("screenquad.ply");
+// 	mCopyTextureScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
+// 	mCopyTextureScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
+// 	mCopyTextureScreenQuad->SetTCoord(2, vec2(1.0f, 1.0f));
+// 	mCopyTextureScreenQuad->SetTCoord(3, vec2(0.0f, 1.0f));
+// 	mCopyTextureScreenQuad->CreateDeviceResource(device);
 
 	// Now we need more generic, large traversal buffers to ping-pong between
 	//     for other rendering modes.  Here I allocate an array of these.  Many
@@ -246,6 +267,7 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 	mCausticsTask->mRefractorDepthTextures = mRefractorDepthTextures;
 	mCausticsTask->mReceiverDepthTexture = mReceiverDepthTexture;
 	mCausticsTask->mCamera = light;
+
 #ifdef _DEBUG
 	GLenum res = glGetError();
 	assert(res == GL_NO_ERROR);

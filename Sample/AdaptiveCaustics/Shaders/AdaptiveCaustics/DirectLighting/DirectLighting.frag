@@ -26,7 +26,15 @@ vec4 CausticContribution( vec4 WorldPos)
 	SceneLight light = sceneLightUniformBuffer.lights[0];
 	vec4 viewPos = light.LightProjectorView * WorldPos;
 	viewPos = viewPos * 0.5 + 0.5;
-	return texture(CausticMapSampler, viewPos.xy);
+	float depth = texture(CausticMapDepthSampler, viewPos.xy).x;
+	if(depth < gl_FragDepth)
+	{
+		return vec4(0.0);//texture(CausticMapSampler, viewPos.xy);
+	}
+	else
+	{
+		return vec4(depth);
+	}
 }
 
 void main()
@@ -56,5 +64,5 @@ void main()
         accumulation += ComputeSpotLight(i, PositionWorld, NormalWorld, Material);
     }
 
-    Output = accumulation + CausticContribution(PositionWorld);
+    Output = accumulation + vec4(CausticContribution(PositionWorld).xyz, 0.3f);
 }

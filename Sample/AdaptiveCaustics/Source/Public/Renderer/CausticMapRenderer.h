@@ -109,6 +109,7 @@ typedef RefPointer<AdaptiveCausticsTaskInfo> AdaptiveCausticsTaskInfoPtr;
 // Author: Che Sun
 // Date: 12/05/2014
 //----------------------------------------------------------------------------
+class CopyTextureScreenQuad;
 class CausticMapRenderer : public SubRenderer
 {
 public:
@@ -145,6 +146,7 @@ private:
 	AdaptiveCausticsTaskInfo* mCausticsTask;
 	AdaptiveCausticsTaskInfo* mDebugDrawTask;
 	AdaptiveCausticsTaskInfo* mSplatTask;
+	CopyTextureScreenQuad* mCopyTextureScreenQuad;
 
 	TraversalBufferData tbd;
 	Texture2DPtr mReceiverPositionTexture;

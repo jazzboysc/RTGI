@@ -17,12 +17,19 @@ DirectLightingScreenQuad::~DirectLightingScreenQuad()
 //----------------------------------------------------------------------------
 void DirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 {
+	SamplerDesc sampler;
+	sampler.MinFilter = FT_Nearest;
+	sampler.MagFilter = FT_Nearest;
+	sampler.WrapS = WT_Clamp;
+	sampler.WrapT = WT_Clamp;
+
 	mGBufferPositionSamplerLoc.SetValue(0);
 	mGBufferNormalSamplerLoc.SetValue(1);
 	mGBufferAlbedoSamplerLoc.SetValue(2);
 	mShadowMapSamplerLoc.SetValue(3);
 	mCausticMapSamplerLoc.SetValue(4);
-
+	mCausticMapDepthSamplerLoc.SetValue(5);
+	mReceiverDepthTex->BindToSampler(5, &sampler);
 // 	if (LightProjector)
 // 	{
 // 		mat4 viewTrans = LightProjector->GetViewTransform();
@@ -48,6 +55,7 @@ void DirectLightingScreenQuad::OnGetShaderConstants()
 	program->GetUniformLocation(&mGBufferAlbedoSamplerLoc, "GBufferAlbedoSampler");
 	program->GetUniformLocation(&mShadowMapSamplerLoc, "ShadowMapSampler");
 	program->GetUniformLocation(&mCausticMapSamplerLoc, "CausticMapSampler");
+	program->GetUniformLocation(&mCausticMapDepthSamplerLoc, "CausticMapDepthSampler");
 	program->GetUniformLocation(&mShowShadow, "ShowShadow");
 	// 	program->GetUniformLocation(&mLightProjectorViewLoc, "LightProjectorView");
 // 	program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
@@ -76,6 +84,7 @@ DirectLightingRenderer::~DirectLightingRenderer()
 void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 	int height, BufferFormat format,GBufferRenderer* gbufferRenderer,
 	CausticMapRenderer* causticMapRenderer,
+	ReceiverResourceRenderer* receiverResourceRenderer,
 	ShadowMapRenderer* shadowMapRenderer)
 {
 	ShaderProgramInfo directLightingProgramInfo;
@@ -123,6 +132,9 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 
 	view.BindingSlot = 4;
 	AddInputDependency(causticMapRenderer, RTGI_CausticsBuffer_CausticMap_Name, &view);
+
+	mDirectLightingScreenQuad->mReceiverDepthTex =
+		(Texture2D*)receiverResourceRenderer->GetDepthTexture();
 
 	// Create output.
 	AddFrameBufferTarget(RTGI_DirectLightingRenderer_DirectLighting_Name,

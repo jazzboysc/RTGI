@@ -17,13 +17,14 @@ public:
 	//Camera* LightProjector;
 	vec3 LightColor;
 	bool ShowShadow;
-
+	Texture2D* mReceiverDepthTex;
 private:
 	ShaderUniform mGBufferPositionSamplerLoc;
 	ShaderUniform mGBufferNormalSamplerLoc;
 	ShaderUniform mGBufferAlbedoSamplerLoc;
 	ShaderUniform mShadowMapSamplerLoc;
 	ShaderUniform mCausticMapSamplerLoc;
+	ShaderUniform mCausticMapDepthSamplerLoc;
 	ShaderUniform mLightProjectorViewLoc;
 	ShaderUniform mLightPositionWorldLoc;
 	ShaderUniform mLightColorLoc;
@@ -35,6 +36,7 @@ typedef RefPointer<DirectLightingScreenQuad> DirectLightingScreenQuadPtr;
 
 
 class CausticMapRenderer;
+class ReceiverResourceRenderer;
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 12/05/2014
@@ -48,6 +50,7 @@ public:
 	void Initialize(GPUDevice* device, int width, int height,
 		BufferFormat format, GBufferRenderer* gbufferRenderer,
 		CausticMapRenderer* causticMapRenderer,
+		ReceiverResourceRenderer* receiverResourceRenderer,
 		ShadowMapRenderer* shadowMapRenderer);
 
 	void Render();
