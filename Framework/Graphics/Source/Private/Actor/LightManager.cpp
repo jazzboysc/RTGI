@@ -86,6 +86,7 @@ Light* LightManager::CreatePointLight(LightProjectorDesc* projectorDesc,
     lightMesh->SetWorldTranslation(lightProjector->GetLocation());
 
     AddPointLight(light);
+    return light;
 }
 //----------------------------------------------------------------------------
 Light* LightManager::CreateSpotLight(LightProjectorDesc* projectorDesc,
@@ -93,7 +94,29 @@ Light* LightManager::CreateSpotLight(LightProjectorDesc* projectorDesc,
 {
     RTGI_ASSERT(projectorDesc && spotLightDesc);
 
-    return 0;
+    Camera* lightProjector = new Camera();
+    lightProjector->SetPerspectiveFrustum(projectorDesc->UpFovDegrees,
+        projectorDesc->AspectRatio, projectorDesc->NearPlane,
+        projectorDesc->FarPlane);
+    lightProjector->SetLookAt(projectorDesc->Location, projectorDesc->LookAt,
+        projectorDesc->Up);
+
+    Light* light = new Light(LT_Spot);
+    light->Intensity = spotLightDesc->Intensity;
+    light->SetProjector(lightProjector);
+
+    glm::vec3 dir = lightProjector->GetDirection();
+    light->mParams1.x = -dir.x;
+    light->mParams1.y = -dir.y;
+    light->mParams1.z = -dir.z;
+    light->mParams1.w = spotLightDesc->CosCutoff;
+    light->mParams2.x = spotLightDesc->SpotExponent;
+    light->mParams2.y = spotLightDesc->ConstantAttenuation;
+    light->mParams2.z = spotLightDesc->QuadraticAttenuation;
+    light->mParams2.w = spotLightDesc->InnerCosCutoff;
+
+    AddSpotLight(light);
+    return light;
 }
 //----------------------------------------------------------------------------
 void LightManager::AddPointLight(Light* light)

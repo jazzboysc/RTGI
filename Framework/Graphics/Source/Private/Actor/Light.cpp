@@ -79,8 +79,10 @@ void Light::OnUpdateLightBufferCache(SceneLight* cache)
         cache->WorldPositionAndType.x = mLocation.x;
         cache->WorldPositionAndType.y = mLocation.y;
         cache->WorldPositionAndType.z = mLocation.z;
-
         cache->WorldPositionAndType.w = float((int)mLightType);
+
+        cache->Params1 = mParams1;
+        cache->Params2 = mParams2;
 
         RTGI_ASSERT(mProjector);
         if( mProjector )

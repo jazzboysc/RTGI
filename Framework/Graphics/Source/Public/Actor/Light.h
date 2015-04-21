@@ -37,6 +37,8 @@ enum LightType
     LT_Spot  = 2
 };
 
+class LightManager;
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/14/2013
@@ -64,6 +66,8 @@ public:
     virtual void OnUpdateLightBufferCache(SceneLight* cache);
    
 protected:
+    friend class LightManager;
+
     LightType mLightType;
     glm::vec3 mLocation;
     Camera* mProjector;
