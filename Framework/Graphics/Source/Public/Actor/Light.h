@@ -31,6 +31,12 @@ struct SceneLight
     glm::vec4 LightProjectorNearFar;
 };
 
+enum LightType
+{
+    LT_Point = 1,
+    LT_Spot  = 2
+};
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 11/14/2013
@@ -38,7 +44,7 @@ struct SceneLight
 class Light : public RefObject
 {
 public:
-	Light();
+    Light(LightType type = LT_Point);
     virtual ~Light();
 
 	glm::vec3 Intensity;
@@ -58,9 +64,13 @@ public:
     virtual void OnUpdateLightBufferCache(SceneLight* cache);
    
 protected:
+    LightType mLightType;
     glm::vec3 mLocation;
     Camera* mProjector;
     TriangleMeshPtr mLightMesh;
+
+    glm::vec4 mParams1;
+    glm::vec4 mParams2;
 };
 
 typedef RefPointer<Light> LightPtr;

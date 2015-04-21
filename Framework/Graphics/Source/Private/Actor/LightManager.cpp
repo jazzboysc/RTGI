@@ -50,9 +50,11 @@ LightManager::~LightManager()
     mMtLightMesh = 0;
 }
 //----------------------------------------------------------------------------
-void LightManager::CreatePointLight(LightProjectorDesc* desc, 
-    Camera* lightMeshCamera, const glm::vec3& intensity)
+Light* LightManager::CreatePointLight(LightProjectorDesc* projectorDesc,
+    Camera* lightMeshCamera, PointLightDesc* pointLightDesc)
 {
+    RTGI_ASSERT(projectorDesc && pointLightDesc);
+
     Material* lightMeshMaterial = new Material(mMtLightMesh);
     LightMesh* lightMesh = new LightMesh(lightMeshMaterial, lightMeshCamera);
     lightMesh->LoadFromPLYFile("square.ply");
@@ -71,16 +73,27 @@ void LightManager::CreatePointLight(LightProjectorDesc* desc,
         "Textures/pointLight.png");
 
     Camera* lightProjector = new Camera();
-    lightProjector->SetPerspectiveFrustum(desc->UpFovDegrees, 
-        desc->AspectRatio, desc->NearPlane, desc->FarPlane);
-    lightProjector->SetLookAt(desc->Location, desc->LookAt, desc->Up);
-    Light* light = new Light();
-    light->Intensity = intensity;
+    lightProjector->SetPerspectiveFrustum(projectorDesc->UpFovDegrees,
+        projectorDesc->AspectRatio, projectorDesc->NearPlane, 
+        projectorDesc->FarPlane);
+    lightProjector->SetLookAt(projectorDesc->Location, projectorDesc->LookAt, 
+        projectorDesc->Up);
+
+    Light* light = new Light(LT_Point);
+    light->Intensity = pointLightDesc->Intensity;
     light->SetProjector(lightProjector);
     light->SetLightMesh(lightMesh);
     lightMesh->SetWorldTranslation(lightProjector->GetLocation());
 
     AddPointLight(light);
+}
+//----------------------------------------------------------------------------
+Light* LightManager::CreateSpotLight(LightProjectorDesc* projectorDesc,
+    Camera* lightMeshCamera, SpotLightDesc* spotLightDesc)
+{
+    RTGI_ASSERT(projectorDesc && spotLightDesc);
+
+    return 0;
 }
 //----------------------------------------------------------------------------
 void LightManager::AddPointLight(Light* light)

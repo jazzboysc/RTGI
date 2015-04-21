@@ -50,7 +50,9 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     pointLight1ProjDesc.Location = vec3(2.0f, 12.0f, 2.0f);
     pointLight1ProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
     pointLight1ProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
-    mLightManager->CreatePointLight(&pointLight1ProjDesc, mMainCamera, vec3(50.0f, 50.0f, 50.0f));
+    PointLightDesc light1Desc;
+    light1Desc.Intensity = vec3(50.0f, 50.0f, 50.0f);
+    mLightManager->CreatePointLight(&pointLight1ProjDesc, mMainCamera, &light1Desc);
 
     LightProjectorDesc pointLight2ProjDesc;
     pointLight2ProjDesc.UpFovDegrees = 90.0f;
@@ -60,7 +62,9 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     pointLight2ProjDesc.Location = vec3(-2.0f, 12.0f, 2.0f);
     pointLight2ProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
     pointLight2ProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
-    mLightManager->CreatePointLight(&pointLight2ProjDesc, mMainCamera, vec3(50.0f, 20.0f, 10.0f));
+    PointLightDesc light2Desc;
+    light2Desc.Intensity = vec3(50.0f, 20.0f, 10.0f);
+    mLightManager->CreatePointLight(&pointLight2ProjDesc, mMainCamera, &light2Desc);
 
     Light* pointLight1 = mLightManager->GetPointLight(0);
     mLightManager->CreateLightBuffer(mDevice);

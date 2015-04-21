@@ -173,9 +173,8 @@ glm::vec3 Camera::GetRight() const
 //----------------------------------------------------------------------------
 void Camera::SetAngle(const float& horizontalAngle, const float& verticalAngle)
 {
-	auto test = glm::rotate(glm::mat4(), glm::radians(-45.0f), glm::vec3(0, 1, 0));
-
-	mRot = glm::normalize(glm::quat(glm::radians(glm::vec3(verticalAngle, horizontalAngle, 0))));
+	mRot = glm::normalize(glm::quat(glm::radians(glm::vec3(verticalAngle, 
+        horizontalAngle, 0))));
 	glm::mat4 res = glm::mat4_cast(mRot);
 	auto euler = glm::degrees(glm::eulerAngles(mRot));
 	mRight.x = res[0][0];
