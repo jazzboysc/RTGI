@@ -44,7 +44,8 @@ public:
     LightManager(GPUDevice* device);
     ~LightManager();
 
-    void CreatePointLight(LightProjectorDesc* desc, Camera* lightMeshCamera);
+    void CreatePointLight(LightProjectorDesc* desc, Camera* lightMeshCamera,
+        const glm::vec3& intensity);
 
     void AddPointLight(Light* light);
     Light* GetPointLight(int i) const;

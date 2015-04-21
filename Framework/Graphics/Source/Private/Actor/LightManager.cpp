@@ -51,7 +51,7 @@ LightManager::~LightManager()
 }
 //----------------------------------------------------------------------------
 void LightManager::CreatePointLight(LightProjectorDesc* desc, 
-    Camera* lightMeshCamera)
+    Camera* lightMeshCamera, const glm::vec3& intensity)
 {
     Material* lightMeshMaterial = new Material(mMtLightMesh);
     LightMesh* lightMesh = new LightMesh(lightMeshMaterial, lightMeshCamera);
@@ -75,7 +75,7 @@ void LightManager::CreatePointLight(LightProjectorDesc* desc,
         desc->AspectRatio, desc->NearPlane, desc->FarPlane);
     lightProjector->SetLookAt(desc->Location, desc->LookAt, desc->Up);
     Light* light = new Light();
-    light->Intensity = vec3(50.0f);
+    light->Intensity = intensity;
     light->SetProjector(lightProjector);
     light->SetLightMesh(lightMesh);
     lightMesh->SetWorldTranslation(lightProjector->GetLocation());
