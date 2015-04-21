@@ -9,14 +9,6 @@ namespace RTGI
 
 #define RTGI_ShadowMapRenderer_ShadowMaps_Name "ShadowMaps"
 
-struct ShadowMapInfo
-{
-    uint CurLightIndex;
-    uint Reserved1;
-    uint Reserved2;
-    uint Reserved3;
-};
-
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 12/05/2014
@@ -29,24 +21,14 @@ public:
 
     void Initialize(int width, int height, BufferFormat format, 
         LightManager* lightManager);
-    void Render(int technique, int pass);
+    void Render(int technique, int pass, Camera* camera);
 
     inline int GetShadowMapCount() const { return mShadowMapCount; };
-    inline void SetShadowMapInfoBufferBindingPoint(unsigned int bindingPoint)
-    {
-        mShadowMapInfoBufferBindingPoint = bindingPoint;
-    };
-    inline unsigned int GetShadowMapInfoBufferBindingPoint() const
-    {
-        return mShadowMapInfoBufferBindingPoint;
-    };
 
 protected:
     PipelineStateBlockPtr mPSB;
     LightManagerPtr mLightManager;
     int mShadowMapCount;
-    UniformBufferPtr mShadowMapInfoBuffer;
-    unsigned int mShadowMapInfoBufferBindingPoint;
 };
 
 typedef RefPointer<ShadowMapsGenerator> ShadowMapsGeneratorPtr;

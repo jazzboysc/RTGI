@@ -38,19 +38,46 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
         vec3(0.0f, 1.0f, 0.0f));
 
     // Create light manager.
-    mLightManager = new LightManager(device);
+    mLightManager = new LightManager();
 
-    // Create a point light.
-    LightProjectorDesc pointLightProjDesc;
-    pointLightProjDesc.UpFovDegrees = 90.0f;
-    pointLightProjDesc.AspectRatio = 1.0f;
-    pointLightProjDesc.NearPlane = 0.01f;
-    pointLightProjDesc.FarPlane = 50.0f;
-    pointLightProjDesc.Location = vec3(0.0f, 12.0f, 2.0f);
-    pointLightProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
-    pointLightProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
-    mLightManager->CreatePointLight(&pointLightProjDesc, mMainCamera);
-    Light* pointLight = mLightManager->GetPointLight(0);
+    // Create light.
+    ShaderProgramInfo lightMeshProgramInfo;
+    lightMeshProgramInfo.VShaderFileName = "VPLviaSVOGI/vLightMesh.glsl";
+    lightMeshProgramInfo.FShaderFileName = "VPLviaSVOGI/fLightMesh.glsl";
+    lightMeshProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                           ShaderType::ST_Fragment;
+    Pass* passLightMesh = new Pass(lightMeshProgramInfo);
+    Technique* techLightMesh = new Technique();
+    techLightMesh->AddPass(passLightMesh);
+    MaterialTemplate* mtLightMesh = new MaterialTemplate();
+    mtLightMesh->AddTechnique(techLightMesh);
+
+    LightMesh* lightMesh = new LightMesh(new Material(mtLightMesh), mMainCamera);
+    lightMesh->LoadFromPLYFile("square.ply");
+    mat4 lightMeshScale = glm::scale(mat4(), vec3(0.05f));
+    lightMesh->UpdateModelSpaceVertices(lightMeshScale);
+    mat4 lightRotM = rotate(mat4(), radians(90.0f), vec3(1, 0, 0));
+    lightMesh->SetWorldTransform(lightRotM);
+    lightMesh->SetTCoord(0, vec2(0.0f, 0.0f));
+    lightMesh->SetTCoord(1, vec2(1.0f, 0.0f));
+    lightMesh->SetTCoord(2, vec2(1.0f, 1.0f));
+    lightMesh->SetTCoord(3, vec2(0.0f, 1.0f));
+    lightMesh->CreateDeviceResource(device);
+
+    lightMesh->LightMeshTexture = new Texture2D();
+    lightMesh->LightMeshTexture->LoadPNGFromFile(mDevice, "Textures/pointLight.png");
+
+    Camera* lightProjector = new Camera();
+    lightProjector->SetPerspectiveFrustum(90.0f, 1.0f, 0.01f, 50.0f);
+    lightProjector->SetLookAt(vec3(0.0f, 12.0f, 2.0f), vec3(0.0f, 0.0f, 0.0f),
+        vec3(1.0f, 0.0f, 0.0f));
+    mLight = new Light();
+    mLight->Intensity = vec3(50.0f);
+    mLight->SetProjector(lightProjector);
+    mLight->SetLightMesh(lightMesh);
+    lightMesh->SetWorldTranslation(lightProjector->GetLocation());
+
+    mLightManager->AddPointLight(mLight);
     mLightManager->CreateLightBuffer(mDevice);
 
 	// Create material templates.
@@ -133,7 +160,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mModel->SetWorldTranslation(vec3(-6.0f, 2.5f, -1.5f));
     mModel->SetWorldScale(vec3(2.5f));
     mModel->MaterialColor = vec3(0.1f, 0.9f, 0.9f);
-    mModel->LightProjector = pointLight->GetProjector();
+    mModel->LightProjector = mLight->GetProjector();
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
@@ -152,7 +179,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
         model2->SetWorldTranslation(vec3(3.2f, 3.6f, 2.4f));
         model2->SetWorldScale(vec3(9.0f));
         model2->MaterialColor = vec3(0.2f, 0.2f, 0.9f);
-        model2->LightProjector = pointLight->GetProjector();
+        model2->LightProjector = mLight->GetProjector();
         model2->SceneBB = &mSceneBB;
         model2->TessLevel = 1.0f;
         mSceneBB.Merge(model2->GetWorldSpaceBB());
@@ -167,7 +194,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mGround->GenerateNormals();
     mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-    mGround->LightProjector = pointLight->GetProjector();
+    mGround->LightProjector = mLight->GetProjector();
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
@@ -180,7 +207,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mCeiling->SetWorldTransform(rotM);
     mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-    mCeiling->LightProjector = pointLight->GetProjector();
+    mCeiling->LightProjector = mLight->GetProjector();
     mCeiling->SceneBB = &mSceneBB;
     mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
@@ -193,7 +220,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mBackWall->SetWorldTransform(rotM);
     mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-    mBackWall->LightProjector = pointLight->GetProjector();
+    mBackWall->LightProjector = mLight->GetProjector();
     mBackWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
@@ -206,7 +233,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mLeftWall->SetWorldTransform(rotM);
     mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(0.95f, 0.2f, 0.2f);
-    mLeftWall->LightProjector = pointLight->GetProjector();
+    mLeftWall->LightProjector = mLight->GetProjector();
     mLeftWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
@@ -219,7 +246,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mRightWall->SetWorldTransform(rotM);
     mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.2f, 0.95f, 0.2f);
-    mRightWall->LightProjector = pointLight->GetProjector();
+    mRightWall->LightProjector = mLight->GetProjector();
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
@@ -491,8 +518,7 @@ void VPLviaSVOGI::FrameFunc()
 #endif
 
     // Scene shadow pass.
-    mShadowMapRenderer->SetShadowMapInfoBufferBindingPoint(2);
-    mShadowMapRenderer->Render(0, SMP_ShadowMap);
+    mShadowMapRenderer->Render(0, SMP_ShadowMap, mLight->GetProjector());
 #ifdef SHOW_TIMING
     workLoad = mShadowMapRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;
@@ -549,13 +575,13 @@ void VPLviaSVOGI::FrameFunc()
     infoPanel->SetTimingLabelValue("Frame Counter", FrameCounter);
 #endif
 
-    // Visualize lights in the scene.
-    mLightManager->RenderLightMesh(0, 0);
+    mLight->RenderLightMesh(0, 0);
 }
 //----------------------------------------------------------------------------
 void VPLviaSVOGI::Terminate()
 {
 	// Release all resources.
+    mLight = 0;
     mLightManager = 0;
 
     mVoxelizer = 0;

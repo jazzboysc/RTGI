@@ -43,7 +43,8 @@ private:
     bool mIsRotatingModel;
     bool mIsWireframe;
 
-    // Scene lights manager.
+    // Scene lights.
+    LightPtr mLight;
     LightManagerPtr mLightManager;
 
     // GI temporal coherence.
