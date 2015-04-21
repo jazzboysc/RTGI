@@ -29,7 +29,7 @@ void DirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 	mShadowMapSamplerLoc.SetValue(3);
 	mCausticMapSamplerLoc.SetValue(4);
 	mCausticMapDepthSamplerLoc.SetValue(5);
-	mReceiverDepthTex->BindToSampler(5, &sampler);
+	//mReceiverDepthTex->BindToSampler(5, &sampler);
 // 	if (LightProjector)
 // 	{
 // 		mat4 viewTrans = LightProjector->GetViewTransform();
@@ -96,8 +96,7 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 		new MaterialTemplate(
 		new Technique(new Pass(directLightingProgramInfo)));
 
-	Material* material = new Material(mtDirectLighting);
-	mDirectLightingScreenQuad = new DirectLightingScreenQuad(material);
+	mDirectLightingScreenQuad = new DirectLightingScreenQuad(new Material(mtDirectLighting));
 	mDirectLightingScreenQuad->LoadFromPLYFile("screenquad.ply");
 	mDirectLightingScreenQuad->SetTCoord(0, vec2(0.0f, 0.0f));
 	mDirectLightingScreenQuad->SetTCoord(1, vec2(1.0f, 0.0f));
@@ -129,6 +128,14 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 
 	view.BindingSlot = 3;
 	AddInputDependency(shadowMapRenderer, RTGI_ShadowMapRenderer_ShadowMap_Name, &view);
+
+// 	RendererInputDataView view2;
+// 	view2.Type = RDT_Texture;
+// 	view2.BindingType = BF_BindIndex;
+// 	view2.Sampler.MinFilter = FT_Linear_Linear;
+// 	view2.Sampler.MagFilter = FT_Linear;
+// 	view2.Sampler.WrapS = WT_Clamp;
+// 	view2.Sampler.WrapT = WT_Clamp;
 
 	view.BindingSlot = 4;
 	AddInputDependency(causticMapRenderer, RTGI_CausticsBuffer_CausticMap_Name, &view);

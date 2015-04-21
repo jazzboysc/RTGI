@@ -21,20 +21,28 @@ vec4 CausticContribution( sampler2DShadow cDepth, sampler2D cMap, vec4 smapCoord
 }
 */
 
-vec4 CausticContribution( vec4 WorldPos)
+vec4 CausticContribution(vec4 WorldPos, vec3 NormalPos)
 {
 	SceneLight light = sceneLightUniformBuffer.lights[0];
+	vec3 toLight0   = normalize( light.WorldPositionAndType.xyz - WorldPos.xyz );
+	float NdotL0    = max( 0.0, dot( NormalPos.xyz, toLight0 ) );
 	vec4 viewPos = light.LightProjectorView * WorldPos;
 	viewPos = viewPos * 0.5 + 0.5;
-	float depth = texture(CausticMapDepthSampler, viewPos.xy).x;
-	if(depth < gl_FragDepth)
-	{
-		return vec4(0.0);//texture(CausticMapSampler, viewPos.xy);
-	}
-	else
-	{
-		return vec4(depth);
-	}
+
+	/*
+	vec3 viewDir = viewPos.xyz;
+    float len = length(viewDir);
+    viewDir = normalize(viewDir);
+    vec3 halfDir = viewDir + vec3(0.0, 0.0, -1.0);
+    float u = -halfDir.x / halfDir.z;
+    float v = -halfDir.y / halfDir.z;
+    float currDepth = (len - light.LightProjectorNearFar.x) /
+        (light.LightProjectorNearFar.y - light.LightProjectorNearFar.x);
+
+    vec2 texCoords = vec2(u, v);
+    texCoords = texCoords*0.5 + 0.5;
+	*/
+	return texture(CausticMapSampler, viewPos.xy);
 }
 
 void main()
@@ -64,5 +72,5 @@ void main()
         accumulation += ComputeSpotLight(i, PositionWorld, NormalWorld, Material);
     }
 
-    Output = accumulation + vec4(CausticContribution(PositionWorld).xyz, 0.3f);
+    Output = accumulation + vec4(CausticContribution(PositionWorld, NormalWorld).xyz, 0.0f);
 }

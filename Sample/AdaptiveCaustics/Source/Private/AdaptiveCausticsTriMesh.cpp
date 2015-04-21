@@ -66,6 +66,7 @@ void AdaptiveCausticsTriMesh::OnUpdateShaderConstants(int technique, int pass)
 		break;
 	case AdaptiveCausticsApp::SMP_ShadowMap:
 		mWorldLoc3.SetValue(worldTrans);
+		//mWorldLoc3.SetValue(glm::translate(worldTrans, vec3(0, 0.1, 0)));
 		mTessLevelLoc.SetValue(TessLevel);
 		if (mCamera)
 		{

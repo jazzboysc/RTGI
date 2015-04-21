@@ -14,6 +14,8 @@
 
 #version 430 core
 
+#include "AdaptiveCaustics/DirectLighting/SceneLight.glsl"
+
 in vec4 vPosition;
 in vec2 vTCoord;
 
@@ -34,7 +36,8 @@ uniform sampler2D ReceiverDepth;
 //    divide.
 vec2 ProjectToTexCoord( vec4 eyeSpacePos )
 {
-	vec4 projLoc = gl_ProjectionMatrix * eyeSpacePos;
+	SceneLight light = sceneLightUniformBuffer.lights[0];
+	vec4 projLoc = light.LightProjectorProj * eyeSpacePos;
 	return ( 0.5*(projLoc.xy / projLoc.w) + 0.5 );
 }
 

@@ -49,16 +49,16 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Create camera and light
-	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 1000.0f);
+	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 150.0f);
 	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
 	mLightProjector = new Camera;
-	mLightProjector->SetPerspectiveFrustum(75.0f, (float)Width / (float)Height, 0.01f, 25.0f);
-	mLightProjector->SetLookAt(vec3(-0.5f, 0.5f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
+	mLightProjector->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 25.0f);
+	mLightProjector->SetLookAt(vec3(-1.5f, -0.5f, 0.0f), vec3(0.0f, -1.7f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
 	mLight = new Light;
 	mLight->SetProjector(mLightProjector);
-	mLight->Intensity = vec3(1.f, 1.f, 1.f);
+	mLight->Intensity = vec3(1.0f);
 
 	mLightManager = new LightManager();
 	mLightManager->AddPointLight(mLight);
@@ -129,9 +129,10 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	ShaderProgramInfo PI_ShadowMap;
 	PI_ShadowMap
 		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.vert"
-		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.frag"
 		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.ctrl"
-		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.eval";
+		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.eval"
+		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.geom"
+		<< "AdaptiveCaustics/ParaboloidShadowmap/ShadowMap.frag";
 
 	auto mtReceiverCausticsResourceCube = new MaterialTemplate(
 		new Technique({
@@ -170,7 +171,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mScene.pool->GenerateNormals();
 	mScene.pool->CreateDeviceResource(mDevice);
 	mScene.pool->SetWorldTranslation(vec3(0.0f, 0.0f, 0.0f));
-	mScene.pool->SetWorldScale(vec3(1, -1, 1));
+	mScene.pool->SetWorldScale(vec3(2, -2, 2));
 	mScene.pool->MaterialColor = vec3(1, 1, 1);
 	mScene.pool->CubeTexture = mCubeMap;
 	
@@ -189,24 +190,22 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mScene.mesh->GenerateNormals();
 	mScene.mesh->CreateDeviceResource(mDevice);
 	mScene.mesh->SetWorldTransform(rotate(mat4(), radians(30.0f), vec3(0, 1, 0)));
-	mScene.mesh->SetWorldTranslation(vec3(0.0f, -0.8f, 0.0f));
-	mScene.mesh->SetWorldScale(vec3(3.0f));
-	auto scale = glm::scale(mat4(), vec3(3));
-	mScene.mesh->UpdateModelSpaceVertices(scale);
+	mScene.mesh->SetWorldTranslation(vec3(0.0f, -1.5f, 0.0f));
+	mScene.mesh->SetWorldScale(vec3(6.0f));
     mScene.mesh->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
 	mScene.mesh->TessLevel = 1.0f;
 
 	// Render sets
 	mScene.receiver = new RenderSet();
 	mScene.receiver->AddRenderObject(mScene.pool);
-	mScene.receiver->AddRenderObject(mScene.ground);
+	//mScene.receiver->AddRenderObject(mScene.ground);
 
 	mScene.refractor = new RenderSet();
 	mScene.refractor->AddRenderObject(mScene.mesh);
 
 	mScene.all = new RenderSet();
 	mScene.all->AddRenderObject(mScene.pool);
-	mScene.all->AddRenderObject(mScene.ground);
+	//mScene.all->AddRenderObject(mScene.ground);
 	mScene.all->AddRenderObject(mScene.mesh);
 #pragma endregion Shaders and Materials
 
@@ -279,15 +278,16 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 
 	// Step 1: Render resources needed for caustics computation
+	glEnable(GL_CULL_FACE);
 	mReceiverGBufferRenderer = new GBufferRenderer(device, mScene.receiver);
 	GBufferDesc gBufferDesc;
 	gBufferDesc.Width = this->Width;
 	gBufferDesc.Height = this->Height;
-	gBufferDesc.PositionFormat = BF_RGBAF;
+	gBufferDesc.PositionFormat = BF_RGBA16F;
 	gBufferDesc.PositionMipmap = false;
-	gBufferDesc.NormalFormat = BF_RGBAF;
+	gBufferDesc.NormalFormat = BF_RGBA16F;
 	gBufferDesc.NormalMipmap = false;
-	gBufferDesc.AlbedoFormat = BF_RGBAF;
+	gBufferDesc.AlbedoFormat = BF_RGBA16F;
 	gBufferDesc.AlbedoMipmap = false;
 	mReceiverGBufferRenderer->CreateGBuffer(&gBufferDesc);
 	mReceiverGBufferRenderer->SetTimer(mTimer);
@@ -300,34 +300,39 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	ReceiverResourceDesc receiverResourceDesc;
 	receiverResourceDesc.Width = this->Width;
 	receiverResourceDesc.Height = this->Height;
-	receiverResourceDesc.ReceiverPositionFormat = BF_RGBAF;
+	receiverResourceDesc.ReceiverPositionFormat = BF_RGBA16F;
 	receiverResourceDesc.ReceiverPositionMipmap = false;
 	mReceiverResourceRenderer->CreateCausticsResource(&receiverResourceDesc);
 	mReceiverResourceRenderer->SetTimer(mTimer);
 
+	glDisable(GL_CULL_FACE);
 	mRefractorResourceRenderer = new RefractorResourceRenderer(device, mScene.refractor);
 	RefractorResourceDesc refractorResourceDesc;
-	refractorResourceDesc.Width = this->Width;
-	refractorResourceDesc.Height = this->Height;
-	refractorResourceDesc.RefractorFrontNormalFormat = BF_RGBAF;
+	refractorResourceDesc.Width = 1024;
+	refractorResourceDesc.Height = 1024;
+	refractorResourceDesc.RefractorNormalFormat = BF_RGBA16F;
 	refractorResourceDesc.RefractorFrontNormalMipmap = true;
 	mRefractorResourceRenderer->CreateCausticsResource(&refractorResourceDesc);
 	mRefractorResourceRenderer->SetTimer(mTimer);
 
 	mRefractorNormalRenderer = new RefractorResourceRenderer(device, mScene.refractor);
 	refractorResourceDesc.RefractorFrontNormalMipmap = false;
+	refractorResourceDesc.Width = this->Width;
+	refractorResourceDesc.Height = this->Height;
 	mRefractorNormalRenderer->CreateCausticsResource(&refractorResourceDesc);
 	mRefractorNormalRenderer->SetTimer(mTimer);
 
+	glEnable(GL_CULL_FACE);
 	mShadowMapRenderer = new ShadowMapRenderer(device, mScene.all);
-	mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBAF);
+	mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBA16F);
 	mShadowMapRenderer->SetTimer(mTimer);
 
 	mCausticMapRenderer = new CausticMapRenderer(device);
 	CausticsMapDesc causticsMapDesc;
-	causticsMapDesc.Width = 2048;
-	causticsMapDesc.Height = 2048;
+	causticsMapDesc.Width = 1024.0f;
+	causticsMapDesc.Height = 1024.0f;
 	causticsMapDesc.CausticsMapFormat = BF_RGBAF;
+	//causticsMapDesc.CausticsMapMipmap = true;
 	mCausticMapRenderer->Initialize(device, &causticsMapDesc,
 		mReceiverResourceRenderer,
 		mRefractorResourceRenderer,
@@ -367,7 +372,6 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mVisualizer->SetShowMode(DEFAULT_SHOWMODE);
 }
 
-//#define PROFILE_ENABLED
 
 //----------------------------------------------------------------------------
 void AdaptiveCausticsApp::FrameFunc()
@@ -390,6 +394,8 @@ void AdaptiveCausticsApp::FrameFunc()
 
 	mLightManager->SetLightBufferBindingPoint(1);
 	mLightManager->UpdateLightBuffer();
+
+//#define PROFILE_ENABLED
 
 	// Resource gathering pass
  	mReceiverGBufferRenderer->Render(0, SMP_GBuffer, mMainCamera);
@@ -486,7 +492,7 @@ void AdaptiveCausticsApp::FrameFunc()
 #endif // PROFILE_ENABLED
 
 	// Post processing: add light mesh
-	//mLight->RenderLightMesh(0, 0);
+	mLight->RenderLightMesh(0, 0);
 
 }
 //----------------------------------------------------------------------------

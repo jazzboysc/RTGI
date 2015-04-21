@@ -49,6 +49,7 @@ GLenum gsBufferFormat[BufferFormat_Max] =
     GL_RGBA,
     GL_RGB,
     GL_RGBA,
+	GL_RGBA,
     GL_RED_INTEGER,
     GL_RED,
     GL_DEPTH_COMPONENT
@@ -73,7 +74,8 @@ GLenum gsBufferComponentType[BufferComponentType_Max] =
 {
     GL_UNSIGNED_BYTE,
     GL_UNSIGNED_INT,
-    GL_FLOAT
+    GL_FLOAT,
+	GL_HALF_FLOAT
 };
 
 GLenum gsBufferAccess[BufferAccess_Max] =

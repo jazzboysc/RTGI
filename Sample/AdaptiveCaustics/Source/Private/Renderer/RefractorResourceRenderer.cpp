@@ -27,7 +27,7 @@ void RefractorResourceRenderer::CreateCausticsResource(RefractorResourceDesc* de
 
 	AddFrameBufferTarget(RTGI_CausticsBuffer_RefractorFrontAndBackNormal_Name,
 		desc->Width, desc->Height, 2, TT_Texture2DArray,
-		desc->RefractorFrontNormalFormat, desc->RefractorFrontNormalMipmap);
+		desc->RefractorNormalFormat, desc->RefractorFrontNormalMipmap);
 	CreateFrameBuffer(desc->Width, desc->Height, 2, TT_Texture2DArray);
 
 	// Create material templates.

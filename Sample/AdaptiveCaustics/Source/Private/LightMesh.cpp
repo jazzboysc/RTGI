@@ -34,7 +34,7 @@ void LightMesh::OnUpdateShaderConstants(int technique, int pass)
     sampler.WrapT = WT_Clamp;
 
     mLightMeshTextureSamplerLoc.SetValue(0);
-    //LightMeshTexture->BindToSampler(0, &sampler);
+    LightMeshTexture->BindToSampler(0, &sampler);
 }
 //----------------------------------------------------------------------------
 void LightMesh::OnRender(Pass* pass, PassInfo* passInfo)

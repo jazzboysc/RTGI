@@ -63,7 +63,7 @@ vec4 ComputePointLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Materia
     if( currDepth - depth > 0.01 && !skipShadow && ShowShadow )
     {
         // Shadow.
-        res = vec4(0.2, 0.2, 0.2, 1.0);
+        res = vec4(0.0, 0.0, 0.0, 1.0);
     }
     else
     {

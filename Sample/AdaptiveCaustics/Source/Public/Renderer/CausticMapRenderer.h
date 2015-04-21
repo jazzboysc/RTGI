@@ -53,6 +53,7 @@ struct ACMSharedCommandBuffer
 	float deltaX;
 	float deltaY;
 };
+const int GMaxTraversalLevel = 10;
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -153,7 +154,6 @@ private:
 	Texture2DPtr mReceiverDepthTexture;
 	Texture2DArrayPtr mRefractorNormalTextures;
 	Texture2DArrayPtr mRefractorDepthTextures;
-	const int mMaxTraversalLevel = 10;
 	GLuint mPrimCountQuery;
 };
 

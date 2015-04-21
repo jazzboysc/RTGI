@@ -21,7 +21,8 @@ enum BufferFormat
     BF_RGB,
     BF_RGBA,
     BF_RGBF,
-    BF_RGBAF,
+	BF_RGBAF,
+	BF_RGBA16F,
     BF_R32UI,
     BF_R32F,
     BF_Depth,
@@ -51,6 +52,7 @@ enum BufferComponentType
     BCT_Unsigned_Byte,
     BCT_Unsigned_Int,
     BCT_Float,
+	BCT_Half_Float,
     BufferComponentType_Max
 };
 

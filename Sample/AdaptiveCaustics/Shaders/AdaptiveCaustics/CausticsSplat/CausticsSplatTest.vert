@@ -98,7 +98,7 @@ void main(void)
 	Dist.x = (texture( RefractorDepth, vec3(vTCoord, 1) ).z) * 2.0f - 1.0f;	
 	Dist.y = (texture( RefractorDepth, vec3(vTCoord, 0) ).z) * 2.0f - 1.0f;	
 	// TIMES2??????
-	Dist = NearFarInfo.x / (Dist * NearFarInfo.y - NearFarInfo.z );
+	Dist = 2 * NearFarInfo.x / (Dist * NearFarInfo.y - NearFarInfo.z );
 	
 	// Distance between front & back surfaces
 	// MINUS SIGN????
@@ -132,7 +132,7 @@ void main(void)
 	float index, minDist = 1000.0, deltaDist = 1000.0;
 	for (index = 0.0; index < 2.0; index += 1.0)
 	{
-		float texel = texture2D( ReceiverDepth, ProjectToTexCoord( P_2_tilde + tmpT2 * index ) ).x;
+		float texel = texture( ReceiverDepth, ProjectToTexCoord( P_2_tilde + tmpT2 * index ) ).x;
 		float distA = -(NearFarInfo.x / (texel * NearFarInfo.y - NearFarInfo.w)) + P_2_tilde.z;
 		if ( abs(distA-index) < deltaDist )
 		{
@@ -161,7 +161,7 @@ void main(void)
 	Temp[0] = invalidPhoton ? vec4(1.0) : vec4(0.0); 
 	Temp[2] = projectedPhoton;
 	Temp[3] = vec4(1.0, 1.0, 1.0, 1.0);//texture( spotLight, gl_Position.xy );
-	//Temp[3].w = floor(512.0*gl_Position.y)+gl_Position.x;
+	Temp[3].w = floor(512.0*gl_Position.y)+gl_Position.x;
 	
 	gl_PointSize = invalidPhoton ? 0.0 : 3.0;
 	Temp[4].z = 3.0;

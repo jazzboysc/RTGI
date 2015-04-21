@@ -305,6 +305,11 @@ void Texture2D::CreateRenderTarget(GPUDevice* device, int width, int height,
         mComponentType = BCT_Float;
         break;
 
+	case BF_RGBA16F:
+		mInternalFormat = BIF_RGBA16F;
+		mComponentType = BCT_Half_Float;
+		break;
+
 	case BF_R32UI:
 #ifndef __APPLE__
 		mInternalFormat = BIF_R32UI;

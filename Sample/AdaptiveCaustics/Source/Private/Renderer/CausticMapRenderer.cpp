@@ -79,9 +79,9 @@ void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
 	}
 	if (pass == 2)
 	{
-		int maxPhotonRes = (int)(pow(2.0, (float)TraversalLevel + 7) + 0.1);
-		splatResolutionModifierLoc.SetValue(4096.0f / maxPhotonRes);
-		renderBufResLoc.SetValue(2048.0f);
+		int maxPhotonRes = (int)(pow(2.0, (float)GMaxTraversalLevel + 5) + 0.1);
+		splatResolutionModifierLoc.SetValue(1024.0f / maxPhotonRes);
+		renderBufResLoc.SetValue(1024.0f);
 		lightProjLoc.SetValue(mCamera->GetProjectionTransform());
 		TanLightFovy2Loc.SetValue(glm::pi<float>() * mCamera->GetFoV() / 360.0f);
 
@@ -103,8 +103,8 @@ void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
 		ReceiverDepthTexLoc.SetValue(2);
 		sampler.MinFilter = FT_Linear_Linear;
 		mRefractorNormalTextures->BindToSampler(0, &sampler);
-		sampler.MinFilter = FT_Linear;
 		mRefractorDepthTextures->BindToSampler(1, &sampler);
+		sampler.MinFilter = FT_Linear;
 		mReceiverDepthTexture->BindToSampler(2, &sampler);
 
 		//ImageUnit0Loc.SetValue(0);
@@ -119,7 +119,7 @@ void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
 //----------------------------------------------------------------------------
 void AdaptiveCausticsTaskInfo::OnPostDispatch(unsigned int pass)
 {
-	glMemoryBarrier(GL_ALL_BARRIER_BITS);
+	glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 }
 //----------------------------------------------------------------------------
 
@@ -218,7 +218,7 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 	//     not generic!).
 
 	mCompTexture = new Texture2D();
-	mCompTexture->CreateRenderTarget(mDevice, 768, 768, BF_RGBAF);
+	mCompTexture->CreateRenderTarget(mDevice, 768, 768, BF_RGBA16F);
 
 	mCausticsTexture = (Texture2D*)GetFrameBufferTextureByName(
 		RTGI_CausticsBuffer_CausticMap_Name);
@@ -249,7 +249,7 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 	//	counterData0);
 	// Storage buffer
 	mCausticsTask->mACMBuffer = new StructuredBuffer();
-	auto bufferSize = sizeof(ACMBuffer)+KERNEL_SIZE(12) * sizeof(vec4);
+	auto bufferSize = sizeof(ACMBuffer)+KERNEL_SIZE(11) * sizeof(vec4);
 	mCausticsTask->mACMBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Stream_Copy);
 	InitializeMinCausticHierarchy(mDevice, mCausticsTask, START_KERNEL_WIDTH);
 
@@ -310,8 +310,11 @@ void CausticMapRenderer::CreateCausticsResource(CausticsMapDesc* desc)
 //----------------------------------------------------------------------------
 void CausticMapRenderer::Render(int technique, int pass, Camera* camera)
 {
+	SubRenderer::PreRender(0, 0);
 	DoTraversal();
 	DoSplat();
+	SubRenderer::PostRender(0, 0);
+
 }
 //----------------------------------------------------------------------------
 void CausticMapRenderer::DoTraversal()
@@ -505,4 +508,6 @@ void CausticMapRenderer::DoSplat()
 	mFBOCaustics->Disable();
 	glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glEnable(GL_DEPTH_TEST);
+
+	//mCausticsTexture->GenerateMipmap();
 }

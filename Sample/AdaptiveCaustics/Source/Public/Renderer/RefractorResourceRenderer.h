@@ -8,14 +8,14 @@ struct RefractorResourceDesc
 {
 	int Width;
 	int Height;
-	BufferFormat RefractorFrontNormalFormat;
+	BufferFormat RefractorNormalFormat;
 	bool RefractorFrontNormalMipmap;
 
 	RefractorResourceDesc()
 	{
 		Width = 0;
 		Height = 0;
-		RefractorFrontNormalFormat = BF_Unknown;
+		RefractorNormalFormat = BF_Unknown;
 		RefractorFrontNormalMipmap = false;
 	}
 };
