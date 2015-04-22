@@ -33,10 +33,14 @@ void SceneMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mDimLocSV, "dim");
     program->GetUniformLocation(&mInv2SceneBBExtensionLocSV, "Inv2SceneBBExtension");
 
-	// Get shadow map pass uniform locations.
+	// Get point light shadow map pass uniform locations.
     program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_PointLightShadowMap);
-    program->GetUniformLocation(&mWorldLocShadowMap, "World");
+    program->GetUniformLocation(&mWorldLocPointLightShadowMap, "World");
     program->GetUniformLocation(&mTessLevelLoc, "TessLevel");
+
+    // Get spot light shadow map pass uniform locations.
+    program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_SpotLightShadowMap);
+    program->GetUniformLocation(&mWorldLocSpotLightShadowMap, "World");
 
     // Get G-buffer pass uniform locations.
     program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_GBuffer);
@@ -82,12 +86,18 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
         mInv2SceneBBExtensionLocSV.SetValue(inv2extension);
     }
 
-    // Update shadow map pass uniform data.
+    // Update point light shadow map pass uniform data.
     if( pass == VPLviaSVOGI::SMP_PointLightShadowMap )
     {
-        mWorldLocShadowMap.SetValue(worldTrans);
+        mWorldLocPointLightShadowMap.SetValue(worldTrans);
         mTessLevelLoc.SetValue(TessLevel);
 	}
+
+    // Update spot light shadow map pass uniform data.
+    if( pass == VPLviaSVOGI::SMP_SpotLightShadowMap )
+    {
+        mWorldLocSpotLightShadowMap.SetValue(worldTrans);
+    }
 
     // Update G-buffer pass uniform data.
     if( pass == VPLviaSVOGI::SMP_GBuffer )

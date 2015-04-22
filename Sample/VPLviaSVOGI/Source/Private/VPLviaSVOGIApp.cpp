@@ -54,17 +54,29 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     light1Desc.Intensity = vec3(50.0f, 50.0f, 50.0f);
     mLightManager->CreatePointLight(&pointLight1ProjDesc, mMainCamera, &light1Desc);
 
-    LightProjectorDesc pointLight2ProjDesc;
-    pointLight2ProjDesc.UpFovDegrees = 90.0f;
-    pointLight2ProjDesc.AspectRatio = 1.0f;
-    pointLight2ProjDesc.NearPlane = 0.01f;
-    pointLight2ProjDesc.FarPlane = 50.0f;
-    pointLight2ProjDesc.Location = vec3(-2.0f, 12.0f, 2.0f);
-    pointLight2ProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
-    pointLight2ProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
-    PointLightDesc light2Desc;
-    light2Desc.Intensity = vec3(50.0f, 20.0f, 10.0f);
-    mLightManager->CreatePointLight(&pointLight2ProjDesc, mMainCamera, &light2Desc);
+    //LightProjectorDesc pointLight2ProjDesc;
+    //pointLight2ProjDesc.UpFovDegrees = 90.0f;
+    //pointLight2ProjDesc.AspectRatio = 1.0f;
+    //pointLight2ProjDesc.NearPlane = 0.01f;
+    //pointLight2ProjDesc.FarPlane = 50.0f;
+    //pointLight2ProjDesc.Location = vec3(-2.0f, 12.0f, 2.0f);
+    //pointLight2ProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
+    //pointLight2ProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
+    //PointLightDesc light2Desc;
+    //light2Desc.Intensity = vec3(50.0f, 20.0f, 10.0f);
+    //mLightManager->CreatePointLight(&pointLight2ProjDesc, mMainCamera, &light2Desc);
+
+    LightProjectorDesc spotLight1ProjDesc;
+    spotLight1ProjDesc.UpFovDegrees = 90.0f;
+    spotLight1ProjDesc.AspectRatio = 1.0f;
+    spotLight1ProjDesc.NearPlane = 0.01f;
+    spotLight1ProjDesc.FarPlane = 50.0f;
+    spotLight1ProjDesc.Location = vec3(10.0f, 10.0f, 0.0f);
+    spotLight1ProjDesc.LookAt = vec3(-10.0f, 10.0f, 0.0f);
+    spotLight1ProjDesc.Up = vec3(0.0f, 1.0f, 0.0f);
+    SpotLightDesc spotLight1Desc;
+    spotLight1Desc.Intensity = vec3(50.0f, 20.0f, 10.0f);
+    mLightManager->CreateSpotLight(&spotLight1ProjDesc, mMainCamera, &spotLight1Desc);
 
     Light* pointLight1 = mLightManager->GetPointLight(0);
     mLightManager->CreateLightBuffer(mDevice);
