@@ -8,10 +8,13 @@
 using namespace RTGI;
 
 //----------------------------------------------------------------------------
-Light::Light()
+Light::Light(LightType type)
 	:
     Intensity(50.0f, 50.0f, 50.0f),
-    mProjector(0)
+    mLightType(type),
+    mProjector(0),
+    mParams1(0.0f),
+    mParams2(0.0f)
 {
 }
 //----------------------------------------------------------------------------
@@ -58,8 +61,10 @@ TriangleMesh* Light::GetLightMesh() const
 //----------------------------------------------------------------------------
 void Light::RenderLightMesh(int technique, int pass, SubRenderer* subRenderer)
 {
-    RTGI_ASSERT(mLightMesh);
-    mLightMesh->Render(technique, pass, subRenderer);
+    if( mLightMesh )
+    {
+        mLightMesh->Render(technique, pass, subRenderer);
+    }
 }
 //----------------------------------------------------------------------------
 void Light::OnUpdateLightBufferCache(SceneLight* cache)
@@ -74,6 +79,10 @@ void Light::OnUpdateLightBufferCache(SceneLight* cache)
         cache->WorldPositionAndType.x = mLocation.x;
         cache->WorldPositionAndType.y = mLocation.y;
         cache->WorldPositionAndType.z = mLocation.z;
+        cache->WorldPositionAndType.w = float((int)mLightType);
+
+        cache->Params1 = mParams1;
+        cache->Params2 = mParams2;
 
         RTGI_ASSERT(mProjector);
         if( mProjector )

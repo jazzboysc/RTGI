@@ -40,17 +40,33 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     // Create light manager.
     mLightManager = new LightManager(device);
 
-    // Create a point light.
-    LightProjectorDesc pointLightProjDesc;
-    pointLightProjDesc.UpFovDegrees = 90.0f;
-    pointLightProjDesc.AspectRatio = 1.0f;
-    pointLightProjDesc.NearPlane = 0.01f;
-    pointLightProjDesc.FarPlane = 50.0f;
-    pointLightProjDesc.Location = vec3(0.0f, 12.0f, 2.0f);
-    pointLightProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
-    pointLightProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
-    mLightManager->CreatePointLight(&pointLightProjDesc, mMainCamera);
-    Light* pointLight = mLightManager->GetPointLight(0);
+    // Create scene lights.
+
+    LightProjectorDesc pointLight1ProjDesc;
+    pointLight1ProjDesc.UpFovDegrees = 90.0f;
+    pointLight1ProjDesc.AspectRatio = 1.0f;
+    pointLight1ProjDesc.NearPlane = 0.01f;
+    pointLight1ProjDesc.FarPlane = 50.0f;
+    pointLight1ProjDesc.Location = vec3(2.0f, 12.0f, 2.0f);
+    pointLight1ProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
+    pointLight1ProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
+    PointLightDesc light1Desc;
+    light1Desc.Intensity = vec3(50.0f, 50.0f, 50.0f);
+    mLightManager->CreatePointLight(&pointLight1ProjDesc, mMainCamera, &light1Desc);
+
+    LightProjectorDesc pointLight2ProjDesc;
+    pointLight2ProjDesc.UpFovDegrees = 90.0f;
+    pointLight2ProjDesc.AspectRatio = 1.0f;
+    pointLight2ProjDesc.NearPlane = 0.01f;
+    pointLight2ProjDesc.FarPlane = 50.0f;
+    pointLight2ProjDesc.Location = vec3(-2.0f, 12.0f, 2.0f);
+    pointLight2ProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
+    pointLight2ProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
+    PointLightDesc light2Desc;
+    light2Desc.Intensity = vec3(50.0f, 20.0f, 10.0f);
+    mLightManager->CreatePointLight(&pointLight2ProjDesc, mMainCamera, &light2Desc);
+
+    Light* pointLight1 = mLightManager->GetPointLight(0);
     mLightManager->CreateLightBuffer(mDevice);
 
 	// Create material templates.
@@ -133,7 +149,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mModel->SetWorldTranslation(vec3(-6.0f, 2.5f, -1.5f));
     mModel->SetWorldScale(vec3(2.5f));
     mModel->MaterialColor = vec3(0.1f, 0.9f, 0.9f);
-    mModel->LightProjector = pointLight->GetProjector();
+    mModel->LightProjector = pointLight1->GetProjector();
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
@@ -152,7 +168,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
         model2->SetWorldTranslation(vec3(3.2f, 3.6f, 2.4f));
         model2->SetWorldScale(vec3(9.0f));
         model2->MaterialColor = vec3(0.2f, 0.2f, 0.9f);
-        model2->LightProjector = pointLight->GetProjector();
+        model2->LightProjector = pointLight1->GetProjector();
         model2->SceneBB = &mSceneBB;
         model2->TessLevel = 1.0f;
         mSceneBB.Merge(model2->GetWorldSpaceBB());
@@ -167,7 +183,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mGround->GenerateNormals();
     mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-    mGround->LightProjector = pointLight->GetProjector();
+    mGround->LightProjector = pointLight1->GetProjector();
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
@@ -180,7 +196,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mCeiling->SetWorldTransform(rotM);
     mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-    mCeiling->LightProjector = pointLight->GetProjector();
+    mCeiling->LightProjector = pointLight1->GetProjector();
     mCeiling->SceneBB = &mSceneBB;
     mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
@@ -193,7 +209,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mBackWall->SetWorldTransform(rotM);
     mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-    mBackWall->LightProjector = pointLight->GetProjector();
+    mBackWall->LightProjector = pointLight1->GetProjector();
     mBackWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
@@ -206,7 +222,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mLeftWall->SetWorldTransform(rotM);
     mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(0.95f, 0.2f, 0.2f);
-    mLeftWall->LightProjector = pointLight->GetProjector();
+    mLeftWall->LightProjector = pointLight1->GetProjector();
     mLeftWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
@@ -219,7 +235,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mRightWall->SetWorldTransform(rotM);
     mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.2f, 0.95f, 0.2f);
-    mRightWall->LightProjector = pointLight->GetProjector();
+    mRightWall->LightProjector = pointLight1->GetProjector();
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 

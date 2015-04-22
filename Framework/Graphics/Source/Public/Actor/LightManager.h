@@ -34,6 +34,21 @@ struct LightProjectorDesc
     glm::vec3 Up;
 };
 
+struct PointLightDesc
+{
+    glm::vec3 Intensity;
+};
+
+struct SpotLightDesc
+{
+    glm::vec3 Intensity;
+    float CosCutoff;
+    float InnerCosCutoff;
+    float SpotExponent;
+    float ConstantAttenuation;
+    float QuadraticAttenuation;
+};
+
 //----------------------------------------------------------------------------
 // Author: Che Sun
 // Date: 04/07/2015
@@ -44,8 +59,15 @@ public:
     LightManager(GPUDevice* device);
     ~LightManager();
 
-    void CreatePointLight(LightProjectorDesc* desc, Camera* lightMeshCamera);
+    // Create a point light and add it to light manager.
+    Light* CreatePointLight(LightProjectorDesc* projectorDesc, 
+        Camera* lightMeshCamera, PointLightDesc* pointLightDesc);
 
+    // Create a spot light and add it to light manager.
+    Light* CreateSpotLight(LightProjectorDesc* projectorDesc,
+        Camera* lightMeshCamera, SpotLightDesc* spotLightDesc);
+
+    // Light access.
     void AddPointLight(Light* light);
     Light* GetPointLight(int i) const;
     int GetPointLightCount() const;
@@ -53,12 +75,15 @@ public:
     Light* GetSpotLight(int i) const;
     int GetSpotLightCount() const;
 
+    // Light buffer is a uniform buffer managed by light manager. It stores
+    // lights' information that can be accessed by lighting shaders.
     void CreateLightBuffer(GPUDevice* device);
     void UpdateLightBuffer();
 
     void SetLightBufferBindingPoint(unsigned int bindingPoint);
     unsigned int GetLightBufferBindingPoint() const;
 
+    // Show light meshes as scene objects.
     void RenderLightMesh(int technique, int pass, SubRenderer* subRenderer = 0);
 
     enum { MAX_LIGHT_COUNT = 256 };

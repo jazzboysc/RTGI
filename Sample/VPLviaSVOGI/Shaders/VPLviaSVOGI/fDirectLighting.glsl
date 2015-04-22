@@ -37,5 +37,6 @@ void main()
         accumulation += ComputeSpotLight(i, PositionWorld, NormalWorld, Material);
     }
 
+    accumulation /= (pointLightCount + spotLightCount);
     Output = accumulation;
 }

@@ -50,9 +50,11 @@ LightManager::~LightManager()
     mMtLightMesh = 0;
 }
 //----------------------------------------------------------------------------
-void LightManager::CreatePointLight(LightProjectorDesc* desc, 
-    Camera* lightMeshCamera)
+Light* LightManager::CreatePointLight(LightProjectorDesc* projectorDesc,
+    Camera* lightMeshCamera, PointLightDesc* pointLightDesc)
 {
+    RTGI_ASSERT(projectorDesc && pointLightDesc);
+
     Material* lightMeshMaterial = new Material(mMtLightMesh);
     LightMesh* lightMesh = new LightMesh(lightMeshMaterial, lightMeshCamera);
     lightMesh->LoadFromPLYFile("square.ply");
@@ -71,16 +73,50 @@ void LightManager::CreatePointLight(LightProjectorDesc* desc,
         "Textures/pointLight.png");
 
     Camera* lightProjector = new Camera();
-    lightProjector->SetPerspectiveFrustum(desc->UpFovDegrees, 
-        desc->AspectRatio, desc->NearPlane, desc->FarPlane);
-    lightProjector->SetLookAt(desc->Location, desc->LookAt, desc->Up);
-    Light* light = new Light();
-    light->Intensity = vec3(50.0f);
+    lightProjector->SetPerspectiveFrustum(projectorDesc->UpFovDegrees,
+        projectorDesc->AspectRatio, projectorDesc->NearPlane, 
+        projectorDesc->FarPlane);
+    lightProjector->SetLookAt(projectorDesc->Location, projectorDesc->LookAt, 
+        projectorDesc->Up);
+
+    Light* light = new Light(LT_Point);
+    light->Intensity = pointLightDesc->Intensity;
     light->SetProjector(lightProjector);
     light->SetLightMesh(lightMesh);
     lightMesh->SetWorldTranslation(lightProjector->GetLocation());
 
     AddPointLight(light);
+    return light;
+}
+//----------------------------------------------------------------------------
+Light* LightManager::CreateSpotLight(LightProjectorDesc* projectorDesc,
+    Camera* lightMeshCamera, SpotLightDesc* spotLightDesc)
+{
+    RTGI_ASSERT(projectorDesc && spotLightDesc);
+
+    Camera* lightProjector = new Camera();
+    lightProjector->SetPerspectiveFrustum(projectorDesc->UpFovDegrees,
+        projectorDesc->AspectRatio, projectorDesc->NearPlane,
+        projectorDesc->FarPlane);
+    lightProjector->SetLookAt(projectorDesc->Location, projectorDesc->LookAt,
+        projectorDesc->Up);
+
+    Light* light = new Light(LT_Spot);
+    light->Intensity = spotLightDesc->Intensity;
+    light->SetProjector(lightProjector);
+
+    glm::vec3 dir = lightProjector->GetDirection();
+    light->mParams1.x = -dir.x;
+    light->mParams1.y = -dir.y;
+    light->mParams1.z = -dir.z;
+    light->mParams1.w = spotLightDesc->CosCutoff;
+    light->mParams2.x = spotLightDesc->SpotExponent;
+    light->mParams2.y = spotLightDesc->ConstantAttenuation;
+    light->mParams2.z = spotLightDesc->QuadraticAttenuation;
+    light->mParams2.w = spotLightDesc->InnerCosCutoff;
+
+    AddSpotLight(light);
+    return light;
 }
 //----------------------------------------------------------------------------
 void LightManager::AddPointLight(Light* light)
