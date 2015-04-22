@@ -92,18 +92,27 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
                                               ShaderType::ST_Fragment;
     Pass* passVoxelization = new Pass(voxelizationProgramInfo);
 
-    ShaderProgramInfo shadowProgramInfo;
-    shadowProgramInfo.VShaderFileName = "VPLviaSVOGI/vShadow.glsl";
-    shadowProgramInfo.FShaderFileName = "VPLviaSVOGI/fShadow.glsl";
-    shadowProgramInfo.TCShaderFileName = "VPLviaSVOGI/tcShadow.glsl";
-    shadowProgramInfo.TEShaderFileName = "VPLviaSVOGI/teShadow.glsl";
-    shadowProgramInfo.GShaderFileName = "VPLviaSVOGI/gShadow.glsl";
-    shadowProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                        ShaderType::ST_Fragment | 
-                                        ShaderType::ST_TessellationControl |
-                                        ShaderType::ST_TessellationEvaluation |
-                                        ShaderType::ST_Geometry;
-    Pass* passShadow = new Pass(shadowProgramInfo);
+    ShaderProgramInfo pointLightShadowProgramInfo;
+    pointLightShadowProgramInfo.VShaderFileName = "VPLviaSVOGI/vPointLightShadow.glsl";
+    pointLightShadowProgramInfo.FShaderFileName = "VPLviaSVOGI/fPointLightShadow.glsl";
+    pointLightShadowProgramInfo.TCShaderFileName = "VPLviaSVOGI/tcPointLightShadow.glsl";
+    pointLightShadowProgramInfo.TEShaderFileName = "VPLviaSVOGI/tePointLightShadow.glsl";
+    pointLightShadowProgramInfo.GShaderFileName = "VPLviaSVOGI/gPointLightShadow.glsl";
+    pointLightShadowProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                                  ShaderType::ST_Fragment | 
+                                                  ShaderType::ST_TessellationControl |
+                                                  ShaderType::ST_TessellationEvaluation |
+                                                  ShaderType::ST_Geometry;
+    Pass* passPointLightShadow = new Pass(pointLightShadowProgramInfo);
+
+    ShaderProgramInfo spotLightShadowProgramInfo;
+    spotLightShadowProgramInfo.VShaderFileName = "VPLviaSVOGI/vSpotLightShadow.glsl";
+    spotLightShadowProgramInfo.GShaderFileName = "VPLviaSVOGI/gSpotLightShadow.glsl";
+    spotLightShadowProgramInfo.FShaderFileName = "VPLviaSVOGI/fSpotLightShadow.glsl";
+    spotLightShadowProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                                 ShaderType::ST_Geometry |
+                                                 ShaderType::ST_Fragment;
+    Pass* passSpotLightShadow = new Pass(spotLightShadowProgramInfo);
 
     ShaderProgramInfo gbufferProgramInfo;
     if( mUseTC )
@@ -131,7 +140,8 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
 	Technique* techSceneModel = new Technique();
     techSceneModel->AddPass(passVoxelization);
-    techSceneModel->AddPass(passShadow);
+    techSceneModel->AddPass(passPointLightShadow);
+    techSceneModel->AddPass(passSpotLightShadow);
     techSceneModel->AddPass(passGBuffer);
     techSceneModel->AddPass(passRSM);
 	MaterialTemplate* mtSceneModel = new MaterialTemplate();
@@ -508,7 +518,7 @@ void VPLviaSVOGI::FrameFunc()
 
     // Scene shadow pass.
     mShadowMapRenderer->SetShadowMapInfoBufferBindingPoint(2);
-    mShadowMapRenderer->Render(0, SMP_ShadowMap);
+    mShadowMapRenderer->Render(0, SMP_PointLightShadowMap);
 #ifdef SHOW_TIMING
     workLoad = mShadowMapRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;

@@ -85,7 +85,8 @@ private:
     enum SceneModelPass
     {
         SMP_Voxelization = 0,
-        SMP_ShadowMap,
+        SMP_PointLightShadowMap,
+        SMP_SpotLightShadowMap = SMP_PointLightShadowMap + 1,
         SMP_GBuffer,
         SMP_RSM
     };

@@ -68,7 +68,8 @@ void ShadowMapsGenerator::Render(int technique, int pass)
         mShadowMapInfoBuffer->UpdateSubData(mShadowMapInfoBufferBindingPoint,
             0, sizeof(unsigned int), (void*)&curLightIndex);
 
-        SubRenderer::OnRender(technique, pass, 0);
+        // Assume spot light shadow pass = point light shadow pass + 1.
+        SubRenderer::OnRender(technique, pass + 1, 0);
     }
 
     PostRender(SRO_FrameBuffer, mPSB);

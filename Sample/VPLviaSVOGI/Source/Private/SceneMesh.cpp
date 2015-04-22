@@ -34,7 +34,7 @@ void SceneMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mInv2SceneBBExtensionLocSV, "Inv2SceneBBExtension");
 
 	// Get shadow map pass uniform locations.
-    program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_ShadowMap);
+    program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_PointLightShadowMap);
     program->GetUniformLocation(&mWorldLocShadowMap, "World");
     program->GetUniformLocation(&mTessLevelLoc, "TessLevel");
 
@@ -83,7 +83,7 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
     }
 
     // Update shadow map pass uniform data.
-    if( pass == VPLviaSVOGI::SMP_ShadowMap )
+    if( pass == VPLviaSVOGI::SMP_PointLightShadowMap )
     {
         mWorldLocShadowMap.SetValue(worldTrans);
         mTessLevelLoc.SetValue(TessLevel);
