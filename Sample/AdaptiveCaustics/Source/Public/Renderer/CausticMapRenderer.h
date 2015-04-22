@@ -52,7 +52,16 @@ struct ACMSharedCommandBuffer
 	uint height;
 	float deltaX;
 	float deltaY;
+
 };
+
+struct ACMIndirectCommandBuffer
+{
+	uint num_groups_x;
+	uint num_groups_y;
+	uint num_groups_z;
+};
+
 const int GMaxTraversalLevel = 10;
 
 //----------------------------------------------------------------------------
@@ -102,6 +111,8 @@ public:
 
 	StructuredBufferPtr mACMBuffer;
 	StructuredBufferPtr mACMSharedCommandBuffer;
+	StructuredBufferPtr mACMIndirectCommandBuffer;
+	BufferViewPtr mACMIndirectCommandBufferView;
 };
 
 typedef RefPointer<AdaptiveCausticsTaskInfo> AdaptiveCausticsTaskInfoPtr;

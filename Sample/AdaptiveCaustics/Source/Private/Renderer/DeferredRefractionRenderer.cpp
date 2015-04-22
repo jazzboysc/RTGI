@@ -10,9 +10,9 @@ DeferredRefractionScreenQuad::DeferredRefractionScreenQuad(Material* material)
 :
 ScreenQuad(material, 0)
 {
-	this->RefractionIndex = 1.1f;
+	this->RefractionIndex = 1.2f;
 	this->SplatResolution = 768;
-	this->RefractorAlbedo = vec4(1.f, 1.f, 1.f, 1.f);
+	this->RefractorAlbedo = vec4(.9f, .9f, .94f, 1.f);
 }
 //----------------------------------------------------------------------------
 DeferredRefractionScreenQuad::~DeferredRefractionScreenQuad()

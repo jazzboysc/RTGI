@@ -4,7 +4,7 @@
 layout(binding = 0, offset = 0) uniform atomic_uint writeCount;
 layout(binding = 0, offset = 4) uniform atomic_uint storageCounter2;
 
-layout (rgba32f, binding = 0) uniform image2D data;
+layout (rgba16f, binding = 0) uniform image2D data;
 layout (binding = 1) uniform sampler2DArray refractorNormal;
 
 layout(std430, binding = 0) buffer _ACMSharedCommandBuffer
@@ -17,7 +17,6 @@ layout(std430, binding = 0) buffer _ACMSharedCommandBuffer
 	uint height;
 	float deltaX;
 	float deltaY;
-
 } ACMSharedCommandBuffer;
 
 layout(std430, binding = 1)  buffer _ACMBuffer
@@ -30,7 +29,7 @@ layout(std430, binding = 1)  buffer _ACMBuffer
 
 
 
-layout (local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+layout (local_size_x = 64, local_size_y = 64, local_size_z = 1) in;
 
 
 void main(void)
@@ -40,10 +39,11 @@ void main(void)
 	gl_GlobalInvocationID.y * gl_WorkGroupSize.y * gl_NumWorkGroups.y +
 	gl_GlobalInvocationID.x;
 
-	if(readIndex >= ACMSharedCommandBuffer.readCount)
-	{
-		// unneeded computation
-		return;
+		// 3D buffer: res * res * 4
+		int x = i % resolution;
+		int y = i / resolution;
+		causticStartPoints[i] = vec4(gl_GlobalInvocationID.y * gl_WorkGroupSize.y * gl_NumWorkGroups.y / (float)resolution, y / (float)resolution, 0, 0);
+		//causticStartPoints[i] = fvec4(1, 0, 0, 0);
 	}
 
 	vec4 uv = ACMBuffer.uv[ACMSharedCommandBuffer.readOffset + readIndex];
@@ -81,20 +81,6 @@ void main(void)
 		ACMBuffer.uv[writeOffset + 1] = texCoord1;
 		ACMBuffer.uv[writeOffset + 2] = texCoord2;
 		ACMBuffer.uv[writeOffset + 3] = texCoord3;
-
-
-		// Debug display
-		vec4 color0 = texture(refractorNormal, vec3(texCoord0.xy, 1));
-		vec4 color1 = texture(refractorNormal, vec3(texCoord1.xy, 1));
-		vec4 color2 = texture(refractorNormal, vec3(texCoord2.xy, 1));
-		vec4 color3 = texture(refractorNormal, vec3(texCoord3.xy, 1));
-
-		//*
-		imageStore(data, imageCoord0, color0 + vec4(0.5, 0.1, 0.6, 0));
-		imageStore(data, imageCoord1, color1 + vec4(0.5, 0.1, 0.6, 0));
-		imageStore(data, imageCoord2, color2 + vec4(0.5, 0.1, 0.6, 0));
-		imageStore(data, imageCoord3, color3 + vec4(0.5, 0.1, 0.6, 0));
-		//*/
 	}
 }
 

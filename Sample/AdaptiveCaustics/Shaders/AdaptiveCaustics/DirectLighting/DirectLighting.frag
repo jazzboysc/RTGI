@@ -42,7 +42,20 @@ vec4 CausticContribution(vec4 WorldPos, vec3 NormalPos)
     vec2 texCoords = vec2(u, v);
     texCoords = texCoords*0.5 + 0.5;
 	*/
-	return texture(CausticMapSampler, viewPos.xy);
+	vec4 contribution;
+	if(viewPos.z < 0 &&
+		viewPos.x <= 1 &&
+		viewPos.y <= 1 &&
+		viewPos.x >= 0 &&
+		viewPos.y >= 0)
+	{
+		contribution = texture(CausticMapSampler, viewPos.xy);
+	}
+	else
+	{
+		contribution = vec4(0);
+	}
+	return contribution;
 }
 
 void main()
@@ -72,5 +85,5 @@ void main()
         accumulation += ComputeSpotLight(i, PositionWorld, NormalWorld, Material);
     }
 
-    Output = accumulation + vec4(CausticContribution(PositionWorld, NormalWorld).xyz, 0.0f);
+    Output = accumulation + vec4(CausticContribution(PositionWorld, NormalWorld));
 }

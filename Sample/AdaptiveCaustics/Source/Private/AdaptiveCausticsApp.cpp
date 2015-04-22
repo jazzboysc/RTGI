@@ -6,7 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
-#define DEFAULT_SHOWMODE Visualizer::eSM_CausticMapSplat
+#define DEFAULT_SHOWMODE Visualizer::eSM_DeferredRefraction
 //----------------------------------------------------------------------------
 AdaptiveCausticsApp::AdaptiveCausticsApp(int width, int height)
 {
@@ -50,15 +50,15 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	// Create camera and light
 	mMainCamera->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 150.0f);
-	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, 0.0f, 0.0f),
+	mMainCamera->SetLookAt(vec3(0.0f, 0.0f, 5.0f), vec3(0.0f, -1.0f, 0.0f),
 		vec3(0.0f, 1.0f, 0.0f));
 
 	mLightProjector = new Camera;
 	mLightProjector->SetPerspectiveFrustum(45.0f, (float)Width / (float)Height, 0.01f, 25.0f);
-	mLightProjector->SetLookAt(vec3(-1.5f, -0.5f, 0.0f), vec3(0.0f, -1.7f, 0.0f), vec3(1.0f, 0.0f, 0.0f));
+	mLightProjector->SetLookAt(vec3(0.0f, -0.5f, -1.5f), vec3(0.0f, -1.5f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 	mLight = new Light;
 	mLight->SetProjector(mLightProjector);
-	mLight->Intensity = vec3(1.0f);
+	mLight->Intensity = vec3(1.7f);
 
 	mLightManager = new LightManager();
 	mLightManager->AddPointLight(mLight);
@@ -324,7 +324,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 
 	glEnable(GL_CULL_FACE);
 	mShadowMapRenderer = new ShadowMapRenderer(device, mScene.all);
-	mShadowMapRenderer->CreateShadowMap(1024, 1024, BF_RGBA16F);
+	mShadowMapRenderer->CreateShadowMap(2048, 2048, BF_RGBA16F);
 	mShadowMapRenderer->SetTimer(mTimer);
 
 	mCausticMapRenderer = new CausticMapRenderer(device);
@@ -332,7 +332,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	causticsMapDesc.Width = 1024.0f;
 	causticsMapDesc.Height = 1024.0f;
 	causticsMapDesc.CausticsMapFormat = BF_RGBAF;
-	//causticsMapDesc.CausticsMapMipmap = true;
+	causticsMapDesc.CausticsMapMipmap = true;
 	mCausticMapRenderer->Initialize(device, &causticsMapDesc,
 		mReceiverResourceRenderer,
 		mRefractorResourceRenderer,
@@ -492,7 +492,7 @@ void AdaptiveCausticsApp::FrameFunc()
 #endif // PROFILE_ENABLED
 
 	// Post processing: add light mesh
-	mLight->RenderLightMesh(0, 0);
+	//mLight->RenderLightMesh(0, 0);
 
 }
 //----------------------------------------------------------------------------
@@ -594,7 +594,7 @@ void AdaptiveCausticsApp::OnButtonClick(System::Object^  sender,
 		}
 	}
 
-#define MAX_ITERATION 9
+#define MAX_ITERATION 7
 	if (button->Name == "Increase Iteration")
 	{
 		mCausticMapRenderer->TraversalLevel++;

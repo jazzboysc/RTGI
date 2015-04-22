@@ -20,8 +20,8 @@ void DirectLightingScreenQuad::OnUpdateShaderConstants(int, int)
 	SamplerDesc sampler;
 	sampler.MinFilter = FT_Nearest;
 	sampler.MagFilter = FT_Nearest;
-	sampler.WrapS = WT_Clamp;
-	sampler.WrapT = WT_Clamp;
+	sampler.WrapS = WT_Repeat;
+	sampler.WrapT = WT_Repeat;
 
 	mGBufferPositionSamplerLoc.SetValue(0);
 	mGBufferNormalSamplerLoc.SetValue(1);
@@ -129,16 +129,16 @@ void DirectLightingRenderer::Initialize(GPUDevice* device, int width,
 	view.BindingSlot = 3;
 	AddInputDependency(shadowMapRenderer, RTGI_ShadowMapRenderer_ShadowMap_Name, &view);
 
-// 	RendererInputDataView view2;
-// 	view2.Type = RDT_Texture;
-// 	view2.BindingType = BF_BindIndex;
-// 	view2.Sampler.MinFilter = FT_Linear_Linear;
-// 	view2.Sampler.MagFilter = FT_Linear;
-// 	view2.Sampler.WrapS = WT_Clamp;
-// 	view2.Sampler.WrapT = WT_Clamp;
+	RendererInputDataView view2;
+	view2.Type = RDT_Texture;
+	view2.BindingType = BF_BindIndex;
+	view2.Sampler.MinFilter = FT_Linear_Linear;
+	view2.Sampler.MagFilter = FT_Linear;
+	view2.Sampler.WrapS = WT_Clamp;
+	view2.Sampler.WrapT = WT_Clamp;
 
-	view.BindingSlot = 4;
-	AddInputDependency(causticMapRenderer, RTGI_CausticsBuffer_CausticMap_Name, &view);
+	view2.BindingSlot = 4;
+	AddInputDependency(causticMapRenderer, RTGI_CausticsBuffer_CausticMap_Name, &view2);
 
 	mDirectLightingScreenQuad->mReceiverDepthTex =
 		(Texture2D*)receiverResourceRenderer->GetDepthTexture();

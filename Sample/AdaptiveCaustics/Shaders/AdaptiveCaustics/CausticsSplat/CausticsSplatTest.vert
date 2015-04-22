@@ -98,7 +98,7 @@ void main(void)
 	Dist.x = (texture( RefractorDepth, vec3(vTCoord, 1) ).z) * 2.0f - 1.0f;	
 	Dist.y = (texture( RefractorDepth, vec3(vTCoord, 0) ).z) * 2.0f - 1.0f;	
 	// TIMES2??????
-	Dist = 2 * NearFarInfo.x / (Dist * NearFarInfo.y - NearFarInfo.z );
+	Dist = NearFarInfo.x / (Dist * NearFarInfo.y - NearFarInfo.z );
 	
 	// Distance between front & back surfaces
 	// MINUS SIGN????
