@@ -21,7 +21,7 @@ SubRenderer(device, receiverSet)
 
 	DebugMipmapLevel = 0;
 	DrawDebugMipmap = false;
-	TraversalLevel = 1;
+	TraversalLevel = 5;
 }
 //----------------------------------------------------------------------------
 CausticMapRenderer::~CausticMapRenderer()
@@ -33,7 +33,7 @@ CausticMapRenderer::~CausticMapRenderer()
 //----------------------------------------------------------------------------
 AdaptiveCausticsTaskInfo::AdaptiveCausticsTaskInfo()
 {
-	RefractionIndex = 1.1f;
+	RefractionIndex = 1.2f;
 }
 //----------------------------------------------------------------------------
 AdaptiveCausticsTaskInfo::~AdaptiveCausticsTaskInfo()
@@ -79,7 +79,7 @@ void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
 	}
 	if (pass == 2)
 	{
-		int maxPhotonRes = (int)(pow(2.0, (float)GMaxTraversalLevel + 5) + 0.1);
+		int maxPhotonRes = (int)(pow(2.0, (float)GMaxTraversalLevel + TraversalLevel - 1) + 0.1);
 		splatResolutionModifierLoc.SetValue(1024.0f / maxPhotonRes);
 		renderBufResLoc.SetValue(1024.0f);
 		lightProjLoc.SetValue(mCamera->GetProjectionTransform());
@@ -249,7 +249,7 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 	//	counterData0);
 	// Storage buffer
 	mCausticsTask->mACMBuffer = new StructuredBuffer();
-	auto bufferSize = sizeof(ACMBuffer)+KERNEL_SIZE(11) * sizeof(vec4);
+	auto bufferSize = sizeof(ACMBuffer) + KERNEL_SIZE(12) * 2 * sizeof(vec4);
 	mCausticsTask->mACMBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Stream_Copy);
 	InitializeMinCausticHierarchy(mDevice, mCausticsTask, START_KERNEL_WIDTH);
 
@@ -257,6 +257,12 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 	mCausticsTask->mACMSharedCommandBuffer = new StructuredBuffer();
 	auto bufferSize1 = sizeof(ACMSharedCommandBuffer);
 	mCausticsTask->mACMSharedCommandBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
+
+	mCausticsTask->mACMIndirectCommandBuffer = new StructuredBuffer();
+	mCausticsTask->mACMIndirectCommandBuffer->ReserveMutableDeviceResource(mDevice, sizeof(ACMIndirectCommandBuffer), BU_Dynamic_Copy);
+	BufferViewDesc viewDesc;
+	viewDesc.Type = BT_DispatchIndirect;
+	mCausticsTask->mACMIndirectCommandBufferView = new BufferView(viewDesc);
 
 	// Shared command buffer for debug draw
 	mDebugDrawTask->mACMSharedCommandBuffer = mCausticsTask->mACMSharedCommandBuffer;
@@ -321,9 +327,9 @@ void CausticMapRenderer::DoTraversal()
 {
 	mCausticsTask->TraversalLevel = TraversalLevel;
 
-	mFBOComputeTemp->Enable();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	mFBOComputeTemp->Disable();
+	//mFBOComputeTemp->Enable();
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//mFBOComputeTemp->Disable();
 
 	if (DrawDebugMipmap)
 	{
@@ -453,28 +459,30 @@ void CausticMapRenderer::DoTraversal()
 		// Execute traversal task
 		mCausticsTask->mACMSharedCommandBuffer->Bind(0);
 		mCausticsTask->mACMBuffer->Bind(1);
-		//*
-		auto res = (int)(glm::sqrt((float)mCausticsTask->AtomicCounterCache.writeCount) + 1.0f);
+		/*
+		auto res = (int)(glm::sqrt((float)mCausticsTask->AtomicCounterCache.writeCount) / 4 + 1.0f);
 		mCausticsTask->DispatchCompute(0,
-			2 * res,
-			2 * res,
+			res,
+			res,
 			1);
 		//*/
+		mCausticsTask->DispatchComputeIndirect(0, mCausticsTask->mACMIndirectCommandBuffer, mCausticsTask->mACMIndirectCommandBufferView, 0);
 
 		//mTraversalTask->mACMSharedCommandBuffer->Bind();
 		//auto bufferData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
 		//mTraversalTask->mACMSharedCommandBuffer->Unmap();
 
 
-
+		mCausticsTask->mACMSharedCommandBuffer->Bind(0);
+		mCausticsTask->mACMIndirectCommandBuffer->Bind(1);
 		mCausticsTask->DispatchCompute(1, 1, 1, 1);
 #ifdef DEBUG_CAUSTCIS
 		auto bufferData = (unsigned int*)mCausticsTask->mACMBuffer->Map(BA_Read_Write);
 		mCausticsTask->mACMBuffer->Unmap();
 #endif
-		//mTraversalTask->mACMSharedCommandBuffer->Bind();
-		//bufferData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
-		//mTraversalTask->mACMSharedCommandBuffer->Unmap();
+		mCausticsTask->mACMIndirectCommandBuffer->Bind();
+		auto bufferData = (ACMIndirectCommandBuffer*)mCausticsTask->mACMIndirectCommandBuffer->Map(BA_Read_Write);
+		mCausticsTask->mACMIndirectCommandBuffer->Unmap();
 		// Generate statistics
 		//*
 		mCausticsTask->mAtomicCounterBuffer->Bind(0);
@@ -509,5 +517,5 @@ void CausticMapRenderer::DoSplat()
 	glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glEnable(GL_DEPTH_TEST);
 
-	//mCausticsTexture->GenerateMipmap();
+	mCausticsTexture->GenerateMipmap();
 }
