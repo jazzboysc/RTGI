@@ -326,7 +326,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     // Create shadow map renderer.
     mShadowMapRenderer = new ShadowMapsGenerator(mDevice);
-    mShadowMapRenderer->Initialize(1024, 1024, BF_RGBAF, mLightManager);
+    mShadowMapRenderer->Initialize(1024, 1024, BF_R32F, mLightManager);
     mShadowMapRenderer->SetRenderSet(mShadowCasters);
 
     // Create RSM renderer.

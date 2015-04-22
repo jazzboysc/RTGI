@@ -42,6 +42,7 @@ VisualizerScreenQuad::VisualizerScreenQuad(Material* material)
 {
     ShowMode = 0;
     TextureArrayIndex = 0;
+    IsShadowMap = false;
     SceneBB = 0;
 }
 //----------------------------------------------------------------------------
@@ -79,6 +80,7 @@ void VisualizerScreenQuad::OnUpdateShaderConstants(int technique, int pass)
             TempTextureArray->BindToSampler(0, &sampler);
         }
         mTextureArrayIndexSM1Loc.SetValue(TextureArrayIndex);
+        mIsShadowMapLoc.SetValue(IsShadowMap);
     }
     else if( pass == 2 )
     {
@@ -181,6 +183,7 @@ void VisualizerScreenQuad::OnGetShaderConstants()
     program = mMaterial->GetProgram(0, 1);
     program->GetUniformLocation(&mTempSamplerArraySM1Loc, "tempSamplerArray");
     program->GetUniformLocation(&mTextureArrayIndexSM1Loc, "TextureArrayIndex");
+    program->GetUniformLocation(&mIsShadowMapLoc, "IsShadowMap");
 
     // SM2
     program = mMaterial->GetProgram(0, 2);
@@ -691,6 +694,7 @@ void Visualizer::SetShowMode(ShowMode mode)
         break;
 
     case SM_Shadow:
+        mScreenQuad->IsShadowMap = true;
         mScreenQuad->ShowMode = 1;
         mScreenQuad->TextureArrayIndex = 0;
         mScreenQuad->TempTextureArray = mShadowMapsTexture;
@@ -720,18 +724,21 @@ void Visualizer::SetShowMode(ShowMode mode)
         break;
 
     case SM_RSMPosition:
+        mScreenQuad->IsShadowMap = false;
         mScreenQuad->ShowMode = 1;
         mScreenQuad->TextureArrayIndex = 0;
         mScreenQuad->TempTextureArray = mRSMPositionTextureArray;
         break;
 
     case SM_RSMNormal:
+        mScreenQuad->IsShadowMap = false;
         mScreenQuad->ShowMode = 1;
         mScreenQuad->TextureArrayIndex = 0;
         mScreenQuad->TempTextureArray = mRSMNormalTextureArray;
         break;
 
     case SM_RSMFlux:
+        mScreenQuad->IsShadowMap = false;
         mScreenQuad->ShowMode = 1;
         mScreenQuad->TextureArrayIndex = 0;
         mScreenQuad->TempTextureArray = mRSMFluxTextureArray;

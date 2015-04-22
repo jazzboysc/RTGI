@@ -61,6 +61,7 @@ public:
     Texture2DArrayPtr TempTextureArray;
     int ShowMode;
     int TextureArrayIndex;
+    bool IsShadowMap;
     AABB* SceneBB;
     StructuredBufferPtr VoxelBuffer;
     int VoxelGridDim;
@@ -75,6 +76,7 @@ private:
     // SM1
     ShaderUniform mTempSamplerArraySM1Loc;
     ShaderUniform mTextureArrayIndexSM1Loc;
+    ShaderUniform mIsShadowMapLoc;
 
     // SM2
     ShaderUniform mTempSamplerSM2Loc;

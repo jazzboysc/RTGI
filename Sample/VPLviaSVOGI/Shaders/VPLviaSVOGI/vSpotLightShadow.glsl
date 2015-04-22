@@ -1,16 +1,20 @@
 #version 430 core
 
+#include "VPLviaSVOGI/sSceneLight.glsl"
+
 in vec4 vPosition;
 
 out float vViewPosZ;
 
 uniform mat4 World;
-uniform mat4 View;
-uniform mat4 Proj;
 
 void main()
 {
-    vec4 viewPos = View * World * vPosition;
-    vViewPosZ = viewPos.z;
-    gl_Position = Proj * viewPos;
+    // Fetch light info.
+    uint curLightIndex = shadowMapUniformBuffer.info.CurLightIndex;
+    SceneLight curLight = sceneLightUniformBuffer.lights[curLightIndex];
+
+    vec4 viewPos = curLight.LightProjectorView * World * vPosition;
+    vViewPosZ = (-viewPos.z - curLight.LightProjectorNearFar.x) / (curLight.LightProjectorNearFar.y - curLight.LightProjectorNearFar.x);
+    gl_Position = curLight.LightProjectorProj * viewPos;
 }

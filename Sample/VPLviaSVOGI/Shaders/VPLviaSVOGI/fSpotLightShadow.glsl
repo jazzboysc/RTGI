@@ -2,9 +2,9 @@
 
 in float gViewPosZ;
 
-out vec4 Output;
+out float Output;
 
 void main()
 {
-    Output = vec4(gViewPosZ, gViewPosZ, gViewPosZ, 1.0);
+    Output = gViewPosZ;
 }

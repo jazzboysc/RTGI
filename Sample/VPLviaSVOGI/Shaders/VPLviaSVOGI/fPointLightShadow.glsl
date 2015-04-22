@@ -3,7 +3,7 @@
 in float gViewPosZ;
 in float gDepth;
 
-out vec4 Output;
+out float Output;
 
 void main()
 {
@@ -12,5 +12,5 @@ void main()
         discard;
     }
     
-    Output = vec4(gDepth, gDepth, gDepth, 1.0);
+    Output = gDepth;
 }
