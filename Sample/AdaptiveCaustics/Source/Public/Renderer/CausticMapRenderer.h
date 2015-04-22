@@ -62,6 +62,14 @@ struct ACMIndirectCommandBuffer
 	uint num_groups_z;
 };
 
+struct ACMIndirectDrawBuffer
+{
+	uint  count;
+	uint  instanceCount;
+	uint  first;
+	uint  baseInstance;
+};
+
 const int GMaxTraversalLevel = 10;
 
 //----------------------------------------------------------------------------
@@ -113,6 +121,8 @@ public:
 	StructuredBufferPtr mACMSharedCommandBuffer;
 	StructuredBufferPtr mACMIndirectCommandBuffer;
 	BufferViewPtr mACMIndirectCommandBufferView;
+	StructuredBufferPtr mACMIndirectDrawBuffer;
+	BufferViewPtr mACMIndirectDrawBufferView;
 };
 
 typedef RefPointer<AdaptiveCausticsTaskInfo> AdaptiveCausticsTaskInfoPtr;

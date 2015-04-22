@@ -41,27 +41,25 @@ void main(void)
 {
 	uint id = gl_GlobalInvocationID.y * gl_WorkGroupSize.y * gl_NumWorkGroups.y + gl_GlobalInvocationID.x;
 
+
 	if(id == 0)
 	{
-		uint res = uint(sqrt(atomicCounter(writeCount)) / 4 + 1.0f);
-		ACMIndirectCommandBuffer.num_groups_x = res;
-		ACMIndirectCommandBuffer.num_groups_y = res;
+		ACMSharedCommandBuffer.mipmapLevel = 4; //10 - 6;
+		ACMSharedCommandBuffer.readOffset = 0;
+		ACMSharedCommandBuffer.readCount = 4096;
+		ACMSharedCommandBuffer.writeOffset = 4096;
+		ACMSharedCommandBuffer.width = 768;
+		ACMSharedCommandBuffer.height = 768;
+		ACMSharedCommandBuffer.deltaX = 0.5f / 64;
+		ACMSharedCommandBuffer.deltaY = 0.5f / 64;
+
+		ACMIndirectCommandBuffer.num_groups_x = 8;
+		ACMIndirectCommandBuffer.num_groups_y = 8;
 		ACMIndirectCommandBuffer.num_groups_z = 1;
 
-		ivec2 texSizeMipmap =  textureSize(refractorNormal, int(ACMSharedCommandBuffer.mipmapLevel)).xy;
-		ACMSharedCommandBuffer.deltaX = 0.5f / texSizeMipmap.x;
-		ACMSharedCommandBuffer.deltaY = 0.5f / texSizeMipmap.y;
-
-		ACMSharedCommandBuffer.readOffset += ACMSharedCommandBuffer.readCount;
-		ACMSharedCommandBuffer.readCount = 4 * atomicCounter(writeCount);
-		ACMSharedCommandBuffer.writeOffset += 4 * atomicCounter(writeCount);
-
-		if(ACMSharedCommandBuffer.mipmapLevel > 0)
-		{
-			ACMSharedCommandBuffer.mipmapLevel --;
-		}
-
-		ACMIndirectDrawBuffer.count = ACMSharedCommandBuffer.readCount;
-
+		ACMIndirectDrawBuffer.count = 0;
+		ACMIndirectDrawBuffer.instanceCount = 1;
+		ACMIndirectDrawBuffer.first = 0;
+		ACMIndirectDrawBuffer.baseInstance = 0;
 	}
 }

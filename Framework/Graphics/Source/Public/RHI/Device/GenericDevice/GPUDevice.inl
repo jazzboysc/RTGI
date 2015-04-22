@@ -75,6 +75,17 @@ void GPUDevice::DeleteBuffer(Buffer* buffer)
     (this->*_DeleteBuffer)(buffer);
 }
 //----------------------------------------------------------------------------
+void GPUDevice::ComputeShaderDispatch(ShaderProgram* program,
+	unsigned int globalX, unsigned int globalY, unsigned int globalZ)
+{
+	(this->*_ComputeShaderDispatch)(program, globalX, globalY, globalZ);
+}
+//----------------------------------------------------------------------------
+void GPUDevice::ComputeShaderDispatchIndirect(void* indirect)
+{
+	(this->*_ComputeShaderDispatchIndirect)(indirect);
+}
+//----------------------------------------------------------------------------
 void GPUDevice::DispatchVertexIndirect(void* indirect)
 {
     (this->*_DispatchVertexIndirect)(indirect);
@@ -83,12 +94,6 @@ void GPUDevice::DispatchVertexIndirect(void* indirect)
 void GPUDevice::DispatchVertex(unsigned int threadCount)
 {
     (this->*_DispatchVertex)(threadCount);
-}
-//----------------------------------------------------------------------------
-void GPUDevice::ComputeShaderDispatch(ShaderProgram* program, 
-    unsigned int globalX, unsigned int globalY, unsigned int globalZ)
-{
-    (this->*_ComputeShaderDispatch)(program, globalX, globalY, globalZ);
 }
 //----------------------------------------------------------------------------
 void GPUDevice::FrameBufferDisable(FrameBuffer* frameBuffer)

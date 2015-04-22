@@ -60,7 +60,7 @@ void AdaptiveCausticsApp::Initialize(GPUDevice* device)
 	mLight->SetProjector(mLightProjector);
 	mLight->Intensity = vec3(1.7f);
 
-	mLightManager = new LightManager();
+	mLightManager = new LightManager(mDevice);
 	mLightManager->AddPointLight(mLight);
 	mLightManager->CreateLightBuffer(mDevice);
 

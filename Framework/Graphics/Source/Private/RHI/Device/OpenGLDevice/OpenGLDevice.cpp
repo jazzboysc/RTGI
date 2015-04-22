@@ -1117,6 +1117,13 @@ void OpenGLDevice::__ComputeShaderDispatch(ShaderProgram* program,
     OPENGL_DEVICE_CHECK_ERROR;
 }
 //----------------------------------------------------------------------------
+void OpenGLDevice::__ComputeShaderDispatchIndirect(void* indirect)
+{
+	glDispatchComputeIndirect((GLintptr)indirect);
+
+	OPENGL_DEVICE_CHECK_ERROR;
+}
+//----------------------------------------------------------------------------
 void OpenGLDevice::__DispatchVertex(unsigned int threadCount)
 {
     glDrawArrays(GL_POINTS, 0, threadCount);
@@ -1287,6 +1294,8 @@ void OpenGLDevice::__BufferClear(Buffer* buffer,
 //----------------------------------------------------------------------------
 OpenGLDevice::OpenGLDevice()
 {
+#define INSERT_GPU_FUNC(x) _##x = (GPUDevice##x)&OpenGLDevice::__##x
+
     _Initialize = (GPUDeviceInitialize)&OpenGLDevice::__Initialize;
     _Terminate = (GPUDeviceTerminate)&OpenGLDevice::__Terminate;
     _CreateShader = (GPUDeviceCreateShader)&OpenGLDevice::__CreateShader;
@@ -1328,8 +1337,13 @@ OpenGLDevice::OpenGLDevice()
     _FrameBufferSetStencilTarget = (GPUDeviceFrameBufferSetStencilTarget)&OpenGLDevice::__FrameBufferSetStencilTarget;
     _FrameBufferEnable = (GPUDeviceFrameBufferEnable)&OpenGLDevice::__FrameBufferEnable;
     _FrameBufferDisable = (GPUDeviceFrameBufferDisable)&OpenGLDevice::__FrameBufferDisable;
-    _ComputeShaderDispatch = (GPUDeviceComputeShaderDispatch)&OpenGLDevice::__ComputeShaderDispatch;
-    _DispatchVertex = (GPUDeviceDispatchVertex)&OpenGLDevice::__DispatchVertex;
+	_ComputeShaderDispatch = (GPUDeviceComputeShaderDispatch)&OpenGLDevice::__ComputeShaderDispatch;
+
+	// TODO: check if this is ok
+	INSERT_GPU_FUNC(ComputeShaderDispatchIndirect);
+	//_ComputeShaderDispatchIndirect = (GPUDeviceComputeShaderDispatchIndirect)&OpenGLDevice::__ComputeShaderDispatchIndirect;
+
+	_DispatchVertex = (GPUDeviceDispatchVertex)&OpenGLDevice::__DispatchVertex;
     _DispatchVertexIndirect = (GPUDeviceDispatchVertexIndirect)&OpenGLDevice::__DispatchVertexIndirect;
     _DeleteBuffer = (GPUDeviceDeleteBuffer)&OpenGLDevice::__DeleteBuffer;
     _BufferMap = (GPUDeviceBufferMap)&OpenGLDevice::__BufferMap;

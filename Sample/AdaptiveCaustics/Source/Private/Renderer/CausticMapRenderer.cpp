@@ -40,14 +40,19 @@ AdaptiveCausticsTaskInfo::~AdaptiveCausticsTaskInfo()
 {}
 //----------------------------------------------------------------------------
 void AdaptiveCausticsTaskInfo::OnGetShaderConstants()
+
 {
 	auto program = this->GetPass(0)->GetShaderProgram();
-	program->GetUniformLocation(&ImageUnit0Loc, "data");
-	program->GetUniformLocation(&ImageUnit1Loc, "refractorNormal");
-
 	if (this->GetPassCount() >= 2)
 	{
-		program = this->GetPass(2)->GetShaderProgram();
+		program = this->GetPass(1)->GetShaderProgram();
+		program->GetUniformLocation(&ImageUnit0Loc, "data");
+		program->GetUniformLocation(&ImageUnit1Loc, "refractorNormal");
+	}
+
+	if (this->GetPassCount() >= 4)
+	{
+		program = this->GetPass(3)->GetShaderProgram();
 		program->GetUniformLocation(&splatResolutionModifierLoc, "splatResolutionModifier");
 		program->GetUniformLocation(&renderBufResLoc, "renderBufRes");
 		program->GetUniformLocation(&lightProjLoc, "LightProj");
@@ -69,7 +74,7 @@ void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
 	sampler.WrapS = WT_Clamp;
 	sampler.WrapT = WT_Clamp;
 
-	if (pass == 0)
+	if (pass == 1)
 	{
 		ImageUnit0Loc.SetValue(0);
 		ImageUnit1Loc.SetValue(1);
@@ -77,7 +82,7 @@ void AdaptiveCausticsTaskInfo::OnPreDispatch(unsigned int pass)
 		//mNormalTextures->BindToImageUnit(1, BufferAccess::BA_Read_Only, true);
 		mRefractorNormalTextures->BindToSampler(1, &sampler);
 	}
-	if (pass == 2)
+	if (pass == 3)
 	{
 		int maxPhotonRes = (int)(pow(2.0, (float)GMaxTraversalLevel + TraversalLevel - 1) + 0.1);
 		splatResolutionModifierLoc.SetValue(1024.0f / maxPhotonRes);
@@ -155,6 +160,10 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 	PI_AdaptiveCausticsTraversal
 		<< "AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsTraversal.comp";
 
+	ShaderProgramInfo PI_AdaptiveCausticsPreTraversalProcess;
+	PI_AdaptiveCausticsPreTraversalProcess
+		<< "AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsPreTraversalProcess.comp";
+
 	ShaderProgramInfo PI_AdaptiveCausticsPostTraversalProcess;
 	PI_AdaptiveCausticsPostTraversalProcess
 		<< "AdaptiveCaustics/CausticsTraversal/AdaptiveCausticsPostTraversalProcess.comp";
@@ -169,6 +178,8 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 		// 		<< "AdaptiveCaustics/CausticsSplat/CausticsSplat.frag";
 		<< "AdaptiveCaustics/CausticsSplat/CausticsSplatTest.vert"
 		<< "AdaptiveCaustics/CausticsSplat/CausticsSplatTest.frag";
+
+
 
 // 	ShaderProgramInfo PI_CopyDepth;
 // 	PI_CopyDepth
@@ -185,8 +196,11 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 		PI_AdaptiveCausticsDebugDraw);
 	ComputePass* PassInfo_AdaptiveSplat = new ComputePass(
 		PI_AdaptiveCausticsSplat);
+	ComputePass* PassInfo_AdaptivePreTraversalProcess = new ComputePass(
+		PI_AdaptiveCausticsPreTraversalProcess);
 
 	mCausticsTask = new AdaptiveCausticsTaskInfo();
+	mCausticsTask->AddPass(PassInfo_AdaptivePreTraversalProcess);
 	mCausticsTask->AddPass(PassInfo_AdaptiveCausticsTraversal);
 	mCausticsTask->AddPass(PassInfo_AdaptivePostTraversalProcess);
 	mCausticsTask->AddPass(PassInfo_AdaptiveSplat);
@@ -257,12 +271,17 @@ void RTGI::CausticMapRenderer::Initialize(GPUDevice* device,
 	mCausticsTask->mACMSharedCommandBuffer = new StructuredBuffer();
 	auto bufferSize1 = sizeof(ACMSharedCommandBuffer);
 	mCausticsTask->mACMSharedCommandBuffer->ReserveMutableDeviceResource(mDevice, bufferSize, BU_Dynamic_Copy);
+	BufferViewDesc viewDesc;
 
 	mCausticsTask->mACMIndirectCommandBuffer = new StructuredBuffer();
 	mCausticsTask->mACMIndirectCommandBuffer->ReserveMutableDeviceResource(mDevice, sizeof(ACMIndirectCommandBuffer), BU_Dynamic_Copy);
-	BufferViewDesc viewDesc;
 	viewDesc.Type = BT_DispatchIndirect;
 	mCausticsTask->mACMIndirectCommandBufferView = new BufferView(viewDesc);
+
+	mCausticsTask->mACMIndirectDrawBuffer = new StructuredBuffer();
+	mCausticsTask->mACMIndirectDrawBuffer->ReserveMutableDeviceResource(mDevice, sizeof(ACMIndirectDrawBuffer), BU_Dynamic_Copy);
+	viewDesc.Type = BT_DrawIndirect;
+	mCausticsTask->mACMIndirectDrawBufferView = new BufferView(viewDesc);
 
 	// Shared command buffer for debug draw
 	mDebugDrawTask->mACMSharedCommandBuffer = mCausticsTask->mACMSharedCommandBuffer;
@@ -375,6 +394,12 @@ void CausticMapRenderer::DoTraversal()
 #endif
 
 	// Initialize uniform buffer
+	mCausticsTask->mACMSharedCommandBuffer->Bind(0);
+	mCausticsTask->mACMIndirectCommandBuffer->Bind(1);
+	mCausticsTask->mACMIndirectDrawBuffer->Bind(2);
+	mCausticsTask->DispatchCompute(0, 1, 1, 1);
+
+	/*
 #ifdef DEBUG_CAUSTCIS
 	auto uniformData = (ACMUniformBuffer*)mCausticsTask->mACMUniformBuffer->Map(BA_Read_Write);
 #else
@@ -395,6 +420,29 @@ void CausticMapRenderer::DoTraversal()
 	}
 	mCausticsTask->mACMSharedCommandBuffer->Unmap();
 
+	mCausticsTask->mACMIndirectCommandBuffer->Bind();
+	auto commandData = (ACMIndirectCommandBuffer*)mCausticsTask->mACMIndirectCommandBuffer->Map(BA_Write_Only);
+	assert(commandData);
+	if (commandData)
+	{
+		commandData->num_groups_x = 8;
+		commandData->num_groups_y = 8;
+		commandData->num_groups_z = 1;
+	}
+	mCausticsTask->mACMIndirectCommandBuffer->Unmap();
+
+	mCausticsTask->mACMIndirectDrawBuffer->Bind();
+	auto drawData = (ACMIndirectDrawBuffer*)mCausticsTask->mACMIndirectDrawBuffer->Map(BA_Write_Only);
+	assert(drawData);
+	if (drawData)
+	{
+		drawData->count = 0;
+		drawData->instanceCount = 1;
+		drawData->first = 0;
+		drawData->baseInstance = 0;
+	}
+	mCausticsTask->mACMIndirectDrawBuffer->Unmap();
+
 	// Initialize uniform buffer cache
 	mCausticsTask->UniformCache.mipmapLevel = 0;
 	mCausticsTask->UniformCache.readOffset = 0;
@@ -408,7 +456,7 @@ void CausticMapRenderer::DoTraversal()
 	// Initialize atomic counter
 	mCausticsTask->AtomicCounterCache.writeCount = START_KERNEL_SIZE / 4;
 	mCausticsTask->AtomicCounterCache.temp = 0;
-
+	//*/
 	/*
 	int result[6];
 	glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &result[0]);
@@ -461,12 +509,12 @@ void CausticMapRenderer::DoTraversal()
 		mCausticsTask->mACMBuffer->Bind(1);
 		/*
 		auto res = (int)(glm::sqrt((float)mCausticsTask->AtomicCounterCache.writeCount) / 4 + 1.0f);
-		mCausticsTask->DispatchCompute(0,
+		mCausticsTask->DispatchCompute(1,
 			res,
 			res,
 			1);
 		//*/
-		mCausticsTask->DispatchComputeIndirect(0, mCausticsTask->mACMIndirectCommandBuffer, mCausticsTask->mACMIndirectCommandBufferView, 0);
+		mCausticsTask->DispatchComputeIndirect(1, mCausticsTask->mACMIndirectCommandBuffer, mCausticsTask->mACMIndirectCommandBufferView, 0);
 
 		//mTraversalTask->mACMSharedCommandBuffer->Bind();
 		//auto bufferData = (ACMSharedCommandBuffer*)mTraversalTask->mACMSharedCommandBuffer->Map(BA_Read_Write);
@@ -475,16 +523,20 @@ void CausticMapRenderer::DoTraversal()
 
 		mCausticsTask->mACMSharedCommandBuffer->Bind(0);
 		mCausticsTask->mACMIndirectCommandBuffer->Bind(1);
-		mCausticsTask->DispatchCompute(1, 1, 1, 1);
+		mCausticsTask->mACMIndirectDrawBuffer->Bind(2);
+		mCausticsTask->DispatchCompute(2, 1, 1, 1);
 #ifdef DEBUG_CAUSTCIS
 		auto bufferData = (unsigned int*)mCausticsTask->mACMBuffer->Map(BA_Read_Write);
 		mCausticsTask->mACMBuffer->Unmap();
 #endif
+		// Generate statistics
+		/*
 		mCausticsTask->mACMIndirectCommandBuffer->Bind();
 		auto bufferData = (ACMIndirectCommandBuffer*)mCausticsTask->mACMIndirectCommandBuffer->Map(BA_Read_Write);
 		mCausticsTask->mACMIndirectCommandBuffer->Unmap();
-		// Generate statistics
-		//*
+
+
+
 		mCausticsTask->mAtomicCounterBuffer->Bind(0);
 		auto counterData1 = (ACMAtomicCounter*)mCausticsTask->mAtomicCounterBuffer->Map(BA_Read_Write);
 		assert(counterData1);
@@ -500,6 +552,10 @@ void CausticMapRenderer::DoTraversal()
 //----------------------------------------------------------------------------
 void CausticMapRenderer::DoSplat()
 {
+	mCausticsTask->mACMIndirectDrawBuffer->Bind();
+	auto bufferData = (ACMIndirectDrawBuffer*)mCausticsTask->mACMIndirectDrawBuffer->Map(BA_Read_Only);
+	mCausticsTask->mACMIndirectDrawBuffer->Unmap();
+
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	mFBOCaustics->Enable();
@@ -510,12 +566,16 @@ void CausticMapRenderer::DoSplat()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	mCausticsTask->DispatchVertex(2, 4 * mCausticsTask->AtomicCounterCache.writeCount);
+	mCausticsTask->DispatchVertexIndirect(3, mCausticsTask->mACMIndirectDrawBuffer, mCausticsTask->mACMIndirectDrawBufferView, 0);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_BLEND);
 	mFBOCaustics->Disable();
 	glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glEnable(GL_DEPTH_TEST);
+
+
+	//RTGI_ASSERT(res == GL_NO_ERROR);
+
 
 	mCausticsTexture->GenerateMipmap();
 }
