@@ -11,7 +11,7 @@ out float teDepth;
 void main()
 {	
     // Fetch light info.
-    uint curLightIndex = sceneLightUniformBuffer.info.CurLightIndex;
+    uint curLightIndex = shadowMapUniformBuffer.info.CurLightIndex;
     SceneLight curLight = sceneLightUniformBuffer.lights[curLightIndex];
 
 	vec4 worldPos =	gl_in[0].gl_Position.xyzw * gl_TessCoord.x +
