@@ -44,7 +44,7 @@ layout(std140, binding = 2) uniform _shadowMapUniformBuffer
 } shadowMapUniformBuffer;
 
 uniform bool ShowShadow;
-uniform sampler2DArray ShadowMapSampler;
+uniform sampler2D ShadowMapSampler;
 
 //----------------------------------------------------------------------------
 vec4 ComputePointLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Material)
@@ -71,7 +71,7 @@ vec4 ComputePointLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Materia
 
 	vec2 texCoords = vec2(u, v);
 	texCoords = texCoords*0.5 + 0.5;
-	float depth = texture(ShadowMapSampler, vec3(texCoords, float(i))).r;
+	float depth = texture(ShadowMapSampler, texCoords).r;
 
 	if (currDepth - depth > 0.01 && !skipShadow && ShowShadow)
 	{
