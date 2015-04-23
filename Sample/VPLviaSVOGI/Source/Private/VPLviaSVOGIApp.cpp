@@ -71,11 +71,16 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     spotLight1ProjDesc.AspectRatio = 1.0f;
     spotLight1ProjDesc.NearPlane = 0.01f;
     spotLight1ProjDesc.FarPlane = 50.0f;
-    spotLight1ProjDesc.Location = vec3(10.0f, 10.0f, 0.0f);
-    spotLight1ProjDesc.LookAt = vec3(-10.0f, 10.0f, 0.0f);
+    spotLight1ProjDesc.Location = vec3(0.0f, 10.0f, 0.0f);
+    spotLight1ProjDesc.LookAt = vec3(-10.0f, 16.0f, 0.0f);
     spotLight1ProjDesc.Up = vec3(0.0f, 1.0f, 0.0f);
     SpotLightDesc spotLight1Desc;
-    spotLight1Desc.Intensity = vec3(50.0f, 20.0f, 10.0f);
+    spotLight1Desc.Intensity = vec3(50.0f, 50.0f, 50.0f);
+    spotLight1Desc.ConstantAttenuation = 0.0f;
+    spotLight1Desc.QuadraticAttenuation = 0.2f;
+    spotLight1Desc.CosCutoff = cos(40.0f / 180.0f * PI_SP);
+    spotLight1Desc.InnerCosCutoff = cos(40.0f * 0.95f / 180.0f * PI_SP);
+    spotLight1Desc.SpotExponent = 0.0f;
     mLightManager->CreateSpotLight(&spotLight1ProjDesc, mMainCamera, &spotLight1Desc);
 
     Light* pointLight1 = mLightManager->GetPointLight(0);

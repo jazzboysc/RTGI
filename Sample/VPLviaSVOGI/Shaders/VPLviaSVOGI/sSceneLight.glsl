@@ -94,7 +94,34 @@ vec4 ComputePointLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Materia
 //----------------------------------------------------------------------------
 vec4 ComputeSpotLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Material)
 {
-    vec4 res = vec4(0.0);
+    vec4 res = vec4(0.0, 0.0, 0.0, 1.0);
+
+    SceneLight light = sceneLightUniformBuffer.lights[i];
+
+    vec3 lightDir = light.WorldPositionAndType.xyz - PositionWorld.xyz;
+    float len = length(lightDir);
+    lightDir = lightDir / len;
+
+    float attenuation = 0.0; // attenuation
+    float spotEffect = dot(light.Params1.xyz, -lightDir);
+    float spotCosCutoff = light.Params1.w;
+    float spotInnerCosCutoff = light.Params2.w;
+    float spotExponent = light.Params2.x;
+    float constantAttenuation = light.Params2.y;
+    float quadraticAttenuation = light.Params2.z;
+
+    // this point lies inside the illumination cone by the spotlight
+    if( spotEffect >= spotCosCutoff )
+    {
+        float falloff = clamp((spotEffect - spotInnerCosCutoff) /
+            (spotInnerCosCutoff - spotCosCutoff), 0.0, 1.0);
+
+        attenuation = falloff * pow(spotEffect, spotExponent) / 
+            (constantAttenuation + quadraticAttenuation*len*len);
+        float d = max(0.0, dot(lightDir, NormalWorld));
+        res.rgb = Material.rgb * light.Intensity.xyz * attenuation * d;
+    }
+
     return res;
 }
 //----------------------------------------------------------------------------

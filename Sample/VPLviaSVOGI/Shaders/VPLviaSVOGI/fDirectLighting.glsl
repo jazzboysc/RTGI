@@ -26,15 +26,16 @@ void main()
     vec4 accumulation = vec4(0.0, 0.0, 0.0, 0.0);
 
     uint pointLightCount = sceneLightUniformBuffer.info.PointLightCount;
-    for( int i = 0; i < pointLightCount; ++i )
+    int i = 0;
+    for( ; i < pointLightCount; ++i )
     {
         accumulation += ComputePointLight(i, PositionWorld, NormalWorld, Material);
     }
 
     uint spotLightCount = sceneLightUniformBuffer.info.SpotLightCount;
-    for( int i = 0; i < spotLightCount; ++i )
+    for( int j = 0; j < spotLightCount; ++j )
     {
-        accumulation += ComputeSpotLight(i, PositionWorld, NormalWorld, Material);
+        accumulation += ComputeSpotLight(i + j, PositionWorld, NormalWorld, Material);
     }
 
     accumulation /= (pointLightCount + spotLightCount);
