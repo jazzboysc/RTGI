@@ -73,9 +73,10 @@ vec4 ComputePointLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Materia
     texCoords = texCoords*0.5 + 0.5;
     float depth = texture(ShadowMapSampler, vec3(texCoords, float(i))).r;
 
-    if( currDepth - depth > 0.01 && !skipShadow && ShowShadow )
+    // Shadow map test.
+    if( (currDepth - depth) > 0.01 && !skipShadow && ShowShadow )
     {
-        // Shadow.
+        // In Shadow.
         res = vec4(0.0, 0.0, 0.0, 1.0);
     }
     else
@@ -113,6 +114,21 @@ vec4 ComputeSpotLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Material
     // this point lies inside the illumination cone by the spotlight
     if( spotEffect >= spotCosCutoff )
     {
+        // Shadow map test.
+        vec4 viewPos = light.LightProjectorView * PositionWorld;
+        float currDepth = (-viewPos.z - light.LightProjectorNearFar.x) /
+            (light.LightProjectorNearFar.y - light.LightProjectorNearFar.x);
+        vec4 projPos = light.LightProjectorProj * viewPos;
+        projPos.xyz /= projPos.w;
+        projPos.xy = projPos.xy*0.5 + 0.5;
+        float depth = texture(ShadowMapSampler, vec3(projPos.xy, float(i))).r;
+        if( (currDepth - depth) > 0.01 && ShowShadow )
+        {
+            // In shadow.
+            return res;
+        }
+
+        // Direct lighting.
         float falloff = clamp((spotEffect - spotInnerCosCutoff) /
             (spotInnerCosCutoff - spotCosCutoff), 0.0, 1.0);
 

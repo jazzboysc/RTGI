@@ -72,7 +72,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     spotLight1ProjDesc.NearPlane = 0.01f;
     spotLight1ProjDesc.FarPlane = 50.0f;
     spotLight1ProjDesc.Location = vec3(0.0f, 10.0f, 0.0f);
-    spotLight1ProjDesc.LookAt = vec3(-10.0f, 16.0f, 0.0f);
+    spotLight1ProjDesc.LookAt = vec3(-10.0f, 1.0f, 0.0f);
     spotLight1ProjDesc.Up = vec3(0.0f, 1.0f, 0.0f);
     SpotLightDesc spotLight1Desc;
     spotLight1Desc.Intensity = vec3(50.0f, 50.0f, 50.0f);

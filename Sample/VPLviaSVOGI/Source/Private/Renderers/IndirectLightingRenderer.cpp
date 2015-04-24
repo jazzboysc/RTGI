@@ -196,8 +196,8 @@ void IndirectLightingRenderer::Initialize(GPUDevice* device, int width,
     }
     else
     {
-        int w = width / 2;
-        int h = height / 2;
+        int w = width;
+        int h = height;
         AddFrameBufferTarget(
             RTGI_IndirectLightingRenderer_IndirectLighting_Name, w, h, 0, 
             TT_Texture2D, format);
