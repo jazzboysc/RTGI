@@ -59,9 +59,6 @@ void SceneMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
     program->GetUniformLocation(&mLightColorLoc, "LightColor");
     program->GetUniformLocation(&mMaterialColorLocRSM, "MaterialColor");
-    program->GetProgramHandle()->Device->SetProgramParameterInt(
-		program, SPP_Geometry_Vertices_Out,
-        VPLviaSVOGI::RSM_FACE_COUNT * 3);
 }
 //----------------------------------------------------------------------------
 void SceneMesh::OnUpdateShaderConstants(int technique, int pass)

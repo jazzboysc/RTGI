@@ -35,6 +35,18 @@ enum ShaderProgramParameter
     SPP_Max
 };
 
+struct ShaderProgramParameterValue
+{
+    ShaderProgramParameter Name;
+    int Value;
+
+    ShaderProgramParameterValue(ShaderProgramParameter name, int value)
+    {
+        Name = name;
+        Value = value;
+    }
+};
+
 struct ShaderProgramInfo
 {
     std::string VShaderFileName;
@@ -44,6 +56,7 @@ struct ShaderProgramInfo
     std::string TCShaderFileName;
     std::string TEShaderFileName;
     unsigned char ShaderStageFlag;
+    std::vector<ShaderProgramParameterValue> Parameters;
 
     ShaderProgramInfo(){ ShaderStageFlag = ShaderType::ST_Unknown; }
 

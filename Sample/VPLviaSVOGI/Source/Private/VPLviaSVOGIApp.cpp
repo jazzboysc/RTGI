@@ -153,6 +153,9 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     rsmProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
                                      ShaderType::ST_Geometry |
                                      ShaderType::ST_Fragment;
+    rsmProgramInfo.Parameters.push_back(
+        ShaderProgramParameterValue(SPP_Geometry_Vertices_Out, 
+        RSM_FACE_COUNT * 3));
     Pass* passRSM = new Pass(rsmProgramInfo);
 
 	Technique* techSceneModel = new Technique();

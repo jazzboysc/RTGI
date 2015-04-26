@@ -79,6 +79,12 @@ void ShaderProgram::CreateDeviceResource(GPUDevice* device)
 	}
 
     mProgramHandle = device->CreateProgram(this);
+    for( int i = 0; i < mProgramInfo.Parameters.size(); ++i )
+    {
+        mProgramHandle->Device->SetProgramParameterInt(this, 
+            mProgramInfo.Parameters[i].Name, 
+            mProgramInfo.Parameters[i].Value);
+    }
 }
 //----------------------------------------------------------------------------
 void ShaderProgram::GetUniformLocation(ShaderUniform* dstUniform, 
