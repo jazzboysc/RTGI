@@ -359,7 +359,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     // Create RSM renderer.
     mRSMRenderer = new RSMRenderer(mDevice);
-    mRSMRenderer->CreateRSM(256, 256, RSM_FACE_COUNT, BF_RGBAF);
+    mRSMRenderer->Initialize(256, 256, BF_RGBAF, mLightManager);
     mRSMRenderer->SetRenderSet(mSceneObjects);
 
     // Create VPL generator.
@@ -562,7 +562,7 @@ void VPLviaSVOGI::FrameFunc()
 #endif
 
     // Scene light RSM pass.
-    mRSMRenderer->Render(0, SMP_PointLightRSM, 0);
+    mRSMRenderer->Render(0, SMP_PointLightRSM);
 #ifdef SHOW_TIMING
     workLoad = mRSMRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;

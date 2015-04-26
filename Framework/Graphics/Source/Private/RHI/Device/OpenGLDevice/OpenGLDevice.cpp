@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------
 // Graphics framework for real-time GI study.
 // Che Sun at Worcester Polytechnic Institute, Fall 2013.
 //----------------------------------------------------------------------------
@@ -1361,10 +1361,10 @@ OpenGLDevice::OpenGLDevice()
 	_GetMaxAnisFilterLevel = (GPUDeviceGetMaxAnisFilterLevel)&OpenGLDevice::__GetMaxAnisFilterLevel;
 	_SetAnisFilterLevel = (GPUDeviceSetAnisFilterLevel)&OpenGLDevice::__SetAnisFilterLevel;
 
-
     mEnable4xMsaa = false;
     m4xMsaaQuality = 0;
 	mAnisFilterLevel = 0;
+    mMaxTextureArrayLayer = 0;
 }
 //----------------------------------------------------------------------------
 OpenGLDevice::~OpenGLDevice()

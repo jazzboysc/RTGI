@@ -131,7 +131,7 @@ private:
 private:
     bool mEnable4xMsaa;
     unsigned int m4xMsaaQuality;
-	GLint mAnisFilterLevel;
+    GLint mAnisFilterLevel;
 };
 
 }

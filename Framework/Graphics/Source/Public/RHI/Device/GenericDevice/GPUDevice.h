@@ -286,6 +286,7 @@ public:
     inline 	void BufferClear(Buffer* buffer, 
         BufferInternalFormat internalFormat, BufferFormat format,
         BufferComponentType type, void* data);
+
     inline 	void GetMaxAnisFilterLevel(int* maxAnisFilterLevel);
     inline 	void SetAnisFilterLevel(int maxAnisFilterLevel);
 
@@ -350,9 +351,12 @@ protected:
     GPUDeviceBufferLoadFromSystemMemory           _BufferLoadFromSystemMemory;
     GPUDeviceBufferLoadImmutableFromSystemMemory  _BufferLoadImmutableFromSystemMemory;
     GPUDeviceBufferClear                          _BufferClear;
+
 	GPUDeviceGetMaxAnisFilterLevel				  _GetMaxAnisFilterLevel;
 	GPUDeviceSetAnisFilterLevel					  _SetAnisFilterLevel;
 
+    // Device capabilities.
+    int mMaxTextureArrayLayer;
 };
 
 typedef RefPointer<GPUDevice> GPUDevicePtr;

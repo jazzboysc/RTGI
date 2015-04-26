@@ -2,6 +2,7 @@
 #define RTGI_RSMRenderer_H
 
 #include "GraphicsFrameworkHeader.h"
+#include "LightManager.h"
 
 namespace RTGI
 {
@@ -9,6 +10,14 @@ namespace RTGI
 #define RTGI_RSMRenderer_RSMPosition_Name "RSMPosition"
 #define RTGI_RSMRenderer_RSMNormal_Name "RSMNormal"
 #define RTGI_RSMRenderer_RSMFlux_Name "RSMFlux"
+
+struct RSMInfo
+{
+    uint CurLightIndex;
+    uint Reserved1;
+    uint Reserved2;
+    uint Reserved3;
+};
 
 //----------------------------------------------------------------------------
 // Author: Che Sun
@@ -20,11 +29,26 @@ public:
     RSMRenderer(GPUDevice* device, RenderSet* renderSet = 0);
     virtual ~RSMRenderer();
 
-    void CreateRSM(int width, int height, int depth, BufferFormat format);
-    void Render(int technique, int pass, Camera* camera);
+    void Initialize(int width, int height, BufferFormat format,
+        LightManager* lightManager);
+    void Render(int technique, int pass);
+
+    inline int GetRSMCount() const { return mRSMCount; };
+    inline void SetRSMInfoBufferBindingPoint(unsigned int bindingPoint)
+    {
+        mRSMInfoBufferBindingPoint = bindingPoint;
+    };
+    inline unsigned int GetRSMInfoBufferBindingPoint() const
+    {
+        return mRSMInfoBufferBindingPoint;
+    };
 
 protected:
     PipelineStateBlockPtr mPSB;
+    LightManagerPtr mLightManager;
+    int mRSMCount;
+    UniformBufferPtr mRSMInfoBuffer;
+    unsigned int mRSMInfoBufferBindingPoint;
 };
 
 typedef RefPointer<RSMRenderer> RSMRendererPtr;
