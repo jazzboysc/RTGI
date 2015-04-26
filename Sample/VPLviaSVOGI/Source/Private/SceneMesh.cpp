@@ -52,8 +52,8 @@ void SceneMesh::OnGetShaderConstants()
     program->GetUniformLocation(&mProjCacheLocGBuffer, "ProjCache");
     program->GetUniformLocation(&mMaterialColorLocGBuffer, "MaterialColor");
 
-    // Get RSM pass uniform locations.
-    program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_RSM);
+    // Get point light RSM pass uniform locations.
+    program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_PointLightRSM);
     program->GetUniformLocation(&mWorldLocRSM, "World");
     program->GetUniformLocation(&mProjLocRSM, "Proj");
     program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
@@ -121,8 +121,8 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
         }
     }
 
-    // Update RSM pass uniform data.
-    if( pass == VPLviaSVOGI::SMP_RSM )
+    // Update point light RSM pass uniform data.
+    if( pass == VPLviaSVOGI::SMP_PointLightRSM )
     {
         mWorldLocRSM.SetValue(worldTrans);
         mLightColorLoc.SetValue(LightColor);

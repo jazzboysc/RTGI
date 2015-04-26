@@ -79,7 +79,7 @@ void ShaderProgram::CreateDeviceResource(GPUDevice* device)
 	}
 
     mProgramHandle = device->CreateProgram(this);
-    for( int i = 0; i < mProgramInfo.Parameters.size(); ++i )
+    for( int i = 0; i < (int)mProgramInfo.Parameters.size(); ++i )
     {
         mProgramHandle->Device->SetProgramParameterInt(this, 
             mProgramInfo.Parameters[i].Name, 

@@ -88,7 +88,8 @@ private:
         SMP_PointLightShadowMap,
         SMP_SpotLightShadowMap = SMP_PointLightShadowMap + 1,
         SMP_GBuffer,
-        SMP_RSM
+        SMP_PointLightRSM,
+        SMP_SpotLightRSM = SMP_PointLightRSM + 1
     };
 
     // Scene models.

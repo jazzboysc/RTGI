@@ -146,24 +146,32 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
                                          ShaderType::ST_Fragment;
     Pass* passGBuffer = new Pass(gbufferProgramInfo);
 
-    ShaderProgramInfo rsmProgramInfo;
-    rsmProgramInfo.VShaderFileName = "VPLviaSVOGI/vRSM.glsl";
-    rsmProgramInfo.GShaderFileName = "VPLviaSVOGI/gRSM.glsl";
-    rsmProgramInfo.FShaderFileName = "VPLviaSVOGI/fRSM.glsl";
-    rsmProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
-                                     ShaderType::ST_Geometry |
-                                     ShaderType::ST_Fragment;
-    rsmProgramInfo.Parameters.push_back(
+    ShaderProgramInfo pointLightRSMProgramInfo;
+    pointLightRSMProgramInfo.VShaderFileName = "VPLviaSVOGI/vPointLightRSM.glsl";
+    pointLightRSMProgramInfo.GShaderFileName = "VPLviaSVOGI/gPointLightRSM.glsl";
+    pointLightRSMProgramInfo.FShaderFileName = "VPLviaSVOGI/fPointLightRSM.glsl";
+    pointLightRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                               ShaderType::ST_Geometry |
+                                               ShaderType::ST_Fragment;
+    pointLightRSMProgramInfo.Parameters.push_back(
         ShaderProgramParameterValue(SPP_Geometry_Vertices_Out, 
         RSM_FACE_COUNT * 3));
-    Pass* passRSM = new Pass(rsmProgramInfo);
+    Pass* passPointLightRSM = new Pass(pointLightRSMProgramInfo);
+
+    ShaderProgramInfo spotLightRSMProgramInfo;
+    spotLightRSMProgramInfo.VShaderFileName = "VPLviaSVOGI/vSpotLightRSM.glsl";
+    spotLightRSMProgramInfo.FShaderFileName = "VPLviaSVOGI/fSpotLightRSM.glsl";
+    spotLightRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                              ShaderType::ST_Fragment;
+    Pass* passSpotLightRSM = new Pass(spotLightRSMProgramInfo);
 
 	Technique* techSceneModel = new Technique();
     techSceneModel->AddPass(passVoxelization);
     techSceneModel->AddPass(passPointLightShadow);
     techSceneModel->AddPass(passSpotLightShadow);
     techSceneModel->AddPass(passGBuffer);
-    techSceneModel->AddPass(passRSM);
+    techSceneModel->AddPass(passPointLightRSM);
+    techSceneModel->AddPass(passSpotLightRSM);
 	MaterialTemplate* mtSceneModel = new MaterialTemplate();
     mtSceneModel->AddTechnique(techSceneModel);
 
@@ -554,7 +562,7 @@ void VPLviaSVOGI::FrameFunc()
 #endif
 
     // Scene light RSM pass.
-    mRSMRenderer->Render(0, SMP_RSM, 0);
+    mRSMRenderer->Render(0, SMP_PointLightRSM, 0);
 #ifdef SHOW_TIMING
     workLoad = mRSMRenderer->GetTimeElapsed();
     totalWorkLoad += workLoad;
