@@ -52,8 +52,13 @@ void SceneMesh::OnGetShaderConstants()
 
     // Get point light RSM pass uniform locations.
     program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_PointLightRSM);
-    program->GetUniformLocation(&mWorldLocRSM, "World");
-    program->GetUniformLocation(&mMaterialColorLocRSM, "MaterialColor");
+    program->GetUniformLocation(&mWorldLocPointLightRSM, "World");
+    program->GetUniformLocation(&mMaterialColorLocPointLightRSM, "MaterialColor");
+
+    // Get spot light RSM pass uniform locations.
+    program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_SpotLightRSM);
+    program->GetUniformLocation(&mWorldLocSpotLightRSM, "World");
+    program->GetUniformLocation(&mMaterialColorLocSpotLightRSM, "MaterialColor");
 }
 //----------------------------------------------------------------------------
 void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
@@ -119,8 +124,15 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
     // Update point light RSM pass uniform data.
     if( pass == VPLviaSVOGI::SMP_PointLightRSM )
     {
-        mWorldLocRSM.SetValue(worldTrans);
-        mMaterialColorLocRSM.SetValue(MaterialColor);
+        mWorldLocPointLightRSM.SetValue(worldTrans);
+        mMaterialColorLocPointLightRSM.SetValue(MaterialColor);
+    }
+
+    // Update spot light RSM pass uniform data.
+    if( pass == VPLviaSVOGI::SMP_SpotLightRSM )
+    {
+        mWorldLocSpotLightRSM.SetValue(worldTrans);
+        mMaterialColorLocSpotLightRSM.SetValue(MaterialColor);
     }
 }
 //----------------------------------------------------------------------------

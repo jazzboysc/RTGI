@@ -90,7 +90,7 @@ void main()
             gPositionWorld = vPositionWorld[j];
             gNormalWorld = vNormalWorld[j];
 
-            gl_Layer = i;
+            gl_Layer = i + int(curLightIndex);
             gl_Position = ProjView * gl_in[j].gl_Position;
 
             EmitVertex();

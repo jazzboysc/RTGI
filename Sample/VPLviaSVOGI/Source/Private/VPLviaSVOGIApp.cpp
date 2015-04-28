@@ -42,17 +42,17 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     // Create scene lights.
 
-    LightProjectorDesc pointLight1ProjDesc;
-    pointLight1ProjDesc.UpFovDegrees = 90.0f;
-    pointLight1ProjDesc.AspectRatio = 1.0f;
-    pointLight1ProjDesc.NearPlane = 0.01f;
-    pointLight1ProjDesc.FarPlane = 50.0f;
-    pointLight1ProjDesc.Location = vec3(2.0f, 12.0f, 2.0f);
-    pointLight1ProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
-    pointLight1ProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
-    PointLightDesc light1Desc;
-    light1Desc.Intensity = vec3(50.0f, 50.0f, 50.0f);
-    mLightManager->CreatePointLight(&pointLight1ProjDesc, mMainCamera, &light1Desc);
+    //LightProjectorDesc pointLight1ProjDesc;
+    //pointLight1ProjDesc.UpFovDegrees = 90.0f;
+    //pointLight1ProjDesc.AspectRatio = 1.0f;
+    //pointLight1ProjDesc.NearPlane = 0.01f;
+    //pointLight1ProjDesc.FarPlane = 50.0f;
+    //pointLight1ProjDesc.Location = vec3(2.0f, 12.0f, 2.0f);
+    //pointLight1ProjDesc.LookAt = vec3(0.0f, 0.0f, 0.0f);
+    //pointLight1ProjDesc.Up = vec3(1.0f, 0.0f, 0.0f);
+    //PointLightDesc light1Desc;
+    //light1Desc.Intensity = vec3(50.0f, 50.0f, 50.0f);
+    //mLightManager->CreatePointLight(&pointLight1ProjDesc, mMainCamera, &light1Desc);
 
     //LightProjectorDesc pointLight2ProjDesc;
     //pointLight2ProjDesc.UpFovDegrees = 90.0f;
@@ -83,7 +83,6 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     spotLight1Desc.SpotExponent = 0.0f;
     mLightManager->CreateSpotLight(&spotLight1ProjDesc, mMainCamera, &spotLight1Desc);
 
-    Light* pointLight1 = mLightManager->GetPointLight(0);
     mLightManager->CreateLightBuffer(mDevice);
 
 	// Create material templates.
@@ -160,8 +159,10 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
 
     ShaderProgramInfo spotLightRSMProgramInfo;
     spotLightRSMProgramInfo.VShaderFileName = "VPLviaSVOGI/vSpotLightRSM.glsl";
+    spotLightRSMProgramInfo.GShaderFileName = "VPLviaSVOGI/gSpotLightRSM.glsl";
     spotLightRSMProgramInfo.FShaderFileName = "VPLviaSVOGI/fSpotLightRSM.glsl";
     spotLightRSMProgramInfo.ShaderStageFlag = ShaderType::ST_Vertex |
+                                              ShaderType::ST_Geometry |
                                               ShaderType::ST_Fragment;
     Pass* passSpotLightRSM = new Pass(spotLightRSMProgramInfo);
 
@@ -191,7 +192,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
     mModel2Sequence = new RenderSequence(0);
-    for( int i = 1; i <= 12; ++i )
+    for( int i = 1; i <= 1; ++i )
     {
         material = new Material(mtSceneModel);
         SceneMesh* model2 = new SceneMesh(material, mMainCamera);

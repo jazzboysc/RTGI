@@ -65,13 +65,13 @@ void VPLGenerator::SetRSMRenderer(RSMRenderer* rsm)
     ClearInputDependency();
 
     view.BindingSlot = 0;
-    AddInputDependency(rsm, "RSMPosition", &view);
+    AddInputDependency(rsm, RTGI_RSMRenderer_RSMPosition_Name, &view);
 
     view.BindingSlot = 1;
-    AddInputDependency(rsm, "RSMNormal", &view);
+    AddInputDependency(rsm, RTGI_RSMRenderer_RSMNormal_Name, &view);
 
     view.BindingSlot = 2;
-    AddInputDependency(rsm, "RSMFlux", &view);
+    AddInputDependency(rsm, RTGI_RSMRenderer_RSMFlux_Name, &view);
 }
 //----------------------------------------------------------------------------
 RSMRenderer* VPLGenerator::GetRSMRenderer() const

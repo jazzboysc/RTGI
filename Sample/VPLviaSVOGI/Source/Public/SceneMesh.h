@@ -48,8 +48,12 @@ private:
     ShaderUniform mMaterialColorLocGBuffer;
 
     // Scene point light RSM pass.
-    ShaderUniform mWorldLocRSM;
-    ShaderUniform mMaterialColorLocRSM;
+    ShaderUniform mWorldLocPointLightRSM;
+    ShaderUniform mMaterialColorLocPointLightRSM;
+
+    // Scene spot light RSM pass.
+    ShaderUniform mWorldLocSpotLightRSM;
+    ShaderUniform mMaterialColorLocSpotLightRSM;
 };
 
 typedef RefPointer<SceneMesh> SceneMeshPtr;
