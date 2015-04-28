@@ -187,7 +187,7 @@ void LightManager::UpdateLightBuffer()
     }
 
     size_t bufferSize = sizeof(LightBufferHead) + 
-        sizeof(SceneLight)*MAX_LIGHT_COUNT;
+        sizeof(SceneLight)*(info->PointLightCount + info->SpotLightCount);
     mLightBuffer->UpdateSubData(mLightBufferBindingPoint, 0, bufferSize,
         (void*)mLightBufferCache);
 }

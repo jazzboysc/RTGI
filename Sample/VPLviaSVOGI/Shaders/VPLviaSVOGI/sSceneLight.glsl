@@ -16,6 +16,14 @@ struct ShadowMapInfo
     uint Reserved3;
 };
 
+struct RSMInfo
+{
+    uint CurLightIndex;
+    uint Reserved1;
+    uint Reserved2;
+    uint Reserved3;
+};
+
 //----------------------------------------------------------------------------
 // Scene Light. Currently support point and spot lights.
 //----------------------------------------------------------------------------
@@ -42,6 +50,11 @@ layout(std140, binding = 2) uniform _shadowMapUniformBuffer
 {
     ShadowMapInfo info;
 } shadowMapUniformBuffer;
+
+layout(std140, binding = 3) uniform _rsmUniformBuffer
+{
+    RSMInfo info;
+} rsmUniformBuffer;
 
 uniform bool ShowShadow;
 uniform sampler2DArray ShadowMapSampler;

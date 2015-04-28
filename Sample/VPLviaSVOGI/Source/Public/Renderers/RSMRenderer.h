@@ -13,10 +13,10 @@ namespace RTGI
 
 struct RSMInfo
 {
-    uint CurLightIndex;
-    uint Reserved1;
-    uint Reserved2;
-    uint Reserved3;
+    unsigned int CurLightIndex;
+    unsigned int Reserved1;
+    unsigned int Reserved2;
+    unsigned int Reserved3;
 };
 
 //----------------------------------------------------------------------------

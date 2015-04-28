@@ -10,8 +10,6 @@ SceneMesh::SceneMesh(Material* material, Camera* camera)
 	TriangleMesh(material, camera)
 {
     MaterialColor = vec3(0.75f, 0.75f, 0.75f);
-    LightColor = vec3(1.0f, 1.0f, 1.0f)*50.0f;
-    LightProjector = 0;
     TessLevel = 14.0f;
 }
 //----------------------------------------------------------------------------
@@ -55,9 +53,6 @@ void SceneMesh::OnGetShaderConstants()
     // Get point light RSM pass uniform locations.
     program = mMaterial->GetProgram(0, VPLviaSVOGI::SMP_PointLightRSM);
     program->GetUniformLocation(&mWorldLocRSM, "World");
-    program->GetUniformLocation(&mProjLocRSM, "Proj");
-    program->GetUniformLocation(&mLightPositionWorldLoc, "LightPositionWorld");
-    program->GetUniformLocation(&mLightColorLoc, "LightColor");
     program->GetUniformLocation(&mMaterialColorLocRSM, "MaterialColor");
 }
 //----------------------------------------------------------------------------
@@ -125,18 +120,7 @@ void SceneMesh::OnUpdateShaderConstants(int technique, int pass)
     if( pass == VPLviaSVOGI::SMP_PointLightRSM )
     {
         mWorldLocRSM.SetValue(worldTrans);
-        mLightColorLoc.SetValue(LightColor);
         mMaterialColorLocRSM.SetValue(MaterialColor);
-
-        assert( LightProjector );
-        if( LightProjector )
-        {
-            vec3 lightPosition = LightProjector->GetLocation();
-            mLightPositionWorldLoc.SetValue(lightPosition);
-
-            mat4 projTrans = LightProjector->GetProjectionTransform();
-            mProjLocRSM.SetValue(projTrans);
-        }
     }
 }
 //----------------------------------------------------------------------------

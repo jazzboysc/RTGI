@@ -1,5 +1,7 @@
 #version 430 core
 
+#include "VPLviaSVOGI/sSceneLight.glsl"
+
 layout (triangles) in;
 layout (triangle_strip) out;
 
@@ -9,24 +11,21 @@ in vec4 vNormalWorld[];
 out vec4 gPositionWorld;
 out vec4 gNormalWorld;
 
-uniform mat4 Proj;
-uniform vec3 LightPositionWorld;
-
-const vec3 PX = vec3(1.0, 0.0, 0.0);
-const vec3 NX = vec3(-1.0, 0.0, 0.0);
-const vec3 PY = vec3(0.0, 1.0, 0.0);
-const vec3 NY = vec3(0.0, -1.0, 0.0);
-const vec3 PZ = vec3(0.0, 0.0, 1.0);
-const vec3 NZ = vec3(0.0, 0.0, -1.0);
-const float EdPX = dot(LightPositionWorld, PX);
-const float EdNX = dot(LightPositionWorld, NX);
-const float EdPY = dot(LightPositionWorld, PY);
-const float EdNY = dot(LightPositionWorld, NY);
-const float EdPZ = dot(LightPositionWorld, PZ);
-const float EdNZ = dot(LightPositionWorld, NZ);
-
-mat4 GetFaceViewTransform(int face)
+mat4 GetFaceViewTransform(vec3 lightPositionWorld, int face)
 {
+    const vec3 PX = vec3(1.0, 0.0, 0.0);
+    const vec3 NX = vec3(-1.0, 0.0, 0.0);
+    const vec3 PY = vec3(0.0, 1.0, 0.0);
+    const vec3 NY = vec3(0.0, -1.0, 0.0);
+    const vec3 PZ = vec3(0.0, 0.0, 1.0);
+    const vec3 NZ = vec3(0.0, 0.0, -1.0);
+    const float EdPX = dot(lightPositionWorld, PX);
+    const float EdNX = dot(lightPositionWorld, NX);
+    const float EdPY = dot(lightPositionWorld, PY);
+    const float EdNY = dot(lightPositionWorld, NY);
+    const float EdPZ = dot(lightPositionWorld, PZ);
+    const float EdNZ = dot(lightPositionWorld, NZ);
+
     mat4 res;
     if( face == 0 )
     {
@@ -74,13 +73,17 @@ mat4 GetFaceViewTransform(int face)
 
 void main()
 {
+    // Fetch light info.
+    uint curLightIndex = rsmUniformBuffer.info.CurLightIndex;
+    SceneLight curLight = sceneLightUniformBuffer.lights[curLightIndex];
+
     mat4 View, ProjView;
     const int faceCount = 5;
 
     for( int i = 0; i < faceCount; ++i )
     {
-        View = GetFaceViewTransform(i);
-        ProjView = Proj * View;
+        View = GetFaceViewTransform(curLight.WorldPositionAndType.xyz, i);
+        ProjView = curLight.LightProjectorProj * View;
 
         for( int j = 0; j < gl_in.length(); ++j )
         {

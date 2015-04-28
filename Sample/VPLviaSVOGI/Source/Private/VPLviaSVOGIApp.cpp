@@ -6,7 +6,7 @@
 using namespace RTGI;
 using namespace RTGI::GUIFramework;
 
-#define SHOW_TIMING
+//#define SHOW_TIMING
 
 //----------------------------------------------------------------------------
 VPLviaSVOGI::VPLviaSVOGI(int width, int height)
@@ -187,12 +187,11 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mModel->SetWorldTranslation(vec3(-6.0f, 2.5f, -1.5f));
     mModel->SetWorldScale(vec3(2.5f));
     mModel->MaterialColor = vec3(0.1f, 0.9f, 0.9f);
-    mModel->LightProjector = pointLight1->GetProjector();
     mModel->SceneBB = &mSceneBB;
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
     mModel2Sequence = new RenderSequence(0);
-    for( int i = 1; i <= 1; ++i )
+    for( int i = 1; i <= 12; ++i )
     {
         material = new Material(mtSceneModel);
         SceneMesh* model2 = new SceneMesh(material, mMainCamera);
@@ -206,7 +205,6 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
         model2->SetWorldTranslation(vec3(3.2f, 3.6f, 2.4f));
         model2->SetWorldScale(vec3(9.0f));
         model2->MaterialColor = vec3(0.2f, 0.2f, 0.9f);
-        model2->LightProjector = pointLight1->GetProjector();
         model2->SceneBB = &mSceneBB;
         model2->TessLevel = 1.0f;
         mSceneBB.Merge(model2->GetWorldSpaceBB());
@@ -221,7 +219,6 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mGround->GenerateNormals();
     mGround->CreateDeviceResource(mDevice);
     mGround->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-    mGround->LightProjector = pointLight1->GetProjector();
     mGround->SceneBB = &mSceneBB;
     mSceneBB.Merge(mGround->GetWorldSpaceBB());
 
@@ -234,7 +231,6 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mCeiling->SetWorldTransform(rotM);
     mCeiling->SetWorldTranslation(vec3(0.0f, 20.0f, 0.0f));
     mCeiling->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-    mCeiling->LightProjector = pointLight1->GetProjector();
     mCeiling->SceneBB = &mSceneBB;
     mSceneBB.Merge(mCeiling->GetWorldSpaceBB());
 
@@ -247,7 +243,6 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mBackWall->SetWorldTransform(rotM);
     mBackWall->SetWorldTranslation(vec3(0.0f, 10.0f, -10.0f));
     mBackWall->MaterialColor = vec3(1.0f, 1.0f, 1.0f);
-    mBackWall->LightProjector = pointLight1->GetProjector();
     mBackWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mBackWall->GetWorldSpaceBB());
 
@@ -260,7 +255,6 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mLeftWall->SetWorldTransform(rotM);
     mLeftWall->SetWorldTranslation(vec3(-10.0f, 10.0f, 0.0f));
     mLeftWall->MaterialColor = vec3(0.95f, 0.2f, 0.2f);
-    mLeftWall->LightProjector = pointLight1->GetProjector();
     mLeftWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mLeftWall->GetWorldSpaceBB());
 
@@ -273,7 +267,6 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mRightWall->SetWorldTransform(rotM);
     mRightWall->SetWorldTranslation(vec3(10.0f, 10.0f, 0.0f));
     mRightWall->MaterialColor = vec3(0.2f, 0.95f, 0.2f);
-    mRightWall->LightProjector = pointLight1->GetProjector();
     mRightWall->SceneBB = &mSceneBB;
     mSceneBB.Merge(mRightWall->GetWorldSpaceBB());
 
@@ -562,6 +555,7 @@ void VPLviaSVOGI::FrameFunc()
 #endif
 
     // Scene light RSM pass.
+    mRSMRenderer->SetRSMInfoBufferBindingPoint(3);
     mRSMRenderer->Render(0, SMP_PointLightRSM);
 #ifdef SHOW_TIMING
     workLoad = mRSMRenderer->GetTimeElapsed();

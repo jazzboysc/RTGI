@@ -24,8 +24,6 @@ public:
 
     AABB* SceneBB;
 	vec3 MaterialColor;
-    vec3 LightColor;
-    Camera* LightProjector;
     float TessLevel;
 
 private:
@@ -49,10 +47,8 @@ private:
     ShaderUniform mWorldCacheLocGBuffer, mViewCacheLocGBuffer, mProjCacheLocGBuffer;
     ShaderUniform mMaterialColorLocGBuffer;
 
-    // RSM pass.
-    ShaderUniform mWorldLocRSM, mProjLocRSM;
-    ShaderUniform mLightPositionWorldLoc;
-    ShaderUniform mLightColorLoc;
+    // Scene point light RSM pass.
+    ShaderUniform mWorldLocRSM;
     ShaderUniform mMaterialColorLocRSM;
 };
 
