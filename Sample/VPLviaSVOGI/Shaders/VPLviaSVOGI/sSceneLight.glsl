@@ -116,7 +116,7 @@ vec4 ComputeSpotLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Material
     float len = length(lightDir);
     lightDir = lightDir / len;
 
-    float attenuation = 0.0; // attenuation
+    float attenuation = 0.0;
     float spotEffect = dot(light.Params1.xyz, -lightDir);
     float spotCosCutoff = light.Params1.w;
     float spotInnerCosCutoff = light.Params2.w;
@@ -124,7 +124,6 @@ vec4 ComputeSpotLight(int i, vec4 PositionWorld, vec3 NormalWorld, vec4 Material
     float constantAttenuation = light.Params2.y;
     float quadraticAttenuation = light.Params2.z;
 
-    // this point lies inside the illumination cone by the spotlight
     if( spotEffect >= spotCosCutoff )
     {
         // Shadow map test.

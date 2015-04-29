@@ -192,7 +192,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     mSceneBB.Merge(mModel->GetWorldSpaceBB());
 
     mModel2Sequence = new RenderSequence(0);
-    for( int i = 1; i <= 1; ++i )
+    for( int i = 1; i <= 12; ++i )
     {
         material = new Material(mtSceneModel);
         SceneMesh* model2 = new SceneMesh(material, mMainCamera);
