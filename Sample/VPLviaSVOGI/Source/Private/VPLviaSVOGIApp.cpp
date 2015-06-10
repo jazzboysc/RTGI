@@ -71,7 +71,7 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     spotLight1ProjDesc.AspectRatio = 1.0f;
     spotLight1ProjDesc.NearPlane = 0.01f;
     spotLight1ProjDesc.FarPlane = 50.0f;
-    spotLight1ProjDesc.Location = vec3(0.0f, 10.0f, 0.0f);
+    spotLight1ProjDesc.Location = vec3(-0.5f, 10.0f, 0.0f);
     spotLight1ProjDesc.LookAt = vec3(-10.0f, 1.0f, 0.0f);
     spotLight1ProjDesc.Up = vec3(0.0f, 1.0f, 0.0f);
     SpotLightDesc spotLight1Desc;
@@ -82,6 +82,23 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     spotLight1Desc.InnerCosCutoff = cos(40.0f * 0.95f / 180.0f * PI_SP);
     spotLight1Desc.SpotExponent = 0.0f;
     mLightManager->CreateSpotLight(&spotLight1ProjDesc, mMainCamera, &spotLight1Desc);
+
+    LightProjectorDesc spotLight2ProjDesc;
+    spotLight2ProjDesc.UpFovDegrees = 90.0f;
+    spotLight2ProjDesc.AspectRatio = 1.0f;
+    spotLight2ProjDesc.NearPlane = 0.01f;
+    spotLight2ProjDesc.FarPlane = 50.0f;
+    spotLight2ProjDesc.Location = vec3(0.5f, 10.0f, 0.0f);
+    spotLight2ProjDesc.LookAt = vec3(10.0f, 15.0f, -5.0f);
+    spotLight2ProjDesc.Up = vec3(0.0f, 1.0f, 0.0f);
+    SpotLightDesc spotLight2Desc;
+    spotLight2Desc.Intensity = vec3(50.0f, 50.0f, 50.0f);
+    spotLight2Desc.ConstantAttenuation = 0.0f;
+    spotLight2Desc.QuadraticAttenuation = 0.2f;
+    spotLight2Desc.CosCutoff = cos(40.0f / 180.0f * PI_SP);
+    spotLight2Desc.InnerCosCutoff = cos(40.0f * 0.95f / 180.0f * PI_SP);
+    spotLight2Desc.SpotExponent = 0.0f;
+    mLightManager->CreateSpotLight(&spotLight2ProjDesc, mMainCamera, &spotLight2Desc);
 
     mLightManager->CreateLightBuffer(mDevice);
 
@@ -473,6 +490,8 @@ void VPLviaSVOGI::Initialize(GPUDevice* device)
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddRadioButton("Final Result", 16, infoStartY, 60, 20, true);
     infoStartY += infoIncY;
+    InformationPanel::GetInstance()->AddCheckBox("Enable Rotation", 16, infoStartY, 60, 20, false);
+    infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddCheckBox("Show Direct Shadow", 16, infoStartY, 60, 20, true);
     infoStartY += infoIncY;
     InformationPanel::GetInstance()->AddCheckBox("VPL Visibility Test", 16, infoStartY, 60, 20, true);
@@ -632,10 +651,6 @@ void VPLviaSVOGI::Terminate()
 //----------------------------------------------------------------------------
 void VPLviaSVOGI::ProcessInput()
 {
-	if (glfwGetKey(Window, GLFW_KEY_R) == GLFW_PRESS)
-	{
-		mIsRotatingModel = !mIsRotatingModel;
-	}
 	if (glfwGetKey(Window, GLFW_KEY_T) == GLFW_PRESS)
 	{
 		mIsWireframe = !mIsWireframe;
@@ -740,6 +755,11 @@ void VPLviaSVOGI::OnCheckBoxClick(System::Object^ sender,
         }
 
         mDirectLightingRenderer->ShowShadow(checkBox->Checked);
+    }
+
+    if( checkBox->Name == "Enable Rotation" )
+    {
+        mIsRotatingModel = checkBox->Checked;
     }
 
     if( checkBox->Name == "VPL Visibility Test" )

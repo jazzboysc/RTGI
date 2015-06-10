@@ -251,7 +251,7 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
                 // 
                 this->groupBoxUserInputs->Location = System::Drawing::Point(12, 358);
                 this->groupBoxUserInputs->Name = L"groupBoxUserInputs";
-                this->groupBoxUserInputs->Size = System::Drawing::Size(296, 455);
+                this->groupBoxUserInputs->Size = System::Drawing::Size(296, 481);
                 this->groupBoxUserInputs->TabIndex = 1;
                 this->groupBoxUserInputs->TabStop = false;
                 this->groupBoxUserInputs->Text = L"User Inputs :";
@@ -260,7 +260,7 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
                 // 
                 this->groupBoxDebugOutputs->Location = System::Drawing::Point(314, 12);
                 this->groupBoxDebugOutputs->Name = L"groupBoxDebugOutputs";
-                this->groupBoxDebugOutputs->Size = System::Drawing::Size(254, 801);
+                this->groupBoxDebugOutputs->Size = System::Drawing::Size(254, 827);
                 this->groupBoxDebugOutputs->TabIndex = 2;
                 this->groupBoxDebugOutputs->TabStop = false;
                 this->groupBoxDebugOutputs->Text = L"Debug Outputs :";
@@ -269,7 +269,7 @@ private: System::Windows::Forms::GroupBox^  groupBoxDebugOutputs;
                 // 
                 this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
                 this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-                this->ClientSize = System::Drawing::Size(580, 826);
+                this->ClientSize = System::Drawing::Size(580, 851);
                 this->Controls->Add(this->groupBoxDebugOutputs);
                 this->Controls->Add(this->groupBoxUserInputs);
                 this->Controls->Add(this->groupBoxWorkloadTiming);
