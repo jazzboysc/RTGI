@@ -1,6 +1,8 @@
 #ifndef RTGI_ObjLoadingTestApp_H
 #define RTGI_ObjLoadingTestApp_H
 
+#include "ObjMesh.h"
+
 namespace RTGI
 {
 
@@ -19,6 +21,8 @@ public:
 	void FrameFunc() override;
 	void Terminate() override;
 
+private:
+    ObjMeshPtr mModel;
 };
 
 }
