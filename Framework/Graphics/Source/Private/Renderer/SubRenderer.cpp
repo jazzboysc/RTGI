@@ -381,6 +381,7 @@ void SubRenderer::OnRender(int technique, int pass, Camera* camera)
     int renderObjectCount = mRenderSet->GetRenderObjectCount();
     if( camera )
     {
+        // Assign viewing camera. 
         for( int i = 0; i < renderObjectCount; ++i )
         {
             RenderObject* renderObject = mRenderSet->GetRenderObject(i);
