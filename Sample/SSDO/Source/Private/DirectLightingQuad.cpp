@@ -23,7 +23,7 @@ void DirectLightingQuad::OnUpdateShaderConstants(int, int)
 
 	vec3 lightLoc = mLight->GetLocation();
     mLightPositionLoc.SetValue(lightLoc);
-    mLightColorLoc.SetValue(mLight->Color);
+    mLightColorLoc.SetValue(mLight->Intensity);
 
     SamplerDesc sampler;
     sampler.MinFilter = FT_Nearest;
